@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // url removed - now handled in prisma.config.ts
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  createdAt     DateTime @default(now()) @map("created_at")
+  
+  cards         Card[]
+  
+  @@map("users")
+}
+
+model Card {
+  id                    String   @id @default(uuid())
+  userId                String   @map("user_id")
+  word                  String
+  imageUrl              String   @map("image_url")
+  sentences             String[]
+  
+  currentSentenceIndex  Int      @default(0) @map("current_sentence_index")
+  consecutiveCorrect    Int      @default(0) @map("consecutive_correct")
+  easeFactor            Float    @default(2.5) @map("ease_factor")
+  
+  lastReviewedAt        DateTime? @map("last_review_at")
+  nextReviewAt          DateTime  @default(now()) @map("next_review_at")
+  currentIntervalMs     BigInt   @default(0) @map("current_interval_ms")
+  
+  createdAt             DateTime @default(now()) @map("created_at")
+  
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, nextReviewAt], map: "idx_cards_user_review")
+  @@map("cards")
+}
