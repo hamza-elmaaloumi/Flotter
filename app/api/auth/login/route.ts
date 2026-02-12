@@ -29,7 +29,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'invalid credentials' }, { status: 401 })
     }
 
-    return NextResponse.json({ message: 'Login successful' }, { status: 200 })
+    const safeUser = { id: user.id, email: user.email }
+    return NextResponse.json({ user: safeUser }, { status: 200 })
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Login error', err)
