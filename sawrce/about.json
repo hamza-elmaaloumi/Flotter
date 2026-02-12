@@ -1,0 +1,48 @@
+{
+  "project_metadata": {
+    "app_name": "floter",
+    "version": "0.7.0-MVP",
+    "design_philosophy": "Active recall with character masking; contextual rotation; multi-sensory feedback"
+  },
+  "ui_logic": {
+    "card_states": {
+      "front_side": {
+        "content": "Sentence with the target word MASKED",
+        "masking_rule": "First letter visible + asterisks for remaining length (e.g., 'A*******e')",
+        "interaction": "Click anywhere to flip"
+      },
+      "back_side": {
+        "content": ["Full Sentence (Word Visible)", "Associated Image"],
+        "auto_action": "Trigger Browser Web Speech API (Audio Reading)",
+        "interaction": "Swipe Left (Struggle) or Swipe Right (Success)"
+      }
+    },
+    "rotation_engine": {
+      "trigger": "Every card render (Front Side)",
+      "logic": "Linear rotation: (current_index + 1) % sentences.length"
+    }
+  },
+  "srs_parameters": {
+    "logic": "Leitner-based dynamic queue",
+    "intervals": {
+      "short_term_requeue": "10 seconds",
+      "initial_review_delay": "6 hours",
+      "multiplier": 2.5
+    },
+    "failure_logic": "Immediate reset to Learning state (short_term_requeue)"
+  },
+  "technical_infrastructure": {
+    "frontend_framework": "Next.js (App Router)",
+    "styling": "Tailwind CSS",
+    "database": "PostgreSQL (Neon.tech Free Tier)",
+    "auth": {
+      "type": "Custom Simple Auth",
+      "fields": ["email", "password"],
+      "verification": "None (Direct login after registration)"
+    },
+    "apis": {
+      "images": "Unsplash API (Demo Mode)",
+      "audio": "Web Speech API (Native Browser TTS)"
+    }
+  }
+}
