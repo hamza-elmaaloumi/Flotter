@@ -1,13 +1,13 @@
 'use client'
 
-import { 
-  motion, 
-  useMotionValue, 
-  useTransform, 
+import {
+  motion,
+  useMotionValue,
+  useTransform,
   useAnimation,
   PanInfo
 } from 'framer-motion'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Check, X, Hand, Sparkles } from 'lucide-react'
 
 interface FlashcardProps {
@@ -24,11 +24,16 @@ interface FlashcardProps {
   onReview: (id: string, status: 'success' | 'struggle') => void
 }
 
+function escapeRegExp(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
 export default function Flashcard({ card, displayIndex, isFlipped, onFlip, onReview }: FlashcardProps) {
   const x = useMotionValue(0)
   const controls = useAnimation()
   const [isDragging, setIsDragging] = useState(false)
   const [windowWidth, setWindowWidth] = useState(1000)
+  const exitDir = useRef(0) // 1 or -1 (used for exit animation direction)
 
   useEffect(() => {
     setWindowWidth(window.innerWidth)
@@ -53,10 +58,13 @@ export default function Flashcard({ card, displayIndex, isFlipped, onFlip, onRev
     const threshold = windowWidth < 768 ? 80 : 150
 
     if (offset > threshold || velocity > 500) {
-      await controls.start({ x: windowWidth + 200, opacity: 0, transition: { duration: 0.3 } })
+      exitDir.current = 1
+      // animate top card out (so underlying cards don't have to run entrance)
+      await controls.start({ x: windowWidth + 200, opacity: 0, transition: { duration: 0.28 } })
       onReview(card.id as string, 'success')
     } else if (offset < -threshold || velocity < -500) {
-      await controls.start({ x: -windowWidth - 200, opacity: 0, transition: { duration: 0.3 } })
+      exitDir.current = -1
+      await controls.start({ x: -windowWidth - 200, opacity: 0, transition: { duration: 0.28 } })
       onReview(card.id as string, 'struggle')
     } else {
       controls.start({ x: 0, transition: { type: 'spring', stiffness: 400, damping: 40 } })
@@ -64,21 +72,27 @@ export default function Flashcard({ card, displayIndex, isFlipped, onFlip, onRev
   }
 
   const rawSentence = card.sentences[card.currentSentenceIndex] || ''
-  const maskedSentence = rawSentence.replace(new RegExp(`\\b(${card.word})\\b`, 'gi'), "______")
+  const maskedSentence = rawSentence.replace(new RegExp(`\\b(${escapeRegExp(card.word)})\\b`, 'gi'), "______")
 
   return (
     <motion.div
-      layout
+      // disable initial entrance animation so underlying cards don't "pop" when top card is removed
+      initial={false}
       className="absolute inset-0 flex items-center justify-center pointer-events-none"
-      initial={{ scale: 0.9, opacity: 0, y: 20 }}
-      animate={{ 
-        scale: stackScale, 
-        y: stackY, 
+      animate={{
+        scale: stackScale,
+        y: stackY,
         opacity: 1,
-        zIndex: 50 - displayIndex 
+        zIndex: 50 - displayIndex
       }}
-      exit={{ x: x.get() > 0 ? 500 : -500, opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      exit={{
+        x: exitDir.current >= 0 ? 500 : -500,
+        opacity: 0,
+        scale: 0.5,
+        transition: { duration: 0.18 },
+        zIndex: 0
+      }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       <motion.div
         className={`relative w-full max-w-[360px] h-[600px] touch-none pointer-events-auto ${displayIndex === 0 ? 'cursor-grab active:cursor-grabbing' : ''}`}
@@ -90,12 +104,14 @@ export default function Flashcard({ card, displayIndex, isFlipped, onFlip, onRev
         onDragStart={() => setIsDragging(true)}
         onDragEnd={handleDragEnd}
       >
-        <motion.div 
+
+        <motion.div
           className="w-full h-full relative preserve-3d"
           style={{ transformStyle: 'preserve-3d' }}
           animate={{ rotateY: isFlipped ? 180 : 0 }}
           transition={{ duration: 0.5, type: "spring", stiffness: 260, damping: 20 }}
         >
+
           {/* FRONT FACE */}
           <CardFace side="front" onClick={() => !isDragging && displayIndex === 0 && onFlip()}>
             <div className="h-[45%] w-full relative bg-zinc-900 overflow-hidden rounded-t-[32px]">
@@ -106,16 +122,16 @@ export default function Flashcard({ card, displayIndex, isFlipped, onFlip, onRev
             <div className="h-[55%] bg-zinc-900 w-full rounded-b-[32px] p-6 flex flex-col items-center text-center border-x border-b border-white/10">
               <div className="flex-1 flex flex-col items-center justify-center space-y-6">
                 <span className="text-emerald-500 text-[10px] tracking-[0.3em] uppercase font-bold flex items-center gap-2">
-                   <Sparkles size={12} /> New Word
+                  <Sparkles size={12} /> New Word
                 </span>
                 <h2 className="text-4xl font-black text-white tracking-tight">
-                   {card.word.charAt(0)}<span className="tracking-widest opacity-50">_______</span>
+                  {card.word.charAt(0)}<span className="tracking-widest opacity-50">_______</span>
                 </h2>
                 <p className="text-zinc-400 text-lg leading-relaxed font-medium">{maskedSentence}</p>
               </div>
               <div className="pt-4 opacity-50">
                 <span className="text-[10px] uppercase font-bold tracking-widest text-white flex items-center gap-2">
-                   <Hand size={14} /> Tap to Reveal
+                  <Hand size={14} /> Tap to Reveal
                 </span>
               </div>
             </div>
@@ -151,6 +167,7 @@ export default function Flashcard({ card, displayIndex, isFlipped, onFlip, onRev
               </div>
             </div>
           </CardFace>
+
         </motion.div>
       </motion.div>
     </motion.div>
@@ -160,11 +177,11 @@ export default function Flashcard({ card, displayIndex, isFlipped, onFlip, onRev
 function CardFace({ children, side, onClick }: any) {
   const isBack = side === 'back'
   return (
-    <div 
+    <div
       onClick={onClick}
-      className={`absolute inset-0 w-full h-full rounded-[32px] shadow-2xl flex flex-col`}
-      style={{ 
-        backfaceVisibility: 'hidden', 
+      className="absolute inset-0 w-full h-full rounded-[32px] shadow-2xl flex flex-col"
+      style={{
+        backfaceVisibility: 'hidden',
         transform: isBack ? 'rotateY(180deg)' : 'none',
         backgroundColor: '#18181b'
       }}
@@ -173,6 +190,7 @@ function CardFace({ children, side, onClick }: any) {
     </div>
   )
 }
+
 
 function StatusStamp({ side, opacity }: { side: 'left' | 'right', opacity: any }) {
   const isRight = side === 'right'
@@ -189,10 +207,10 @@ function StatusStamp({ side, opacity }: { side: 'left' | 'right', opacity: any }
 }
 
 function HighlightSentence({ sentence, word }: { sentence: string, word: string }) {
-  const parts = sentence.split(new RegExp(`(${word})`, 'gi'))
+  const parts = sentence.split(new RegExp(`(${escapeRegExp(word)})`, 'gi'))
   return (
     <p className="text-sm md:text-base text-zinc-300 leading-snug">
-      {parts.map((part, i) => 
+      {parts.map((part, i) =>
         part.toLowerCase() === word.toLowerCase() ? (
           <span key={i} className="text-emerald-400 font-bold">{part}</span>
         ) : (

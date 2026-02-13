@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
-import Flashcard from './componenets/FlashCard'
+import Flashcard from './components/FlashCard'
 import { AnimatePresence } from 'framer-motion'
 
 type Card = {
@@ -13,6 +13,7 @@ type Card = {
   sentences: string[]
   currentSentenceIndex: number
   consecutiveCorrect?: number
+  _reviewedAt?: number // Internal field to force re-render when card cycles back
 }
 
 export default function DeckPage() {
@@ -47,28 +48,39 @@ export default function DeckPage() {
 
   const handleReview = async (cardId: string, result: 'success' | 'struggle') => {
     try {
-      // Optimistically update UI by removing/moving card first for instant feel
+      // Sync with backend first to ensure data consistency
+      await axios.patch('/api/cards', { cardId, action: 'review', result })
+
+      // Then update UI state
       if (result === 'success') {
         setCards((prev) => prev.filter(c => c.id !== cardId))
       } else {
         setCards((prev) => {
-          const card = prev.find(c => c.id === cardId)
-          if (!card) return prev
-          const remaining = prev.filter(c => c.id !== cardId)
-          return [...remaining, card]
+          const cardIndex = prev.findIndex(c => c.id === cardId)
+          if (cardIndex === -1) return prev
+          const card = prev[cardIndex]
+          // Remove from current position and add to end
+          const newCards = prev.filter(c => c.id !== cardId)
+
+          const updatedCard = {
+            ...card,
+            currentSentenceIndex: (card.currentSentenceIndex + 1) % card.sentences.length,
+            _reviewedAt: Date.now()
+          }
+
+          return [...newCards, updatedCard]
         })
       }
 
-      // Sync with backend in background
-      await axios.patch('/api/cards', { cardId, action: 'review', result })
-      
       setFlipped(s => {
         const newState = { ...s }
         delete newState[cardId]
         return newState
       })
+
     } catch (err) {
       console.error('Review update error', err)
+      // Optionally: revert optimistic update here if needed
     }
   }
 
@@ -85,18 +97,14 @@ export default function DeckPage() {
         </header>
 
         <div className="relative w-full h-[600px] mx-auto" style={{ perspective: '1200px' }}>
-          <AnimatePresence>
-            {/* 
-               We render the top 3 cards. 
-               We REVERSE them so that the first item (index 0) is rendered LAST in the DOM, 
-               which puts it on top of the stack.
-            */}
+          {/* Prevent initial entrance animations inside AnimatePresence to avoid jumps when stack changes */}
+          <AnimatePresence initial={false}>
+            {/* render top 3, reversed so top card is last in DOM */}
             {cards.slice(0, 3).reverse().map((card, index, array) => {
-              // Calculate actual index in the "visible" stack (0 is top)
-              const displayIndex = array.length - 1 - index;
+              const displayIndex = array.length - 1 - index // 0 is top
               return (
                 <Flashcard
-                  key={card.id}
+                  key={`${card.id}-${card._reviewedAt || 'initial'}`} // Force remount only when card cycles back
                   card={card}
                   displayIndex={displayIndex}
                   isFlipped={!!flipped[card.id]}
@@ -109,7 +117,7 @@ export default function DeckPage() {
               )
             })}
           </AnimatePresence>
-          
+
           {cards.length === 0 && !loading && (
             <div className="text-center py-20 animate-in fade-in zoom-in duration-500">
               <p className="text-zinc-500 font-medium italic">All caught up for today!</p>
