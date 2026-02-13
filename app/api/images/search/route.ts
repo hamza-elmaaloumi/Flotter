@@ -9,7 +9,7 @@ export async function GET(req: Request) {
     const key = process.env.UNSPLASH_ACCESS_KEY || process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY
     if (!key) return NextResponse.json({ error: 'missing_unsplash_key' }, { status: 500 })
 
-    const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=12`, {
+    const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=32`, {
       headers: { Authorization: `Client-ID ${key}` },
     })
 

@@ -1,6 +1,5 @@
 "use client"
 import Link from 'next/link'
-import React from 'react'
 import { useUser } from '../providers/UserProvider'
 
 export default function Header() {
@@ -17,14 +16,26 @@ export default function Header() {
             PLATFORM
           </Link>
 
-          <div className="flex items-center gap-6">
-            <Link
-              href="/"
-              className="text-sm font-medium text-zinc-400 hover:text-white transition-colors"
-            >
-              Home
-            </Link>
-          </div>
+          {user && (
+            <>
+              <div className="flex items-center gap-6">
+                <Link
+                  href="/cards/deck"
+                  className="text-sm font-medium text-zinc-400 hover:text-white transition-colors"
+                >
+                  Deck
+                </Link>
+              </div>
+              <div className="flex items-center gap-6">
+                <Link
+                  href="/cards/new"
+                  className="text-sm font-medium text-zinc-400 hover:text-white transition-colors"
+                >
+                  add
+                </Link>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="flex items-center gap-4">
