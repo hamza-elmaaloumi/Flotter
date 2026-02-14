@@ -2,7 +2,8 @@
 
 import { motion, useMotionValue, useTransform, PanInfo, animate, AnimatePresence } from 'framer-motion'
 import React, { useState, useEffect } from 'react'
-import { Check, X, Hand, Sparkles, ArrowLeft, ArrowRight } from 'lucide-react'
+import { Check, X, Hand, Sparkles, ArrowLeft, ArrowRight, Pencil } from 'lucide-react' // Added Pencil icon
+import { useRouter } from 'next/navigation'
 
 interface FlashcardProps {
   card: {
@@ -19,11 +20,12 @@ interface FlashcardProps {
 }
 
 export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: FlashcardProps) {
+  const router = useRouter()
   const x = useMotionValue(0)
   const [isDragging, setIsDragging] = useState(false)
   const [showSwipeHint, setShowSwipeHint] = useState(false)
 
-  const sensitivityMultiplier = 1.6 
+  const sensitivityMultiplier = 1.6
 
   useEffect(() => {
     if (!isTop) {
@@ -39,7 +41,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
 
   const rotateZ = useTransform(x, [-200, 200], [-10, 10])
   const opacity = useTransform(x, [-500, -300, 0, 300, 500], [0, 1, 1, 1, 0])
-  
+
   const successOpacity = useTransform(x, [50, 150], [0, 1])
   const struggleOpacity = useTransform(x, [-50, -150], [0, 1])
 
@@ -50,7 +52,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
 
   const handleDragEnd = async (_: any, info: PanInfo) => {
     if (!isTop) return
-    
+
     const currentX = x.get()
     const velocity = info.velocity.x
     const threshold = 120
@@ -59,28 +61,26 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
       await animate(x, 500, { duration: 0.3, ease: "easeOut" })
       onReview(card.id as string, 'success')
       x.set(0)
-    } 
+    }
     else if (currentX < -threshold || velocity < -500) {
       await animate(x, -500, { duration: 0.3, ease: "easeOut" })
       onReview(card.id as string, 'struggle')
       x.set(0)
-    } 
+    }
     else {
       animate(x, 0, { type: 'spring', stiffness: 300, damping: 30 })
     }
-    
+
     setIsDragging(false)
   }
 
   const handleBackClick = () => {
     if (!isDragging && isTop && isFlipped) {
       setShowSwipeHint(true)
-      // Jiggle animation: move left then right then back to center
       animate(x, -30, { duration: 0.15, ease: "easeInOut" })
         .then(() => animate(x, 30, { duration: 0.15, ease: "easeInOut" }))
         .then(() => animate(x, 0, { duration: 0.15, ease: "easeInOut" }))
-      
-      // Hide hint after animation completes
+
       setTimeout(() => setShowSwipeHint(false), 1500)
     }
   }
@@ -90,12 +90,12 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
 
   return (
     <motion.div
-      style={{ 
-        x: isTop ? x : 0, 
+      style={{
+        x: isTop ? x : 0,
         rotateZ: isTop ? rotateZ : 0,
         opacity: isTop ? opacity : 1,
         zIndex: isTop ? 50 : 40,
-        scale: 1, 
+        scale: 1,
         y: 0,
         position: 'absolute',
         inset: 0,
@@ -107,9 +107,21 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
       onDragStart={() => setIsDragging(true)}
       onDrag={handleDrag}
       onDragEnd={handleDragEnd}
-      className={`touch-none ${isTop ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'}`}
+      className={`touch-none ${isTop ? 'cursor-grab active:cursor-grabbing' : ''}`}
     >
       <div className="w-full max-w-[360px] h-[600px] relative">
+        {/* EDIT BUTTON (CRAYON STYLE) */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`${card.id}/edit`);
+          }}
+          className="absolute top-4 right-4 z-[60] p-3 bg-zinc-800/80 backdrop-blur-md border border-white/10 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-700 transition-all active:scale-90 shadow-xl"
+          title="Edit Card"
+        >
+          <Pencil size={18} />
+        </button>
+
         <motion.div
           className="w-full h-full relative preserve-3d"
           style={{ transformStyle: 'preserve-3d' }}
@@ -117,21 +129,21 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
           transition={{ duration: 0.3 }}
         >
           {/* FRONT FACE */}
-          <div 
-            onClick={() => !isDragging && isTop && onFlip()}
+          <div
+            onPointerUp={() => !isDragging && isTop && onFlip()}
             className="absolute inset-0 backface-hidden rounded-[32px] overflow-hidden shadow-2xl bg-zinc-900 border border-white/10"
             style={{ backfaceVisibility: 'hidden' }}
           >
             {/* Swiping Indicators for Front Face */}
             <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-8">
-               <div className="border-4 border-emerald-500 px-4 py-1 rounded-xl -rotate-12">
-                 <span className="text-emerald-500 text-3xl font-black uppercase tracking-wider">Learned</span>
-               </div>
+              <div className="border-4 border-emerald-500 px-4 py-1 rounded-xl -rotate-12">
+                <span className="text-emerald-500 text-3xl font-black uppercase tracking-wider">Learned</span>
+              </div>
             </motion.div>
             <motion.div style={{ opacity: struggleOpacity }} className="absolute inset-0 bg-rose-500/20 z-20 pointer-events-none flex items-start justify-end p-8">
-               <div className="border-4 border-rose-500 px-4 py-1 rounded-xl rotate-12">
-                 <span className="text-rose-500 text-3xl font-black uppercase tracking-wider">Review</span>
-               </div>
+              <div className="border-4 border-rose-500 px-4 py-1 rounded-xl rotate-12">
+                <span className="text-rose-500 text-3xl font-black uppercase tracking-wider">Review</span>
+              </div>
             </motion.div>
 
             <div className="h-[45%] w-full">
@@ -154,28 +166,28 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
           </div>
 
           {/* BACK FACE */}
-          <div 
-            onClick={handleBackClick}
+          <div
+            onPointerUp={handleBackClick}
             className="absolute inset-0 bg-zinc-900 rounded-[32px] overflow-hidden border border-white/10"
             style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
           >
             {/* Color Overlays during swipe with Labels */}
             <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-8">
-               <div className="border-4 border-emerald-500 px-4 py-1 rounded-xl -rotate-12">
-                 <span className="text-emerald-500 text-3xl font-black uppercase tracking-wider">Learned</span>
-               </div>
+              <div className="border-4 border-emerald-500 px-4 py-1 rounded-xl -rotate-12">
+                <span className="text-emerald-500 text-3xl font-black uppercase tracking-wider">Learned</span>
+              </div>
             </motion.div>
             <motion.div style={{ opacity: struggleOpacity }} className="absolute inset-0 bg-rose-500/20 z-20 pointer-events-none flex items-start justify-end p-8">
-               <div className="border-4 border-rose-500 px-4 py-1 rounded-xl rotate-12">
-                 <span className="text-rose-500 text-3xl font-black uppercase tracking-wider">Review</span>
-               </div>
+              <div className="border-4 border-rose-500 px-4 py-1 rounded-xl rotate-12">
+                <span className="text-rose-500 text-3xl font-black uppercase tracking-wider">Review</span>
+              </div>
             </motion.div>
 
             {/* Swipe Hint Indicators */}
             <AnimatePresence>
               {showSwipeHint && (
                 <>
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
@@ -187,7 +199,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
                     </div>
                     <span className="text-rose-500 text-xs font-bold uppercase tracking-wider">Review</span>
                   </motion.div>
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
@@ -202,7 +214,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
                 </>
               )}
             </AnimatePresence>
-            
+
             <div className="h-[45%] w-full">
               <img src={card.imageUrl} className="w-full h-full object-cover" alt="" />
             </div>
