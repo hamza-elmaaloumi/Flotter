@@ -61,7 +61,7 @@ export async function GET(req: Request) {
     })
 
     if (doRotate && cards.length > 0) {
-      const updates = cards.map((c) => {
+      const updates = cards.map((c: any) => {
         const nextIndex = (c.currentSentenceIndex + 1) % c.sentences.length
         return prisma.card.update({
           where: { id: c.id },
