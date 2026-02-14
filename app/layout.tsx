@@ -4,7 +4,6 @@ import "./globals.css";
 import UserProvider from "./providers/UserProvider";
 import NextAuthSessionProvider from "./providers/NextAuthSessionProvider"; // Import the new wrapper
 import Header from "./components/header";
-import Footer from "./components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +38,6 @@ export default function RootLayout({
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-indigo-500/5 blur-[120px] pointer-events-none" />
               {children}
             </main>
-            <Footer />
           </UserProvider>
         </NextAuthSessionProvider>
       </body>

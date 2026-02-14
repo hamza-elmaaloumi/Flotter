@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]/route"
 
-const INITIAL_REVIEW_MS = 2 * 60 * 1000 // 2 minutes
+const INITIAL_REVIEW_MS = 15 * 60 * 1000 // 15 minutes
 
 function sanitizeCard(card: any) {
   if (!card) return card

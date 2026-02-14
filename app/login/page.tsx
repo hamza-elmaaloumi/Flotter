@@ -36,7 +36,7 @@ export default function LoginPage() {
         setError("Invalid email or password")
         setLoading(false)
       } else {
-        router.push('/')
+        router.push('/cards/learning')
         router.refresh() // Ensures the session state updates immediately
       }
     } catch (err) {
@@ -46,7 +46,7 @@ export default function LoginPage() {
   }
 
   const handleGoogleLogin = () => {
-    signIn('google', { callbackUrl: '/' })
+    signIn('google', { callbackUrl: '/cards/learning' })
   }
 
   return (
