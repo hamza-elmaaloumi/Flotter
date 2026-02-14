@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
@@ -13,6 +13,7 @@ export default function DeckPage() {
   const [cards, setCards] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [flipped, setFlipped] = useState<Record<string, boolean>>({})
+  const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
 
   const loadCards = useCallback(async () => {
     if (!user?.id) return
@@ -27,7 +28,19 @@ export default function DeckPage() {
 
   useEffect(() => { loadCards() }, [loadCards])
 
+  // Cleanup speech synthesis when the component unmounts
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis.cancel()
+      currentUtteranceRef.current = null
+    }
+  }, [])
+
   const handleReview = (cardId: string, result: 'success' | 'struggle') => {
+    // Stop any playing audio when card is swiped
+    window.speechSynthesis.cancel()
+    currentUtteranceRef.current = null
+
     setCards((prev) => {
       const cardIndex = prev.findIndex(c => c.id === cardId)
       if (cardIndex === -1) return prev
@@ -66,10 +79,10 @@ export default function DeckPage() {
           </div>
         </header>
 
-        {/* MAIN STAGE (Sized specifically for the 360x600 Flashcard) */}
+        {/* MAIN STAGE */}
         <div className="relative flex-1 w-full max-h-[600px] min-h-[500px] flex justify-center items-center" style={{ perspective: '1500px' }}>
           
-          {/* LOADING STATE - Matching Card Dimensions */}
+          {/* LOADING STATE */}
           {loading && cards.length === 0 && (
             <div className="w-[360px] h-[600px] bg-zinc-900/20 border border-white/5 rounded-[32px] flex flex-col items-center justify-center space-y-4 animate-pulse">
                 <Loader2 className="animate-spin text-zinc-700" size={32} />
@@ -77,10 +90,9 @@ export default function DeckPage() {
             </div>
           )}
 
-          {/* BACKGROUND DECORATIVE STACK (Fixes "ugly" flat UI) */}
+          {/* BACKGROUND DECORATIVE STACK */}
           {!loading && cards.length > 1 && (
             <>
-              {/* Bottom shadow/offset cards to create 3D depth */}
               <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[48%] w-[340px] h-[580px] bg-zinc-900 border border-white/5 rounded-[32px] -z-10 opacity-40" />
               <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[46%] w-[320px] h-[560px] bg-zinc-900/50 border border-white/5 rounded-[32px] -z-20 opacity-20" />
             </>
@@ -94,15 +106,19 @@ export default function DeckPage() {
               isTop={index === 0}
               isFlipped={!!flipped[card.id]}
               onFlip={() => {
+                // Stop any previous audio before starting new one
+                window.speechSynthesis.cancel()
+                
                 setFlipped(s => ({ ...s, [card.id]: true }))
                 const u = new SpeechSynthesisUtterance(card.sentences[card.currentSentenceIndex])
+                currentUtteranceRef.current = u
                 window.speechSynthesis.speak(u)
               }}
               onReview={handleReview}
             />
           ))}
           
-          {/* EMPTY STATE - Matching Card Dimensions */}
+          {/* EMPTY STATE */}
           {cards.length === 0 && !loading && (
             <div className="w-[360px] h-[600px] flex flex-col items-center justify-center bg-zinc-900 border border-white/10 rounded-[32px] p-8 text-center shadow-2xl">
               <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/20">
@@ -113,7 +129,7 @@ export default function DeckPage() {
                 You've mastered all the due cards in your deck for today. Great job!
               </p>
               <button 
-                onClick={() => router.push('/')} 
+                onClick={() => router.push('/cards/learning')} 
                 className="w-full bg-white text-black py-4 rounded-2xl font-black uppercase text-xs tracking-widest active:scale-95 transition-transform"
               >
                 Return to Home

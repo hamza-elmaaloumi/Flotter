@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import axios from "axios"
 import { useForm } from "react-hook-form"
-import { signIn } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
 type FormData = {
@@ -14,6 +14,12 @@ type FormData = {
 
 export default function RegisterPage() {
   const router = useRouter()
+  const session = useSession()
+  useEffect(() => {
+    if (session.status === "authenticated") {
+      router.push("/cards/learning")
+    }
+  }, [session.status, router])
   const {
     register,
     handleSubmit,

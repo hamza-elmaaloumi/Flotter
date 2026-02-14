@@ -103,11 +103,11 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
         alignItems: 'center',
         justifyContent: 'center',
       }}
-      drag={isTop ? "x" : false}
-      onDragStart={() => setIsDragging(true)}
+      drag={isTop && isFlipped ? "x" : false}
+      onDragStart={() => isFlipped && setIsDragging(true)}
       onDrag={handleDrag}
       onDragEnd={handleDragEnd}
-      className={`touch-none ${isTop ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      className={`touch-none ${isTop && isFlipped ? 'cursor-grab active:cursor-grabbing' : ''}`}
     >
       <div className="w-full max-w-[360px] h-[600px] relative">
         {/* EDIT BUTTON (CRAYON STYLE) */}
