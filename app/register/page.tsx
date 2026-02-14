@@ -4,6 +4,8 @@ import React, { useState } from "react"
 import Link from "next/link"
 import axios from "axios"
 import { useForm } from "react-hook-form"
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 type FormData = {
   email: string
@@ -11,6 +13,7 @@ type FormData = {
 }
 
 export default function RegisterPage() {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -22,9 +25,26 @@ export default function RegisterPage() {
   async function onSubmit(data: FormData) {
     setMessage(null)
     try {
+      // 1. Register the user in the database
       const res = await axios.post("/api/auth/register", data)
-      const user = res.data?.user
-      setMessage(user ? `Registered ${user.email}` : "Registration successful")
+      
+      if (res.status === 201) {
+        setMessage("Account created! Signing you in...")
+        
+        // 2. Automatically log them in with NextAuth
+        const result = await signIn('credentials', {
+          redirect: false,
+          email: data.email,
+          password: data.password,
+        })
+
+        if (!result?.error) {
+          router.push('/')
+          router.refresh()
+        } else {
+          setMessage("Account created, but login failed. Please go to Login page.")
+        }
+      }
     } catch (err: any) {
       const errMsg = err?.response?.data?.error || err?.message || "Registration failed"
       setMessage(String(errMsg))
@@ -33,7 +53,6 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-[#000000] text-[#FFFFFF] antialiased font-['San_Francisco',_Roboto,_Arial,_sans-serif]">
-      {/* Background Decorative Element */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#22C55E08_0%,_transparent_70%)] pointer-events-none" />
 
       <div className="w-full max-w-md z-10 px-[20px]">
@@ -97,10 +116,6 @@ export default function RegisterPage() {
 
           <p className="mt-4 text-center text-[14px] text-[#636366]">
             Already have an account? <Link href="/login" className="underline text-[#22C55E] hover:text-[#16A34A] font-[600]">Sign In</Link>
-          </p>
-
-          <p className="mt-8 text-center text-[14px] text-[#636366] font-[600] uppercase tracking-widest">
-            Protected by secure encryption
           </p>
         </div>
       </div>

@@ -17,28 +17,28 @@ export async function POST(req: Request) {
 
     const normalizedEmail = email.toLowerCase().trim()
 
-    const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } })
-    if (existing) {
-      return NextResponse.json({ error: 'email already registered' }, { status: 409 })
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({ where: { email: normalizedEmail } })
+    if (existingUser) {
+      return NextResponse.json({ error: 'User already exists' }, { status: 409 })
     }
 
+    // Hash password (Your existing logic)
     const passwordHash = crypto.createHash('sha256').update(password).digest('hex')
 
+    // Create user
     const user = await prisma.user.create({
       data: {
         email: normalizedEmail,
-        passwordHash,
-      },
-      select: {
-        id: true,
-        email: true,
+        passwordHash: passwordHash,
       },
     })
 
-    return NextResponse.json({ user }, { status: 201 })
+    const safeUser = { id: user.id, email: user.email }
+    return NextResponse.json({ user: safeUser }, { status: 201 })
+
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('Register error', err)
+    console.error('Registration error', err)
     return NextResponse.json({ error: 'internal_error' }, { status: 500 })
   }
 }

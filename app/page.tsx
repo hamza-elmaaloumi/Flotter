@@ -38,11 +38,16 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchDash() {
+      // We still check for user.id to know when the session has loaded 
+      // before attempting the fetch
       if (!user?.id) return
+      
       setLoading(true)
       setError(null)
       try {
-        const res = await axios.get('/api/cards/dash', { params: { userId: user.id } })
+        // CLEANER & SECURE: No need to pass userId in params anymore.
+        // The server identifies you via the Session Cookie.
+        const res = await axios.get('/api/cards/dash')
         setData(res.data)
       } catch (e: any) {
         setError(e?.response?.data?.error || 'Unable to load dashboard')
@@ -91,7 +96,7 @@ export default function Home() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-[12px] mb-[32px]">
           <StatCard label="Collection" icon={LayoutGrid} value={data?.totalCardsCount || 0} loading={loading} />
           <StatCard label="Due Now" icon={Calendar} value={data?.dueCardsCount || 0} loading={loading} />
-          <StatCard label="Mastery" icon={GraduationCap} value={`${data?.learnedCardsCount || 0}%`} loading={loading} />
+          <StatCard label="Mastery" icon={GraduationCap} value={`${data?.learnedCardsCount || 0}`} loading={loading} />
         </section>
 
         {/* List Section */}

@@ -1,58 +1,47 @@
 "use client"
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { useSession, signOut } from "next-auth/react"
 
 type User = {
   id: string
   email: string
+  name?: string | null
+  image?: string | null
 }
 
 type UserContextValue = {
   user: User | null
-  setUser: (u: User | null) => void
-  update: (u: Partial<User>) => void
-  clear: () => void
+  isLoading: boolean
+  logout: () => void
 }
-
-const KEY = 'floter_user'
 
 const UserContext = createContext<UserContextValue | undefined>(undefined)
 
 export default function UserProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUserState] = useState<User | null>(null)
+  const { data: session, status } = useSession()
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY)
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        setUserState(parsed)
-      }
-    } catch (e) {
-      // ignore parse errors
+    if (status === "authenticated" && session?.user) {
+      setUser({
+        id: (session.user as any).id, // Ensure ID is passed in auth options callback
+        email: session.user.email!,
+        name: session.user.name,
+        image: session.user.image,
+      })
+    } else if (status === "unauthenticated") {
+      setUser(null)
     }
-  }, [])
+  }, [session, status])
 
-  useEffect(() => {
-    try {
-      if (user) {
-        localStorage.setItem(KEY, JSON.stringify(user))
-      } else {
-        localStorage.removeItem(KEY)
-      }
-    } catch (e) {
-      // ignore storage errors
-    }
-  }, [user])
-
-  const setUser = (u: User | null) => setUserState(u)
-
-  const update = (u: Partial<User>) => setUserState(prev => (prev ? { ...prev, ...u } : null))
-
-  const clear = () => setUserState(null)
+  const logout = async () => {
+    await signOut({ callbackUrl: '/' })
+    setUser(null)
+  }
 
   return (
-    <UserContext.Provider value={{ user, setUser, update, clear }}>
+    <UserContext.Provider value={{ user, isLoading: status === "loading", logout }}>
       {children}
     </UserContext.Provider>
   )

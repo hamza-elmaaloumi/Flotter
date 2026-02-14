@@ -1,29 +1,32 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
-
-
-
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "../../auth/[...nextauth]/route"
 
 export async function GET(req: Request) {
     try {
-        const url = new URL(req.url)
-        let userId = url.searchParams.get('userId')
+        // 1. Get the secure session from the server
+        const session = await getServerSession(authOptions)
 
-        if (!userId) {
-            try {
-                const body = await req.json()
-                userId = body?.userId
-            } catch (e) {
-            }
+        // 2. Reject the request if no valid session exists
+        if (!session || !session.user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 })
+        // 3. Extract the User ID from the session (the single source of truth)
+        // @ts-ignore
+        const userId = session.user.id
 
+        // 4. Perform database operations using the secure ID
         const totalCardsCount = await prisma.card.count({ where: { userId } })
-        const dueCardsCount = await prisma.card.count({ where: { userId, nextReviewAt: { lte: new Date() } } })
+        const dueCardsCount = await prisma.card.count({ 
+            where: { userId, nextReviewAt: { lte: new Date() } } 
+        })
 
         const sevenDaysLater = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-        const learnedCardsCount = await prisma.card.count({ where: { userId, nextReviewAt: { gt: sevenDaysLater } } })
+        const learnedCardsCount = await prisma.card.count({ 
+            where: { userId, nextReviewAt: { gt: sevenDaysLater } } 
+        })
 
         const totalCards = await prisma.card.findMany({
             where: { userId },
@@ -31,9 +34,14 @@ export async function GET(req: Request) {
             orderBy: { nextReviewAt: 'asc' }
         })
 
-        return NextResponse.json({ totalCardsCount, dueCardsCount, learnedCardsCount, cards: totalCards })
+        return NextResponse.json({ 
+            totalCardsCount, 
+            dueCardsCount, 
+            learnedCardsCount, 
+            cards: totalCards 
+        })
     } catch (err) {
-        console.error(err)
+        console.error("Dashboard API Error:", err)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }

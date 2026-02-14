@@ -1,28 +1,20 @@
-import { prisma } from '../../../../lib/prisma'
+import { prisma } from '@/lib/prisma'
 import EditCardForm from './EditCardForm'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "../../../api/auth/[...nextauth]/route"
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const session = await getServerSession(authOptions)
+    if (!session) redirect('/login')
+    
     const { id } = await params
+    const card = await prisma.card.findUnique({ where: { id } })
 
-    const card = await prisma.card.findUnique({
-        where: { id },
-        select: {
-            id: true,
-            userId: true,
-            word: true,
-            imageUrl: true,
-            sentences: true,
-            currentSentenceIndex: true,
-            consecutiveCorrect: true,
-            easeFactor: true,
-            lastReviewedAt: true,
-            nextReviewAt: true,
-            currentIntervalMs: true,
-        },
-    })
-
+    // SECURITY: Ensure card exists AND belongs to the user
     if (!card) return notFound()
+    // @ts-ignore
+    if (card.userId !== session.user.id) return redirect('/')
 
     const serializable = {
         ...card,
@@ -30,7 +22,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     }
 
     return (
-        <div className="min-h-screen bg-zinc-900 flex items-center justify-center p-6">
+        <div className="min-h-screen bg-black flex items-center justify-center p-6">
             <EditCardForm initialCard={serializable} />
         </div>
     )

@@ -5,20 +5,12 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
 import Flashcard from './components/FlashCard'
-
-type Card = {
-  id: string
-  word: string
-  imageUrl: string
-  sentences: string[]
-  currentSentenceIndex: number
-  _reviewedAt?: number
-}
+import { Sparkles, Loader2 } from 'lucide-react'
 
 export default function DeckPage() {
   const { user } = useUser()
   const router = useRouter()
-  const [cards, setCards] = useState<Card[]>([])
+  const [cards, setCards] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [flipped, setFlipped] = useState<Record<string, boolean>>({})
 
@@ -26,77 +18,75 @@ export default function DeckPage() {
     if (!user?.id) return
     setLoading(true)
     try {
-      const res = await axios.get('/api/cards', { params: { userId: user.id, dueOnly: true, rotate: true } })
+      const res = await axios.get('/api/cards', { params: { dueOnly: true, rotate: true } })
       setCards(res.data.cards || [])
-    } catch (err: any) {
+    } catch (err) {
       console.error('Load cards error', err)
-    } finally {
-      setLoading(false)
-    }
+    } finally { setLoading(false) }
   }, [user?.id])
 
   useEffect(() => { loadCards() }, [loadCards])
 
-  const speak = (text: string) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
-    const u = new SpeechSynthesisUtterance(text)
-    window.speechSynthesis.cancel()
-    window.speechSynthesis.speak(u)
-  }
-
   const handleReview = (cardId: string, result: 'success' | 'struggle') => {
-    // 1. INSTANT STATE UPDATE (No awaiting animations)
     setCards((prev) => {
       const cardIndex = prev.findIndex(c => c.id === cardId)
       if (cardIndex === -1) return prev
-      
       const card = prev[cardIndex]
       const newCards = prev.filter(c => c.id !== cardId)
-
-      if (result === 'success') {
-        return newCards
-      } else {
-        const updatedCard = {
-          ...card,
-          currentSentenceIndex: (card.currentSentenceIndex + 1) % card.sentences.length,
-          _reviewedAt: Date.now()
-        }
-        return [...newCards, updatedCard]
-      }
+      if (result === 'success') return newCards
+      return [...newCards, { ...card, currentSentenceIndex: (card.currentSentenceIndex + 1) % card.sentences.length }]
     })
 
-    setFlipped(s => {
-      const newState = { ...s }
-      delete newState[cardId]
-      return newState
-    })
-
-    // 2. BACKGROUND SYNC
-    axios.patch('/api/cards', { cardId, action: 'review', result }).catch(err => {
-      console.error('Sync failed', err)
-    })
+    setFlipped(s => { const n = { ...s }; delete n[cardId]; return n; })
+    axios.patch('/api/cards', { cardId, action: 'review', result })
   }
 
   return (
-    <main className="min-h-screen bg-[#000000] text-[#FFFFFF] py-[32px] px-[20px] overflow-hidden font-['San_Francisco',_Roboto,_Arial,_sans-serif]">
-      {/* Decorative Brand Element */}
-      <div className="fixed top-0 left-1/4 w-[400px] h-[400px] bg-[#22C55E]/5 blur-[120px] pointer-events-none" />
-
-      <div className="max-w-lg mx-auto relative h-[75vh]">
-        <header className="mb-[32px] text-center">
-          <h1 className="text-[28px] font-[700] tracking-tight text-[#FFFFFF] uppercase">Daily Deck</h1>
-          <div className="mt-2 inline-block bg-[#1C1C1E] px-[16px] py-[4px] rounded-[20px]">
-             <p className="text-[#22C55E] text-[14px] uppercase font-[600] tracking-widest">
-              {cards.length} Items Pending
-            </p>
+    <main className="min-h-screen bg-[#000000] text-white py-6 px-4 overflow-hidden flex flex-col">
+      <div className="max-w-[400px] mx-auto w-full flex-1 flex flex-col">
+        
+        {/* HEADER SECTION */}
+        <header className="mb-8 flex flex-col items-center">
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles size={14} className="text-emerald-500" />
+            <h1 className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-500">
+              Daily Training
+            </h1>
+          </div>
+          <h2 className="text-3xl font-bold tracking-tighter">THE DECK</h2>
+          
+          <div className="mt-4 flex items-center gap-3">
+            <div className="h-[1px] w-8 bg-zinc-800" />
+            <div className="bg-zinc-900/50 border border-white/5 px-4 py-1 rounded-full">
+              <span className="text-emerald-500 font-bold text-[10px] tracking-widest uppercase">
+                {cards.length} {cards.length === 1 ? 'Card' : 'Cards'} Left
+              </span>
+            </div>
+            <div className="h-[1px] w-8 bg-zinc-800" />
           </div>
         </header>
 
-        <div className="relative w-full h-[600px] mx-auto" style={{ perspective: '1200px' }}>
-          {/* RENDER ONLY THE TOP 2 CARDS
-            No AnimatePresence = No lag waiting for "exit" transitions.
-            Card at index 0 is always the top/draggable one.
-          */}
+        {/* MAIN STAGE (Sized specifically for the 360x600 Flashcard) */}
+        <div className="relative flex-1 w-full max-h-[600px] min-h-[500px] flex justify-center items-center" style={{ perspective: '1500px' }}>
+          
+          {/* LOADING STATE - Matching Card Dimensions */}
+          {loading && cards.length === 0 && (
+            <div className="w-[360px] h-[600px] bg-zinc-900/20 border border-white/5 rounded-[32px] flex flex-col items-center justify-center space-y-4 animate-pulse">
+                <Loader2 className="animate-spin text-zinc-700" size={32} />
+                <span className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.2em]">Preparing Deck</span>
+            </div>
+          )}
+
+          {/* BACKGROUND DECORATIVE STACK (Fixes "ugly" flat UI) */}
+          {!loading && cards.length > 1 && (
+            <>
+              {/* Bottom shadow/offset cards to create 3D depth */}
+              <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[48%] w-[340px] h-[580px] bg-zinc-900 border border-white/5 rounded-[32px] -z-10 opacity-40" />
+              <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[46%] w-[320px] h-[560px] bg-zinc-900/50 border border-white/5 rounded-[32px] -z-20 opacity-20" />
+            </>
+          )}
+
+          {/* FLASHCARD RENDER */}
           {cards.slice(0, 2).map((card, index) => (
             <Flashcard
               key={card.id} 
@@ -105,39 +95,49 @@ export default function DeckPage() {
               isFlipped={!!flipped[card.id]}
               onFlip={() => {
                 setFlipped(s => ({ ...s, [card.id]: true }))
-                speak(card.sentences[card.currentSentenceIndex])
+                const u = new SpeechSynthesisUtterance(card.sentences[card.currentSentenceIndex])
+                window.speechSynthesis.speak(u)
               }}
               onReview={handleReview}
-              // These props would ideally utilize the design system's interactive_card styling:
-              // background: #1C1C1E, border_radius: 24px, padding: 20px
             />
           ))}
           
+          {/* EMPTY STATE - Matching Card Dimensions */}
           {cards.length === 0 && !loading && (
-            <div className="text-center py-20 bg-[#121212] border border-[#3A3A3C] rounded-[24px]">
-              <p className="text-[#98989E] font-[400] text-[17px] italic">All caught up!</p>
-              <div className="mt-4 text-[#ffffff] text-[14px] font-[600] uppercase tracking-widest">
-                Return later for new cards or add some manually.
+            <div className="w-[360px] h-[600px] flex flex-col items-center justify-center bg-zinc-900 border border-white/10 rounded-[32px] p-8 text-center shadow-2xl">
+              <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/20">
+                <Sparkles className="text-emerald-500" size={32} />
               </div>
-              <div className="mt-6">
-                <button
-                  onClick={() => router.push('/')}
-                  className="mt-4 inline-flex items-center gap-2 bg-[#22C55E] hover:bg-[#16a34a] text-black px-4 py-2 rounded-full font-[700] uppercase tracking-widest"
-                  aria-label="Go back home"
-                >
-                  Back Home
-                </button>
-              </div>
+              <h3 className="text-2xl font-black mb-3 italic">ALL CAUGHT UP</h3>
+              <p className="text-zinc-500 text-sm leading-relaxed mb-10">
+                You've mastered all the due cards in your deck for today. Great job!
+              </p>
+              <button 
+                onClick={() => router.push('/')} 
+                className="w-full bg-white text-black py-4 rounded-2xl font-black uppercase text-xs tracking-widest active:scale-95 transition-transform"
+              >
+                Return to Home
+              </button>
             </div>
           )}
         </div>
-      </div>
 
-      {/* Persistent Navigation Placeholder styling (Bottom Tab Bar logic) */}
-      <div className="fixed bottom-0 left-0 right-0 h-[60px] bg-[#000000] border-t-[0.5px] border-[#1C1C1E] flex items-center justify-around px-6 lg:hidden">
-        <div className="w-6 h-6 rounded-full bg-[#3B82F6]" />
-        <div className="w-6 h-6 rounded-full bg-[#FFFFFF]" />
-        <div className="w-6 h-6 rounded-full bg-[#FFFFFF]" />
+        {/* BOTTOM INSTRUCTIONAL FOOTER */}
+        {!loading && cards.length > 0 && (
+            <footer className="py-8 text-center">
+                <div className="inline-flex items-center gap-4 text-zinc-600">
+                    <div className="flex flex-col items-center gap-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest">Swipe Left</span>
+                        <div className="w-6 h-1 bg-rose-500/30 rounded-full" />
+                    </div>
+                    <div className="h-4 w-[1px] bg-zinc-800" />
+                    <div className="flex flex-col items-center gap-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest">Swipe Right</span>
+                        <div className="w-6 h-1 bg-emerald-500/30 rounded-full" />
+                    </div>
+                </div>
+            </footer>
+        )}
       </div>
     </main>
   )

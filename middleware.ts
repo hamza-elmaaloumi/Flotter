@@ -1,7 +1,15 @@
-import middleware from "next-auth/middleware";
+import { withAuth } from "next-auth/middleware"
 
-export default middleware;
+export default withAuth({
+  pages: {
+    signIn: "/login",
+  },
+})
 
-export const config = {
-  matcher: ['/', '/cards/:path*'] // safe way to protect / and all /cards routes
-};
+export const config = { 
+  // We use only two clean strings here to avoid the "matcher[2]" error
+  matcher: [
+    "/cards/:path*", 
+    "/api/cards/:path*"
+  ] 
+}
