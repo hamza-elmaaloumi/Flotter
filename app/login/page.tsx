@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useUser } from '../providers/UserProvider'
 
 export default function LoginPage() {
@@ -46,20 +47,20 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#09090b] text-zinc-100 antialiased selection:bg-indigo-500/30">
+    <main className="min-h-screen flex items-center justify-center bg-[#000000] text-[#FFFFFF] antialiased font-['San_Francisco',_Roboto,_Arial,_sans-serif]">
       {/* Background Decorative Element */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-500/5 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#22C55E10_0%,_transparent_70%)] pointer-events-none" />
 
-      <div className="w-full max-w-md z-10 px-6">
-        <div className="bg-zinc-900/50 border border-zinc-800 backdrop-blur-xl p-8 rounded-2xl shadow-2xl">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-white">Login</h1>
-            <p className="text-zinc-400 mt-2 text-sm">Welcome back. Please enter your details.</p>
+      <div className="w-full max-w-md z-10 px-[20px]">
+        <div className="bg-[#121212] border border-[#3A3A3C] p-[32px] rounded-[24px]">
+          <div className="mb-[32px]">
+            <h1 className="text-[28px] font-[700] tracking-tight text-[#FFFFFF]">Login</h1>
+            <p className="text-[#98989E] mt-2 text-[15px]">Welcome back. Please enter your details.</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-widest text-zinc-500 ml-1">
+          <form onSubmit={handleSubmit} className="space-y-[24px]">
+            <div className="space-y-[12px]">
+              <label className="text-[14px] font-[600] uppercase tracking-widest text-[#98989E] ml-1">
                 Email Address
               </label>
               <input
@@ -68,12 +69,12 @@ export default function LoginPage() {
                 placeholder="name@example.com"
                 type="email"
                 required
-                className="w-full bg-zinc-800/40 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500"
+                className="w-full bg-[#1C1C1E] border border-[#3A3A3C] rounded-[16px] px-4 py-[16px] text-[#FFFFFF] placeholder-[#636366] transition-all duration-200 focus:outline-none focus:border-[#22C55E] text-[17px]"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-widest text-zinc-500 ml-1">
+            <div className="space-y-[12px]">
+              <label className="text-[14px] font-[600] uppercase tracking-widest text-[#98989E] ml-1">
                 Password
               </label>
               <input
@@ -82,28 +83,32 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 type="password"
                 required
-                className="w-full bg-zinc-800/40 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder-zinc-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500"
+                className="w-full bg-[#1C1C1E] border border-[#3A3A3C] rounded-[16px] px-4 py-[16px] text-[#FFFFFF] placeholder-[#636366] transition-all duration-200 focus:outline-none focus:border-[#22C55E] text-[17px]"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full relative group overflow-hidden bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-xl transition-all duration-300 active:scale-[0.98] disabled:opacity-60 disabled:active:scale-100 shadow-[0_0_20px_rgba(79,70,229,0.15)]"
+              className="w-full bg-[#22C55E] hover:bg-[#16A34A] text-[#FFFFFF] font-[600] py-[16px] rounded-[18px] transition-all duration-300 active:scale-[0.98] disabled:opacity-50 text-[17px]"
             >
-              <span className="relative z-10">
+              <span>
                 {loading ? 'Authenticating...' : 'Sign In'}
               </span>
             </button>
 
             {error && (
-              <div className="text-center text-sm p-3 rounded-lg border bg-rose-500/10 border-rose-500/20 text-rose-400 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="text-center text-[15px] p-4 rounded-[16px] border bg-[#1C1C1E] border-[#FF453A]/30 text-[#FF453A]">
                 {error}
               </div>
             )}
           </form>
 
-          <p className="mt-8 text-center text-xs text-zinc-600 uppercase tracking-tighter">
+          <p className="mt-4 text-center text-[14px] text-[#636366]">
+            Don't have an account? <Link href="/register" className="underline text-[#22C55E] hover:text-[#16A34A] font-[600]">Sign Up</Link>
+          </p>
+
+          <p className="mt-8 text-center text-[14px] text-[#636366] uppercase tracking-widest font-[600]">
             Secure Session Encryption Active
           </p>
         </div>

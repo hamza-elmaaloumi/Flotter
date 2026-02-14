@@ -1,282 +1,208 @@
 "use client"
+
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useUser } from './providers/UserProvider'
 import Link from 'next/link'
+import { Plus, LayoutGrid, Calendar, GraduationCap, ChevronDown, Image as ImageIcon } from 'lucide-react'
+
 type Card = {
-	id: string
-	imageUrl?: string | null
-	sentences: string[]
-	nextReviewAt: string
+  id: string
+  imageUrl?: string | null
+  sentences: string[]
+  nextReviewAt: string
 }
-/**
-StatCard Component
-Implements "card" component specs from Design System
-*/
-function StatCard({ label, value, loading }: { label: string; value: React.ReactNode; loading?: boolean }) {
-	return (
-		<div
-			className="group transition-all duration-300"
-			style={{
-				background: "rgba(24, 24, 27, 0.6)",
-				border: "1px solid rgba(63, 63, 70, 0.4)",
-				borderRadius: "24px",
-				padding: "24px",
-				backdropFilter: "blur(20px)",
-				boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)"
-			}}
-		>
-			<p style={{
-				fontSize: "10px",
-				fontWeight: "600",
-				letterSpacing: "0.2em",
-				textTransform: "uppercase",
-				color: "#71717A",
-				margin: 0
-			}}>
-				{label}
-			</p>
-			<p className="mt-2" style={{
-				fontSize: "28px",
-				fontWeight: "700",
-				fontFamily: "Cal Sans, Inter, sans-serif",
-				color: loading ? "#27272A" : "#FAFAFA",
-				margin: 0
-			}}>
-				{loading ? '—' : value}
-			</p>
-		</div>
-	)
+
+function StatCard({ label, value, loading, icon: Icon }: { label: string; value: React.ReactNode; loading?: boolean; icon: any }) {
+  return (
+    <div className="bg-[#1C1C1E] p-[12px] px-[16px] rounded-[20px] transition-all hover:bg-[#121212] flex flex-col items-center justify-center text-center">
+      <div className="flex items-center gap-2 mb-2">
+        <Icon size={16} className="text-[#3B82F6]" />
+        <p className="text-[14px] font-[600] uppercase text-[#98989E]">
+          {label}
+        </p>
+      </div>
+      <p className="text-[22px] font-[600] text-[#FFFFFF]">
+        {loading ? <span className="animate-pulse opacity-20">•••</span> : value}
+      </p>
+    </div>
+  )
 }
+
 export default function Home() {
-	const { user } = useUser()
-	const [loading, setLoading] = useState(false)
-	const [error, setError] = useState<string | null>(null)
-	const [data, setData] = useState<any | null>(null)
-	const [expandedId, setExpandedId] = useState<string | null>(null)
-	useEffect(() => {
-		async function fetchDash() {
-			if (!user?.id) return
-			setLoading(true)
-			setError(null)
-			try {
-				const res = await axios.get('/api/cards/dash', { params: { userId: user.id } })
-				setData(res.data)
-			} catch (e: any) {
-				console.error(e)
-				setError(e?.response?.data?.error || 'Unable to load dashboard')
-			} finally {
-				setLoading(false)
-			}
-		}
-		fetchDash()
-	}, [user?.id])
-	// Theme Constants
-	const theme = {
-		bg: "#0A0A0B",
-		emerald: "#10B981",
-		emeraldHover: "#34D399",
-		textPrimary: "#FAFAFA",
-		textSecondary: "#A1A1AA",
-		fontSans: "Inter, system-ui, sans-serif",
-		fontDisplay: "Cal Sans, Inter, sans-serif"
-	}
-	return (
-		<div className="min-h-screen selection:bg-emerald-500/30" style={{ backgroundColor: theme.bg, color: theme.textPrimary, fontFamily: theme.fontSans }}>
-			{/* Subtle Top Glow Pattern */}
-			<div style={{
-				position: 'absolute', top: 0, left: 0, right: 0, height: '400px',
-				background: 'radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%)',
-				pointerEvents: 'none'
-			}} />
-			<div className="max-w-6xl mx-auto px-8 py-16 relative z-10">
+  const { user } = useUser()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [data, setData] = useState<any | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
-				{/* Header Section */}
-				<header className="flex items-end justify-between mb-12">
-					<div>
-						<h1 style={{
-							fontFamily: theme.fontDisplay,
-							fontSize: "36px",
-							fontWeight: "700",
-							letterSpacing: "-0.03em",
-							lineHeight: "1.2"
-						}}>
-							Your Dashboard
-						</h1>
-						<p className="mt-2" style={{ color: theme.textSecondary, fontSize: "16px" }}>
-							Surgical overview of your card collection.
-						</p>
-					</div>
+  useEffect(() => {
+    async function fetchDash() {
+      if (!user?.id) return
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await axios.get('/api/cards/dash', { params: { userId: user.id } })
+        setData(res.data)
+      } catch (e: any) {
+        setError(e?.response?.data?.error || 'Unable to load dashboard')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchDash()
+  }, [user?.id])
 
-					<Link
-						href="/cards/new"
-						className="group flex items-center gap-2 transition-all duration-200"
-						style={{
-							backgroundColor: theme.emerald,
-							color: "#0A0A0B",
-							padding: "12px 24px",
-							borderRadius: "16px",
-							fontWeight: "600",
-							fontSize: "14px",
-							boxShadow: "0 0 20px rgba(16, 185, 129, 0.2)"
-						}}
-					>
-						<span>+</span>
-						<span>New Card</span>
-					</Link>
-				</header>
+  return (
+    <div className="min-h-screen bg-[#000000] text-[#FFFFFF] font-['San_Francisco',_Roboto,_Arial,_sans-serif] antialiased">
+      <div className="max-w-5xl mx-auto px-[20px] py-[32px] relative">
+        
+        {/* Header Section */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-[12px] mb-[32px]">
+          <div>
+            <h1 className="text-[28px] font-[700] tracking-tight text-[#FFFFFF] mb-2">
+              Learning Overview
+            </h1>
+            <p className="text-[#98989E] text-[15px]">
+              Manage your active flashcards and track study progress.
+            </p>
+          </div>
 
-				{/* Stats Grid */}
-				<section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-					<StatCard label="Total Cards" value={data?.totalCardsCount} loading={loading} />
-					<StatCard label="Due for Review" value={data?.dueCardsCount} loading={loading} />
-					<StatCard label="Learned" value={data?.learnedCardsCount} loading={loading} />
-				</section>
+          <div className="flex gap-3">
+            <Link
+              href="/cards/deck"
+              className="inline-flex items-center justify-center gap-2 bg-[#3B82F6] hover:bg-[#2563EB] text-[#FFFFFF] px-[20px] py-[12px] rounded-[18px] font-[600] text-[15px] transition-all active:scale-[0.98]"
+            >
+              <GraduationCap size={18} />
+              <span>Start learning</span>
+            </Link>
 
-				{/* Main Content */}
-				<section>
-					<h2 className="mb-6" style={{
-						fontSize: "10px",
-						fontWeight: "600",
-						letterSpacing: "0.2em",
-						textTransform: "uppercase",
-						color: theme.textSecondary
-					}}>
-						Active Collection
-					</h2>
+            <Link
+              href="/cards/new"
+              className="inline-flex items-center justify-center gap-2 bg-[#22C55E] hover:bg-[#16A34A] text-[#FFFFFF] px-[20px] py-[12px] rounded-[18px] font-[600] text-[15px] transition-all active:scale-[0.98]"
+            >
+              <Plus size={18} strokeWidth={3} />
+              <span>New Card</span>
+            </Link>
+          </div>
+        </header>
 
-					{error && (
-						<div className="p-4 mb-6 rounded-xl" style={{
-							background: "rgba(244, 63, 94, 0.1)",
-							border: "1px solid rgba(244, 63, 94, 0.2)",
-							color: "#F43F5E",
-							fontSize: "14px"
-						}}>
-							{error}
-						</div>
-					)}
+        {/* Stats Grid */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-[12px] mb-[32px]">
+          <StatCard label="Collection" icon={LayoutGrid} value={data?.totalCardsCount || 0} loading={loading} />
+          <StatCard label="Due Now" icon={Calendar} value={data?.dueCardsCount || 0} loading={loading} />
+          <StatCard label="Mastery" icon={GraduationCap} value={`${data?.learnedCardsCount || 0}%`} loading={loading} />
+        </section>
 
-					<div style={{
-						background: "rgba(24, 24, 27, 0.6)",
-						border: "1px solid rgba(63, 63, 70, 0.4)",
-						borderRadius: "24px",
-						overflow: "hidden",
-						backdropFilter: "blur(20px)"
-					}}>
-						<table className="w-full text-left border-collapse">
-							<thead>
-								<tr style={{ borderBottom: "1px solid rgba(63, 63, 70, 0.4)" }}>
-									<th className="px-6 py-4" style={{ fontSize: "12px", fontWeight: "500", color: theme.textSecondary }}>Visual</th>
-									<th className="px-6 py-4" style={{ fontSize: "12px", fontWeight: "500", color: theme.textSecondary }}>Primary Context</th>
-									<th className="px-6 py-4" style={{ fontSize: "12px", fontWeight: "500", color: theme.textSecondary }}>Scheduled</th>
-									<th className="px-6 py-4 text-right"></th>
-								</tr>
-							</thead>
-							<tbody className="divide-y divide-white/5">
-								{loading && (
-									<tr>
-										<td colSpan={4} className="py-20 text-center">
-											<div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-emerald-500 border-r-2 border-transparent" />
-										</td>
-									</tr>
-								)}
+        {/* List Section */}
+        <section>
+          <div className="flex items-center justify-between mb-[12px]">
+            <h2 className="text-[14px] font-[600] uppercase tracking-widest text-[#98989E]">
+              Active Cards
+            </h2>
+            {loading && <div className="w-4 h-4 border-2 border-[#22C55E] border-t-transparent rounded-full animate-spin" />}
+          </div>
 
-								{!loading && data?.cards?.map((c: Card) => {
-									const isOpen = expandedId === c.id;
-									return (
-										<React.Fragment key={c.id}>
-											<tr
-												onClick={() => setExpandedId(isOpen ? null : c.id)}
-												className="cursor-pointer transition-colors duration-150"
-												style={{ backgroundColor: isOpen ? "rgba(255, 255, 255, 0.02)" : "transparent" }}
-											>
-												<td className="px-6 py-4">
-													<div className="w-16 h-10 rounded-lg overflow-hidden bg-zinc-900 border border-white/5">
-														{c.imageUrl ? (
-															<img src={c.imageUrl} alt="" className="w-full h-full object-cover opacity-80" />
-														) : (
-															<div className="w-full h-full flex items-center justify-center text-[10px] text-zinc-600">VOID</div>
-														)}
-													</div>
-												</td>
-												<td className="px-6 py-4">
-													<p className="text-sm font-medium line-clamp-1" style={{ color: theme.textPrimary }}>
-														{c.sentences[0] || "No context provided"}
-													</p>
-													<span style={{ fontSize: "11px", color: theme.textSecondary }}>
-														{c.sentences.length} Unit{c.sentences.length !== 1 ? 's' : ''}
-													</span>
-												</td>
-												<td className="px-6 py-4">
-													<div className="inline-flex items-center px-2 py-1 rounded-full bg-white/5 border border-white/10" style={{ fontSize: "12px", color: theme.textSecondary }}>
-														{new Date(c.nextReviewAt).toLocaleDateString()}
-													</div>
-												</td>
-												<td className="px-6 py-4 text-right">
-													<span className="transition-transform duration-300 inline-block" style={{ transform: isOpen ? 'rotate(180deg)' : 'none', color: theme.textSecondary }}>
-														↓
-													</span>
-												</td>
-											</tr>
+          {error && (
+            <div className="p-4 mb-6 rounded-[16px] bg-[#1C1C1E] border border-[#FF453A]/50 text-[#FF453A] text-[14px]">
+              {error}
+            </div>
+          )}
 
-											{/* Expanded Surgical View */}
-											{isOpen && (
-												<tr>
-													<td colSpan={4} className="px-8 py-8" style={{ background: "rgba(9, 9, 11, 0.4)" }}>
-														<div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-															<div className="md:col-span-4">
-																<div className="aspect-video rounded-xl overflow-hidden border border-white/10 shadow-2xl">
-																	{c.imageUrl ? (
-																		<img src={c.imageUrl} alt="Card preview" className="w-full h-full object-cover" />
-																	) : (
-																		<div className="w-full h-full flex items-center justify-center bg-zinc-900 text-zinc-700 italic">No visual data</div>
-																	)}
-																</div>
-															</div>
-															<div className="md:col-span-8">
-																<h4 style={{
-																	fontSize: "10px",
-																	fontWeight: "600",
-																	letterSpacing: "0.2em",
-																	textTransform: "uppercase",
-																	color: theme.emerald,
-																	marginBottom: "16px"
-																}}>
-																	Contextual Analysis
-																</h4>
-																<div className="space-y-4">
-																	{c.sentences.map((s, i) => (
-																		<p key={i} style={{
-																			fontSize: "16px",
-																			lineHeight: "1.6",
-																			color: theme.textPrimary,
-																			borderLeft: `2px solid ${i === 0 ? theme.emerald : "rgba(63, 63, 70, 0.4)"}`,
-																			paddingLeft: "16px"
-																		}}>
-																			{s}
-																		</p>
-																	))}
-																</div>
-															</div>
-														</div>
-													</td>
-												</tr>
-											)}
-										</React.Fragment>
-									);
-								})}
-							</tbody>
-						</table>
+          <div className="bg-[#121212] border border-[#3A3A3C] rounded-[24px] overflow-hidden">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-[#3A3A3C] bg-[#1C1C1E]">
+                  <th className="px-6 py-4 text-[14px] font-[600] text-[#98989E] uppercase tracking-widest">Card Content</th>
+                  <th className="px-6 py-4 text-[14px] font-[600] text-[#98989E] uppercase tracking-widest hidden md:table-cell">Next Review</th>
+                  <th className="px-6 py-4 text-right"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#3A3A3C]">
+                {!loading && data?.cards?.map((c: Card) => {
+                  const isOpen = expandedId === c.id;
+                  return (
+                    <React.Fragment key={c.id}>
+                      <tr
+                        onClick={() => setExpandedId(isOpen ? null : c.id)}
+                        className={`group cursor-pointer transition-colors hover:bg-[#1C1C1E] ${isOpen ? 'bg-[#1C1C1E]' : ''}`}
+                      >
+                        <td className="px-6 py-5">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-[12px] bg-[#3A3A3C] overflow-hidden flex-shrink-0 flex items-center justify-center">
+                              {c.imageUrl ? (
+                                <img src={c.imageUrl} alt="" className="w-full h-full object-cover transition-all" />
+                              ) : (
+                                <ImageIcon size={18} className="text-[#98989E]" />
+                              )}
+                            </div>
+                            <p className="text-[17px] font-[400] text-[#FFFFFF] line-clamp-1">
+                              {c.sentences[0] || "Untitled Card"}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="px-6 py-5 hidden md:table-cell">
+                          <span className="text-[15px] text-[#98989E]">
+                            {new Date(c.nextReviewAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                          </span>
+                        </td>
+                        <td className="px-6 py-5 text-right">
+                          <ChevronDown 
+                            size={18} 
+                            className={`inline-block text-[#636366] transition-transform ${isOpen ? 'rotate-180 text-[#3B82F6]' : ''}`} 
+                          />
+                        </td>
+                      </tr>
 
-						{!loading && data?.cards?.length === 0 && (
-							<div className="py-20 text-center" style={{ color: theme.textSecondary }}>
-								<div className="mb-4 text-4xl opacity-20">∅</div>
-								<p style={{ fontSize: "14px" }}>Collection is currently empty.</p>
-							</div>
-						)}
-					</div>
-				</section>
-			</div>
-		</div>
-	)
+                      {isOpen && (
+                        <tr>
+                          <td colSpan={3} className="px-6 py-8 bg-[#000000]">
+                            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+                              <div className="md:col-span-4">
+                                <div className="aspect-square rounded-[16px] overflow-hidden border border-[#3A3A3C] bg-[#121212]">
+                                  {c.imageUrl ? (
+                                    <img src={c.imageUrl} alt="Context" className="w-full h-full object-cover" />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-[#636366] text-[14px] font-[600] uppercase">
+                                      No Image
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="md:col-span-8">
+                                <p className="text-[14px] font-[600] text-[#22C55E] uppercase tracking-widest mb-4">Context Variations</p>
+                                <div className="space-y-4">
+                                  {c.sentences.map((s, i) => (
+                                    <div key={i} className="flex gap-4 group/line p-3 rounded-[12px] hover:bg-[#121212] transition-colors">
+                                      <span className="text-[#3B82F6] text-[15px] font-[600]">0{i + 1}</span>
+                                      <p className="text-[17px] text-[#98989E] group-hover/line:text-[#FFFFFF] transition-colors leading-relaxed">
+                                        {s}
+                                      </p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+
+            {!loading && (!data?.cards || data?.cards?.length === 0) && (
+              <div className="py-20 text-center">
+                <p className="text-[#98989E] text-[17px] mb-4">Your collection is empty.</p>
+                <Link href="/cards/new" className="text-[#22C55E] text-[15px] font-[600] uppercase border-b border-[#22C55E]/20 hover:border-[#22C55E] pb-0.5 transition-all">
+                  Create your first card
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+    </div>
+  )
 }
