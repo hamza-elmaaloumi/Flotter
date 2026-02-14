@@ -1,0 +1,146 @@
+{
+  "design_system_name": "Linguistic-Dark-UI",
+  "version": "1.0.0",
+  "global_styles": {
+    "color_palette": {
+      "background": {
+        "primary": "#000000",
+        "surface": "#121212",
+        "elevated_card": "#1C1C1E"
+      },
+      "brand": {
+        "primary_purple": "#8B78F6",
+        "primary_purple_variant": "#7158E2"
+      },
+      "functional": {
+        "success_green": "#4CD964",
+        "warning_yellow": "#FFCC00",
+        "destructive_red": "#FF453A",
+        "inactive_grey": "#3A3A3C"
+      },
+      "text": {
+        "high_emphasis": "#FFFFFF",
+        "medium_emphasis": "#98989E",
+        "low_emphasis": "#636366",
+        "on_brand": "#FFFFFF"
+      }
+    },
+    "typography": {
+      "font_family": "San Francisco, Roboto, Arial, sans-serif",
+      "scales": {
+        "h1": {
+          "size": "28px",
+          "weight": "700",
+          "color": "#FFFFFF"
+        },
+        "h2": {
+          "size": "22px",
+          "weight": "600",
+          "color": "#FFFFFF"
+        },
+        "body_large": {
+          "size": "17px",
+          "weight": "400",
+          "color": "#FFFFFF"
+        },
+        "body_medium": {
+          "size": "15px",
+          "weight": "400",
+          "color": "#98989E"
+        },
+        "label_bold": {
+          "size": "14px",
+          "weight": "600",
+          "text_transform": "uppercase"
+        }
+      }
+    },
+    "shapes": {
+      "border_radius": {
+        "standard_card": "24px",
+        "inner_card": "16px",
+        "button_pill": "100px",
+        "button_standard": "16px",
+        "stats_pill": "20px"
+      }
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary_action": {
+        "background": "#8B78F6",
+        "text_color": "#FFFFFF",
+        "border_radius": "18px",
+        "padding": "16px 24px",
+        "font_weight": "600",
+        "text_align": "center"
+      },
+      "list_item_button": {
+        "background": "#1C1C1E",
+        "text_color": "#FFFFFF",
+        "border_radius": "12px",
+        "margin_bottom": "8px",
+        "padding": "18px"
+      }
+    },
+    "cards": {
+      "interactive_card": {
+        "background": "#1C1C1E",
+        "padding": "20px",
+        "border_radius": "24px",
+        "icon_style": "monochrome_muted"
+      },
+      "disabled_card": {
+        "background": "#1C1C1E",
+        "opacity": "0.5",
+        "content_color": "#636366",
+        "status_tag": "Indisponible maintenant"
+      },
+      "stats_card": {
+        "background": "#1C1C1E",
+        "padding": "12px 16px",
+        "border_radius": "20px",
+        "alignment": "center",
+        "label_color": "#98989E"
+      }
+    },
+    "navigation": {
+      "bottom_tab_bar": {
+        "background": "#000000",
+        "border_top": "0.5px solid #1C1C1E",
+        "active_icon_color": "#5EEAD4",
+        "inactive_icon_color": "#FFFFFF",
+        "height": "60px"
+      }
+    },
+    "data_display": {
+      "vocabulary_header": {
+        "circle_badge_radius": "50%",
+        "border_color": "#8B78F6",
+        "border_width": "4px",
+        "font_size_value": "40px"
+      },
+      "segmented_control": {
+        "background": "#1C1C1E",
+        "active_segment": "#FFCC00",
+        "inactive_segment": "transparent",
+        "text_color_active": "#000000",
+        "text_color_inactive": "#FFFFFF",
+        "border_radius": "20px"
+      }
+    }
+  },
+  "layout_spacing": {
+    "page_padding": "20px",
+    "section_margin": "32px",
+    "element_spacing": "12px"
+  },
+  "icons": {
+    "style": "outline_and_filled",
+    "stroke_width": "2px",
+    "active_state": {
+      "color": "#5EEAD4",
+      "glow": "none"
+    }
+  }
+}
