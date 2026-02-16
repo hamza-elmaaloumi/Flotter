@@ -130,7 +130,7 @@ export default function NewCardPage() {
                       type="button" 
                       onClick={searchImages} 
                       disabled={loading}
-                      className="bg-white text-black px-4 rounded-[12px] text-[12px] font-[800] uppercase tracking-tighter disabled:opacity-50"
+                      className="bg-blue-500 text-white px-4 rounded-[12px] text-[12px] font-[800] uppercase tracking-tighter disabled:opacity-50"
                   >
                       {loading ? '...' : 'Find'}
                   </button>

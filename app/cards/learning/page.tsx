@@ -60,7 +60,7 @@ export default function Home() {
         
         {/* HERO / PSYCHOLOGICAL SECTION */}
         <section className={`relative overflow-hidden rounded-[24px] md:rounded-[32px] border transition-all duration-1000 p-6 md:p-12 mb-[20px] md:mb-[32px] ${
-          isFinished ? 'bg-[#051109] border-[#22C55E]/40' : 'bg-[#0A0A0A] border-[#1C1C1E]'
+          isFinished ? 'bg-[#121212] border-[#22C55E]/40' : 'bg-[#121212] border-[#1C1C1E]'
         }`}>
           
           <div className={`absolute top-[-50px] right-[-50px] w-[200px] h-[200px] md:w-[400px] md:h-[400px] blur-[80px] md:blur-[120px] rounded-full transition-all duration-1000 ${

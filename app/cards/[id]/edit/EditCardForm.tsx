@@ -141,7 +141,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
           <span className={labelTextStyles}>Visual Search</span>
           <div className="flex gap-2 mt-2 mb-3">
             <input value={query} onChange={(e) => setQuery(e.target.value)} className={inputStyles + " mt-0"} placeholder="Search Unsplash..." />
-            <button type="button" onClick={searchImages} disabled={imagesLoading} className="px-4 md:px-6 bg-white text-black rounded-xl text-xs md:text-sm font-black">
+            <button type="button" onClick={searchImages} disabled={imagesLoading} className="px-4 md:px-6 bg-blue-500 text-white- rounded-xl text-xs md:text-sm font-black">
               {imagesLoading ? '...' : 'Find'}
             </button>
           </div>
