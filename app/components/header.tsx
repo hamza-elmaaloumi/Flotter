@@ -2,59 +2,69 @@
 
 import Link from 'next/link'
 import { useUser } from '../providers/UserProvider'
-import { User, LayoutGrid } from 'lucide-react'
+import { User, LayoutGrid, Zap } from 'lucide-react'
 
 export default function Header() {
   const { user, isLoading } = useUser()
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] border-b-[0.5px] border-[#1C1C1E] bg-[#000000] font-['San_Francisco',_Roboto,_Arial,_sans-serif]">
-      <nav className="max-w-6xl mx-auto px-[20px] h-[60px] flex items-center justify-between">
-        {/* Left: Brand */}
+    <header className="fixed top-0 left-0 right-0 z-[100] border-b border-white/[0.03] bg-black/80 backdrop-blur-xl">
+      <nav className="max-w-[1100px] mx-auto px-4 h-[56px] flex items-center justify-between">
+        
+        {/* Left: Brand - Slenderized */}
         <div className="flex flex-1 items-center">
           <Link
             href="/"
-            className="text-[#FFFFFF] font-[700] tracking-[0.2em] text-[17px] hover:text-[#22C55E] transition-colors"
+            className="flex items-center gap-2 group"
           >
-            FLOTTER
+            <div className="w-6 h-6 bg-emerald-500 rounded-lg flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all">
+              <Zap size={12} fill="black" className="text-black" />
+            </div>
+            <span className="text-white font-black tracking-[0.25em] text-[13px] uppercase">
+              Flotter
+            </span>
           </Link>
         </div>
 
-        {/* Middle: Home/Deck Icon */}
+        {/* Middle: Deck Navigation - High Density Squircle */}
         <div className="flex items-center justify-center">
           {user && !isLoading && (
             <Link
               href="/cards/learning"
-              className="flex items-center justify-center w-[40px] h-[40px] rounded-[12px] bg-[#1C1C1E] border border-[#3A3A3C] text-[#98989E] hover:text-[#22C55E] hover:border-[#22C55E]/30 transition-all group"
+              className="flex items-center justify-center w-[36px] h-[36px] rounded-[10px] bg-[#121212] border border-[#1C1C1E] text-zinc-600 hover:text-emerald-500 hover:border-emerald-500/30 transition-all active:scale-90"
             >
-              <LayoutGrid size={20} className="group-active:scale-90 transition-transform" />
+              <LayoutGrid size={18} />
             </Link>
           )}
         </div>
 
-        {/* Right: Profile or Auth */}
-        <div className="flex flex-1 items-center justify-end gap-[12px]">
+        {/* Right: Auth/Profile - Compact Buttons */}
+        <div className="flex flex-1 items-center justify-end gap-3">
           {!isLoading && (
             <>
               {user ? (
                 <Link
                   href="/profile"
-                  className="flex items-center justify-center w-[36px] h-[36px] rounded-full bg-[#1C1C1E] border border-[#3A3A3C] text-[#98989E] hover:text-[#FFFFFF] hover:border-[#22C55E] transition-all"
+                  className="flex items-center justify-center w-[32px] h-[32px] rounded-full bg-[#121212] border border-[#1C1C1E] text-zinc-500 hover:text-emerald-500 hover:border-emerald-500/50 transition-all active:scale-95 overflow-hidden"
                 >
-                  <User size={18} />
+                  {user.image ? (
+                    <img src={user.image} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <User size={16} />
+                  )}
                 </Link>
               ) : (
                 <>
                   <Link
                     href="/login"
-                    className="text-[14px] font-[600] uppercase tracking-widest text-[#98989E] hover:text-[#FFFFFF] transition-colors px-[16px] py-[8px]"
+                    className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-colors px-3 py-2"
                   >
                     Login
                   </Link>
 
                   <Link
                     href="/register"
-                    className="text-[14px] font-[600] uppercase tracking-widest bg-[#22C55E] text-[#FFFFFF] hover:bg-[#16A34A] transition-colors px-[24px] py-[10px] rounded-[16px]"
+                    className="text-[10px] font-black uppercase tracking-[0.2em] bg-emerald-500 text-black px-4 py-2 rounded-full hover:bg-emerald-400 transition-all active:scale-95 shadow-lg shadow-emerald-500/10"
                   >
                     Join
                   </Link>

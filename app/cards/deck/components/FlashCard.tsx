@@ -2,7 +2,7 @@
 
 import { motion, useMotionValue, useTransform, PanInfo, animate, AnimatePresence } from 'framer-motion'
 import React, { useState, useEffect } from 'react'
-import { Check, X, Hand, Sparkles, ArrowLeft, ArrowRight, Pencil } from 'lucide-react' // Added Pencil icon
+import { Check, X, Hand, Sparkles, ArrowLeft, ArrowRight, Pencil } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface FlashcardProps {
@@ -28,20 +28,15 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
   const sensitivityMultiplier = 1.6
 
   useEffect(() => {
-    if (!isTop) {
-      x.set(0)
-    }
+    if (!isTop) x.set(0)
   }, [isTop, x])
 
   useEffect(() => {
-    if (!isFlipped) {
-      setShowSwipeHint(false)
-    }
+    if (!isFlipped) setShowSwipeHint(false)
   }, [isFlipped])
 
   const rotateZ = useTransform(x, [-200, 200], [-10, 10])
   const opacity = useTransform(x, [-500, -300, 0, 300, 500], [0, 1, 1, 1, 0])
-
   const successOpacity = useTransform(x, [50, 150], [0, 1])
   const struggleOpacity = useTransform(x, [-50, -150], [0, 1])
 
@@ -52,7 +47,6 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
 
   const handleDragEnd = async (_: any, info: PanInfo) => {
     if (!isTop) return
-
     const currentX = x.get()
     const velocity = info.velocity.x
     const threshold = 120
@@ -70,7 +64,6 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
     else {
       animate(x, 0, { type: 'spring', stiffness: 300, damping: 30 })
     }
-
     setIsDragging(false)
   }
 
@@ -95,8 +88,6 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
         rotateZ: isTop ? rotateZ : 0,
         opacity: isTop ? opacity : 1,
         zIndex: isTop ? 50 : 40,
-        scale: 1,
-        y: 0,
         position: 'absolute',
         inset: 0,
         display: 'flex',
@@ -109,21 +100,18 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
       onDragEnd={handleDragEnd}
       className={`touch-none ${isTop && isFlipped ? 'cursor-grab active:cursor-grabbing' : ''}`}
     >
-      <div className="w-full max-w-[360px] h-[600px] relative">
-        {/* EDIT BUTTON (CRAYON STYLE) */}
+      {/* Reduced width from 340px to 310px for mobile */}
+      <div className="w-full max-w-[310px] md:max-w-[350px] aspect-[2/3.3] relative">
+        
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            router.push(`${card.id}/edit`);
-          }}
-          className="absolute top-4 right-4 z-[60] p-3 bg-zinc-800/80 backdrop-blur-md border border-white/10 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-700 transition-all active:scale-90 shadow-xl"
-          title="Edit Card"
+          onClick={(e) => { e.stopPropagation(); router.push(`${card.id}/edit`); }}
+          className="absolute top-4 right-4 z-[70] p-3 bg-zinc-800/80 backdrop-blur-md border border-white/10 rounded-full text-zinc-400 hover:text-white transition-all active:scale-90 shadow-xl"
         >
-          <Pencil size={18} />
+          <Pencil size={16} />
         </button>
 
         <motion.div
-          className="w-full h-full relative preserve-3d"
+          className="w-full h-full relative"
           style={{ transformStyle: 'preserve-3d' }}
           animate={{ rotateY: isFlipped ? 180 : 0 }}
           transition={{ duration: 0.3 }}
@@ -131,18 +119,17 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
           {/* FRONT FACE */}
           <div
             onPointerUp={() => !isDragging && isTop && onFlip()}
-            className="absolute inset-0 backface-hidden rounded-[32px] overflow-hidden shadow-2xl bg-zinc-900 border border-white/10"
-            style={{ backfaceVisibility: 'hidden' }}
+            className="absolute inset-0 rounded-[32px] overflow-hidden shadow-2xl bg-zinc-900 border border-white/10"
+            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
           >
-            {/* Swiping Indicators for Front Face */}
-            <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-8">
-              <div className="border-4 border-emerald-500 px-4 py-1 rounded-xl -rotate-12">
-                <span className="text-emerald-500 text-3xl font-black uppercase tracking-wider">Learned</span>
+            <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-6">
+              <div className="border-4 border-emerald-500 px-3 py-1 rounded-xl -rotate-12">
+                <span className="text-emerald-500 text-xl md:text-2xl font-black uppercase tracking-wider">Learned</span>
               </div>
             </motion.div>
-            <motion.div style={{ opacity: struggleOpacity }} className="absolute inset-0 bg-rose-500/20 z-20 pointer-events-none flex items-start justify-end p-8">
-              <div className="border-4 border-rose-500 px-4 py-1 rounded-xl rotate-12">
-                <span className="text-rose-500 text-3xl font-black uppercase tracking-wider">Review</span>
+            <motion.div style={{ opacity: struggleOpacity }} className="absolute inset-0 bg-rose-500/20 z-20 pointer-events-none flex items-start justify-end p-6">
+              <div className="border-4 border-rose-500 px-3 py-1 rounded-xl rotate-12">
+                <span className="text-rose-500 text-xl md:text-2xl font-black uppercase tracking-wider">Review</span>
               </div>
             </motion.div>
 
@@ -150,17 +137,17 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
               <img src={card.imageUrl} className="w-full h-full object-cover" alt="" />
             </div>
             <div className="h-[55%] p-6 flex flex-col items-center text-center">
-              <div className="flex-1 flex flex-col items-center justify-center space-y-6">
-                <span className="text-emerald-500 text-[10px] tracking-[0.3em] uppercase font-bold flex items-center gap-2">
+              <div className="flex-1 flex flex-col items-center justify-center space-y-4 md:space-y-6">
+                <span className="text-emerald-500 text-[8px] md:text-[9px] tracking-[0.2em] uppercase font-bold flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> New Word
                 </span>
-                <h2 className="text-4xl font-black text-white">
+                <h2 className="text-2xl md:text-3xl font-black text-white">
                   {card.word.charAt(0)}<span className="tracking-widest opacity-50">_______</span>
                 </h2>
-                <p className="text-zinc-400 text-lg leading-relaxed">{maskedSentence}</p>
+                <p className="text-zinc-400 text-xs md:text-base leading-relaxed">{maskedSentence}</p>
               </div>
-              <div className="pt-4 opacity-50 flex items-center gap-2 text-[10px] uppercase font-bold tracking-widest text-white">
-                <Hand size={14} /> Tap to Reveal
+              <div className="pt-4 opacity-50 flex items-center gap-2 text-[9px] uppercase font-bold tracking-widest text-white">
+                <Hand size={12} /> Tap to Reveal
               </div>
             </div>
           </div>
@@ -169,62 +156,48 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
           <div
             onPointerUp={handleBackClick}
             className="absolute inset-0 bg-zinc-900 rounded-[32px] overflow-hidden border border-white/10"
-            style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
           >
-            {/* Color Overlays during swipe with Labels */}
-            <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-8">
-              <div className="border-4 border-emerald-500 px-4 py-1 rounded-xl -rotate-12">
-                <span className="text-emerald-500 text-3xl font-black uppercase tracking-wider">Learned</span>
+            <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-6">
+              <div className="border-4 border-emerald-500 px-3 py-1 rounded-xl -rotate-12">
+                <span className="text-emerald-500 text-xl md:text-2xl font-black uppercase tracking-wider">Learned</span>
               </div>
             </motion.div>
-            <motion.div style={{ opacity: struggleOpacity }} className="absolute inset-0 bg-rose-500/20 z-20 pointer-events-none flex items-start justify-end p-8">
-              <div className="border-4 border-rose-500 px-4 py-1 rounded-xl rotate-12">
-                <span className="text-rose-500 text-3xl font-black uppercase tracking-wider">Review</span>
+            <motion.div style={{ opacity: struggleOpacity }} className="absolute inset-0 bg-rose-500/20 z-20 pointer-events-none flex items-start justify-end p-6">
+              <div className="border-4 border-rose-500 px-3 py-1 rounded-xl rotate-12">
+                <span className="text-rose-500 text-xl md:text-2xl font-black uppercase tracking-wider">Review</span>
               </div>
             </motion.div>
-
-            {/* Swipe Hint Indicators */}
-            <AnimatePresence>
-              {showSwipeHint && (
-                <>
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="absolute top-8 left-8 z-30 flex flex-col items-center gap-2"
-                  >
-                    <div className="w-12 h-12 rounded-full bg-rose-500/20 border-2 border-rose-500 flex items-center justify-center">
-                      <ArrowLeft className="text-rose-500" size={24} />
-                    </div>
-                    <span className="text-rose-500 text-xs font-bold uppercase tracking-wider">Review</span>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="absolute top-8 right-8 z-30 flex flex-col items-center gap-2"
-                  >
-                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center">
-                      <ArrowRight className="text-emerald-500" size={24} />
-                    </div>
-                    <span className="text-emerald-500 text-xs font-bold uppercase tracking-wider">Learned</span>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
 
             <div className="h-[45%] w-full">
               <img src={card.imageUrl} className="w-full h-full object-cover" alt="" />
             </div>
-            <div className="h-[55%] p-6 flex flex-col items-center text-center">
+            <div className="h-[55%] p-6 flex flex-col items-center text-center relative">
               <div className="flex-1 flex flex-col items-center justify-center space-y-4">
-                <h2 className="text-5xl font-black text-white tracking-tighter">{card.word}</h2>
-                <div className="bg-white/5 p-4 rounded-xl border border-white/5 text-zinc-300">
+                <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter">{card.word}</h2>
+                <div className="bg-white/5 p-4 rounded-xl border border-white/5 text-zinc-300 text-xs md:text-sm">
                   {rawSentence}
                 </div>
               </div>
+
+              <AnimatePresence>
+                {showSwipeHint && (
+                  <div className="absolute inset-x-0 bottom-6 flex justify-between px-8 pointer-events-none">
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="flex flex-col items-center gap-1">
+                      <div className="w-9 h-9 rounded-full bg-rose-500/20 border-2 border-rose-500 flex items-center justify-center">
+                        <ArrowLeft className="text-rose-500" size={18} />
+                      </div>
+                      <span className="text-rose-500 text-[7px] font-black uppercase tracking-widest">Review</span>
+                    </motion.div>
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="flex flex-col items-center gap-1">
+                      <div className="w-9 h-9 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center">
+                        <ArrowRight className="text-emerald-500" size={18} />
+                      </div>
+                      <span className="text-emerald-500 text-[7px] font-black uppercase tracking-widest">Learned</span>
+                    </motion.div>
+                  </div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </motion.div>

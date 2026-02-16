@@ -11,7 +11,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     const { id } = await params
     const card = await prisma.card.findUnique({ where: { id } })
 
-    // SECURITY: Ensure card exists AND belongs to the user
     if (!card) return notFound()
     // @ts-ignore
     if (card.userId !== session.user.id) return redirect('/')
@@ -22,7 +21,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     }
 
     return (
-        <div className="min-h-screen bg-black flex items-center justify-center p-6">
+        <div className="min-h-screen bg-black flex items-start md:items-center justify-center p-4 md:p-6">
             <EditCardForm initialCard={serializable} />
         </div>
     )

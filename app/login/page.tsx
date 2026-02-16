@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { signIn, useSession } from 'next-auth/react'
+import { LogIn, Mail, Lock } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
   const session = useSession()
+  
   useEffect(() => {
     if (session.status === "authenticated") {
       router.push("/cards/learning")
@@ -25,7 +27,6 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      // Use NextAuth signIn instead of manual fetch
       const result = await signIn('credentials', {
         redirect: false,
         email,
@@ -37,7 +38,7 @@ export default function LoginPage() {
         setLoading(false)
       } else {
         router.push('/cards/learning')
-        router.refresh() // Ensures the session state updates immediately
+        router.refresh()
       }
     } catch (err) {
       setError('An unexpected error occurred')
@@ -49,24 +50,32 @@ export default function LoginPage() {
     signIn('google', { callbackUrl: '/cards/learning' })
   }
 
+  const inputStyles = "w-full bg-[#1C1C1E] border border-[#2C2C2E] rounded-[14px] px-4 py-[14px] text-white placeholder-[#48484A] transition-all duration-200 focus:outline-none focus:border-emerald-500/50 text-[15px]"
+  const labelStyles = "text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1 mb-2 block"
+
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#000000] text-[#FFFFFF] antialiased font-['San_Francisco',_Roboto,_Arial,_sans-serif]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#22C55E10_0%,_transparent_70%)] pointer-events-none" />
+    <main className="min-h-screen flex items-center justify-center bg-black text-white antialiased p-4">
+      {/* Neural Glow Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#10B98108_0%,_transparent_65%)] pointer-events-none" />
 
-      <div className="w-full max-w-md z-10 px-[20px]">
-        <div className="bg-[#121212] border border-[#3A3A3C] p-[32px] rounded-[24px]">
-          <div className="mb-[32px]">
-            <h1 className="text-[28px] font-[700] tracking-tight text-[#FFFFFF]">Login</h1>
-            <p className="text-[#98989E] mt-2 text-[15px]">Welcome back. Please enter your details.</p>
-          </div>
+      <div className="w-full max-w-[340px] z-10">
+        <div className="bg-[#121212] border border-[#1C1C1E] p-6 md:p-8 rounded-[28px] shadow-2xl relative">
+          
+          <header className="mb-8 text-center">
+            <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/20 mx-auto mb-4">
+               <LogIn className="text-emerald-500" size={24} />
+            </div>
+            <h1 className="text-2xl font-black tracking-tight">Login</h1>
+            <p className="text-zinc-500 mt-1 text-[13px] font-medium">Welcome back to the training.</p>
+          </header>
 
-          {/* Google Login Button */}
+          {/* Google Login */}
           <button
             onClick={handleGoogleLogin}
             type="button"
-            className="w-full mb-6 bg-white hover:bg-zinc-200 text-black font-[600] py-[14px] rounded-[18px] transition-all duration-300 flex items-center justify-center gap-3 text-[16px]"
+            className="w-full mb-6 bg-white hover:bg-zinc-200 text-black font-black py-[12px] rounded-[14px] transition-all active:scale-[0.98] flex items-center justify-center gap-3 text-[14px]"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24">
+            <svg width="18" height="18" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
@@ -75,61 +84,61 @@ export default function LoginPage() {
             Continue with Google
           </button>
 
-          <div className="relative mb-8">
+          <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-[#3A3A3C]"></span>
+              <span className="w-full border-t border-[#1C1C1E]"></span>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[#121212] px-2 text-[#636366]">Or continue with email</span>
+            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest">
+              <span className="bg-[#121212] px-3 text-zinc-600">Secure Email Login</span>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-[24px]">
-            <div className="space-y-[12px]">
-              <label className="text-[14px] font-[600] uppercase tracking-widest text-[#98989E] ml-1">
-                Email Address
-              </label>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@example.com"
-                type="email"
-                required
-                className="w-full bg-[#1C1C1E] border border-[#3A3A3C] rounded-[16px] px-4 py-[16px] text-[#FFFFFF] placeholder-[#636366] transition-all duration-200 focus:outline-none focus:border-[#22C55E] text-[17px]"
-              />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className={labelStyles}>Email Address</label>
+              <div className="relative">
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
+                  type="email"
+                  required
+                  className={inputStyles}
+                />
+              </div>
             </div>
 
-            <div className="space-y-[12px]">
-              <label className="text-[14px] font-[600] uppercase tracking-widest text-[#98989E] ml-1">
-                Password
-              </label>
-              <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                type="password"
-                required
-                className="w-full bg-[#1C1C1E] border border-[#3A3A3C] rounded-[16px] px-4 py-[16px] text-[#FFFFFF] placeholder-[#636366] transition-all duration-200 focus:outline-none focus:border-[#22C55E] text-[17px]"
-              />
+            <div>
+              <label className={labelStyles}>Password</label>
+              <div className="relative">
+                <input
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  type="password"
+                  required
+                  className={inputStyles}
+                />
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#22C55E] hover:bg-[#16A34A] text-[#FFFFFF] font-[600] py-[16px] rounded-[18px] transition-all duration-300 active:scale-[0.98] disabled:opacity-50 text-[17px]"
+              className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-[14px] rounded-[16px] transition-all active:scale-[0.98] disabled:opacity-50 text-[15px] mt-2 shadow-lg shadow-emerald-500/10"
             >
-              <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
+              {loading ? 'Authenticating...' : 'Sign In'}
             </button>
 
             {error && (
-              <div className="text-center text-[15px] p-4 rounded-[16px] border bg-[#1C1C1E] border-[#FF453A]/30 text-[#FF453A]">
+              <div className="text-center text-[12px] p-3 rounded-xl border bg-rose-500/5 border-rose-500/20 text-rose-500 font-bold">
                 {error}
               </div>
             )}
           </form>
 
-          <p className="mt-4 text-center text-[14px] text-[#636366]">
-            Don't have an account? <Link href="/register" className="underline text-[#22C55E] hover:text-[#16A34A] font-[600]">Sign Up</Link>
+          <p className="mt-8 text-center text-[12px] text-zinc-600 font-medium">
+            Don't have an account? <Link href="/register" className="text-emerald-500 hover:text-emerald-400 font-black ml-1">Sign Up</Link>
           </p>
         </div>
       </div>

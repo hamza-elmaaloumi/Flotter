@@ -2,42 +2,58 @@
 
 import React, { useEffect } from 'react'
 import { signOut } from 'next-auth/react'
+import { ShieldAlert } from 'lucide-react'
 
 export default function LogoutPage() {
   useEffect(() => {
     const performLogout = async () => {
-      // Small delay to show the "fancy" transition before redirecting
+      // Small delay to ensure the animation is seen
       setTimeout(async () => {
         await signOut({ callbackUrl: '/' })
-      }, 1500)
+      }, 1800)
     }
     performLogout()
   }, [])
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-[#000000] text-[#FFFFFF] font-['San_Francisco',_Roboto,_Arial,_sans-serif]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#22C55E08_0%,_transparent_70%)] pointer-events-none" />
+    <main className="min-h-screen flex flex-col items-center justify-center bg-black text-white antialiased p-4">
+      {/* Background Neural Glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#10B98108_0%,_transparent_65%)] pointer-events-none" />
       
-      <div className="relative flex flex-col items-center z-10">
-        <div className="w-16 h-16 relative mb-[24px]">
-          <div className="absolute inset-0 border-[4px] border-[#3A3A3C] rounded-full"></div>
-          <div className="absolute inset-0 border-[4px] border-[#22C55E] border-t-transparent rounded-full animate-spin"></div>
+      <div className="relative flex flex-col items-center z-10 w-full max-w-[310px]">
+        {/* Progress Metric Container */}
+        <div className="relative w-20 h-20 mb-8">
+          {/* Static Track */}
+          <div className="absolute inset-0 border-[3px] border-zinc-900 rounded-[24px]"></div>
+          {/* Animated Pulse Ring */}
+          <div className="absolute inset-0 border-[3px] border-emerald-500 border-t-transparent rounded-[24px] animate-spin shadow-[0_0_15px_rgba(16,185,129,0.2)]"></div>
+          {/* Inner Icon */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <ShieldAlert className="text-emerald-500/40" size={24} />
+          </div>
         </div>
         
-        <h2 className="text-[22px] font-[600] tracking-tight text-[#FFFFFF] animate-pulse">
-          Signing out...
-        </h2>
-        
-        <div className="mt-[12px] bg-[#1C1C1E] px-[16px] py-[4px] rounded-[20px] border border-[#3A3A3C]">
-          <p className="text-[#98989E] text-[14px] font-[600] uppercase tracking-widest">
-            Clearing secure session
-          </p>
+        <div className="text-center space-y-2">
+          <h2 className="text-xl font-black tracking-tight italic">
+            Terminating...
+          </h2>
+          
+          <div className="inline-block bg-[#121212] border border-white/[0.03] px-4 py-1.5 rounded-full">
+            <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em] flex items-center gap-2">
+              <span className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+              Clearing Secure Cache
+            </p>
+          </div>
         </div>
       </div>
 
-      <p className="absolute bottom-[32px] text-[14px] text-[#636366] font-[600] uppercase tracking-[0.3em]">
-        Linguistic-Dark-UI
-      </p>
+      {/* Slender Branding Footer */}
+      <div className="absolute bottom-12 flex flex-col items-center gap-2 opacity-20">
+        <div className="h-[1px] w-8 bg-zinc-800 mb-2" />
+        <p className="text-[10px] text-zinc-500 font-black uppercase tracking-[0.4em]">
+          Pulse Protocol
+        </p>
+      </div>
     </main>
   )
 }

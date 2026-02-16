@@ -12,7 +12,8 @@ import {
   ShieldCheck, 
   Settings, 
   LogOut, 
-  ArrowRight 
+  ArrowRight,
+  Fingerprint
 } from 'lucide-react'
 
 export default async function ProfilePage() {
@@ -32,103 +33,112 @@ export default async function ProfilePage() {
 
   if (!user) {
     return (
-      <main className="min-h-screen bg-[#000000] flex items-center justify-center p-6">
-        <div className="bg-[#121212] border border-[#FF453A]/30 p-8 rounded-[24px] text-center">
-          <p className="text-[#FF453A] font-[600]">User profile not found.</p>
+      <main className="min-h-screen bg-black flex items-center justify-center p-6">
+        <div className="bg-[#121212] border border-rose-500/20 p-8 rounded-[24px] text-center">
+          <p className="text-rose-500 text-sm font-black uppercase tracking-widest">Profile not found</p>
         </div>
       </main>
     )
   }
 
-  return (
-    <div className="min-h-screen bg-[#000000] text-[#FFFFFF] font-['San_Francisco',_Roboto,_Arial,_sans-serif] antialiased pb-[80px]">
-      {/* Background Ambient Glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[300px] bg-[#22C55E]/5 blur-[120px] pointer-events-none" />
+  const labelStyle = "text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-1"
 
-      <div className="max-w-3xl mx-auto px-[20px] pt-[100px] relative z-10">
+  return (
+    <div className="min-h-screen bg-black text-white antialiased pb-20">
+      {/* Neural Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-[250px] bg-emerald-500/5 blur-[100px] pointer-events-none" />
+
+      <div className="max-w-[340px] md:max-w-md mx-auto px-4 pt-16 relative z-10">
         
-        {/* Profile Card */}
-        <section className="bg-[#121212] border border-[#3A3A3C] rounded-[32px] p-8 mb-8">
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="w-28 h-28 rounded-[28px] bg-[#1C1C1E] border-2 border-[#3A3A3C] overflow-hidden flex items-center justify-center">
+        {/* AVATAR & IDENTITY */}
+        <section className="flex flex-col items-center mb-10">
+          <div className="relative mb-4">
+            <div className="w-20 h-20 rounded-[24px] bg-[#121212] border border-[#1C1C1E] overflow-hidden flex items-center justify-center shadow-2xl">
               {user.image ? (
                 <img src={user.image} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
-                <User size={40} className="text-[#636366]" />
+                <User size={32} className="text-zinc-700" />
               )}
             </div>
-            <div className="text-center md:text-left">
-              <h1 className="text-[28px] font-[700] tracking-tight mb-1">{user.name ?? 'Learner'}</h1>
-              <p className="text-[#98989E] text-[16px]">{user.email}</p>
+            <div className="absolute -bottom-2 -right-2 bg-emerald-500 p-1.5 rounded-lg border-[3px] border-black">
+              <Fingerprint size={12} className="text-black" />
             </div>
           </div>
+          <h1 className="text-xl font-black tracking-tight">{user.name ?? 'Learner'}</h1>
+          <p className="text-zinc-500 text-[12px] font-medium">{user.email}</p>
         </section>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <div className="bg-[#1C1C1E] p-5 rounded-[22px] border border-transparent">
-            <div className="flex items-center gap-3 mb-2">
-              <Calendar size={16} className="text-[#3B82F6]" />
-              <p className="text-[13px] font-[600] uppercase tracking-widest text-[#98989E]">Joined</p>
+        {/* STATS STRIP */}
+        <div className="grid grid-cols-2 gap-3 mb-8">
+          <div className="bg-[#121212] border border-[#1C1C1E] p-4 rounded-[20px]">
+            <p className={labelStyle}>Member Since</p>
+            <div className="flex items-center gap-2">
+              <Calendar size={14} className="text-emerald-500" />
+              <p className="text-[13px] font-bold">{new Date(user.createdAt).toLocaleDateString()}</p>
             </div>
-            <p className="text-[16px] font-[500]">{new Date(user.createdAt).toLocaleDateString()}</p>
           </div>
-          <div className="bg-[#1C1C1E] p-5 rounded-[22px] border border-transparent">
-            <div className="flex items-center gap-3 mb-2">
-              <Clock size={16} className="text-[#4CD964]" />
-              <p className="text-[13px] font-[600] uppercase tracking-widest text-[#98989E]">Last Update</p>
+          <div className="bg-[#121212] border border-[#1C1C1E] p-4 rounded-[20px]">
+            <p className={labelStyle}>Last Activity</p>
+            <div className="flex items-center gap-2">
+              <Clock size={14} className="text-emerald-500" />
+              <p className="text-[13px] font-bold">{new Date(user.updatedAt).toLocaleDateString()}</p>
             </div>
-            <p className="text-[16px] font-[500]">{new Date(user.updatedAt).toLocaleDateString()}</p>
           </div>
         </div>
 
-        {/* Account Settings Block */}
-        <div className="bg-[#121212] border border-[#3A3A3C] rounded-[24px] overflow-hidden mb-8">
-          <div className="px-6 py-4 border-b border-[#3A3A3C] bg-[#1C1C1E]">
-            <h3 className="text-[13px] font-[700] uppercase tracking-widest text-[#98989E]">Account Settings</h3>
+        {/* SETTINGS MENU */}
+        <div className="bg-[#121212] border border-[#1C1C1E] rounded-[24px] overflow-hidden mb-6">
+          <div className="px-5 py-3 border-b border-white/[0.03] bg-white/[0.02]">
+            <h3 className={labelStyle}>Settings</h3>
           </div>
-          <div className="divide-y divide-[#3A3A3C]">
-            <button className="w-full flex items-center justify-between px-6 py-5 hover:bg-[#1C1C1E] transition-colors group">
-              <div className="flex items-center gap-4">
-                <Mail size={20} className="text-[#636366] group-hover:text-white" />
-                <span className="text-[16px]">Change Email Address</span>
+          <div className="divide-y divide-white/[0.03]">
+            <button className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/[0.02] active:bg-white/[0.04] transition-all group">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                  <Mail size={16} className="text-zinc-500 group-hover:text-emerald-500 transition-colors" />
+                </div>
+                <span className="text-[14px] font-bold text-zinc-300">Email Address</span>
               </div>
-              <Settings size={18} className="text-[#636366]" />
+              <ArrowRight size={14} className="text-zinc-700 group-hover:text-emerald-500 transition-all" />
             </button>
-            <button className="w-full flex items-center justify-between px-6 py-5 hover:bg-[#1C1C1E] transition-colors group">
-              <div className="flex items-center gap-4">
-                <ShieldCheck size={20} className="text-[#636366] group-hover:text-white" />
-                <span className="text-[16px]">Security & Password</span>
+            <button className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/[0.02] active:bg-white/[0.04] transition-all group">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                  <ShieldCheck size={16} className="text-zinc-500 group-hover:text-emerald-500 transition-colors" />
+                </div>
+                <span className="text-[14px] font-bold text-zinc-300">Security</span>
               </div>
-              <Settings size={18} className="text-[#636366]" />
+              <ArrowRight size={14} className="text-zinc-700 group-hover:text-emerald-500 transition-all" />
             </button>
           </div>
         </div>
 
-        {/* Danger Zone / Logout Button */}
-        <div className="bg-[#121212] border border-[#FF453A]/20 rounded-[24px] overflow-hidden shadow-lg shadow-[#FF453A]/5">
+        {/* LOGOUT */}
+        <div className="bg-[#121212] border border-rose-500/10 rounded-[24px] overflow-hidden shadow-xl shadow-rose-500/[0.02]">
           <Link 
             href="/logout"
-            className="w-full flex items-center justify-between px-6 py-6 hover:bg-[#FF453A]/5 transition-all group"
+            className="w-full flex items-center justify-between px-5 py-5 hover:bg-rose-500/[0.03] active:bg-rose-500/[0.05] transition-all group"
           >
-            <div className="flex items-center gap-4 text-left">
-              <div className="p-2.5 bg-[#FF453A]/10 rounded-[14px] text-[#FF453A] group-hover:bg-[#FF453A]/20 transition-colors">
-                <LogOut size={22} />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-rose-500/10 rounded-xl text-rose-500 flex items-center justify-center border border-rose-500/10">
+                <LogOut size={20} />
               </div>
               <div>
-                <span className="text-[17px] font-[600] text-[#FF453A] block leading-none mb-1">Sign Out</span>
-                <p className="text-[13px] text-[#FF453A]/50 font-[500]">Terminate secure session</p>
+                <span className="text-[15px] font-black text-rose-500 block leading-tight">Sign Out</span>
+                <p className="text-[10px] text-rose-500/40 font-bold uppercase tracking-wider">End Session</p>
               </div>
             </div>
-            <ArrowRight size={18} className="text-[#FF453A] opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+            <ArrowRight size={16} className="text-rose-500/30 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        {/* Footer Text */}
-        <div className="mt-16 text-center">
-          <p className="text-[11px] text-[#636366] font-[700] uppercase tracking-[0.3em]">
-            Flotter Profile Identity
-          </p>
+        {/* Footer */}
+        <div className="mt-12 text-center">
+          <div className="inline-block px-3 py-1 rounded-full border border-white/[0.05] bg-white/[0.02]">
+            <p className="text-[9px] text-zinc-600 font-black uppercase tracking-[0.2em]">
+              System ID: {user.id.slice(0, 8)}
+            </p>
+          </div>
         </div>
       </div>
     </div>
