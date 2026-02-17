@@ -2,18 +2,24 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useSession, signOut } from "next-auth/react"
+import axios from "axios"
 
 type User = {
   id: string
   email: string
   name?: string | null
   image?: string | null
+  totalXp?: number
+  monthlyXp?: number
+  streakCount?: number
+  rank?: number
 }
 
 type UserContextValue = {
   user: User | null
   isLoading: boolean
   logout: () => void
+  refreshUser: () => Promise<void>
 }
 
 const UserContext = createContext<UserContextValue | undefined>(undefined)
@@ -21,17 +27,40 @@ const UserContext = createContext<UserContextValue | undefined>(undefined)
 export default function UserProvider({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession()
   const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  const fetchProfile = async () => {
+    try {
+      const resp = await axios.get('/api/profile')
+      if (resp.data.user) {
+        setUser({
+          ...resp.data.user,
+          rank: resp.data.rank
+        })
+      }
+    } catch (err) {
+      console.error('Failed to fetch profile', err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
-      setUser({
-        id: (session.user as any).id, // Ensure ID is passed in auth options callback
+      // Initially seed from session
+      setUser(prev => prev || {
+        id: (session.user as any).id,
         email: session.user.email!,
         name: session.user.name,
         image: session.user.image,
       })
+      // Then fetch full profile for extra details (XP, Rank, better Image handling)
+      fetchProfile()
     } else if (status === "unauthenticated") {
       setUser(null)
+      setLoading(false)
+    } else if (status === "loading") {
+      setLoading(true)
     }
   }, [session, status])
 
@@ -41,7 +70,12 @@ export default function UserProvider({ children }: { children: React.ReactNode }
   }
 
   return (
-    <UserContext.Provider value={{ user, isLoading: status === "loading", logout }}>
+    <UserContext.Provider value={{ 
+      user, 
+      isLoading: status === "loading" || (status === "authenticated" && loading && !user), 
+      logout,
+      refreshUser: fetchProfile
+    }}>
       {children}
     </UserContext.Provider>
   )

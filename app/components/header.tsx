@@ -12,7 +12,7 @@ export default function Header() {
   return (
     // Applied: primary background (#121212) and divider color (#262626)
     // Height: Not explicitly in JSON for header, but set to 64px to match Nav Bar consistency
-    <header className="fixed top-0 left-0 right-0 z-[100] h-[64px] border-b border-[#262626] bg-[#222222]/90 backdrop-blur-xl">
+    <header className="fixed top-0 left-0 right-0 z-[100] h-[64px] border-b border-[#262626] bg-[#1c1c1e]/90 backdrop-blur-xl">
       <nav className="max-w-5xl mx-auto px-[6px] h-full flex items-center justify-between">
 
         {/* Left: Brand & Header Style (Clean/Left alignment) */}

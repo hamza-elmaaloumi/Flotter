@@ -46,7 +46,7 @@ export const authOptions: AuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          image: user.image
+          image: user.image && user.image.startsWith('data:') ? null : user.image
         }
       }
     })
@@ -58,6 +58,14 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        // Optimization: Ensure large profile images (Base64) don't bloat the JWT
+        // NextAuth by default carries the 'image'/'picture' field.
+        // If it starts with 'data:', it's a massive Base64 string that will cause 431 errors.
+        if (typeof (user as any).image === 'string' && (user as any).image.startsWith('data:')) {
+          token.picture = null
+          // @ts-ignore
+          token.image = null
+        }
       }
       return token
     },

@@ -17,7 +17,7 @@ export default function Footer() {
 
   return (
     /* Background: #121212 | Height: 64px | Border: #262626 */
-    <footer className="fixed bottom-0 left-0 right-0 h-[64px] bg-[#222222] border-t border-[#262626] z-50 flex items-center justify-around px-4">
+    <footer className="fixed bottom-0 left-0 right-0 h-[64px] bg-[#1c1c1e] border-t border-[#262626] z-50 flex items-center justify-around px-4">
       
       {/* Left Icon - Home */}
       <Link 
