@@ -69,15 +69,15 @@ export default function Home() {
       <div className="max-w-5xl mx-auto px-[6px] pt-[20px] relative">
 
         {/* HERO SECTION - Card Radius: 14px */}
-        <section className={`relative overflow-hidden rounded-[14px] border transition-all duration-1000 p-6 mb-[20px] ${isFinished ? 'bg-[#121212] border-[#10B981]/40' : 'bg-[#121212] border-[#2D2D2F]'
+        <section className={`relative overflow-hidden rounded-[14px] bg-[#1e1e1e] border transition-all duration-1000 p-6 mb-[20px] ${isFinished ? 'border-[#10B981]/40' : 'border-[#2D2D2F]'
           }`}>
 
-          <div className={`absolute top-[-50px] right-[-50px] w-[200px] h-[200px] blur-[80px] rounded-full transition-all duration-1000 ${isFinished ? 'bg-[#10B981]/15' : 'bg-[#EF4444]/10'
-            }`} />
+          {/* Sublte light effect - changed to white/5 to avoid green/red bias */}
+          <div className="absolute top-[-50px] right-[-50px] w-[200px] h-[200px] blur-[80px] rounded-full bg-white/5 transition-all duration-1000" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex-1 text-center md:text-left order-2 md:order-1">
-              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4 border transition-colors duration-500 ${isFinished ? 'bg-[#10B981]/10 border-[#10B981]/20 text-[#10B981]' : 'bg-[#222222] border-[#2D2D2F] text-[#3B82F6]'
+              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4 border transition-colors duration-500 ${isFinished ? 'bg-[#10B981]/10 border-[#10B981]/20 text-[#10B981]' : 'bg-[#121212] border-[#2D2D2F] text-[#3B82F6]'
                 }`}>
                 <Sparkles size={12} fill="currentColor" />
                 <span className="text-[11px] font-bold uppercase tracking-widest">
@@ -124,19 +124,21 @@ export default function Home() {
               </div>
             </div>
 
-            {/* PSYCHOPATHIC RING - Kept logic, updated colors to System Status */}
+            {/* PSYCHOPATHIC RING */}
             <div className="relative w-[140px] h-[140px] md:w-[180px] md:h-[180px] flex items-center justify-center order-1 md:order-2">
               {!isFinished && due > 0 && (
                 <div className="absolute inset-0 rounded-full bg-[#EF4444]/5 animate-ping" />
               )}
 
               <svg className="w-full h-full transform -rotate-90 relative z-10 overflow-visible" viewBox="0 0 100 100">
+                {/* Background Track Circle */}
                 <circle
                   cx="50" cy="50" r="42"
                   stroke="currentColor" strokeWidth="8"
                   fill={isFinished ? "#10B981" : "transparent"}
-                  className={`transition-all duration-1000 ${isFinished ? "text-[#10B981]" : "text-[#222222]"}`}
+                  className={`transition-all duration-1000 ${isFinished ? "text-[#10B981]" : "text-[#dd4d4d]"}`}
                 />
+                {/* Progress Circle (The Stroke) */}
                 <circle
                   cx="50" cy="50" r="42"
                   stroke="currentColor" strokeWidth="8" fill="transparent"
@@ -235,10 +237,10 @@ export default function Home() {
                     return (
                       <div key={i} className="flex flex-col items-center gap-1">
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${filled
-                            ? 'bg-[#EF4444] shadow-[0_0_10px_rgba(239,68,68,0.3)]'
-                            : isToday
-                              ? 'bg-[#222222] border-2 border-[#EF4444]/40' // Ring for today if not done
-                              : 'bg-[#222222] border border-[#2D2D2F]'
+                          ? 'bg-[#EF4444] shadow-[0_0_10px_rgba(239,68,68,0.3)]'
+                          : isToday
+                            ? 'bg-[#222222] border-2 border-[#EF4444]/40' // Ring for today if not done
+                            : 'bg-[#222222] border border-[#2D2D2F]'
                           } ${isToday ? 'scale-110' : ''}`}>
                           {filled && <Flame size={10} className="text-white" fill="currentColor" />}
                         </div>

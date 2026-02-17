@@ -149,19 +149,19 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
                 <span className="text-emerald-500 text-[8px] md:text-[9px] tracking-[0.2em] uppercase font-bold flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> {t('flashcard.newWord')}
                 </span>
-                <h2 className="text-2xl md:text-3xl font-black text-white">
+                <h2 dir='ltr' className="text-2xl md:text-3xl font-black text-white">
                   {card.word.charAt(0)}<span className="tracking-widest opacity-50">_______</span>
                 </h2>
-                <p className="text-zinc-400 text-xs md:text-base leading-relaxed">{maskedSentence}</p>
+                <p dir='ltr' className="text-zinc-400 text-xs md:text-base leading-relaxed">{maskedSentence}</p>
               </div>
-              <div className="pt-4 opacity-50 flex items-center gap-2 text-[9px] uppercase font-bold tracking-widest text-white">
+              <div dir='ltr' className="pt-4 opacity-50 flex items-center gap-2 text-[9px] uppercase font-bold tracking-widest text-white">
                 <Hand size={12} /> {t('flashcard.tapToReveal')}
               </div>
             </div>
           </div>
 
           {/* BACK FACE */}
-          <div
+          <div 
             onPointerUp={handleBackClick}
             className="absolute inset-0 bg-zinc-900 rounded-[32px] overflow-hidden border border-white/10"
             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
@@ -180,7 +180,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
             <div className="h-[45%] w-full">
               <img src={card.imageUrl} className="w-full h-full object-cover" alt="" />
             </div>
-            <div className="h-[55%] p-6 flex flex-col items-center text-center relative">
+            <div  dir='ltr' className="h-[55%] p-6 flex flex-col items-center text-center relative">
               <div className="flex-1 flex flex-col items-center justify-center space-y-4">
                 <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter">{card.word}</h2>
                 <div className="bg-white/5 p-4 rounded-xl border border-white/5 text-zinc-300 text-xs md:text-sm">

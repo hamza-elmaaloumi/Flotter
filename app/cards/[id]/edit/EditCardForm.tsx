@@ -169,7 +169,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
               <Plus size={14} strokeWidth={3} /> {t('editCard.addLine')}
             </button>
           </div>
-          <div className="space-y-3">
+          <div dir='ltr' className="space-y-3">
             {sentences.map((s, idx) => (
               <div key={idx} className="relative flex items-center">
                 <input 
@@ -200,12 +200,12 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
           <div className="flex gap-2 mb-6">
             <div className="relative flex-1">
               <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7280]" />
-              <input 
+              <input dir='ltr'
                 value={query} 
                 onChange={(e) => setQuery(e.target.value)} 
                 onKeyDown={(e) => e.key === 'Enter' && searchImages()}
                 className={inputStyles + " pl-11 py-3 bg-[#121212]"} 
-                placeholder={t('editCard.searchPlaceholder')} 
+                placeholder="search for an image..."
               />
             </div>
             <button 

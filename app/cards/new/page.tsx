@@ -101,7 +101,7 @@ export default function NewCardPage() {
         <div className="lg:col-span-7 space-y-8">
           <section>
             <label className={labelBase}>{t('newCard.word')}</label>
-            <input 
+            <input dir='ltr'
               value={word} 
               onChange={e => setWord(e.target.value)} 
               placeholder={t('newCard.wordPlaceholder')} 
@@ -123,7 +123,7 @@ export default function NewCardPage() {
             <div className="space-y-3">
               {sentences.map((s, i) => (
                 <div key={i} className="group relative flex items-start gap-2">
-                  <textarea 
+                  <textarea dir='ltr' 
                     value={s} 
                     onChange={e => updateSentence(i, e.target.value)} 
                     placeholder={`Sentence ${i + 1}...`}
@@ -149,12 +149,12 @@ export default function NewCardPage() {
           <div className="flex gap-2 mb-4">
             <div className="relative flex-1">
               <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280]" />
-              <input 
+              <input dir='ltr' 
                 value={query} 
                 onChange={e => setQuery(e.target.value)} 
                 onKeyDown={(e) => e.key === 'Enter' && searchImages()}
                 className={inputBase + " pl-10 h-11"} 
-                placeholder={t('newCard.searchPlaceholder')} 
+                placeholder="search for an image..." 
               />
             </div>
             <button 
