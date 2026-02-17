@@ -4,6 +4,7 @@ import { motion, useMotionValue, useTransform, PanInfo, animate, AnimatePresence
 import React, { useState, useEffect } from 'react'
 import { Check, X, Hand, Sparkles, ArrowLeft, ArrowRight, Pencil } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '../../../providers/LanguageProvider'
 
 interface FlashcardProps {
   card: {
@@ -23,6 +24,7 @@ interface FlashcardProps {
 
 export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, flipTimestamp, onSwipeXp }: FlashcardProps) {
   const router = useRouter()
+  const { t } = useLanguage()
   const x = useMotionValue(0)
   const [isDragging, setIsDragging] = useState(false)
   const [showSwipeHint, setShowSwipeHint] = useState(false)
@@ -130,12 +132,12 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
           >
             <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-6">
               <div className="border-4 border-emerald-500 px-3 py-1 rounded-xl -rotate-12">
-                <span className="text-emerald-500 text-xl md:text-2xl font-black uppercase tracking-wider">Learned</span>
+                <span className="text-emerald-500 text-xl md:text-2xl font-black uppercase tracking-wider">{t('flashcard.learned')}</span>
               </div>
             </motion.div>
             <motion.div style={{ opacity: struggleOpacity }} className="absolute inset-0 bg-rose-500/20 z-20 pointer-events-none flex items-start justify-end p-6">
               <div className="border-4 border-rose-500 px-3 py-1 rounded-xl rotate-12">
-                <span className="text-rose-500 text-xl md:text-2xl font-black uppercase tracking-wider">Review</span>
+                <span className="text-rose-500 text-xl md:text-2xl font-black uppercase tracking-wider">{t('flashcard.review')}</span>
               </div>
             </motion.div>
 
@@ -145,7 +147,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
             <div className="h-[55%] p-6 flex flex-col items-center text-center">
               <div className="flex-1 flex flex-col items-center justify-center space-y-4 md:space-y-6">
                 <span className="text-emerald-500 text-[8px] md:text-[9px] tracking-[0.2em] uppercase font-bold flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> New Word
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> {t('flashcard.newWord')}
                 </span>
                 <h2 className="text-2xl md:text-3xl font-black text-white">
                   {card.word.charAt(0)}<span className="tracking-widest opacity-50">_______</span>
@@ -153,7 +155,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
                 <p className="text-zinc-400 text-xs md:text-base leading-relaxed">{maskedSentence}</p>
               </div>
               <div className="pt-4 opacity-50 flex items-center gap-2 text-[9px] uppercase font-bold tracking-widest text-white">
-                <Hand size={12} /> Tap to Reveal
+                <Hand size={12} /> {t('flashcard.tapToReveal')}
               </div>
             </div>
           </div>
@@ -166,12 +168,12 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
           >
             <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-6">
               <div className="border-4 border-emerald-500 px-3 py-1 rounded-xl -rotate-12">
-                <span className="text-emerald-500 text-xl md:text-2xl font-black uppercase tracking-wider">Learned</span>
+                <span className="text-emerald-500 text-xl md:text-2xl font-black uppercase tracking-wider">{t('flashcard.learned')}</span>
               </div>
             </motion.div>
             <motion.div style={{ opacity: struggleOpacity }} className="absolute inset-0 bg-rose-500/20 z-20 pointer-events-none flex items-start justify-end p-6">
               <div className="border-4 border-rose-500 px-3 py-1 rounded-xl rotate-12">
-                <span className="text-rose-500 text-xl md:text-2xl font-black uppercase tracking-wider">Review</span>
+                <span className="text-rose-500 text-xl md:text-2xl font-black uppercase tracking-wider">{t('flashcard.review')}</span>
               </div>
             </motion.div>
 
@@ -195,13 +197,13 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
                       <div className="w-9 h-9 rounded-full bg-rose-500/20 border-2 border-rose-500 flex items-center justify-center">
                         <ArrowLeft className="text-rose-500" size={18} />
                       </div>
-                      <span className="text-rose-500 text-[7px] font-black uppercase tracking-widest">Review</span>
+                      <span className="text-rose-500 text-[7px] font-black uppercase tracking-widest">{t('flashcard.review')}</span>
                     </motion.div>
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="flex flex-col items-center gap-1">
                       <div className="w-9 h-9 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center">
                         <ArrowRight className="text-emerald-500" size={18} />
                       </div>
-                      <span className="text-emerald-500 text-[7px] font-black uppercase tracking-widest">Learned</span>
+                      <span className="text-emerald-500 text-[7px] font-black uppercase tracking-widest">{t('flashcard.learned')}</span>
                     </motion.div>
                   </div>
                 )}

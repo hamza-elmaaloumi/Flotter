@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Search, Loader2, ChevronRight, Image as ImageIcon, Plus } from 'lucide-react'
+import { useLanguage } from '../../providers/LanguageProvider'
 
 interface SearchResult {
   id: string
@@ -15,6 +16,7 @@ export default function ListPage() {
   const [allCards, setAllCards] = useState<SearchResult[]>([])
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(true)
+  const { t, language } = useLanguage()
 
   const extractDisplayWord = (card: any): string => {
     if (card.word && typeof card.word === 'string') return card.word;
@@ -61,7 +63,7 @@ export default function ListPage() {
   }, [query, allCards])
 
   return (
-    <div className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased selection:bg-[#3B82F6]/30">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased selection:bg-[#3B82F6]/30">
       {/* Header - Clean Style, Left Aligned per Design System */}
       <div className="sticky top-0 z-10 bg-[#121212]/95 backdrop-blur-md border-b border-[#262626]">
         <div className="max-w-2xl mx-auto px-4 py-4">
@@ -72,7 +74,7 @@ export default function ListPage() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search your collection..."
+                placeholder={t('searchCards.placeholder')}
                 // Typography: body_medium (15px)
                 className="w-full bg-[#222222] border border-[#2D2D2F] rounded-[12px] py-2.5 pl-10 pr-4 text-[15px] text-[#FFFFFF] placeholder-[#6B7280] outline-none focus:border-[#3B82F6] transition-all"
               />
@@ -94,13 +96,13 @@ export default function ListPage() {
             <div className="flex flex-col items-center justify-center py-20">
               <Loader2 size={24} className="animate-spin text-[#3B82F6] mb-4" />
               {/* Typography: label (12px, Bold, Uppercase) */}
-              <span className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider">Loading</span>
+              <span className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider">{t('searchCards.loading')}</span>
             </div>
           ) : (
             <>
               {results.length === 0 && (
                 <div className="py-20 text-center border border-dashed border-[#2D2D2F] rounded-[16px]">
-                  <p className="text-[15px] text-[#9CA3AF]">No matches for "{query}"</p>
+                  <p className="text-[15px] text-[#9CA3AF]">{t('searchCards.noMatches')} "{query}"</p>
                 </div>
               )}
 
@@ -132,7 +134,7 @@ export default function ListPage() {
                       </span>
                       {/* Typography: caption (13px, Medium, Color: secondary) */}
                       <span className="text-[13px] font-medium text-[#9CA3AF]">
-                        Recently added
+                        {t('searchCards.recentlyAdded')}
                       </span>
                     </div>
                   </div>
@@ -151,7 +153,7 @@ export default function ListPage() {
             <div className="inline-block px-4 py-1.5 bg-[#222222] border border-[#2D2D2F] rounded-full">
               {/* Typography: label (12px, Bold, Uppercase) */}
               <p className="text-[12px] font-bold uppercase tracking-widest text-[#6B7280]">
-                {results.length} Cards Found
+                {results.length} {t('searchCards.cardsFound')}
               </p>
             </div>
           </footer>

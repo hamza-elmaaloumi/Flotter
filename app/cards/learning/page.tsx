@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
 import Link from 'next/link'
 import { Plus, Calendar, GraduationCap, ChevronDown, Image as ImageIcon, BookOpen, Sparkles, Zap, Check, Flame } from 'lucide-react'
+import { useLanguage } from '../../providers/LanguageProvider'
 
 // --- Sub-components ---
 function StatCard({ label, value, loading, icon: Icon, colorClass }: any) {
@@ -31,6 +32,7 @@ export default function Home() {
   const [data, setData] = useState<any | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [isListExpanded, setIsListExpanded] = useState(false)
+  const { t, language } = useLanguage()
 
   useEffect(() => {
     async function fetchDash() {
@@ -63,7 +65,7 @@ export default function Home() {
 
   return (
     // Global Background: #121212 | Font: System Sans-Serif
-    <div className="min-h-screen bg-[#121212] text-[#FFFFFF] font-sans antialiased pb-[64px]">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] font-sans antialiased pb-[64px]">
       <div className="max-w-5xl mx-auto px-[6px] pt-[20px] relative">
 
         {/* HERO SECTION - Card Radius: 14px */}
@@ -79,24 +81,24 @@ export default function Home() {
                 }`}>
                 <Sparkles size={12} fill="currentColor" />
                 <span className="text-[11px] font-bold uppercase tracking-widest">
-                  {isFinished ? "Neural Pathways Synced" : "Daily Objective"}
+                  {isFinished ? t('learning.neuralSynced') : t('learning.dailyObjective')}
                 </span>
               </div>
 
               {/* H1 Typography: 19px, Bold */}
               <h1 className="text-[19px] md:text-[24px] font-bold leading-tight tracking-tight mb-4">
                 {isFinished ? (
-                  <>Everything is <br className="hidden md:block" /><span className="text-[#10B981]">Mastered.</span></>
+                  <>{t('learning.everythingIs')} <br className="hidden md:block" /><span className="text-[#10B981]">{t('learning.mastered')}</span></>
                 ) : (
-                  <>Don't lose the <br className="hidden md:block" /><span className="text-[#EF4444]">Momentum.</span></>
+                  <>{t('learning.dontLose')} <br className="hidden md:block" /><span className="text-[#EF4444]">{t('learning.momentum')}</span></>
                 )}
               </h1>
 
               {/* Body Medium: 14px, Regular | Color: Secondary Text #9CA3AF */}
               <p className="text-[#9CA3AF] text-[14px] font-normal max-w-md mb-6 leading-relaxed mx-auto md:mx-0">
                 {isFinished
-                  ? "Your review queue is empty. Knowledge protected."
-                  : `You have ${due} cards needing immediate attention.`}
+                  ? t('learning.queueEmpty')
+                  : language === 'ar' ? `لديك ${due} بطاقات تحتاج مراجعة فورية.` : `You have ${due} cards needing immediate attention.`}
               </p>
 
               <div className="flex flex-row justify-center md:justify-start gap-3">
@@ -109,7 +111,7 @@ export default function Home() {
                     }`}
                 >
                   <Zap size={16} fill="currentColor" />
-                  <span>{isFinished ? "Finished" : "Start"}</span>
+                  <span>{isFinished ? t('learning.finished') : t('learning.start')}</span>
                 </Link>
                 {/* Secondary/Action Style */}
                 <Link
@@ -117,7 +119,7 @@ export default function Home() {
                   className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 bg-[#FFFFFF] text-[#000000] px-[24px] py-[14px] rounded-[12px] font-bold text-[14px] transition-all"
                 >
                   <Plus size={16} strokeWidth={3} />
-                  <span>New</span>
+                  <span>{t('learning.new')}</span>
                 </Link>
               </div>
             </div>
@@ -159,7 +161,7 @@ export default function Home() {
                       {loading ? ".." : due}
                     </span>
                     <span className="text-[#9CA3AF] text-[11px] font-bold uppercase tracking-widest mt-1">
-                      Due
+                      {t('learning.due')}
                     </span>
                   </>
                 )}
@@ -187,15 +189,15 @@ export default function Home() {
                       {loading ? '...' : streak}
                     </span>
                     <span className="text-[11px] font-bold uppercase tracking-widest text-[#9CA3AF]">
-                      Day Streak
+                      {t('learning.dayStreak')}
                     </span>
                   </div>
                   <p className="text-[11px] text-[#6B7280] mt-0.5">
                     {isActiveToday
-                      ? '✓ Active today — streak safe'
+                      ? `✓ ${t('learning.activeToday')}`
                       : streak > 0
-                        ? 'Earn at least 1 XP today to keep it alive!'
-                        : 'Start learning to build your streak'}
+                        ? t('learning.earnXp')
+                        : t('learning.startLearning')}
                   </p>
                 </div>
               </div>
@@ -256,21 +258,21 @@ export default function Home() {
         <section className="mb-[20px]">
           <div className="grid grid-cols-3 gap-[8px]">
             <StatCard
-              label="Review"
+              label={t('learning.review')}
               icon={Calendar}
               value={due}
               loading={loading}
               colorClass={due > 0 ? "text-[#EF4444]" : "text-[#9CA3AF]"}
             />
             <StatCard
-              label="Learning"
+              label={t('learning.learning')}
               icon={BookOpen}
               value={Math.max(0, (total) - (data?.learnedCardsCount || 0) - due)}
               loading={loading}
               colorClass="text-[#EAB308]" // Premium Gold
             />
             <StatCard
-              label="Mastered"
+              label={t('learning.mastered2')}
               icon={GraduationCap}
               value={data?.learnedCardsCount || 0}
               loading={loading}
@@ -282,12 +284,12 @@ export default function Home() {
         {/* RECENT ACTIVITY - List Item / Settings Row Implementation */}
         <section>
           <div className="flex items-center justify-between mb-3 px-1">
-            <h2 className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Activity</h2>
+            <h2 className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">{t('learning.activity')}</h2>
             <button
               onClick={() => setIsListExpanded(!isListExpanded)}
               className="text-[11px] font-bold uppercase tracking-widest text-[#10B981] hover:opacity-80 transition-colors flex items-center gap-1.5"
             >
-              {isListExpanded ? "Hide All" : "View All"}
+              {isListExpanded ? t('learning.hideAll') : t('learning.viewAll')}
               <ChevronDown size={14} className={`transition-transform duration-300 ${isListExpanded ? 'rotate-180' : ''}`} />
             </button>
           </div>
@@ -313,7 +315,7 @@ export default function Home() {
                         </div>
                         <div className="max-w-[180px] md:max-w-none">
                           <p className="text-[15px] font-semibold text-[#FFFFFF] truncate">{c.sentences[0] || "Untitled"}</p>
-                          <p className="text-[12px] text-[#9CA3AF]">Next: {new Date(c.nextReviewAt).toLocaleDateString()}</p>
+                          <p className="text-[12px] text-[#9CA3AF]">{t('learning.next')} {new Date(c.nextReviewAt).toLocaleDateString()}</p>
                         </div>
                       </div>
                       <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${isOpen ? 'text-[#3B82F6]' : 'text-[#6B7280]'}`}>
@@ -324,10 +326,10 @@ export default function Home() {
                       <div className="px-4 py-6 bg-[#222222]/50 animate-in slide-in-from-top-1 duration-200">
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                           <div className="md:col-span-4 aspect-video rounded-[12px] overflow-hidden border border-[#2D2D2F] bg-[#121212]">
-                            {c.imageUrl ? <img src={c.imageUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[#6B7280] text-[11px] font-bold uppercase">No Visual</div>}
+                            {c.imageUrl ? <img src={c.imageUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[#6B7280] text-[11px] font-bold uppercase">{t('learning.noVisual')}</div>}
                           </div>
                           <div className="md:col-span-8">
-                            <p className="text-[11px] font-bold text-[#10B981] uppercase tracking-widest mb-3">Context Variations</p>
+                            <p className="text-[11px] font-bold text-[#10B981] uppercase tracking-widest mb-3">{t('learning.contextVariations')}</p>
                             <div className="space-y-2">
                               {c.sentences.map((s: string, i: number) => (
                                 <div key={i} className="p-3 rounded-[12px] bg-[#1C1C1E] border border-[#2D2D2F]">
@@ -347,7 +349,7 @@ export default function Home() {
           {!isListExpanded && (
             <div className="mt-2 text-center">
               {/* Caption Typography: 12px, Medium */}
-              <p className="text-[12px] text-[#6B7280] font-medium uppercase tracking-widest">List Hidden • Click View All to Expand</p>
+              <p className="text-[12px] text-[#6B7280] font-medium uppercase tracking-widest">{t('learning.listHidden')}</p>
             </div>
           )}
         </section>

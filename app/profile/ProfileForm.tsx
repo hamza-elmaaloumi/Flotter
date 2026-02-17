@@ -12,6 +12,7 @@ import {
   CheckCircle2, 
   AlertCircle 
 } from 'lucide-react'
+import { useLanguage } from '../providers/LanguageProvider'
 
 type ProfileFormProps = {
   user: {
@@ -24,6 +25,7 @@ type ProfileFormProps = {
 
 export default function ProfileForm({ user }: ProfileFormProps) {
   const router = useRouter()
+  const { t } = useLanguage()
   const [name, setName] = useState(user.name || '')
   const [image, setImage] = useState(user.image || '')
   const [loading, setLoading] = useState(false)
@@ -59,7 +61,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       setTimeout(() => setSuccess(false), 3000)
     } catch (err: any) {
       console.error('Update failed', err)
-      setError(err.response?.data?.error || 'Failed to update profile')
+      setError(err.response?.data?.error || t('profileForm.error'))
     } finally {
       setLoading(false)
     }
@@ -91,23 +93,23 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             className="hidden" 
           />
         </div>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">Change Profile Photo</p>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">{t('profileForm.changePhoto')}</p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-2 block px-1">Display Name</label>
+          <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-2 block px-1">{t('profileForm.displayName')}</label>
           <input 
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
+            placeholder={t('profileForm.namePlaceholder')}
             className="w-full h-[52px] bg-[#1C1C1E] border border-[#2D2D2F] rounded-[14px] px-5 text-[15px] text-white placeholder-[#4B5563] focus:border-[#3B82F6] outline-none transition-all"
           />
         </div>
 
         <div>
-          <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-2 block px-1">Email Address (Read Only)</label>
+          <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-2 block px-1">{t('profileForm.emailReadOnly')}</label>
           <div className="w-full h-[52px] bg-[#1C1C1E] opacity-50 border border-[#2D2D2F] rounded-[14px] px-5 flex items-center text-[15px] text-[#9CA3AF]">
             {user.email}
           </div>
@@ -124,7 +126,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       {success && (
         <div className="flex items-center gap-2 text-[#10B981] text-[13px] font-medium bg-[#10B981]/5 border border-[#10B981]/10 p-3 rounded-[12px]">
           <CheckCircle2 size={14} />
-          Profile updated successfully!
+          {t('profileForm.success')}
         </div>
       )}
 
@@ -138,7 +140,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         ) : (
           <>
             <Save size={18} />
-            <span>Save Changes</span>
+            <span>{t('profileForm.save')}</span>
           </>
         )}
       </button>

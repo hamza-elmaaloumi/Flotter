@@ -1,10 +1,12 @@
 "use client"
 
 import React, { useState } from "react"
-import { ChevronDown, ExternalLink } from "lucide-react"
+import { ChevronDown, ExternalLink, Globe } from "lucide-react"
+import { useLanguage } from "../providers/LanguageProvider"
 
 export default function SettingsPage() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
+  const { t, language, setLanguage } = useLanguage()
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   const toggle = (i: number) => {
     setOpenIndex(openIndex === i ? null : i)
@@ -12,35 +14,35 @@ export default function SettingsPage() {
 
   const items: { title: string; content: React.ReactNode }[] = [
     {
-      title: "Mastering XP & Ranking",
+      title: t('settings.xpTitle'),
       content: (
         <div className="space-y-4 text-[14px] font-normal text-[#9CA3AF] leading-relaxed">
           <section>
-            <p className="font-bold text-[#FFFFFF] mb-2 uppercase text-[11px] tracking-wider">How our XP works</p>
-            <p className="mb-2">XP (Experience Points) is the heartbeat of Flotter. It tracks your focus and consistency.</p>
+            <p className="font-bold text-[#FFFFFF] mb-2 uppercase text-[11px] tracking-wider">{t('settings.xp.howTitle')}</p>
+            <p className="mb-2">{t('settings.xp.howIntro')}</p>
             <ul className="list-disc pl-5 space-y-2 text-[13px]">
-              <li><span className="text-[#3B82F6] font-bold">+10 XP</span>: Perfect Review (Flip, wait <span className="text-white">1.5s</span> for focus, then swipe).</li>
-              <li><span className="text-[#FACC15] font-bold">+5 XP</span>: Audio Context (Listen to the <span className="text-white">full AI sentence</span> audio).</li>
-              <li><span className="text-[#10B981] font-bold">+50 XP</span>: Builder Bonus (Add a <span className="text-white">new card</span> to your deck).</li>
-              <li className="italic text-[#6B7280]">Note: Swiping before 1.5s results in 0 XP. Quality focus matters.</li>
+              <li><span className="text-[#3B82F6] font-bold">+10 XP</span>: {t('settings.xp.perfect')}</li>
+              <li><span className="text-[#FACC15] font-bold">+5 XP</span>: {t('settings.xp.audio')}</li>
+              <li><span className="text-[#10B981] font-bold">+50 XP</span>: {t('settings.xp.builder')}</li>
+              <li className="italic text-[#6B7280]">{t('settings.xp.note')}</li>
             </ul>
           </section>
 
           <section className="pt-2 border-t border-[#262626]">
-            <p className="font-bold text-[#FFFFFF] mb-2 uppercase text-[11px] tracking-wider">Climbing the Ranking</p>
-            <p className="mb-2">Your <span className="text-white">Monthly Ranking</span> is derived from the XP you accumulate in a calendar month.</p>
+            <p className="font-bold text-[#FFFFFF] mb-2 uppercase text-[11px] tracking-wider">{t('settings.xp.climbTitle')}</p>
+            <p className="mb-2">{t('settings.xp.climbIntro')}</p>
             <ul className="space-y-2 text-[13px]">
               <li className="flex items-start gap-2">
                 <span className="text-[#3B82F6]">1.</span>
-                <span><span className="text-white font-semibold">Maximize Each Card:</span> Instead of rushing cards, always listen to the AI audio to grab that extra <span className="text-[#FACC15] font-bold">+5 XP</span> per card.</span>
+                <span><span className="text-white font-semibold">{t('settings.xp.tip1Title')}</span> {t('settings.xp.tip1Desc')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-[#3B82F6]">2.</span>
-                <span><span className="text-white font-semibold">Consistency is Key:</span> Maintain a daily streak to elevate your visibility to other learners.</span>
+                <span><span className="text-white font-semibold">{t('settings.xp.tip2Title')}</span> {t('settings.xp.tip2Desc')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-[#3B82F6]">3.</span>
-                <span><span className="text-white font-semibold">Monthly Resets:</span> The leaderboard resets at the start of every month. If you're behind, use the first day of the month to sprint ahead!</span>
+                <span><span className="text-white font-semibold">{t('settings.xp.tip3Title')}</span> {t('settings.xp.tip3Desc')}</span>
               </li>
             </ul>
           </section>
@@ -48,30 +50,26 @@ export default function SettingsPage() {
       ),
     },
     {
-      title: "App guide",
+      title: t('settings.guideTitle'),
       content: (
         <div className="space-y-3 text-[14px] font-normal text-[#9CA3AF] leading-relaxed">
-          <p>
-            Flotter is a mobile-first active-recall flashcard app that masks a
-            target word in context so you practise retrieval. It's built for
-            short, repeatable reviews using a Leitner-style SRS.
-          </p>
+          <p>{t('settings.guide.intro')}</p>
           <ul className="list-disc pl-5 space-y-2">
-            <li>Tap anywhere on a card to flip it (front ↔ back).</li>
-            <li>Masked target words help trigger active recall.</li>
-            <li>Browser TTS reads sentences automatically on the back.</li>
-            <li>Swipe right to promote, swipe left to relearn.</li>
+            <li>{t('settings.guide.tip1')}</li>
+            <li>{t('settings.guide.tip2')}</li>
+            <li>{t('settings.guide.tip3')}</li>
+            <li>{t('settings.guide.tip4')}</li>
           </ul>
         </div>
       ),
     },
     {
-      title: "Support",
+      title: t('settings.supportTitle'),
       content: (
         <div className="space-y-3 text-[14px] font-normal text-[#9CA3AF]">
-          <p>For bugs or feature requests, reach out to our team.</p>
+          <p>{t('settings.support.text')}</p>
           <div className="p-4 rounded-[12px] bg-[#121212] border border-[#2D2D2F]">
-            <p className="text-[11px] font-bold uppercase text-[#6B7280] mb-1">Email</p>
+            <p className="text-[11px] font-bold uppercase text-[#6B7280] mb-1">{t('settings.support.emailLabel')}</p>
             <a className="text-[#3B82F6] font-semibold flex items-center gap-2" href="mailto:support@flotter.app">
               support@flotter.app <ExternalLink size={14} />
             </a>
@@ -80,35 +78,68 @@ export default function SettingsPage() {
       ),
     },
     {
-      title: "Terms of use",
+      title: t('settings.termsTitle'),
       content: (
         <div className="text-[14px] font-normal text-[#9CA3AF]">
-          <p>The service is provided "as-is". By using Flotter you agree to respect intellectual property and provide accurate account info.</p>
+          <p>{t('settings.terms.text')}</p>
         </div>
       ),
     },
     {
-      title: "Privacy policy",
+      title: t('settings.privacyTitle'),
       content: (
         <div className="text-[14px] font-normal text-[#9CA3AF]">
-          <p>Flotter collects minimum data: email, hashed password, and progress metadata. We do not sell personal data.</p>
+          <p>{t('settings.privacy.text')}</p>
         </div>
       ),
     },
   ]
 
   return (
-    // Added 'w-full' and 'items-stretch' to ensure the layout doesn't snap width
-    <main className="min-h-screen bg-[#121212] flex flex-col items-center p-4 antialiased">
+    <main dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] flex flex-col items-center p-4 antialiased">
       <div className="w-full max-w-md">
-        <h1 className="text-[22px] font-bold text-[#FFFFFF] mb-8 mt-6">Settings</h1>
+        <h1 className="text-[22px] font-bold text-[#FFFFFF] mb-8 mt-6">{t('settings.title')}</h1>
+
+        {/* Language Switcher */}
+        <section className="bg-[#1C1C1E] border border-[#2D2D2F] rounded-[12px] mb-3 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-[8px] bg-[#121212] border border-[#2D2D2F] flex items-center justify-center">
+                <Globe size={16} className="text-[#3B82F6]" />
+              </div>
+              <span className="text-[16px] font-semibold text-[#FFFFFF]">{t('settings.language')}</span>
+            </div>
+            <div className="flex bg-[#121212] border border-[#2D2D2F] rounded-[10px] overflow-hidden">
+              <button
+                onClick={() => setLanguage('en')}
+                className={`px-4 py-1.5 text-[13px] font-bold transition-all ${
+                  language === 'en'
+                    ? 'bg-[#3B82F6] text-white'
+                    : 'text-[#9CA3AF] hover:text-white'
+                }`}
+              >
+                {t('settings.langEn')}
+              </button>
+              <button
+                onClick={() => setLanguage('ar')}
+                className={`px-4 py-1.5 text-[13px] font-bold transition-all ${
+                  language === 'ar'
+                    ? 'bg-[#3B82F6] text-white'
+                    : 'text-[#9CA3AF] hover:text-white'
+                }`}
+              >
+                {t('settings.langAr')}
+              </button>
+            </div>
+          </div>
+        </section>
         
         <div className="flex flex-col gap-3">
           {items.map((it, i) => {
             const isOpen = openIndex === i
             return (
               <section 
-                key={it.title} 
+                key={i} 
                 className="bg-[#1C1C1E] border border-[#2D2D2F] rounded-[12px] transition-all duration-200 ease-in-out"
               >
                 <button
@@ -126,7 +157,6 @@ export default function SettingsPage() {
                   />
                 </button>
                 
-                {/* Fixed height transition container to prevent layout jumping */}
                 <div 
                   className={`grid transition-all duration-300 ease-in-out ${
                     isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
@@ -145,7 +175,7 @@ export default function SettingsPage() {
 
         <footer className="mt-16 text-center">
           <p className="text-[11px] font-bold text-[#48484A] uppercase tracking-[0.2em]">
-            Flotter Engine V1.0
+            {t('settings.footer')}
           </p>
         </footer>
       </div>

@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form"
 import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { UserPlus, Sparkles } from "lucide-react"
+import { useLanguage } from '../providers/LanguageProvider'
 
 type FormData = {
   email: string
@@ -16,6 +17,7 @@ type FormData = {
 export default function RegisterPage() {
   const router = useRouter()
   const session = useSession()
+  const { t, language } = useLanguage()
 
   useEffect(() => {
     if (session.status === "authenticated") {
@@ -37,7 +39,7 @@ export default function RegisterPage() {
       const res = await axios.post("/api/auth/register", data)
       
       if (res.status === 201) {
-        setMessage("Account created! Signing you in...")
+        setMessage(t('register.success'))
         const result = await signIn('credentials', {
           redirect: false,
           email: data.email,
@@ -48,7 +50,7 @@ export default function RegisterPage() {
           router.push('/')
           router.refresh()
         } else {
-          setMessage("Login failed. Please go to Login page.")
+          setMessage(t('register.loginFailed'))
         }
       }
     } catch (err: any) {
@@ -66,7 +68,7 @@ export default function RegisterPage() {
 
   return (
     // Global background: primary (#121212)
-    <main className="min-h-screen flex items-center justify-center bg-[#121212] text-[#FFFFFF] antialiased p-4">
+    <main dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen flex items-center justify-center bg-[#121212] text-[#FFFFFF] antialiased p-4">
       {/* Brand Blue Glow Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#3B82F608_0%,_transparent_65%)] pointer-events-none" />
 
@@ -80,18 +82,18 @@ export default function RegisterPage() {
                <UserPlus className="text-[#3B82F6]" size={24} />
             </div>
             {/* h1: 19px, Bold */}
-            <h1 className="text-[19px] font-bold tracking-tight">Create Account</h1>
+            <h1 className="text-[19px] font-bold tracking-tight">{t('register.title')}</h1>
             {/* body_medium: 14px, Regular, secondary text color (#9CA3AF) */}
-            <p className="text-[#9CA3AF] mt-1 text-[14px] font-normal">Start your mastery journey today.</p>
+            <p className="text-[#9CA3AF] mt-1 text-[14px] font-normal">{t('register.subtitle')}</p>
           </header>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
-              <label className={labelStyles}>Email Address</label>
+              <label className={labelStyles}>{t('register.email')}</label>
               <input
                 type="email"
                 placeholder="name@example.com"
-                {...register("email", { required: "Email is required" })}
+                {...register("email", { required: t('register.emailRequired') })}
                 className={inputStyles}
               />
               {errors.email && (
@@ -101,11 +103,11 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className={labelStyles}>Security Key (Password)</label>
+              <label className={labelStyles}>{t('register.password')}</label>
               <input
                 type="password"
                 placeholder="••••••••"
-                {...register("password", { required: "Password is required" })}
+                {...register("password", { required: t('register.passwordRequired') })}
                 className={inputStyles}
               />
               {errors.password && (
@@ -120,7 +122,7 @@ export default function RegisterPage() {
               className="w-full bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-[#FFFFFF] font-bold py-[14px] rounded-[12px] transition-all active:scale-[0.98] disabled:opacity-50 text-[15px] mt-2 shadow-lg shadow-[#3B82F6]/10 flex items-center justify-center gap-2"
             >
               <Sparkles size={16} />
-              {isSubmitting ? "Processing..." : "Register"}
+              {isSubmitting ? t('register.loading') : t('register.submit')}
             </button>
 
             {message && (
@@ -136,7 +138,7 @@ export default function RegisterPage() {
 
           {/* Caption text: 12px, Medium, secondary color (#9CA3AF) */}
           <p className="mt-8 text-center text-[12px] text-[#9CA3AF] font-medium">
-            Already a member? <Link href="/login" className="text-[#3B82F6] hover:underline font-bold ml-1">Sign In</Link>
+            {t('register.hasAccount')} <Link href="/login" className="text-[#3B82F6] hover:underline font-bold ml-1">{t('register.signIn')}</Link>
           </p>
         </div>
       </div>

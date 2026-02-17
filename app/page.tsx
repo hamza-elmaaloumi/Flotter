@@ -12,6 +12,7 @@ import {
   Activity
 } from 'lucide-react'
 import AdBanner from './components/AdBanner'
+import { useLanguage } from './providers/LanguageProvider'
 
 // --- Feature Card (Mapping to card.standard_card tokens) ---
 function FeatureCard({ icon: Icon, title, description }: any) {
@@ -33,12 +34,14 @@ function FeatureCard({ icon: Icon, title, description }: any) {
 }
 
 export default function LandingPage() {
+  const { t, language } = useLanguage()
+
   return (
     /* Global bg: #121212 */
-    <div className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased selection:bg-[#3B82F6]/30">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased selection:bg-[#3B82F6]/30">
 
       {/* NAVIGATION (Aligned with Header design) */}
-      <nav className="fixed top-0 w-full z-50 border-b border-[#262626] bg-[#121212]/90 backdrop-blur-xl">
+      <nav dir="ltr" className="fixed top-0 w-full z-50 border-b border-[#262626] bg-[#121212]/90 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-[16px] h-[64px] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-[#3B82F6] rounded-[8px] flex items-center justify-center">
@@ -51,15 +54,15 @@ export default function LandingPage() {
           </div>
           
           <div className="hidden md:flex items-center gap-6 text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">
-            <a href="#method" className="hover:text-[#3B82F6] transition-colors">Algorithm</a>
-            <a href="#features" className="hover:text-[#3B82F6] transition-colors">Protocol</a>
+            <a href="#method" className="hover:text-[#3B82F6] transition-colors">{t('landing.navAlgorithm')}</a>
+            <a href="#features" className="hover:text-[#3B82F6] transition-colors">{t('landing.navProtocol')}</a>
           </div>
 
           <Link 
             href="/login" 
             className="bg-[#222222] text-[#FFFFFF] px-5 py-2 rounded-[12px] text-[14px] font-semibold border border-[#2D2D2F] hover:bg-[#2D2D2F] transition-all"
           >
-            Enter App
+            {t('landing.enterApp')}
           </Link>
         </div>
       </nav>
@@ -73,19 +76,19 @@ export default function LandingPage() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[12px] bg-[#1C1C1E] border border-[#3B82F6]/30 mb-8">
             <Sparkles size={12} className="text-[#FBBF24]" />
             <span className="text-[11px] font-bold uppercase tracking-widest text-[#FBBF24]">
-              Neural Optimization Active
+              {t('landing.badge')}
             </span>
           </div>
 
           {/* Large Hero Title (Custom 48px for Landing, using bold system weight) */}
           <h1 className="text-[32px] md:text-[56px] font-bold leading-[1.1] mb-6 text-[#FFFFFF]">
-            Shield your mind <br />
-            from <span className="text-[#EF4444]">memory decay.</span>
+            {t('landing.heroTitle1')} <br />
+            {t('landing.heroTitle2')} <span className="text-[#EF4444]">{t('landing.heroTitle3')}</span>
           </h1>
 
           {/* body_large: 15px | text.secondary: #9CA3AF */}
           <p className="text-[#9CA3AF] text-[15px] font-normal max-w-xl mx-auto mb-10 leading-relaxed">
-            Stop losing progress. Our SRS engine triggers reviews at the exact millisecond of forgetfulness.
+            {t('landing.heroSub')}
           </p>
 
           <div className="flex justify-center">
@@ -93,7 +96,7 @@ export default function LandingPage() {
               href="/register"
               className="bg-[#3B82F6] text-[#FFFFFF] px-[32px] py-[16px] rounded-[12px] text-[15px] font-bold hover:bg-[#1D4ED8] transition-all flex items-center gap-2 shadow-lg shadow-[#3B82F6]/20"
             >
-              Initialize Training <ArrowRight size={18} />
+              {t('landing.cta')} <ArrowRight size={18} />
             </Link>
           </div>
         </div>
@@ -107,11 +110,11 @@ export default function LandingPage() {
           <div className="flex-1 text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-2 mb-3 text-[#3B82F6]">
               <Activity size={18} />
-              <span className="font-bold uppercase text-[11px] tracking-widest">Real-time Mastery</span>
+              <span className="font-bold uppercase text-[11px] tracking-widest">{t('landing.realtimeMastery')}</span>
             </div>
-            <h2 className="text-[19px] font-bold mb-3 text-[#FFFFFF]">Sync Your Synapses.</h2>
+            <h2 className="text-[19px] font-bold mb-3 text-[#FFFFFF]">{t('landing.syncSynapses')}</h2>
             <p className="text-[#9CA3AF] text-[14px] font-normal leading-relaxed">
-              Visualizing the "Forgetfulness Curve." Our dashboard keeps your cognitive load balanced and your retention at 98%.
+              {t('landing.syncDesc')}
             </p>
           </div>
           
@@ -119,7 +122,7 @@ export default function LandingPage() {
           <div className="relative w-32 h-32 flex items-center justify-center rounded-full border-[6px] border-[#3B82F6] border-t-[#222222]">
             <div className="flex flex-col items-center">
               <span className="text-[24px] font-bold text-[#FFFFFF]">85%</span>
-              <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">Neural</span>
+              <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">{t('landing.neural')}</span>
             </div>
           </div>
         </div>
@@ -128,25 +131,25 @@ export default function LandingPage() {
       {/* FEATURES PROTOCOL */}
       <section id="features" className="max-w-5xl mx-auto px-[16px] py-16 border-t border-[#262626]">
         <div className="mb-12 text-center">
-          <h2 className="text-[11px] font-bold uppercase text-[#6B7280] mb-2 tracking-widest">The Protocol</h2>
-          <h3 className="text-[19px] font-bold text-[#FFFFFF]">Precision Engineered.</h3>
+          <h2 className="text-[11px] font-bold uppercase text-[#6B7280] mb-2 tracking-widest">{t('landing.theProtocol')}</h2>
+          <h3 className="text-[19px] font-bold text-[#FFFFFF]">{t('landing.precisionEngineered')}</h3>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
           <FeatureCard 
             icon={BrainCircuit}
-            title="Active Recall"
-            description="Trigger deep retrieval paths. We don't just show cards; we force neural reconstruction."
+            title={t('landing.activeRecall')}
+            description={t('landing.activeRecallDesc')}
           />
           <FeatureCard 
             icon={Target}
-            title="Visual Anchoring"
-            description="Every word is tied to a high-density image, creating a dual-coding effect for instant memory."
+            title={t('landing.visualAnchoring')}
+            description={t('landing.visualAnchoringDesc')}
           />
           <FeatureCard 
             icon={Layers}
-            title="Context Mesh"
-            description="Words aren't learned in isolation. We weave them into sentence matrices for natural fluency."
+            title={t('landing.contextMesh')}
+            description={t('landing.contextMeshDesc')}
           />
         </div>
       </section>
@@ -154,15 +157,15 @@ export default function LandingPage() {
       {/* CTA SECTION (Applying stats_card radius/padding) */}
       <section className="max-w-3xl mx-auto px-[20px] py-20">
         <div className="bg-[#1C1C1E] border border-[#2D2D2F] rounded-[14px] p-10 text-center">
-          <h2 className="text-[28px] font-bold mb-4 text-[#FFFFFF]">Achieve Fluency.</h2>
+          <h2 className="text-[28px] font-bold mb-4 text-[#FFFFFF]">{t('landing.achieveFluency')}</h2>
           <p className="text-[#9CA3AF] text-[14px] font-normal max-w-xs mx-auto mb-8">
-            Join the elite circle of learners mastering languages through algorithmic science.
+            {t('landing.achieveFluencyDesc')}
           </p>
           <Link 
             href="/register"
             className="bg-[#3B82F6] text-[#FFFFFF] px-10 py-4 rounded-[12px] text-[15px] font-bold hover:bg-[#1D4ED8] transition-all inline-block"
           >
-            Begin Initialization
+            {t('landing.beginInit')}
           </Link>
         </div>
       </section>
@@ -175,8 +178,8 @@ export default function LandingPage() {
             <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">iStoria OS © 2026</span>
           </div>
           <div className="flex justify-center gap-6 text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">
-            <a href="#" className="hover:text-[#3B82F6] transition-colors">Privacy</a>
-            <a href="#" className="hover:text-[#3B82F6] transition-colors">Terms</a>
+            <a href="#" className="hover:text-[#3B82F6] transition-colors">{t('landing.privacy')}</a>
+            <a href="#" className="hover:text-[#3B82F6] transition-colors">{t('landing.terms')}</a>
           </div>
         </div>
       </footer>

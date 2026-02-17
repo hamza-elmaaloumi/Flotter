@@ -24,3 +24,12 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+body.lang-ar {
+  --font-geist-sans: var(--font-cairo);
+  font-family: var(--font-cairo), Arial, Helvetica, sans-serif;
+}
+
+body.lang-ar .font-sans {
+  font-family: var(--font-cairo), Arial, Helvetica, sans-serif;
+}

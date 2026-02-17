@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { useUser } from '../../../providers/UserProvider'
+import { useLanguage } from '../../../providers/LanguageProvider'
 import { 
   Plus, 
   Trash2, 
@@ -31,6 +32,7 @@ type UnsplashResult = {
 export default function EditCardForm({ initialCard }: { initialCard: CardShape }) {
   const router = useRouter()
   const { user } = useUser()
+  const { t, language } = useLanguage()
 
   const [word, setWord] = useState(initialCard.word || '')
   const [imageUrl, setImageUrl] = useState(initialCard.imageUrl || '')
@@ -65,7 +67,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    if (!word.trim()) return setError('Word is required')
+    if (!word.trim()) return setError(t('editCard.wordRequired'))
     
     setLoading(true)
     try {
@@ -78,7 +80,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
       router.push('/cards/learning')
       router.refresh()
     } catch (err: any) {
-      setError(err?.response?.data?.error || 'Failed to save')
+      setError(err?.response?.data?.error || t('editCard.saveFailed'))
     } finally {
       setLoading(false)
     }
@@ -90,22 +92,22 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
   const cardStyles = "bg-[#1C1C1E] rounded-[16px] p-2 border border-[#2D2D2F]" // Component: standard_card
 
   return (
-    <div className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-40 font-sans">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-40 font-sans">
       
       {/* Header - Clean Style */}
-      <header className="sticky top-0 z-10 bg-[#121212] border-b border-[#262626] px-4 h-[64px] flex items-center justify-between">
+      <header dir="ltr" className="sticky top-0 z-10 bg-[#121212] border-b border-[#262626] px-4 h-[64px] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <button onClick={() => router.back()} className="p-1 text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors">
             <ChevronLeft size={24} />
           </button>
-          <h1 className="text-[17px] font-bold tracking-[-0.5px]">Edit Entry</h1>
+          <h1 className="text-[17px] font-bold tracking-[-0.5px]">{t('editCard.title')}</h1>
         </div>
         <button 
           onClick={handleSubmit} 
           disabled={loading}
           className="text-[#3B82F6] text-[16px] font-bold hover:opacity-80 disabled:opacity-30 transition-opacity"
         >
-          {loading ? <Loader2 size={19} className="animate-spin" /> : 'Save'}
+          {loading ? <Loader2 size={19} className="animate-spin" /> : t('editCard.save')}
         </button>
       </header>
 
@@ -114,18 +116,18 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
         {/* Vocabulary Input Section */}
         <section className="space-y-6">
           <div>
-            <label className={labelStyles}>Vocabulary Word</label>
+            <label className={labelStyles}>{t('editCard.word')}</label>
             <input 
               value={word} 
               onChange={(e) => setWord(e.target.value)} 
               className={`${inputStyles} text-[14px] font-bold`} // h2 style for the main word
-              placeholder="Enter word..." 
+              placeholder={t('editCard.wordPlaceholder')} 
             />
           </div>
 
           {/* Card Image Section */}
           <div>
-            <label className={labelStyles}>Card Image</label>
+            <label className={labelStyles}>{t('editCard.cardImage')}</label>
             <div className={cardStyles}>
               {imageUrl ? (
                 <div className="relative group aspect-video w-full rounded-[14px] overflow-hidden bg-[#222222]">
@@ -147,8 +149,8 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
               ) : (
                 <div className="aspect-video w-full rounded-[14px] border-2 border-dashed border-[#2D2D2F] flex flex-col items-center justify-center bg-[#121212] text-[#6B7280]">
                   <ImageIcon size={32} className="mb-2 text-[#333333]" />
-                  <p className="text-[14px]">No image selected</p>
-                  <p className="text-[12px] text-[#9CA3AF]">Select from library below</p>
+                  <p className="text-[14px]">{t('editCard.noImage')}</p>
+                  <p className="text-[12px] text-[#9CA3AF]">{t('editCard.selectFromLibrary')}</p>
                 </div>
               )}
             </div>
@@ -158,13 +160,13 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
         {/* Usage Context Section */}
         <section>
           <div className="flex justify-between items-center mb-4">
-            <label className={labelStyles + " mb-0"}>Usage Context</label>
+            <label className={labelStyles + " mb-0"}>{t('editCard.context')}</label>
             <button 
               type="button" 
               onClick={addSentence} 
               className="text-[12px] text-[#3B82F6] font-bold uppercase flex items-center gap-1 hover:text-[#1D4ED8]"
             >
-              <Plus size={14} strokeWidth={3} /> Add Line
+              <Plus size={14} strokeWidth={3} /> {t('editCard.addLine')}
             </button>
           </div>
           <div className="space-y-3">
@@ -174,7 +176,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
                   value={s} 
                   onChange={(e) => updateSentence(idx, e.target.value)} 
                   className={inputStyles + " pr-12 h-[52px]"} // Height matching settings_row feel
-                  placeholder="Enter sentence..." 
+                  placeholder={t('editCard.sentencePlaceholder')} 
                 />
                 <button 
                   type="button" 
@@ -191,7 +193,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
         {/* Unsplash Search Section */}
         <section className="pt-8 border-t border-[#262626]">
           <div className="flex items-center justify-between mb-4">
-            <label className={labelStyles + " mb-0"}>Unsplash Library</label>
+            <label className={labelStyles + " mb-0"}>{t('editCard.unsplash')}</label>
             {imagesLoading && <Loader2 size={16} className="animate-spin text-[#3B82F6]" />}
           </div>
           
@@ -203,7 +205,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
                 onChange={(e) => setQuery(e.target.value)} 
                 onKeyDown={(e) => e.key === 'Enter' && searchImages()}
                 className={inputStyles + " pl-11 py-3 bg-[#121212]"} 
-                placeholder="Search for visuals..." 
+                placeholder={t('editCard.searchPlaceholder')} 
               />
             </div>
             <button 
@@ -211,7 +213,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
               onClick={searchImages} 
               className="px-6 bg-[#333333] text-[14px] font-bold rounded-[12px] border border-[#2D2D2F] hover:bg-[#374151] transition-colors"
             >
-              Search
+              {t('editCard.searchBtn')}
             </button>
           </div>
 
@@ -236,7 +238,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
             {results.length === 0 && !imagesLoading && (
               <div className="col-span-full py-12 flex flex-col items-center justify-center border border-dashed border-[#2D2D2F] rounded-[16px] bg-[#1C1C1E]/50">
                 <Search size={24} className="text-[#333333] mb-2" />
-                <span className="text-[12px] text-[#6B7280] font-medium">Discover images for your card</span>
+                <span className="text-[12px] text-[#6B7280] font-medium">{t('editCard.discoverImages')}</span>
               </div>
             )}
           </div>
@@ -258,7 +260,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
             disabled={loading}
             className="w-60 bg-green-600 text-[#FFFFFF] h-[39px] rounded-[12px] text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-[0_8px_30px_rgb(0,0,0,0.4)] disabled:bg-[#374151] disabled:text-[#6B7280]"
           >
-            {loading ? <Loader2 size={20} className="animate-spin" /> : <><Save size={20} /> SAVE CHANGES</>}
+            {loading ? <Loader2 size={20} className="animate-spin" /> : <><Save size={20} /> {t('editCard.saveChanges')}</>}
           </button>
         </div>
       </footer>

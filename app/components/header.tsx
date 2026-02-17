@@ -2,10 +2,12 @@
 
 import Link from 'next/link'
 import { useUser } from '../providers/UserProvider'
+import { useLanguage } from '../providers/LanguageProvider'
 import { User, Zap, Layers, LifeBuoy, Settings, Shield } from 'lucide-react'
 
 export default function Header() {
   const { user, isLoading } = useUser()
+  const { t } = useLanguage()
 
   return (
     // Applied: primary background (#121212) and divider color (#262626)
@@ -80,7 +82,7 @@ export default function Header() {
                     // body_large: 15px SemiBold
                     className="text-[15px] font-semibold text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors px-3"
                   >
-                    Login
+                    {t('header.login')}
                   </Link>
 
                   <Link
@@ -88,7 +90,7 @@ export default function Header() {
                     // button_primary: bg #3B82F6, radius 12px, text white
                     className="text-[14px] font-bold uppercase tracking-widest bg-[#3B82F6] text-[#FFFFFF] px-[20px] py-[10px] rounded-[12px] hover:bg-[#1D4ED8] transition-all active:scale-95"
                   >
-                    Join
+                    {t('header.join')}
                   </Link>
                 </div>
               )}

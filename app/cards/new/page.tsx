@@ -5,10 +5,12 @@ import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
 import { Plus, Search, Check, ChevronLeft, Loader2, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useLanguage } from '../../providers/LanguageProvider'
 
 export default function NewCardPage() {
   const { user } = useUser()
   const router = useRouter()
+  const { t, language } = useLanguage()
   
   // State
   const [word, setWord] = useState('')
@@ -44,7 +46,7 @@ export default function NewCardPage() {
       const res = await axios.get('/api/images/search', { params: { query } })
       setResults(res.data.results || [])
     } catch (err) {
-      setMsg('Search error')
+      setMsg(t('newCard.searchError'))
     } finally { setLoading(false) }
   }
 
@@ -53,7 +55,7 @@ export default function NewCardPage() {
     
     const cleanSentences = sentences.filter(s => s.trim() !== '')
     if (!word.trim() || cleanSentences.length === 0 || !selected) {
-      setMsg('Incomplete fields')
+      setMsg(t('newCard.incomplete'))
       return 
     }
 
@@ -61,10 +63,10 @@ export default function NewCardPage() {
     try {
       const imageUrl = selected?.urls?.regular || selected?.urls?.small || ''
       await axios.post('/api/cards', { word, sentences: cleanSentences, imageUrl })
-      setMsg('Success')
+      setMsg(t('newCard.success'))
       setTimeout(() => router.push('/cards/learning'), 1000)
     } catch (err) {
-      setMsg('Save failed')
+      setMsg(t('newCard.saveFailed'))
     } finally { setSaving(false) }
   }
 
@@ -74,22 +76,22 @@ export default function NewCardPage() {
   const cardBase = "bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-2" // standard_card
 
   return (
-    <div className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-32 font-sans">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-32 font-sans">
       
       {/* Header Component (Clean Style) */}
-      <header className="sticky top-0 z-20 bg-[#121212] border-b border-[#262626] px-4 h-[64px] flex items-center justify-between">
+      <header dir="ltr" className="sticky top-0 z-20 bg-[#121212] border-b border-[#262626] px-4 h-[64px] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <button onClick={() => router.back()} className="p-1 text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors">
             <ChevronLeft size={24} />
           </button>
-          <h1 className="text-[17px] font-bold tracking-[-0.5px]">New Card</h1>
+          <h1 className="text-[17px] font-bold tracking-[-0.5px]">{t('newCard.title')}</h1>
         </div>
         <button 
           onClick={() => handleSubmit()} 
           disabled={saving}
           className="text-[#3B82F6] text-[16px] font-bold hover:opacity-80 disabled:opacity-30 transition-opacity"
         >
-          {saving ? <Loader2 size={18} className="animate-spin" /> : 'Create'}
+          {saving ? <Loader2 size={18} className="animate-spin" /> : t('newCard.create')}
         </button>
       </header>
 
@@ -98,24 +100,24 @@ export default function NewCardPage() {
         {/* Left Side: Inputs */}
         <div className="lg:col-span-7 space-y-8">
           <section>
-            <label className={labelBase}>Vocabulary Word</label>
+            <label className={labelBase}>{t('newCard.word')}</label>
             <input 
               value={word} 
               onChange={e => setWord(e.target.value)} 
-              placeholder="e.g. Ephemeral" 
+              placeholder={t('newCard.wordPlaceholder')} 
               className={`${inputBase} text-[14px] font-bold py-3`} // h2-like style
             />
           </section>
 
           <section>
             <div className="flex justify-between items-center mb-2">
-              <label className={labelBase + " mb-0"}>Usage Context</label>
+              <label className={labelBase + " mb-0"}>{t('newCard.context')}</label>
               <button 
                 type="button" 
                 onClick={addSentence}
                 className="text-[11px] text-[#3B82F6] font-bold uppercase flex items-center gap-1 hover:text-[#1D4ED8]"
               >
-                <Plus size={12} strokeWidth={3} /> Add Line
+                <Plus size={12} strokeWidth={3} /> {t('newCard.addLine')}
               </button>
             </div>
             <div className="space-y-3">
@@ -143,7 +145,7 @@ export default function NewCardPage() {
 
         {/* Right Side: Image Library */}
         <div className="lg:col-span-5 mt-10 lg:mt-0 pt-10 lg:pt-0 border-t lg:border-t-0 border-[#262626]">
-          <label className={labelBase}>Visual Search</label>
+          <label className={labelBase}>{t('newCard.visualSearch')}</label>
           <div className="flex gap-2 mb-4">
             <div className="relative flex-1">
               <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280]" />
@@ -152,7 +154,7 @@ export default function NewCardPage() {
                 onChange={e => setQuery(e.target.value)} 
                 onKeyDown={(e) => e.key === 'Enter' && searchImages()}
                 className={inputBase + " pl-10 h-11"} 
-                placeholder="Find imagery..." 
+                placeholder={t('newCard.searchPlaceholder')} 
               />
             </div>
             <button 
@@ -161,7 +163,7 @@ export default function NewCardPage() {
               disabled={loading}
               className="px-5 h-11 bg-[#333333] text-[12px] font-bold rounded-[12px] border border-[#2D2D2F] hover:bg-[#374151] transition-colors disabled:opacity-50"
             >
-              {loading ? <Loader2 size={16} className="animate-spin" /> : 'Search'}
+              {loading ? <Loader2 size={16} className="animate-spin" /> : t('newCard.search')}
             </button>
           </div>
 
@@ -191,7 +193,7 @@ export default function NewCardPage() {
             {results.length === 0 && !loading && (
               <div className="col-span-full py-10 flex flex-col items-center justify-center text-[#6B7280]">
                 <Search size={20} className="mb-2 opacity-20" />
-                <span className="text-[12px]">Search to browse library</span>
+                <span className="text-[12px]">{t('newCard.browseLibrary')}</span>
               </div>
             )}
           </div>
@@ -206,7 +208,7 @@ export default function NewCardPage() {
                   className="block w-full h-auto max-h-[300px] object-contain" 
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#121212] to-transparent p-4 pt-10">
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-[#9CA3AF]">Selected Image</span>
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-[#9CA3AF]">{t('newCard.selectedImage')}</span>
                 </div>
               </div>
             </div>
@@ -222,7 +224,7 @@ export default function NewCardPage() {
             disabled={saving}
             className="w-60 bg-green-600 text-[#FFFFFF] h-[39px] rounded-[12px] text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg disabled:bg-[#374151] disabled:text-[#6B7280]"
           >
-            {saving ? <Loader2 size={20} className="animate-spin" /> : <><Plus size={20} strokeWidth={3} /> CREATE NEW CARD</>}
+            {saving ? <Loader2 size={20} className="animate-spin" /> : <><Plus size={20} strokeWidth={3} /> {t('newCard.createBtn')}</>}
           </button>
         </div>
       </footer>

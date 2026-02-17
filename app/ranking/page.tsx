@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useUser } from '../providers/UserProvider'
+import { useLanguage } from '../providers/LanguageProvider'
 import Link from 'next/link'
 import { Shield, Trophy, Flame, ChevronLeft, Loader2, Zap, Crown, Medal } from 'lucide-react'
 
@@ -25,6 +26,7 @@ function getRankIcon(rank: number) {
 
 export default function RankingPage() {
   const { user } = useUser()
+  const { t, language } = useLanguage()
   const [ranking, setRanking] = useState<RankedUser[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -43,20 +45,20 @@ export default function RankingPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-[64px]">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-[64px]">
       {/* Header */}
-      <header className="sticky top-0 z-20 bg-[#121212] border-b border-[#262626] px-4 h-[64px] flex items-center justify-between">
+      <header dir="ltr" className="sticky top-0 z-20 bg-[#121212] border-b border-[#262626] px-4 h-[64px] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="p-1 text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors">
             <ChevronLeft size={24} />
           </Link>
           <div className="flex items-center gap-2">
             <Shield size={18} className="text-[#FACC15]" fill="currentColor" />
-            <h1 className="text-[17px] font-bold tracking-[-0.5px]">Leaderboard</h1>
+            <h1 className="text-[17px] font-bold tracking-[-0.5px]">{t('ranking.title')}</h1>
           </div>
         </div>
         <div className="bg-[#222222] border border-[#2D2D2F] px-3 py-1 rounded-[12px]">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-[#9CA3AF]">This Month</span>
+          <span className="text-[11px] font-bold uppercase tracking-widest text-[#9CA3AF]">{t('ranking.thisMonth')}</span>
         </div>
       </header>
 
@@ -64,12 +66,12 @@ export default function RankingPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 size={24} className="animate-spin text-[#3B82F6] mb-4" />
-            <span className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider">Loading Rankings</span>
+            <span className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider">{t('ranking.loading')}</span>
           </div>
         ) : ranking.length === 0 ? (
           <div className="text-center py-20">
             <Trophy size={32} className="text-[#6B7280] mx-auto mb-4 opacity-30" />
-            <p className="text-[#6B7280] text-[14px]">No learners yet. Be the first!</p>
+            <p className="text-[#6B7280] text-[14px]">{t('ranking.empty')}</p>
           </div>
         ) : (
           <>
@@ -143,10 +145,10 @@ export default function RankingPage() {
                       </div>
                       <div>
                         <p className={`text-[14px] font-semibold ${isMe ? 'text-[#3B82F6]' : 'text-[#FFFFFF]'}`}>
-                          {u.name} {isMe && <span className="text-[10px] text-[#3B82F6] opacity-60">(you)</span>}
+                          {u.name} {isMe && <span className="text-[10px] text-[#3B82F6] opacity-60">{t('ranking.you')}</span>}
                         </p>
                         <p className="text-[11px] text-[#6B7280]">
-                          Total: {u.totalXp.toLocaleString()} XP
+                          {t('ranking.total')} {u.totalXp.toLocaleString()} XP
                         </p>
                       </div>
                     </div>
@@ -169,7 +171,7 @@ export default function RankingPage() {
 
             <div className="mt-4 text-center">
               <p className="text-[11px] text-[#6B7280] font-bold uppercase tracking-widest">
-                Rankings reset at the start of each month
+                {t('ranking.resetNote')}
               </p>
             </div>
           </>

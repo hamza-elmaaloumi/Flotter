@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Cairo } from "next/font/google";
 import "./globals.css";
 import UserProvider from "./providers/UserProvider";
+import LanguageProvider from "./providers/LanguageProvider";
 import NextAuthSessionProvider from "./providers/NextAuthSessionProvider"; // Import the new wrapper
 import Header from "./components/header";
 import Footer from "./components/footer";
@@ -19,6 +20,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const cairo = Cairo({
+  variable: "--font-cairo",
+  subsets: ["arabic", "latin"],
+  weight: ["400", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "Flotter | Premium Portal",
   description: "A sleek, professional authentication system",
@@ -33,11 +40,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#09090b] text-zinc-100 min-h-screen flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} ${cairo.variable} antialiased bg-[#09090b] text-zinc-100 min-h-screen flex flex-col`}
       >
         {/* NextAuth Provider MUST wrap the UserProvider */}
         <NextAuthSessionProvider>
           <UserProvider>
+          <LanguageProvider>
             <Script
               async
               src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9323001864718386"
@@ -49,6 +57,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+          </LanguageProvider>
           </UserProvider>
         </NextAuthSessionProvider>
       </body>

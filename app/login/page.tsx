@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { signIn, useSession } from 'next-auth/react'
 import { LogIn } from 'lucide-react'
+import { useLanguage } from '../providers/LanguageProvider'
 
 export default function LoginPage() {
   const router = useRouter()
   const session = useSession()
+  const { t, language } = useLanguage()
   
   useEffect(() => {
     if (session.status === "authenticated") {
@@ -34,14 +36,14 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setError("Invalid email or password")
+        setError(t('login.errorInvalid'))
         setLoading(false)
       } else {
         router.push('/cards/learning')
         router.refresh()
       }
     } catch (err) {
-      setError('An unexpected error occurred')
+      setError(t('login.errorGeneric'))
       setLoading(false)
     }
   }
@@ -59,7 +61,7 @@ export default function LoginPage() {
 
   return (
     // Global background: primary (#121212)
-    <main className="min-h-screen flex items-center justify-center bg-[#121212] text-[#FFFFFF] antialiased p-4">
+    <main dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen flex items-center justify-center bg-[#121212] text-[#FFFFFF] antialiased p-4">
       {/* Brand Blue Glow instead of Emerald */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#3B82F608_0%,_transparent_65%)] pointer-events-none" />
 
@@ -73,9 +75,9 @@ export default function LoginPage() {
                <LogIn className="text-[#3B82F6]" size={24} />
             </div>
             {/* h1: 19px, Bold */}
-            <h1 className="text-[19px] font-bold tracking-tight">Login</h1>
+            <h1 className="text-[19px] font-bold tracking-tight">{t('login.title')}</h1>
             {/* body_medium: 14px, Regular, secondary text color */}
-            <p className="text-[#9CA3AF] mt-1 text-[14px] font-normal">Welcome back to the training.</p>
+            <p className="text-[#9CA3AF] mt-1 text-[14px] font-normal">{t('login.subtitle')}</p>
           </header>
 
           {/* Google Login - Standardized to item_radius 12px */}
@@ -90,7 +92,7 @@ export default function LoginPage() {
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
-            Continue with Google
+            {t('login.google')}
           </button>
 
           <div className="relative mb-6">
@@ -99,13 +101,13 @@ export default function LoginPage() {
               <span className="w-full border-t border-[#262626]"></span>
             </div>
             <div className="relative flex justify-center text-[11px] uppercase font-bold tracking-widest">
-              <span className="bg-[#121212] px-3 text-[#6B7280]">Secure Email Login</span>
+              <span className="bg-[#121212] px-3 text-[#6B7280]">{t('login.divider')}</span>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className={labelStyles}>Email Address</label>
+              <label className={labelStyles}>{t('login.email')}</label>
               <div className="relative">
                 <input
                   value={email}
@@ -119,7 +121,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className={labelStyles}>Password</label>
+              <label className={labelStyles}>{t('login.password')}</label>
               <div className="relative">
                 <input
                   value={password}
@@ -138,7 +140,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-[#FFFFFF] font-bold py-[14px] rounded-[12px] transition-all active:scale-[0.98] disabled:opacity-50 text-[15px] mt-2 shadow-lg shadow-[#3B82F6]/10"
             >
-              {loading ? 'Authenticating...' : 'Sign In'}
+              {loading ? t('login.loading') : t('login.submit')}
             </button>
 
             {error && (
@@ -151,7 +153,7 @@ export default function LoginPage() {
 
           {/* Caption text: 12px, Medium, secondary color */}
           <p className="mt-8 text-center text-[12px] text-[#9CA3AF] font-medium">
-            Don't have an account? <Link href="/register" className="text-[#3B82F6] hover:underline font-bold ml-1">Sign Up</Link>
+            {t('login.noAccount')} <Link href="/register" className="text-[#3B82F6] hover:underline font-bold ml-1">{t('login.signUp')}</Link>
           </p>
         </div>
       </div>

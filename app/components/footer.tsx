@@ -4,10 +4,12 @@ import Link from 'next/link'
 import { Plus, Home, Search } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
+import { useLanguage } from '../providers/LanguageProvider'
 
 export default function Footer() {
   const pathname = usePathname()
   const { status } = useSession()
+  const { t } = useLanguage()
 
   if (status !== "authenticated") {
     return null
@@ -25,7 +27,7 @@ export default function Footer() {
         }`}
       >
         <Home size={19} />
-        <span className="text-[11px] font-bold uppercase tracking-widest mt-1">Home</span>
+        <span className="text-[11px] font-bold uppercase tracking-widest mt-1">{t('footer.home')}</span>
       </Link>
       
 
@@ -48,7 +50,7 @@ export default function Footer() {
         }`}
       >
         <Search size={19} />
-        <span className="text-[11px] font-bold uppercase tracking-widest mt-1">Search</span>
+        <span className="text-[11px] font-bold uppercase tracking-widest mt-1">{t('footer.search')}</span>
       </Link>
 
     </footer>
