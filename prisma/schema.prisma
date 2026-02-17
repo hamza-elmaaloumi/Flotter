@@ -20,6 +20,13 @@ model User {
   // ADDED @default(now()) HERE to satisfy existing rows
   updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
 
+  // XP & Streak System
+  totalXp          Int       @default(0) @map("total_xp")
+  monthlyXp        Int       @default(0) @map("monthly_xp")
+  monthlyXpResetAt DateTime  @default(now()) @map("monthly_xp_reset_at")
+  streakCount      Int       @default(0) @map("streak_count")
+  lastActiveDate   DateTime? @map("last_active_date")
+
   cards         Card[]
   accounts      Account[]
   sessions      Session[]

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
 import Flashcard from './components/FlashCard'
-import { Sparkles, Loader2 } from 'lucide-react'
+import { Sparkles, Loader2, Zap } from 'lucide-react'
 
 // CONFIGURATION
 const API_KEY = process.env.NEXT_PUBLIC_ELEVEN_LABS_KEY || "sk_af2c6b36ab6dc99603b9e6d639f69a7fd4760ea92548e848";
@@ -18,6 +18,12 @@ export default function DeckPage() {
   const [loading, setLoading] = useState(false)
   const [flipped, setFlipped] = useState<Record<string, boolean>>({})
   const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  // XP tracking state
+  const [flipTimestamps, setFlipTimestamps] = useState<Record<string, number>>({})
+  const [audioCompleted, setAudioCompleted] = useState<Record<string, boolean>>({})
+  const [sessionXp, setSessionXp] = useState(0)
+  const [xpToast, setXpToast] = useState<number | null>(null)
 
   const loadCards = useCallback(async () => {
     if (!user?.id) return
@@ -32,10 +38,14 @@ export default function DeckPage() {
 
   useEffect(() => { loadCards() }, [loadCards])
 
-  const speakSentence = async (text: string) => {
+  const speakSentence = async (text: string, cardId: string) => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
+    }
+
+    const onEnded = () => {
+      setAudioCompleted(prev => ({ ...prev, [cardId]: true }))
     }
 
     try {
@@ -57,15 +67,46 @@ export default function DeckPage() {
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       audioRef.current = new Audio(url);
+      audioRef.current.addEventListener('ended', onEnded);
       audioRef.current.play();
 
     } catch (error) {
       console.warn("ElevenLabs failed, switching to Google TTS fallback...");
       const googleFallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=tw-ob`;
       audioRef.current = new Audio(googleFallbackUrl);
+      audioRef.current.addEventListener('ended', onEnded);
       audioRef.current.play();
     }
   };
+
+  // XP toast helper
+  const showXpToast = (amount: number) => {
+    setSessionXp(prev => prev + amount)
+    setXpToast(amount)
+    setTimeout(() => setXpToast(null), 1200)
+  }
+
+  const handleSwipeXp = async (cardId: string, earnedReviewXp: boolean) => {
+    let totalXpThisSwipe = 0
+
+    if (earnedReviewXp) {
+      // +10 XP for reviewing (waited 1.5s)
+      totalXpThisSwipe += 10
+      axios.post('/api/xp/add', { amount: 10, reason: 'card_review' }).catch(() => {})
+    }
+
+    if (audioCompleted[cardId]) {
+      // +5 XP for listening to full audio
+      totalXpThisSwipe += 5
+      axios.post('/api/xp/add', { amount: 5, reason: 'audio_listen' }).catch(() => {})
+    }
+
+    if (totalXpThisSwipe > 0) showXpToast(totalXpThisSwipe)
+
+    // Clean up tracking for this card
+    setFlipTimestamps(prev => { const n = { ...prev }; delete n[cardId]; return n })
+    setAudioCompleted(prev => { const n = { ...prev }; delete n[cardId]; return n })
+  }
 
   const handleReview = (cardId: string, result: 'success' | 'struggle') => {
     if (audioRef.current) audioRef.current.pause();
@@ -128,11 +169,15 @@ export default function DeckPage() {
               card={card}
               isTop={index === 0}
               isFlipped={!!flipped[card.id]}
+              flipTimestamp={flipTimestamps[card.id] || null}
               onFlip={() => {
+                const now = Date.now()
                 setFlipped(s => ({ ...s, [card.id]: true }))
-                speakSentence(card.sentences[card.currentSentenceIndex])
+                setFlipTimestamps(s => ({ ...s, [card.id]: now }))
+                speakSentence(card.sentences[card.currentSentenceIndex], card.id)
               }}
               onReview={handleReview}
+              onSwipeXp={(earned) => handleSwipeXp(card.id, earned)}
             />
           ))}
           
@@ -149,7 +194,7 @@ export default function DeckPage() {
               </p>
               {/* button_primary: #3B82F6, radius 12px */}
               <button 
-                onClick={() => router.push('/')} 
+                onClick={() => router.push('/cards/learning')} 
                 className="w-full bg-[#3B82F6] text-[#FFFFFF] py-4 rounded-[12px] font-bold uppercase text-[11px] tracking-widest active:scale-95 transition-all"
               >
                 Return Home
@@ -163,7 +208,23 @@ export default function DeckPage() {
                 <div className="inline-flex items-center gap-4 text-[#6B7280]">
                     <span className="text-[11px] font-bold uppercase tracking-widest">Premium AI Audio Active</span>
                 </div>
+                {sessionXp > 0 && (
+                  <div className="mt-2 inline-flex items-center gap-1.5 bg-[#222222] border border-[#2D2D2F] px-4 py-1.5 rounded-[12px]">
+                    <Zap size={12} className="text-[#FACC15]" fill="currentColor" />
+                    <span className="text-[#FACC15] text-[11px] font-bold tracking-widest uppercase">+{sessionXp} XP this session</span>
+                  </div>
+                )}
             </footer>
+        )}
+
+        {/* XP Toast */}
+        {xpToast !== null && (
+          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[200] animate-bounce">
+            <div className="bg-[#FACC15] text-[#000000] px-6 py-2.5 rounded-[12px] font-black text-[14px] flex items-center gap-2 shadow-[0_10px_30px_rgba(250,204,21,0.3)]">
+              <Zap size={16} fill="currentColor" />
+              +{xpToast} XP
+            </div>
+          </div>
         )}
       </div>
     </main>

@@ -4,6 +4,7 @@ import { authOptions } from '../api/auth/[...nextauth]/route'
 import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import ProfileForm from './ProfileForm'
 import { 
   User, 
   Mail, 
@@ -12,10 +13,16 @@ import {
   ShieldCheck, 
   LogOut, 
   ChevronRight,
-  Fingerprint
+  Fingerprint,
+  Zap,
+  Flame,
+  Trophy,
+  X
 } from 'lucide-react'
 
-export default async function ProfilePage() {
+export default async function ProfilePage(props: { searchParams: Promise<{ edit?: string }> }) {
+  const searchParams = await props.searchParams
+  const isEditing = searchParams.edit === 'true'
   const session = await getServerSession(authOptions)
 
   if (!session?.user) {
@@ -27,7 +34,12 @@ export default async function ProfilePage() {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, email: true, image: true, createdAt: true, updatedAt: true },
+    select: {
+      id: true, name: true, email: true, image: true,
+      createdAt: true, updatedAt: true,
+      totalXp: true, monthlyXp: true, monthlyXpResetAt: true,
+      streakCount: true, lastActiveDate: true,
+    },
   })
 
   if (!user) {
@@ -40,6 +52,24 @@ export default async function ProfilePage() {
     )
   }
 
+  // Calculate monthly XP (handle stale month)
+  const now = new Date()
+  const currentMonth = now.getUTCMonth()
+  const currentYear = now.getUTCFullYear()
+  const resetMonth = user.monthlyXpResetAt.getUTCMonth()
+  const resetYear = user.monthlyXpResetAt.getUTCFullYear()
+  const isStale = resetMonth !== currentMonth || resetYear !== currentYear
+  const effectiveMonthlyXp = isStale ? 0 : user.monthlyXp
+
+  // Calculate rank
+  const usersAbove = await prisma.user.count({
+    where: {
+      monthlyXp: { gt: effectiveMonthlyXp },
+      monthlyXpResetAt: { gte: new Date(currentYear, currentMonth, 1) },
+    },
+  })
+  const rank = usersAbove + 1
+
   return (
     // Global Background: #121212
     <div className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-[64px]">
@@ -49,27 +79,45 @@ export default async function ProfilePage() {
 
       <div className="max-w-[340px] md:max-w-md mx-auto px-[6px] pt-16 relative z-10">
         
-        {/* AVATAR & IDENTITY */}
-        <section className="flex flex-col items-center mb-[24px]">
-          <div className="relative mb-4">
-            {/* item_radius: 12px */}
-            <div className="w-20 h-20 rounded-[12px] bg-[#222222] border border-[#2D2D2F] overflow-hidden flex items-center justify-center shadow-2xl">
-              {user.image ? (
-                <img src={user.image} alt="Avatar" className="w-full h-full object-cover" />
-              ) : (
-                <User size={32} className="text-[#6B7280]" />
-              )}
+        {/* PROFILE HEADER / FORM */}
+        {isEditing ? (
+          <section className="mb-[24px] bg-[#1C1C1E] border border-[#2D2D2F] p-6 rounded-[24px] shadow-2xl">
+            <div className="flex items-center justify-between mb-8">
+              <h1 className="text-[19px] font-bold tracking-tight">Edit Profile</h1>
+              <Link 
+                href="/profile" 
+                className="w-10 h-10 rounded-full bg-[#222222] border border-[#2D2D2F] flex items-center justify-center text-[#6B7280] hover:text-white transition-all"
+              >
+                <X size={18} />
+              </Link>
             </div>
-            {/* Verified Green from Brand Tokens */}
-            <div className="absolute -bottom-1 -right-1 bg-[#10B981] p-1.5 rounded-[8px] border-[3px] border-[#121212]">
-              <Fingerprint size={12} className="text-[#000000]" />
+            {/* @ts-ignore */}
+            <ProfileForm user={user} />
+          </section>
+        ) : (
+          <section className="flex flex-col items-center mb-[24px]">
+            <div className="relative mb-4">
+              <div className="w-20 h-20 rounded-[12px] bg-[#222222] border border-[#2D2D2F] overflow-hidden flex items-center justify-center shadow-2xl">
+                {user.image ? (
+                  <img src={user.image} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <User size={32} className="text-[#6B7280]" />
+                )}
+              </div>
+              <div className="absolute -bottom-1 -right-1 bg-[#10B981] p-1.5 rounded-[8px] border-[3px] border-[#121212]">
+                <Fingerprint size={12} className="text-[#000000]" />
+              </div>
             </div>
-          </div>
-          {/* h1: 19px Bold */}
-          <h1 className="text-[19px] font-bold tracking-tight">{user.name ?? 'Learner'}</h1>
-          {/* caption: 12px Medium, secondary color */}
-          <p className="text-[#9CA3AF] text-[12px] font-medium">{user.email}</p>
-        </section>
+            <h1 className="text-[19px] font-bold tracking-tight">{user.name ?? 'Learner'}</h1>
+            <p className="text-[#9CA3AF] text-[12px] font-medium mb-4">{user.email}</p>
+            <Link 
+              href="/profile?edit=true" 
+              className="px-5 py-2 rounded-full bg-[#1C1C1E] border border-[#2D2D2F] text-[11px] font-bold uppercase tracking-widest text-[#3B82F6] hover:bg-[#222222] transition-colors"
+            >
+              Edit Profile
+            </Link>
+          </section>
+        )}
 
         {/* STATS STRIP - Standard Card Radius 16px (per cards.standard_card) */}
         <div className="grid grid-cols-2 gap-[8px] mb-[20px]">
@@ -89,6 +137,37 @@ export default async function ProfilePage() {
           </div>
         </div>
 
+        {/* XP & RANKING STATS */}
+        <div className="grid grid-cols-3 gap-[8px] mb-[20px]">
+          <div className="bg-[#1C1C1E] border border-[#FACC15]/10 p-4 rounded-[16px] flex flex-col items-center text-center">
+            <Zap size={16} className="text-[#FACC15] mb-1" fill="currentColor" />
+            <p className="text-[19px] font-bold text-[#FACC15]">{user.totalXp.toLocaleString()}</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mt-0.5">Total XP</p>
+          </div>
+          <div className="bg-[#1C1C1E] border border-[#EF4444]/10 p-4 rounded-[16px] flex flex-col items-center text-center">
+            <Flame size={16} className="text-[#EF4444] mb-1" fill={user.streakCount > 0 ? 'currentColor' : 'none'} />
+            <p className={`text-[19px] font-bold ${user.streakCount > 0 ? 'text-[#EF4444]' : 'text-[#6B7280]'}`}>{user.streakCount}</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mt-0.5">Day Streak</p>
+          </div>
+          <div className="bg-[#1C1C1E] border border-[#3B82F6]/10 p-4 rounded-[16px] flex flex-col items-center text-center">
+            <Trophy size={16} className="text-[#3B82F6] mb-1" />
+            <p className="text-[19px] font-bold text-[#3B82F6]">#{rank}</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mt-0.5">Rank</p>
+          </div>
+        </div>
+
+        <div className="bg-[#1C1C1E] border border-[#2D2D2F] p-4 rounded-[16px] mb-[20px]">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-0.5">Monthly XP</p>
+              <p className="text-[16px] font-bold text-[#FFFFFF]">{effectiveMonthlyXp.toLocaleString()} <span className="text-[11px] text-[#6B7280] font-normal">XP this month</span></p>
+            </div>
+            <Link href="/ranking" className="text-[11px] font-bold uppercase tracking-widest text-[#3B82F6] hover:opacity-80 transition-opacity">
+              View Rankings →
+            </Link>
+          </div>
+        </div>
+
         {/* SETTINGS MENU - UI Element Divider: #262626 */}
         <div className="bg-[#1C1C1E] border border-[#2D2D2F] rounded-[16px] overflow-hidden mb-6">
           <div className="px-5 py-3 border-b border-[#262626] bg-[#222222]">
@@ -97,6 +176,19 @@ export default async function ProfilePage() {
           
           {/* settings_row: height 56px, background #1C1C1E */}
           <div className="divide-y divide-[#262626]">
+            <Link 
+              href="/profile?edit=true" 
+              className="w-full h-[56px] flex items-center justify-between px-5 hover:bg-[#222222] transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-[8px] bg-[#121212] border border-[#2D2D2F] flex items-center justify-center">
+                  <User size={16} className="text-[#9CA3AF] group-hover:text-[#3B82F6] transition-colors" />
+                </div>
+                <span className="text-[14px] font-regular text-[#FFFFFF]">Edit Profile</span>
+              </div>
+              <ChevronRight size={14} className="text-[#6B7280]" />
+            </Link>
+
             <button className="w-full h-[56px] flex items-center justify-between px-5 hover:bg-[#222222] transition-all group">
               <div className="flex items-center gap-3">
                 {/* Icon Container Rounded 8px */}

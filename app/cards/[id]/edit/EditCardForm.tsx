@@ -75,7 +75,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
       if (JSON.stringify(sentences) !== JSON.stringify(initialCard.sentences)) payload.sentences = sentences
 
       await axios.patch(`/api/cards/${initialCard.id}`, payload)
-      router.push('/')
+      router.push('/cards/learning')
       router.refresh()
     } catch (err: any) {
       setError(err?.response?.data?.error || 'Failed to save')
@@ -251,12 +251,12 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
       </main>
 
       {/* Primary Action Button - Floating Style */}
-      <footer className="fixed bottom-12 left-0 right-0 p-6 bg-gradient-to-t from-[#121212] via-[#121212] to-transparent z-20">
+      <footer className="fixed bottom-12 left-0 right-0 flex justify-center  p-6 bg-gradient-to-t from-[#121212] via-[#121212] to-transparent z-20">
         <div className="max-w-xl mx-auto">
           <button 
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-[#3B82F6] text-[#FFFFFF] h-[56px] rounded-[12px] text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-[0_8px_30px_rgb(0,0,0,0.4)] disabled:bg-[#374151] disabled:text-[#6B7280]"
+            className="w-60 bg-green-600 text-[#FFFFFF] h-[39px] rounded-[12px] text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-[0_8px_30px_rgb(0,0,0,0.4)] disabled:bg-[#374151] disabled:text-[#6B7280]"
           >
             {loading ? <Loader2 size={20} className="animate-spin" /> : <><Save size={20} /> SAVE CHANGES</>}
           </button>

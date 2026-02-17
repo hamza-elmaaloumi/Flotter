@@ -24,7 +24,7 @@ export default function Header() {
 
           {/* Header Title: h2 style (16px, Bold) */}
           <span className="hidden md:block text-[16px] font-bold tracking-normal text-[#FFFFFF]">
-            iStoria
+            Flotter
           </span>
         </div>
 
@@ -36,7 +36,7 @@ export default function Header() {
                 <>
                   {/* Action Button: Premium Gold Ranking Shield */}
                   <Link
-                    href=""
+                    href="/ranking"
                     className="p-2 transition-all relative group flex items-center justify-center"
                     title="Rankings"
                   >

@@ -62,7 +62,7 @@ export default function NewCardPage() {
       const imageUrl = selected?.urls?.regular || selected?.urls?.small || ''
       await axios.post('/api/cards', { word, sentences: cleanSentences, imageUrl })
       setMsg('Success')
-      setTimeout(() => router.push('/'), 1000)
+      setTimeout(() => router.push('/cards/learning'), 1000)
     } catch (err) {
       setMsg('Save failed')
     } finally { setSaving(false) }
@@ -215,12 +215,12 @@ export default function NewCardPage() {
       </main>
 
       {/* Primary Action Button - Floating State */}
-      <footer className="fixed bottom-12 left-0 right-0 p-6 bg-gradient-to-t from-[#121212] via-[#121212] to-transparent z-10">
+      <footer className="fixed bottom-12 left-0 right-0 flex justify-center p-6 bg-gradient-to-t from-[#121212] via-[#121212] to-transparent z-10">
         <div className="max-w-xl mx-auto">
           <button 
             onClick={() => handleSubmit()}
             disabled={saving}
-            className="w-full bg-[#3B82F6] text-[#FFFFFF] h-[56px] rounded-[12px] text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg disabled:bg-[#374151] disabled:text-[#6B7280]"
+            className="w-60 bg-green-600 text-[#FFFFFF] h-[39px] rounded-[12px] text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg disabled:bg-[#374151] disabled:text-[#6B7280]"
           >
             {saving ? <Loader2 size={20} className="animate-spin" /> : <><Plus size={20} strokeWidth={3} /> CREATE NEW CARD</>}
           </button>

@@ -17,9 +17,11 @@ interface FlashcardProps {
   isFlipped: boolean
   onFlip: () => void
   onReview: (id: string, status: 'success' | 'struggle') => void
+  flipTimestamp: number | null
+  onSwipeXp?: (earnedReviewXp: boolean) => void
 }
 
-export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: FlashcardProps) {
+export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, flipTimestamp, onSwipeXp }: FlashcardProps) {
   const router = useRouter()
   const x = useMotionValue(0)
   const [isDragging, setIsDragging] = useState(false)
@@ -51,13 +53,17 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
     const velocity = info.velocity.x
     const threshold = 120
 
+    const waited = flipTimestamp ? (Date.now() - flipTimestamp >= 1500) : false
+
     if (currentX > threshold || velocity > 500) {
       await animate(x, 500, { duration: 0.3, ease: "easeOut" })
+      onSwipeXp?.(waited)
       onReview(card.id as string, 'success')
       x.set(0)
     }
     else if (currentX < -threshold || velocity < -500) {
       await animate(x, -500, { duration: 0.3, ease: "easeOut" })
+      onSwipeXp?.(waited)
       onReview(card.id as string, 'struggle')
       x.set(0)
     }

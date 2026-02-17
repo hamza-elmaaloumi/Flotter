@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]/route"
+import { awardXp } from '@/lib/xp'
 
 const INITIAL_REVIEW_MS = 15 * 60 * 1000 // 15 minutes
 
@@ -32,6 +33,9 @@ export async function POST(req: Request) {
       data: { userId, word, imageUrl, sentences },
       select: { id: true, word: true, imageUrl: true, sentences: true, nextReviewAt: true },
     })
+
+    // Award +50 XP for creating a card
+    await awardXp(userId, 50)
 
     return NextResponse.json({ card }, { status: 201 })
   } catch (err) {

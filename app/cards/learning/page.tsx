@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
 import Link from 'next/link'
-import { Plus, Calendar, GraduationCap, ChevronDown, Image as ImageIcon, BookOpen, Sparkles, Zap, Check } from 'lucide-react'
+import { Plus, Calendar, GraduationCap, ChevronDown, Image as ImageIcon, BookOpen, Sparkles, Zap, Check, Flame } from 'lucide-react'
 
 // --- Sub-components ---
 function StatCard({ label, value, loading, icon: Icon, colorClass }: any) {
@@ -50,8 +50,16 @@ export default function Home() {
 
   const total = data?.totalCardsCount || 0
   const due = data?.dueCardsCount || 0
+  const streak = data?.streak || 0
+  const totalXp = data?.totalXp || 0
+  const lastActiveDate = data?.lastActiveDate
   const isFinished = data && due === 0 && total > 0
   const completionPercentage = isFinished ? 100 : (total > 0 ? ((total - due) / total) * 100 : 0)
+
+  // Streak status: check if user has been active today
+  const isActiveToday = lastActiveDate
+    ? new Date(lastActiveDate).toISOString().slice(0, 10) === new Date().toISOString().slice(0, 10)
+    : false
 
   return (
     // Global Background: #121212 | Font: System Sans-Serif
@@ -59,18 +67,15 @@ export default function Home() {
       <div className="max-w-5xl mx-auto px-[6px] pt-[20px] relative">
 
         {/* HERO SECTION - Card Radius: 14px */}
-        <section className={`relative overflow-hidden rounded-[14px] border transition-all duration-1000 p-6 mb-[20px] ${
-            isFinished ? 'bg-[#121212] border-[#10B981]/40' : 'bg-[#121212] border-[#2D2D2F]'
+        <section className={`relative overflow-hidden rounded-[14px] border transition-all duration-1000 p-6 mb-[20px] ${isFinished ? 'bg-[#121212] border-[#10B981]/40' : 'bg-[#121212] border-[#2D2D2F]'
           }`}>
 
-          <div className={`absolute top-[-50px] right-[-50px] w-[200px] h-[200px] blur-[80px] rounded-full transition-all duration-1000 ${
-              isFinished ? 'bg-[#10B981]/15' : 'bg-[#EF4444]/10'
+          <div className={`absolute top-[-50px] right-[-50px] w-[200px] h-[200px] blur-[80px] rounded-full transition-all duration-1000 ${isFinished ? 'bg-[#10B981]/15' : 'bg-[#EF4444]/10'
             }`} />
 
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex-1 text-center md:text-left order-2 md:order-1">
-              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4 border transition-colors duration-500 ${
-                  isFinished ? 'bg-[#10B981]/10 border-[#10B981]/20 text-[#10B981]' : 'bg-[#222222] border-[#2D2D2F] text-[#3B82F6]'
+              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4 border transition-colors duration-500 ${isFinished ? 'bg-[#10B981]/10 border-[#10B981]/20 text-[#10B981]' : 'bg-[#222222] border-[#2D2D2F] text-[#3B82F6]'
                 }`}>
                 <Sparkles size={12} fill="currentColor" />
                 <span className="text-[11px] font-bold uppercase tracking-widest">
@@ -98,10 +103,9 @@ export default function Home() {
                 {/* Primary Button Style - Radius: 12px */}
                 <Link
                   href="/cards/deck"
-                  className={`flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-[24px] py-[14px] rounded-[12px] font-bold text-[14px] transition-all active:scale-[0.95] ${
-                      isFinished
-                        ? "bg-[#374151] text-[#6B7280] cursor-not-allowed"
-                        : "bg-[#EF4444] text-[#FFFFFF] shadow-[0_10px_30px_rgba(239,68,68,0.2)]"
+                  className={`flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-[24px] py-[14px] rounded-[12px] font-bold text-[14px] transition-all active:scale-[0.95] ${isFinished
+                      ? "bg-[#374151] text-[#6B7280] cursor-not-allowed"
+                      : "bg-[#EF4444] text-[#FFFFFF] shadow-[0_10px_30px_rgba(239,68,68,0.2)]"
                     }`}
                 >
                   <Zap size={16} fill="currentColor" />
@@ -161,6 +165,90 @@ export default function Home() {
                 )}
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* STREAK & XP SECTION */}
+        <section className="mb-[20px]">
+          <div className={`relative overflow-hidden rounded-[14px] border p-4 transition-all ${streak > 0 ? 'bg-[#1C1C1E] border-[#EF4444]/20' : 'bg-[#1C1C1E] border-[#2D2D2F]'
+            }`}>
+            {streak > 0 && (
+              <div className="absolute top-[-30px] right-[-30px] w-[120px] h-[120px] blur-[60px] rounded-full bg-[#EF4444]/10" />
+            )}
+            <div className="relative z-10 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center border ${streak > 0 ? 'bg-[#EF4444]/10 border-[#EF4444]/20' : 'bg-[#222222] border-[#2D2D2F]'
+                  }`}>
+                  <Flame size={20} className={streak > 0 ? 'text-[#EF4444]' : 'text-[#6B7280]'} fill={streak > 0 ? 'currentColor' : 'none'} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[19px] font-bold ${streak > 0 ? 'text-[#EF4444]' : 'text-[#6B7280]'}`}>
+                      {loading ? '...' : streak}
+                    </span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-[#9CA3AF]">
+                      Day Streak
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#6B7280] mt-0.5">
+                    {isActiveToday
+                      ? '✓ Active today — streak safe'
+                      : streak > 0
+                        ? 'Earn at least 1 XP today to keep it alive!'
+                        : 'Start learning to build your streak'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 bg-[#222222] border border-[#2D2D2F] px-3 py-1.5 rounded-[12px]">
+                <Zap size={12} className="text-[#FACC15]" fill="currentColor" />
+                <span className="text-[12px] font-bold text-[#FACC15]">{loading ? '...' : totalXp}</span>
+                <span className="text-[10px] text-[#6B7280] font-bold uppercase">XP</span>
+              </div>
+            </div>
+
+            {/* Streak progress dots for the week */}
+            {streak > 0 && (
+              <div className="mt-3 pt-3 border-t border-[#262626] flex items-center justify-center gap-2">
+                {(() => {
+                  const weekLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+                  const todayIndex = (new Date().getDay() + 6) % 7
+
+                  return weekLabels.map((label, i) => {
+                    const isToday = i === todayIndex;
+
+                    // LOGIC: 
+                    // 1. If it's today, fill it ONLY if isActiveToday is true.
+                    // 2. If it's a past day, fill it if the streak is long enough to cover it.
+                    let filled = false;
+                    if (isToday) {
+                      filled = isActiveToday;
+                    } else if (i < todayIndex) {
+                      // If today is Tuesday (index 1) and we check Monday (index 0)
+                      // we fill it if streak is at least 1 (if we haven't done today) 
+                      // or 2 (if we have already done today).
+                      const distance = todayIndex - i;
+                      filled = streak >= (isActiveToday ? distance + 1 : distance);
+                    }
+
+                    return (
+                      <div key={i} className="flex flex-col items-center gap-1">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${filled
+                            ? 'bg-[#EF4444] shadow-[0_0_10px_rgba(239,68,68,0.3)]'
+                            : isToday
+                              ? 'bg-[#222222] border-2 border-[#EF4444]/40' // Ring for today if not done
+                              : 'bg-[#222222] border border-[#2D2D2F]'
+                          } ${isToday ? 'scale-110' : ''}`}>
+                          {filled && <Flame size={10} className="text-white" fill="currentColor" />}
+                        </div>
+                        <span className={`text-[8px] font-bold uppercase ${isToday ? 'text-[#EF4444]' : 'text-[#6B7280]'}`}>
+                          {label}
+                        </span>
+                      </div>
+                    )
+                  })
+                })()}
+              </div>
+            )}
           </div>
         </section>
 

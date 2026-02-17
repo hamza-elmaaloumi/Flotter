@@ -12,6 +12,42 @@ export default function SettingsPage() {
 
   const items: { title: string; content: React.ReactNode }[] = [
     {
+      title: "Mastering XP & Ranking",
+      content: (
+        <div className="space-y-4 text-[14px] font-normal text-[#9CA3AF] leading-relaxed">
+          <section>
+            <p className="font-bold text-[#FFFFFF] mb-2 uppercase text-[11px] tracking-wider">How our XP works</p>
+            <p className="mb-2">XP (Experience Points) is the heartbeat of Flotter. It tracks your focus and consistency.</p>
+            <ul className="list-disc pl-5 space-y-2 text-[13px]">
+              <li><span className="text-[#3B82F6] font-bold">+10 XP</span>: Perfect Review (Flip, wait <span className="text-white">1.5s</span> for focus, then swipe).</li>
+              <li><span className="text-[#FACC15] font-bold">+5 XP</span>: Audio Context (Listen to the <span className="text-white">full AI sentence</span> audio).</li>
+              <li><span className="text-[#10B981] font-bold">+50 XP</span>: Builder Bonus (Add a <span className="text-white">new card</span> to your deck).</li>
+              <li className="italic text-[#6B7280]">Note: Swiping before 1.5s results in 0 XP. Quality focus matters.</li>
+            </ul>
+          </section>
+
+          <section className="pt-2 border-t border-[#262626]">
+            <p className="font-bold text-[#FFFFFF] mb-2 uppercase text-[11px] tracking-wider">Climbing the Ranking</p>
+            <p className="mb-2">Your <span className="text-white">Monthly Ranking</span> is derived from the XP you accumulate in a calendar month.</p>
+            <ul className="space-y-2 text-[13px]">
+              <li className="flex items-start gap-2">
+                <span className="text-[#3B82F6]">1.</span>
+                <span><span className="text-white font-semibold">Maximize Each Card:</span> Instead of rushing cards, always listen to the AI audio to grab that extra <span className="text-[#FACC15] font-bold">+5 XP</span> per card.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#3B82F6]">2.</span>
+                <span><span className="text-white font-semibold">Consistency is Key:</span> Maintain a daily streak to elevate your visibility to other learners.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#3B82F6]">3.</span>
+                <span><span className="text-white font-semibold">Monthly Resets:</span> The leaderboard resets at the start of every month. If you're behind, use the first day of the month to sprint ahead!</span>
+              </li>
+            </ul>
+          </section>
+        </div>
+      ),
+    },
+    {
       title: "App guide",
       content: (
         <div className="space-y-3 text-[14px] font-normal text-[#9CA3AF] leading-relaxed">

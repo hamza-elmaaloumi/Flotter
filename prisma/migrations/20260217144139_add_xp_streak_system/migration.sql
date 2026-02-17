@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "users" ADD COLUMN     "last_active_date" TIMESTAMP(3),
+ADD COLUMN     "monthly_xp" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "monthly_xp_reset_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "streak_count" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "total_xp" INTEGER NOT NULL DEFAULT 0;
