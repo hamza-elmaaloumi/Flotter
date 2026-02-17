@@ -21,7 +21,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     }
 
     return (
-        <div className="min-h-screen bg-black flex items-start md:items-center justify-center p-4 md:p-6">
+        <div className="min-h-screen bg-black">
             <EditCardForm initialCard={serializable} />
         </div>
     )

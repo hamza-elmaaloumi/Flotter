@@ -3,20 +3,39 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
-import { Plus, Search, Image as ImageIcon, Check, ArrowLeft, Type } from 'lucide-react'
+import { Plus, Search, Check, ChevronLeft, Loader2, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export default function NewCardPage() {
   const { user } = useUser()
   const router = useRouter()
+  
+  // State
   const [word, setWord] = useState('')
-  const [sentences, setSentences] = useState(['', '', ''])
+  const [sentences, setSentences] = useState(['']) 
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<any[]>([])
   const [selected, setSelected] = useState<any | null>(null)
+  
+  // UI States
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
+
+  // Sentence Handlers
+  const addSentence = () => setSentences([...sentences, ''])
+  const removeSentence = (index: number) => {
+    if (sentences.length === 1) {
+      setSentences(['']) 
+      return
+    }
+    setSentences(sentences.filter((_, i) => i !== index))
+  }
+  const updateSentence = (index: number, val: string) => {
+    const copy = [...sentences]
+    copy[index] = val
+    setSentences(copy)
+  }
 
   async function searchImages() {
     if (!query) return
@@ -29,164 +48,187 @@ export default function NewCardPage() {
     } finally { setLoading(false) }
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!word.trim() || sentences.some(s => !s.trim()) || !selected) {
-      setMsg('Please fill all fields and select an image.')
+  async function handleSubmit(e?: React.FormEvent) {
+    if (e) e.preventDefault()
+    
+    const cleanSentences = sentences.filter(s => s.trim() !== '')
+    if (!word.trim() || cleanSentences.length === 0 || !selected) {
+      setMsg('Incomplete fields')
       return 
     }
 
     setSaving(true)
     try {
+      // Use 'regular' or 'small' for better quality than thumb
       const imageUrl = selected?.urls?.regular || selected?.urls?.small || ''
-      await axios.post('/api/cards', { word, sentences, imageUrl })
-      
-      setMsg('Card saved successfully')
-      setTimeout(() => router.push('/'), 1500)
+      await axios.post('/api/cards', { word, sentences: cleanSentences, imageUrl })
+      setMsg('Success')
+      setTimeout(() => router.push('/'), 1000)
     } catch (err) {
-      setMsg('Failed to save card')
+      setMsg('Save failed')
     } finally { setSaving(false) }
   }
 
-  const inputStyles = "w-full bg-[#121212] border border-[#1C1C1E] rounded-[14px] md:rounded-[16px] px-4 py-3 md:py-[16px] focus:border-[#22C55E] outline-none text-[14px] md:text-[16px] transition-all placeholder:text-zinc-600"
-  const labelStyles = "text-[10px] md:text-[12px] font-[700] uppercase tracking-widest text-[#636366] ml-1"
+  const inputBase = "w-full bg-zinc-900/40 border border-white/[0.06] rounded-md px-3 py-2 text-[13px] text-white placeholder:text-zinc-600 outline-none focus:border-green-500/50 transition-all"
+  const labelBase = "text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5 block font-medium"
 
   return (
-    <main className="min-h-screen bg-[#000000] text-[#FFFFFF] py-4 md:py-[32px] px-4 md:px-[20px] antialiased">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-black text-zinc-300 antialiased pb-24">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-20 bg-black/80 backdrop-blur-md border-b border-white/[0.05] px-4 py-3 flex items-center justify-between">
+        <button onClick={() => router.back()} className="p-1 -ml-1 text-zinc-500 hover:text-white transition-colors">
+          <ChevronLeft size={18} />
+        </button>
+        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">New Card</span>
+        <button 
+          onClick={() => handleSubmit()} 
+          disabled={saving}
+          className="text-green-500 text-[13px] font-semibold active:opacity-50 disabled:opacity-30"
+        >
+          {saving ? <Loader2 size={14} className="animate-spin" /> : 'Create'}
+        </button>
+      </div>
+
+      <main className="max-w-4xl mx-auto p-4 lg:grid lg:grid-cols-12 lg:gap-8">
         
-        {/* HEADER */}
-        <header className="mb-6 md:mb-[32px] flex items-center justify-between">
-          <button 
-            onClick={() => router.back()}
-            className="p-2 -ml-2 text-zinc-500 hover:text-white transition-colors"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <h1 className="text-[18px] md:text-[24px] font-[800] tracking-tight">New Card</h1>
-          <div className="w-10 h-10 bg-zinc-900 rounded-full border border-white/5 flex items-center justify-center">
-            <Plus size={18} className="text-[#22C55E]" />
-          </div>
-        </header>
+        {/* Left Side: Inputs */}
+        <div className="lg:col-span-7 space-y-6">
+          <section>
+            <label className={labelBase}>Word</label>
+            <input 
+              value={word} 
+              onChange={e => setWord(e.target.value)} 
+              placeholder="e.g. Ephemeral" 
+              className={inputBase + " text-[15px] font-medium py-2.5"} 
+            />
+          </section>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-[32px]">
-          
-          {/* LEFT: INPUTS */}
-          <div className="lg:col-span-7 space-y-5 md:space-y-[24px]">
-            <div className="space-y-1.5 md:space-y-2">
-              <label className={labelStyles}>The Word</label>
-              <input 
-                value={word} 
-                onChange={e => setWord(e.target.value)} 
-                placeholder="Vocabulary term..."
-                className={inputStyles} 
-              />
+          <section>
+            <div className="flex justify-between items-center mb-1.5">
+              <label className={labelBase + " mb-0"}>Context Sentences</label>
+              <button 
+                type="button" 
+                onClick={addSentence}
+                className="text-[10px] text-blue-500 font-bold uppercase flex items-center gap-1 hover:text-blue-400"
+              >
+                <Plus size={10} /> Add Another
+              </button>
             </div>
-
-            <div className="space-y-2 md:space-y-3">
-              <label className={labelStyles}>Context Sentences</label>
+            <div className="space-y-2">
               {sentences.map((s, i) => (
-                <textarea 
-                  key={i} 
-                  value={s} 
-                  onChange={e => {
-                    const copy = [...sentences]; copy[i] = e.target.value; setSentences(copy);
-                  }} 
-                  placeholder={`Example ${i + 1}`}
-                  rows={2} 
-                  className={`${inputStyles} resize-none py-3`} 
-                />
-              ))}
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={saving} 
-              className="w-full bg-[#22C55E] hover:bg-[#16A34A] text-black font-[800] py-4 md:py-[18px] rounded-[16px] md:rounded-[20px] disabled:opacity-50 transition-all active:scale-[0.98] text-[15px] shadow-lg shadow-green-500/10"
-            >
-              {saving ? 'Encrypting Card...' : 'Save to Deck'}
-            </button>
-            
-            {msg && (
-                <div className={`p-4 rounded-xl border text-center text-[13px] font-bold ${msg.includes('success') ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'}`}>
-                    {msg}
-                </div>
-            )}
-          </div>
-
-          {/* RIGHT: IMAGE PICKER */}
-          <div className="lg:col-span-5 flex flex-col gap-4">
-            <div className="bg-[#121212] border border-[#1C1C1E] p-4 md:p-6 rounded-[24px] flex flex-col h-full">
-               <label className={labelStyles + " mb-3"}>Visual Reference</label>
-               
-               <div className="flex gap-2 mb-4">
-                  <input 
-                      value={query} 
-                      onChange={e => setQuery(e.target.value)} 
-                      placeholder="Search image..." 
-                      className="flex-1 bg-black border border-[#1C1C1E] rounded-[12px] px-4 py-2 text-[14px] outline-none focus:border-blue-500 transition-all" 
+                <div key={i} className="group relative flex items-start gap-2">
+                  <textarea 
+                    value={s} 
+                    onChange={e => updateSentence(i, e.target.value)} 
+                    placeholder={`Sentence ${i + 1}...`}
+                    rows={2} 
+                    className={inputBase + " resize-none pr-8"} 
                   />
                   <button 
-                      type="button" 
-                      onClick={searchImages} 
-                      disabled={loading}
-                      className="bg-blue-500 text-white px-4 rounded-[12px] text-[12px] font-[800] uppercase tracking-tighter disabled:opacity-50"
+                    type="button" 
+                    onClick={() => removeSentence(i)}
+                    className="absolute right-2 top-2 text-zinc-700 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                   >
-                      {loading ? '...' : 'Find'}
+                    <X size={14} />
                   </button>
-               </div>
-
-               <div className="flex-1 flex flex-col min-h-[280px]">
-                   <div className="grid grid-cols-3 gap-2 h-full overflow-y-auto bg-black/40 p-2 rounded-xl border border-white/5 custom-scrollbar">
-                      {results.length > 0 ? (
-                          results.map(r => (
-                          <div key={r.id} className="relative group">
-                            <img 
-                                src={r.urls.thumb} 
-                                alt="result"
-                                onClick={() => setSelected(r)} 
-                                className={`cursor-pointer rounded-lg w-full aspect-square object-cover transition-all ${selected?.id === r.id ? 'opacity-100 ring-2 ring-[#22C55E]' : 'opacity-40 hover:opacity-100'}`} 
-                            />
-                            {selected?.id === r.id && (
-                              <div className="absolute top-1 right-1 bg-[#22C55E] rounded-full p-0.5 pointer-events-none">
-                                <Check size={10} className="text-black" />
-                              </div>
-                            )}
-                          </div>
-                          ))
-                      ) : (
-                          <div className="col-span-3 flex flex-col items-center justify-center h-full text-zinc-700 space-y-2">
-                              <ImageIcon size={24} strokeWidth={1.5} />
-                              <p className="text-[11px] font-medium italic">No results yet</p>
-                          </div>
-                      )}
-                   </div>
-               </div>
-
-               {selected && (
-                   <div className="mt-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                      <div className="relative rounded-[16px] overflow-hidden border border-[#1C1C1E] aspect-video">
-                          <img src={selected.urls.small} alt="Selection" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
-                            <p className="text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                              <Check size={12} className="text-[#22C55E]" /> Selection Active
-                            </p>
-                          </div>
-                      </div>
-                   </div>
-               )}
+                </div>
+              ))}
             </div>
+          </section>
+        </div>
+
+        {/* Right Side: Image Library */}
+        <div className="lg:col-span-5 mt-8 lg:mt-0 pt-8 lg:pt-0 border-t lg:border-t-0 border-white/[0.05]">
+          <label className={labelBase}>Visual Search</label>
+          <div className="flex gap-2 mb-3">
+            <div className="relative flex-1">
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-600" />
+              <input 
+                value={query} 
+                onChange={e => setQuery(e.target.value)} 
+                onKeyDown={(e) => e.key === 'Enter' && searchImages()}
+                className={inputBase + " pl-8 h-8"} 
+                placeholder="Find imagery..." 
+              />
+            </div>
+            <button 
+              type="button" 
+              onClick={searchImages} 
+              disabled={loading}
+              className="px-3 h-8 bg-zinc-800 text-[11px] font-bold rounded-md hover:bg-zinc-700 transition-colors disabled:opacity-50"
+            >
+              {loading ? <Loader2 size={12} className="animate-spin" /> : 'Search'}
+            </button>
           </div>
 
-        </form>
+          {/* Grid Results */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 max-h-48 overflow-y-auto pr-1 mb-4 border border-white/[0.05] rounded-lg p-1.5 bg-zinc-900/20 scrollbar-hide">
+            {results.map(r => (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => setSelected(r)}
+                className={`relative w-full rounded-sm overflow-hidden border transition-all ${selected?.id === r.id ? 'border-green-500 ring-1 ring-green-500' : 'border-transparent hover:border-zinc-700'}`}
+              >
+                {/* FIX 1: Changed pt-[100%] to aspect-square and img to object-cover.
+                   This makes tiles identical sizes but fills them completely.
+                   If you strictly want NO cropping in grid, change object-cover to object-contain. 
+                */}
+                <div className="aspect-square relative bg-zinc-900">
+                  <img 
+                    src={r.urls.small} // Used 'small' instead of 'thumb' for slightly better resolution
+                    alt={r.alt_description || "image"} 
+                    className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity ${selected?.id === r.id ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`} 
+                  />
+                </div>
+                {selected?.id === r.id && (
+                  <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
+                    <Check size={14} className="text-white drop-shadow-md" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Selected Preview */}
+          {selected && (
+            // FIX 2: Removed aspect-[16/9] to stop cropping the selected image
+            // Added min-h-[100px] to prevent collapse
+            <div className="relative w-full rounded-md overflow-hidden border border-white/[0.1] animate-in fade-in bg-zinc-900">
+              <img 
+                src={selected.urls.regular} 
+                alt="Preview" 
+                // Removed absolute positioning and h-full so image dictates height naturally
+                className="block w-full h-auto object-contain opacity-90" 
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 pt-8">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Selected Reference</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Floating Action Button */}
+      <div className="fixed bottom-12 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">
+        <div className="max-w-xl mx-auto pointer-events-auto">
+          <button 
+            onClick={() => handleSubmit()}
+            disabled={saving}
+            className="w-full bg-white text-black h-12 rounded-full text-[13px] font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 hover:bg-zinc-200"
+          >
+            {saving ? <Loader2 size={16} className="animate-spin" /> : <><Plus size={16} /> Save New Card</>}
+          </button>
+        </div>
       </div>
-      
-      {/* Custom Scrollbar Logic */}
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1c1c1e; border-radius: 10px; }
-      `}</style>
-    </main>
+
+      {msg && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50">
+           <div className="px-4 py-1.5 bg-zinc-900 border border-white/10 rounded-full text-[11px] font-bold text-white shadow-lg">
+              {msg}
+           </div>
+        </div>
+      )}
+    </div>
   )
 }

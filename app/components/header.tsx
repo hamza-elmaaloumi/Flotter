@@ -9,7 +9,7 @@ export default function Header() {
 
   return (
     // Applied: bottom_tab_bar background and border styles
-    <header className="fixed top-0 left-0 right-0 z-[100] h-[60px] border-b-[0.5px] border-[#1C1C1E] bg-[#000000]/80 backdrop-blur-xl">
+    <header className="fixed top-0 left-0 right-0 z-[100] h-[60px] border-b-[3.5px] border-[#1C1C1E] bg-[#000000]/80 backdrop-blur-xl">
       <nav className="max-w-[1100px] mx-auto px-[20px] h-full flex items-center justify-between">
         
         {/* Left: Brand - Primary Green Logo */}
@@ -29,15 +29,6 @@ export default function Header() {
         <div className="flex items-center justify-center gap-4">
           {user && !isLoading && (
             <>
-              {/* Learning Hub Button */}
-              <Link
-                href="/cards/learning"
-                // Applied: surface background and inner_card radius (16px)
-                className="flex items-center justify-center w-[42px] h-[42px] rounded-[16px] bg-[#121212] border border-[#1C1C1E] text-[#98989E] hover:text-[#3B82F6] hover:border-[#3B82F6] transition-all active:scale-90"
-                title="Learning Hub"
-              >
-                <LayoutGrid size={20} strokeWidth={2} />
-              </Link>
 
               {/* Deck Button - Fixed to match Design System */}
               <Link

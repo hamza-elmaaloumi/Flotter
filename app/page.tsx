@@ -11,6 +11,7 @@ import {
   Layers,
   Activity
 } from 'lucide-react'
+import AdBanner from './components/AdBanner'
 
 // --- Feature Card (Applying standard_card border_radius and surface color) ---
 function FeatureCard({ icon: Icon, title, description }: any) {
@@ -88,6 +89,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+        <AdBanner dataAdSlot="6974039515" />
 
       {/* INTERACTIVE MOCKUP (Applying interactive_card styles) */}
       <section className="max-w-[800px] mx-auto px-[20px] mb-[80px]">
@@ -112,6 +114,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      <AdBanner dataAdSlot="6974039515" />
 
       {/* FEATURES PROTOCOL */}
       <section id="features" className="max-w-[1100px] mx-auto px-[20px] py-16 border-t border-[#1C1C1E]">
@@ -154,6 +157,7 @@ export default function LandingPage() {
           </Link>
         </div>
       </section>
+        <AdBanner dataAdSlot="6974039515" />
 
       {/* FOOTER */}
       <footer className="py-12 border-t border-[#1C1C1E] text-center bg-[#000000]">

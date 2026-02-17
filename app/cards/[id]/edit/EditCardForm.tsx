@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { useUser } from '../../../providers/UserProvider'
@@ -8,10 +8,10 @@ import {
   Plus, 
   Trash2, 
   Search, 
-  Type, 
   ChevronLeft,
   Save,
-  X 
+  Image as ImageIcon,
+  Loader2
 } from 'lucide-react'
 
 type CardShape = {
@@ -63,10 +63,8 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    if (!word.trim()) {
-      setError('Word is required')
-      return
-    }
+    if (!word.trim()) return setError('Word is required')
+    
     setLoading(true)
     try {
       const payload: any = {}
@@ -78,94 +76,155 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
       router.push('/')
       router.refresh()
     } catch (err: any) {
-      setError(err?.response?.data?.error || 'Failed to save changes')
+      setError(err?.response?.data?.error || 'Failed to save')
     } finally {
       setLoading(false)
     }
   }
 
-  const inputStyles = "w-full mt-1 p-3 md:p-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-[14px] md:text-[16px] outline-none focus:border-emerald-500/50 transition-all placeholder:text-zinc-600"
-  const labelTextStyles = "text-zinc-500 text-[9px] md:text-[10px] uppercase font-bold tracking-[0.15em] ml-1"
+  // Minimal UI Utility Styles
+  const inputBase = "w-full bg-zinc-900/50 border border-white/[0.06] rounded-md px-3 py-2 text-[13px] text-white placeholder:text-zinc-600 outline-none focus:border-blue-500/50 transition-all"
+  const labelBase = "text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5 block font-medium"
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <form onSubmit={handleSubmit} className="bg-[#121212] border border-[#1C1C1E] rounded-[24px] md:rounded-[32px] p-5 md:p-8 shadow-2xl relative">
+    <div className="min-h-screen bg-black text-zinc-300 antialiased pb-20">
+      {/* Top Nav - Flush & Thin */}
+      <div className="sticky top-0 z-10 bg-black/80 backdrop-blur-md border-b border-white/[0.05] px-4 py-3 flex items-center justify-between">
+        <button onClick={() => router.back()} className="p-1 -ml-1 text-zinc-500 hover:text-white transition-colors">
+          <ChevronLeft size={18} />
+        </button>
+        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">Edit Entry</span>
+        <button 
+          onClick={handleSubmit} 
+          disabled={loading}
+          className="text-blue-500 text-[13px] font-semibold active:opacity-50 disabled:opacity-30"
+        >
+          {loading ? <Loader2 size={14} className="animate-spin" /> : 'Save'}
+        </button>
+      </div>
+
+      <main className="max-w-xl mx-auto p-4 space-y-8">
         
-        {/* HEADER */}
-        <div className="flex items-center justify-between mb-6 md:mb-8">
+        {/* Basic Info Section */}
+        <section className="space-y-4">
           <div>
-            <button type="button" onClick={() => router.back()} className="flex items-center gap-1 text-zinc-500 hover:text-white transition-colors mb-1 md:mb-2 text-[10px] font-bold uppercase tracking-wider">
-              <ChevronLeft size={12} /> Back
-            </button>
-            <h1 className="text-xl md:text-3xl font-black text-white">Edit Card</h1>
+            <label className={labelBase}>Vocabulary Word</label>
+            <input 
+              value={word} 
+              onChange={(e) => setWord(e.target.value)} 
+              className={`${inputBase} text-[15px] font-medium py-2.5`} 
+              placeholder="e.g. Ephemeral" 
+            />
           </div>
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-emerald-500/10 rounded-[14px] md:rounded-2xl flex items-center justify-center border border-emerald-500/20">
-             <Type className="text-emerald-500" size={20} />
-          </div>
-        </div>
 
-        {/* INPUTS GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
-          <label>
-            <span className={labelTextStyles}>Word</span>
-            <input value={word} onChange={(e) => setWord(e.target.value)} className={inputStyles} placeholder="Enter word..." />
-          </label>
-          <label>
-            <span className={labelTextStyles}>Image URL</span>
-            <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputStyles} placeholder="https://..." />
-          </label>
-        </div>
+          <div>
+            <label className={labelBase}>Image Asset URL</label>
+            <div className="flex gap-2">
+              <input 
+                value={imageUrl} 
+                onChange={(e) => setImageUrl(e.target.value)} 
+                className={inputBase} 
+                placeholder="Paste URL..." 
+              />
+              {imageUrl && (
+                <div className="w-9 h-9 rounded-md border border-white/10 overflow-hidden flex-shrink-0">
+                  <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
 
-        {/* SENTENCES */}
-        <div className="mb-6 md:mb-8">
-          <div className="flex items-center justify-between mb-3 px-1">
-            <span className={labelTextStyles}>Example Sentences</span>
-            <button type="button" onClick={addSentence} className="text-emerald-400 text-[10px] md:text-[11px] font-black uppercase tracking-wider bg-emerald-400/10 px-2.5 py-1 md:px-3 md:py-1.5 rounded-full border border-emerald-400/20">
-              <Plus size={12} className="inline mr-1" /> Add
+        {/* Sentences Section - Dense List */}
+        <section>
+          <div className="flex justify-between items-end mb-3">
+            <label className={labelBase + " mb-0"}>Usage Context</label>
+            <button type="button" onClick={addSentence} className="text-[10px] text-blue-500 font-bold uppercase flex items-center gap-1">
+              <Plus size={10} /> Add Line
             </button>
           </div>
-          <div className="space-y-2 md:space-y-3">
+          <div className="space-y-2">
             {sentences.map((s, idx) => (
-              <div key={idx} className="flex gap-2">
-                <input value={s} onChange={(e) => updateSentence(idx, e.target.value)} className={inputStyles} placeholder="Context sentence..." />
-                <button type="button" onClick={() => removeSentence(idx)} className="mt-1 p-3 rounded-xl bg-rose-500/5 text-rose-500 border border-rose-500/10 flex-shrink-0">
-                  <Trash2 size={18} />
+              <div key={idx} className="group relative flex items-center gap-2">
+                <input 
+                  value={s} 
+                  onChange={(e) => updateSentence(idx, e.target.value)} 
+                  className={inputBase + " pr-8"} 
+                  placeholder="Sentence example..." 
+                />
+                <button 
+                  type="button" 
+                  onClick={() => removeSentence(idx)} 
+                  className="absolute right-2 text-zinc-600 hover:text-red-400 transition-colors"
+                >
+                  <Trash2 size={13} />
                 </button>
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* IMAGE SEARCH - Made more compact */}
-        <div className="mb-6 md:mb-8 bg-white/[0.02] p-4 md:p-6 rounded-2xl border border-white/[0.05]">
-          <span className={labelTextStyles}>Visual Search</span>
-          <div className="flex gap-2 mt-2 mb-3">
-            <input value={query} onChange={(e) => setQuery(e.target.value)} className={inputStyles + " mt-0"} placeholder="Search Unsplash..." />
-            <button type="button" onClick={searchImages} disabled={imagesLoading} className="px-4 md:px-6 bg-blue-500 text-white- rounded-xl text-xs md:text-sm font-black">
-              {imagesLoading ? '...' : 'Find'}
+        {/* Visual Search - Integrated Grid */}
+        <section className="pt-6 border-t border-white/[0.05]">
+          <label className={labelBase}>Unsplash Library</label>
+          <div className="flex gap-2 mb-3">
+            <div className="relative flex-1">
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-600" />
+              <input 
+                value={query} 
+                onChange={(e) => setQuery(e.target.value)} 
+                className={inputBase + " pl-8 h-8"} 
+                placeholder="Search images..." 
+              />
+            </div>
+            <button 
+              type="button" 
+              onClick={searchImages} 
+              className="px-3 h-8 bg-zinc-800 text-[11px] font-bold rounded-md hover:bg-zinc-700 transition-colors"
+            >
+              Search
             </button>
           </div>
-          <div className="grid grid-cols-4 md:grid-cols-5 gap-2 md:gap-3 max-h-[160px] overflow-y-auto pr-1">
+
+          <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5 h-32 overflow-y-auto pr-1 scrollbar-hide">
             {results.map((r) => (
-              <button key={r.id} type="button" onClick={() => setImageUrl(r.urls.regular || r.urls.small || '')} className="aspect-square rounded-lg md:rounded-xl overflow-hidden border-2 border-transparent hover:border-emerald-500 transition-all active:scale-95">
-                <img src={r.urls.small} className="w-full h-full object-cover" />
+              <button 
+                key={r.id} 
+                type="button" 
+                onClick={() => setImageUrl(r.urls.regular || '')} 
+                className={`aspect-square rounded-sm overflow-hidden border ${imageUrl === r.urls.regular ? 'border-blue-500 ring-1 ring-blue-500' : 'border-transparent'}`}
+              >
+                <img src={r.urls.small} className="w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity" />
               </button>
             ))}
+            {results.length === 0 && !imagesLoading && (
+              <div className="col-span-full h-full flex flex-col items-center justify-center border border-dashed border-white/[0.05] rounded-md">
+                <ImageIcon size={14} className="text-zinc-800 mb-1" />
+                <span className="text-[10px] text-zinc-700">No images</span>
+              </div>
+            )}
           </div>
-        </div>
+        </section>
 
-        {error && <div className="mb-5 p-3 md:p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-[12px] md:text-sm font-bold flex items-center gap-2"><X size={14} /> {error}</div>}
+        {error && (
+          <div className="text-[11px] text-red-400 bg-red-400/5 border border-red-400/20 px-3 py-2 rounded-md">
+            {error}
+          </div>
+        )}
+      </main>
 
-        {/* ACTIONS */}
-        <div className="flex flex-row gap-2 md:gap-3">
-          <button type="submit" disabled={loading} className="flex-[2] py-3.5 md:py-4 bg-emerald-500 hover:bg-emerald-400 text-black text-sm md:text-base font-black rounded-xl md:rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
-            {loading ? '...' : <><Save size={18} /> Save</>}
-          </button>
-          <button type="button" onClick={() => router.back()} className="flex-1 py-3.5 md:py-4 border border-white/10 text-white text-sm md:text-base font-bold rounded-xl md:rounded-2xl hover:bg-white/5 transition-all">
-            Cancel
+      {/* Floating Action Bar for Mobile */}
+      <div className="fixed bottom-12 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">
+        <div className="max-w-xl mx-auto pointer-events-auto">
+          <button 
+            onClick={handleSubmit}
+            disabled={loading}
+            className="w-full bg-white text-black h-11 rounded-full text-[13px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-xl disabled:bg-zinc-800 disabled:text-zinc-500"
+          >
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <><Save size={16} /> Save Changes</>}
           </button>
         </div>
-      </form>
+      </div>
     </div>
   )
 }

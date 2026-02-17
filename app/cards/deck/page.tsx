@@ -7,13 +7,17 @@ import { useUser } from '../../providers/UserProvider'
 import Flashcard from './components/FlashCard'
 import { Sparkles, Loader2 } from 'lucide-react'
 
+// CONFIGURATION
+const API_KEY = process.env.NEXT_PUBLIC_ELEVEN_LABS_KEY || "sk_af2c6b36ab6dc99603b9e6d639f69a7fd4760ea92548e848";
+const VOICE_ID = "EXAVITQu4vr4xnSDxMaL"; // "Bella" - Clear and professional
+
 export default function DeckPage() {
   const { user } = useUser()
   const router = useRouter()
   const [cards, setCards] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [flipped, setFlipped] = useState<Record<string, boolean>>({})
-  const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const loadCards = useCallback(async () => {
     if (!user?.id) return
@@ -28,16 +32,51 @@ export default function DeckPage() {
 
   useEffect(() => { loadCards() }, [loadCards])
 
-  useEffect(() => {
-    return () => {
-      window.speechSynthesis.cancel()
-      currentUtteranceRef.current = null
+  // --- THE SMART SPEECH FUNCTION ---
+  const speakSentence = async (text: string) => {
+    // 1. Stop any current audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
     }
-  }, [])
+
+    try {
+      // 2. TRY ELEVEN LABS FIRST
+      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'xi-api-key': API_KEY,
+        },
+        body: JSON.stringify({
+          text: text,
+          model_id: "eleven_multilingual_v2",
+          voice_settings: { stability: 0.5, similarity_boost: 0.75 }
+        }),
+      });
+
+      // If ElevenLabs fails (out of credits or bad key), throw error to trigger catch block
+      if (!response.ok) throw new Error("ElevenLabs limit reached or error");
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      audioRef.current = new Audio(url);
+      audioRef.current.play();
+
+    } catch (error) {
+      console.warn("ElevenLabs failed, switching to Google TTS fallback...");
+      
+      // 3. FALLBACK: GOOGLE TRANSLATE TRICK
+      // This is free, unlimited, and requires no API key.
+      const googleFallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=tw-ob`;
+      
+      audioRef.current = new Audio(googleFallbackUrl);
+      audioRef.current.play();
+    }
+  };
 
   const handleReview = (cardId: string, result: 'success' | 'struggle') => {
-    window.speechSynthesis.cancel()
-    currentUtteranceRef.current = null
+    if (audioRef.current) audioRef.current.pause();
 
     setCards((prev) => {
       const cardIndex = prev.findIndex(c => c.id === cardId)
@@ -56,7 +95,6 @@ export default function DeckPage() {
     <main className="min-h-screen bg-[#000000] text-white py-4 md:py-6 px-4 overflow-hidden flex flex-col justify-between">
       <div className="max-w-[400px] mx-auto w-full flex-1 flex flex-col">
         
-        {/* HEADER SECTION - Scaled Down */}
         <header className="mb-4 md:mb-8 flex flex-col items-center">
           <div className="flex items-center gap-2 mb-1">
             <Sparkles size={12} className="text-emerald-500" />
@@ -77,7 +115,6 @@ export default function DeckPage() {
           </div>
         </header>
 
-        {/* MAIN STAGE - Fluid Heights */}
         <div className="relative flex-1 w-full max-h-[550px] md:max-h-[600px] min-h-[400px] flex justify-center items-center" style={{ perspective: '1200px' }}>
           
           {loading && cards.length === 0 && (
@@ -87,14 +124,6 @@ export default function DeckPage() {
             </div>
           )}
 
-          {/* BACKGROUND DECORATIVE STACK - Adjusted for mobile scale */}
-          {!loading && cards.length > 1 && (
-            <>
-              <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[49%] w-[90%] aspect-[2/3.3] bg-zinc-900 border border-white/5 rounded-[24px] md:rounded-[32px] -z-10 opacity-40" />
-              <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[48%] w-[85%] aspect-[2/3.3] bg-zinc-900/50 border border-white/5 rounded-[24px] md:rounded-[32px] -z-20 opacity-20" />
-            </>
-          )}
-
           {cards.slice(0, 2).map((card, index) => (
             <Flashcard
               key={card.id} 
@@ -102,11 +131,9 @@ export default function DeckPage() {
               isTop={index === 0}
               isFlipped={!!flipped[card.id]}
               onFlip={() => {
-                window.speechSynthesis.cancel()
                 setFlipped(s => ({ ...s, [card.id]: true }))
-                const u = new SpeechSynthesisUtterance(card.sentences[card.currentSentenceIndex])
-                currentUtteranceRef.current = u
-                window.speechSynthesis.speak(u)
+                // CALL OUR SMART SPEECH FUNCTION
+                speakSentence(card.sentences[card.currentSentenceIndex])
               }}
               onReview={handleReview}
             />
@@ -131,19 +158,10 @@ export default function DeckPage() {
           )}
         </div>
 
-        {/* BOTTOM FOOTER - Minimalist size */}
         {!loading && cards.length > 0 && (
             <footer className="py-4 md:py-8 text-center">
                 <div className="inline-flex items-center gap-4 text-zinc-600">
-                    <div className="flex flex-col items-center gap-1">
-                        <span className="text-[8px] font-black uppercase tracking-widest">Review</span>
-                        <div className="w-4 h-0.5 bg-rose-500/30 rounded-full" />
-                    </div>
-                    <div className="h-3 w-[1px] bg-zinc-800" />
-                    <div className="flex flex-col items-center gap-1">
-                        <span className="text-[8px] font-black uppercase tracking-widest">Learned</span>
-                        <div className="w-4 h-0.5 bg-emerald-500/30 rounded-full" />
-                    </div>
+                    <span className="text-[8px] font-black uppercase tracking-widest">Premium AI Audio Active</span>
                 </div>
             </footer>
         )}
