@@ -1,42 +1,55 @@
 "use client"
 import React from 'react'
 import Link from 'next/link'
-import { Plus, Home, Book, Settings, Search } from 'lucide-react'
+import { Plus, Home, Search } from 'lucide-react'
 import { useSession } from 'next-auth/react'
+import { usePathname } from 'next/navigation'
 
 export default function Footer() {
+  const pathname = usePathname()
+  const { status } = useSession()
 
-  const session = useSession()
-  if (session.status !== "authenticated") {
+  if (status !== "authenticated") {
     return null
   }
 
   return (
-    // Applied: navigation.bottom_tab_bar (background, height, border_top)
-    <footer className="fixed bottom-0 left-0 right-0 h-[60px] bg-[#121212] border-t-[0.5px] border-[#1C1C1E] z-50 flex items-center justify-around px-4">
+    /* Background: #121212 | Height: 64px | Border: #262626 */
+    <footer className="fixed bottom-0 left-0 right-0 h-[64px] bg-[#121212] border-t border-[#262626] z-50 flex items-center justify-around px-4">
       
-      {/* Left Navigation Icons */}
-      <Link href="/cards/learning" className="flex flex-col items-center justify-center text-[#FFFFFF] hover:text-[#3B82F6] transition-colors">
-        <Home size={22} />
+      {/* Left Icon - Home */}
+      <Link 
+        href="/cards/learning" 
+        className={`flex flex-col items-center justify-center transition-colors ${
+          pathname === '/cards/learning' ? 'text-[#3B82F6]' : 'text-[#9CA3AF] hover:text-[#FFFFFF]'
+        }`}
+      >
+        <Home size={19} />
+        <span className="text-[11px] font-bold uppercase tracking-widest mt-1">Home</span>
       </Link>
       
 
-      {/* Center Primary Action Button */}
-      {/* Applied: shapes.button_pill & brand.primary_green */}
+      {/* Center Primary Action Button - Restored Original Logic */}
       <div className="relative -top-5">
         <Link
           href="/cards/new"
-          className="flex items-center justify-center w-14 h-14 bg-[#22C55E] text-[#FFFFFF] rounded-[100px] shadow-[0_4px_20px_rgba(34,197,94,0.4)] hover:bg-[#16A34A] active:scale-95 transition-all border-4 border-[#000000]"
+          /* Background: #3B82F6 | radius: 100px (Pill/Circle) | border: #121212 */
+          className="flex items-center justify-center w-14 h-14 bg-[#3B82F6] text-[#FFFFFF] rounded-full shadow-[0_4px_20px_rgba(59,130,246,0.4)] hover:bg-[#1D4ED8] active:scale-95 transition-all border-4 border-[#121212]"
         >
           <Plus size={28} strokeWidth={3} />
         </Link>
       </div>
 
-      {/* Right Navigation Icons */}
-      <Link href="/cards/search" className="flex flex-col items-center justify-center text-[#FFFFFF] hover:text-[#3B82F6] transition-colors">
-        <Search size={22} />
+      {/* Right Icon - Search */}
+      <Link 
+        href="/cards/search" 
+        className={`flex flex-col items-center justify-center transition-colors ${
+          pathname === '/cards/search' ? 'text-[#3B82F6]' : 'text-[#9CA3AF] hover:text-[#FFFFFF]'
+        }`}
+      >
+        <Search size={19} />
+        <span className="text-[11px] font-bold uppercase tracking-widest mt-1">Search</span>
       </Link>
-
 
     </footer>
   )

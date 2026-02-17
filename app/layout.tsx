@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#09090b] text-zinc-100 min-h-screen flex flex-col`}
       >
@@ -46,7 +46,6 @@ export default function RootLayout({
             />
             <Header />
             <main className="pt-16 flex-grow mb-12 flex flex-col relative overflow-hidden">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-indigo-500/5 blur-[120px] pointer-events-none" />
               {children}
             </main>
             <Footer />

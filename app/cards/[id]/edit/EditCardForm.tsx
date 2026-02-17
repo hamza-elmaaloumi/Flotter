@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -11,7 +11,9 @@ import {
   ChevronLeft,
   Save,
   Image as ImageIcon,
-  Loader2
+  Loader2,
+  X,
+  Check
 } from 'lucide-react'
 
 type CardShape = {
@@ -82,149 +84,184 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
     }
   }
 
-  // Minimal UI Utility Styles
-  const inputBase = "w-full bg-zinc-900/50 border border-white/[0.06] rounded-md px-3 py-2 text-[13px] text-white placeholder:text-zinc-600 outline-none focus:border-blue-500/50 transition-all"
-  const labelBase = "text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5 block font-medium"
+  // --- Design System Constant Styles ---
+  const inputStyles = "w-full bg-[#222222] border border-[#2D2D2F] rounded-[12px] px-3 py-2.5 text-[14px] text-[#FFFFFF] placeholder-[#6B7280] outline-none focus:border-[#3B82F6] transition-all"
+  const labelStyles = "text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] mb-2 block" // Typography: label
+  const cardStyles = "bg-[#1C1C1E] rounded-[16px] p-2 border border-[#2D2D2F]" // Component: standard_card
 
   return (
-    <div className="min-h-screen bg-black text-zinc-300 antialiased pb-20">
-      {/* Top Nav - Flush & Thin */}
-      <div className="sticky top-0 z-10 bg-black/80 backdrop-blur-md border-b border-white/[0.05] px-4 py-3 flex items-center justify-between">
-        <button onClick={() => router.back()} className="p-1 -ml-1 text-zinc-500 hover:text-white transition-colors">
-          <ChevronLeft size={18} />
-        </button>
-        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">Edit Entry</span>
+    <div className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-40 font-sans">
+      
+      {/* Header - Clean Style */}
+      <header className="sticky top-0 z-10 bg-[#121212] border-b border-[#262626] px-4 h-[64px] flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <button onClick={() => router.back()} className="p-1 text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors">
+            <ChevronLeft size={24} />
+          </button>
+          <h1 className="text-[17px] font-bold tracking-[-0.5px]">Edit Entry</h1>
+        </div>
         <button 
           onClick={handleSubmit} 
           disabled={loading}
-          className="text-blue-500 text-[13px] font-semibold active:opacity-50 disabled:opacity-30"
+          className="text-[#3B82F6] text-[16px] font-bold hover:opacity-80 disabled:opacity-30 transition-opacity"
         >
-          {loading ? <Loader2 size={14} className="animate-spin" /> : 'Save'}
+          {loading ? <Loader2 size={19} className="animate-spin" /> : 'Save'}
         </button>
-      </div>
+      </header>
 
-      <main className="max-w-xl mx-auto p-4 space-y-8">
+      <main className="max-w-xl mx-auto p-4 space-y-10">
         
-        {/* Basic Info Section */}
-        <section className="space-y-4">
+        {/* Vocabulary Input Section */}
+        <section className="space-y-6">
           <div>
-            <label className={labelBase}>Vocabulary Word</label>
+            <label className={labelStyles}>Vocabulary Word</label>
             <input 
               value={word} 
               onChange={(e) => setWord(e.target.value)} 
-              className={`${inputBase} text-[15px] font-medium py-2.5`} 
-              placeholder="e.g. Ephemeral" 
+              className={`${inputStyles} text-[14px] font-bold`} // h2 style for the main word
+              placeholder="Enter word..." 
             />
           </div>
 
+          {/* Card Image Section */}
           <div>
-            <label className={labelBase}>Image Asset URL</label>
-            <div className="flex gap-2">
-              <input 
-                value={imageUrl} 
-                onChange={(e) => setImageUrl(e.target.value)} 
-                className={inputBase} 
-                placeholder="Paste URL..." 
-              />
-              {imageUrl && (
-                <div className="w-9 h-9 rounded-md border border-white/10 overflow-hidden flex-shrink-0">
-                  <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+            <label className={labelStyles}>Card Image</label>
+            <div className={cardStyles}>
+              {imageUrl ? (
+                <div className="relative group aspect-video w-full rounded-[14px] overflow-hidden bg-[#222222]">
+                  <img 
+                    src={imageUrl} 
+                    alt="Selected" 
+                    className="w-full h-full object-cover" 
+                  />
+                  <div className="absolute inset-0 bg-[#121212]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl('')}
+                      className="bg-[#EF4444] text-white p-3 rounded-[12px] shadow-lg transform transition-transform hover:scale-105"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="aspect-video w-full rounded-[14px] border-2 border-dashed border-[#2D2D2F] flex flex-col items-center justify-center bg-[#121212] text-[#6B7280]">
+                  <ImageIcon size={32} className="mb-2 text-[#333333]" />
+                  <p className="text-[14px]">No image selected</p>
+                  <p className="text-[12px] text-[#9CA3AF]">Select from library below</p>
                 </div>
               )}
             </div>
           </div>
         </section>
 
-        {/* Sentences Section - Dense List */}
+        {/* Usage Context Section */}
         <section>
-          <div className="flex justify-between items-end mb-3">
-            <label className={labelBase + " mb-0"}>Usage Context</label>
-            <button type="button" onClick={addSentence} className="text-[10px] text-blue-500 font-bold uppercase flex items-center gap-1">
-              <Plus size={10} /> Add Line
+          <div className="flex justify-between items-center mb-4">
+            <label className={labelStyles + " mb-0"}>Usage Context</label>
+            <button 
+              type="button" 
+              onClick={addSentence} 
+              className="text-[12px] text-[#3B82F6] font-bold uppercase flex items-center gap-1 hover:text-[#1D4ED8]"
+            >
+              <Plus size={14} strokeWidth={3} /> Add Line
             </button>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {sentences.map((s, idx) => (
-              <div key={idx} className="group relative flex items-center gap-2">
+              <div key={idx} className="relative flex items-center">
                 <input 
                   value={s} 
                   onChange={(e) => updateSentence(idx, e.target.value)} 
-                  className={inputBase + " pr-8"} 
-                  placeholder="Sentence example..." 
+                  className={inputStyles + " pr-12 h-[52px]"} // Height matching settings_row feel
+                  placeholder="Enter sentence..." 
                 />
                 <button 
                   type="button" 
                   onClick={() => removeSentence(idx)} 
-                  className="absolute right-2 text-zinc-600 hover:text-red-400 transition-colors"
+                  className="absolute right-3 p-2 text-[#6B7280] hover:text-[#EF4444] transition-colors"
                 >
-                  <Trash2 size={13} />
+                  <Trash2 size={18} />
                 </button>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Visual Search - Integrated Grid */}
-        <section className="pt-6 border-t border-white/[0.05]">
-          <label className={labelBase}>Unsplash Library</label>
-          <div className="flex gap-2 mb-3">
+        {/* Unsplash Search Section */}
+        <section className="pt-8 border-t border-[#262626]">
+          <div className="flex items-center justify-between mb-4">
+            <label className={labelStyles + " mb-0"}>Unsplash Library</label>
+            {imagesLoading && <Loader2 size={16} className="animate-spin text-[#3B82F6]" />}
+          </div>
+          
+          <div className="flex gap-2 mb-6">
             <div className="relative flex-1">
-              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-600" />
+              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7280]" />
               <input 
                 value={query} 
                 onChange={(e) => setQuery(e.target.value)} 
-                className={inputBase + " pl-8 h-8"} 
-                placeholder="Search images..." 
+                onKeyDown={(e) => e.key === 'Enter' && searchImages()}
+                className={inputStyles + " pl-11 py-3 bg-[#121212]"} 
+                placeholder="Search for visuals..." 
               />
             </div>
             <button 
               type="button" 
               onClick={searchImages} 
-              className="px-3 h-8 bg-zinc-800 text-[11px] font-bold rounded-md hover:bg-zinc-700 transition-colors"
+              className="px-6 bg-[#333333] text-[14px] font-bold rounded-[12px] border border-[#2D2D2F] hover:bg-[#374151] transition-colors"
             >
               Search
             </button>
           </div>
 
-          <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5 h-32 overflow-y-auto pr-1 scrollbar-hide">
+          <div className="grid grid-cols-3 gap-3 max-h-80 overflow-y-auto pr-1">
             {results.map((r) => (
               <button 
                 key={r.id} 
                 type="button" 
                 onClick={() => setImageUrl(r.urls.regular || '')} 
-                className={`aspect-square rounded-sm overflow-hidden border ${imageUrl === r.urls.regular ? 'border-blue-500 ring-1 ring-blue-500' : 'border-transparent'}`}
+                className={`aspect-square rounded-[12px] overflow-hidden border-2 transition-all relative ${imageUrl === r.urls.regular ? 'border-[#3B82F6]' : 'border-transparent'}`}
               >
-                <img src={r.urls.small} className="w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity" />
+                <img src={r.urls.small} className={`w-full h-full object-cover transition-opacity ${imageUrl === r.urls.regular ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`} />
+                {imageUrl === r.urls.regular && (
+                  <div className="absolute inset-0 bg-[#3B82F6]/30 flex items-center justify-center">
+                    <div className="bg-[#3B82F6] rounded-full p-1 shadow-lg">
+                      <Check size={16} className="text-white" />
+                    </div>
+                  </div>
+                )}
               </button>
             ))}
             {results.length === 0 && !imagesLoading && (
-              <div className="col-span-full h-full flex flex-col items-center justify-center border border-dashed border-white/[0.05] rounded-md">
-                <ImageIcon size={14} className="text-zinc-800 mb-1" />
-                <span className="text-[10px] text-zinc-700">No images</span>
+              <div className="col-span-full py-12 flex flex-col items-center justify-center border border-dashed border-[#2D2D2F] rounded-[16px] bg-[#1C1C1E]/50">
+                <Search size={24} className="text-[#333333] mb-2" />
+                <span className="text-[12px] text-[#6B7280] font-medium">Discover images for your card</span>
               </div>
             )}
           </div>
         </section>
 
+        {/* Error Handling */}
         {error && (
-          <div className="text-[11px] text-red-400 bg-red-400/5 border border-red-400/20 px-3 py-2 rounded-md">
-            {error}
+          <div className="text-[12px] font-bold uppercase bg-[#EF4444]/10 border border-[#EF4444] text-[#EF4444] px-4 py-3 rounded-[12px] flex items-center gap-2">
+            <X size={14} /> {error}
           </div>
         )}
       </main>
 
-      {/* Floating Action Bar for Mobile */}
-      <div className="fixed bottom-12 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">
-        <div className="max-w-xl mx-auto pointer-events-auto">
+      {/* Primary Action Button - Floating Style */}
+      <footer className="fixed bottom-12 left-0 right-0 p-6 bg-gradient-to-t from-[#121212] via-[#121212] to-transparent z-20">
+        <div className="max-w-xl mx-auto">
           <button 
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-white text-black h-11 rounded-full text-[13px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-xl disabled:bg-zinc-800 disabled:text-zinc-500"
+            className="w-full bg-[#3B82F6] text-[#FFFFFF] h-[56px] rounded-[12px] text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-[0_8px_30px_rgb(0,0,0,0.4)] disabled:bg-[#374151] disabled:text-[#6B7280]"
           >
-            {loading ? <Loader2 size={16} className="animate-spin" /> : <><Save size={16} /> Save Changes</>}
+            {loading ? <Loader2 size={20} className="animate-spin" /> : <><Save size={20} /> SAVE CHANGES</>}
           </button>
         </div>
-      </div>
+      </footer>
     </div>
   )
 }

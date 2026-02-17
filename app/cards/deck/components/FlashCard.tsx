@@ -102,7 +102,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
     >
       {/* Reduced width from 340px to 310px for mobile */}
       <div className="w-full max-w-[310px] md:max-w-[350px] aspect-[2/3.3] relative">
-        
+
         <button
           onClick={(e) => { e.stopPropagation(); router.push(`${card.id}/edit`); }}
           className="absolute top-4 right-4 z-[70] p-3 bg-zinc-800/80 backdrop-blur-md border border-white/10 rounded-full text-zinc-400 hover:text-white transition-all active:scale-90 shadow-xl"
@@ -176,7 +176,9 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview }: 
               <div className="flex-1 flex flex-col items-center justify-center space-y-4">
                 <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter">{card.word}</h2>
                 <div className="bg-white/5 p-4 rounded-xl border border-white/5 text-zinc-300 text-xs md:text-sm">
-                  {rawSentence}
+                  {rawSentence.split(new RegExp(`(\\b${card.word}\\b)`, 'gi')).map((part, i) =>
+                    part.toLowerCase() === card.word.toLowerCase() ? <span key={i} className="text-emerald-400 font-bold">{part}</span> : part
+                  )}
                 </div>
               </div>
 

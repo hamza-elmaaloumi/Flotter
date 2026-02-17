@@ -61,43 +61,46 @@ export default function ListPage() {
   }, [query, allCards])
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white antialiased selection:bg-blue-500/30">
-      {/* Search Header - Using a slightly lighter zinc for separation */}
-      <div className="sticky top-0 z-10 bg-zinc-950/80 backdrop-blur-xl border-b border-white/[0.08]">
+    <div className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased selection:bg-[#3B82F6]/30">
+      {/* Header - Clean Style, Left Aligned per Design System */}
+      <div className="sticky top-0 z-10 bg-[#121212]/95 backdrop-blur-md border-b border-[#262626]">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
             <div className="relative flex-1">
-              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+              <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search your collection..."
-                className="w-full bg-white/[0.03] border border-white/[0.1] rounded-xl py-2.5 pl-10 pr-4 text-[14px] text-zinc-100 placeholder-zinc-500 outline-none focus:bg-white/[0.05] focus:border-white/[0.2] transition-all"
+                // Typography: body_medium (15px)
+                className="w-full bg-[#222222] border border-[#2D2D2F] rounded-[12px] py-2.5 pl-10 pr-4 text-[15px] text-[#FFFFFF] placeholder-[#6B7280] outline-none focus:border-[#3B82F6] transition-all"
               />
             </div>
             <Link 
               href="/cards/new" 
-              className="p-2.5 bg-white text-black rounded-xl hover:bg-zinc-200 transition-colors"
+              // Button Primary Style: #3B82F6 with 12px radius
+              className="p-2.5 bg-[#3B82F6] text-[#FFFFFF] rounded-[12px] hover:bg-[#1D4ED8] transition-colors flex items-center justify-center"
             >
-              <Plus size={18} />
+              <Plus size={20} />
             </Link>
           </div>
         </div>
       </div>
 
       <main className="max-w-2xl mx-auto px-4 py-6">
-        <div className="space-y-2">
+        <div className="space-y-1.5"> {/* Logic UI State: spacing_and_radius gap */}
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
-              <Loader2 size={24} className="animate-spin text-zinc-700 mb-2" />
-              <span className="text-[12px] text-zinc-500 uppercase tracking-widest">Loading</span>
+              <Loader2 size={24} className="animate-spin text-[#3B82F6] mb-4" />
+              {/* Typography: label (12px, Bold, Uppercase) */}
+              <span className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider">Loading</span>
             </div>
           ) : (
             <>
               {results.length === 0 && (
-                <div className="py-20 text-center border border-dashed border-white/10 rounded-2xl">
-                  <p className="text-[14px] text-zinc-500">No matches for "{query}"</p>
+                <div className="py-20 text-center border border-dashed border-[#2D2D2F] rounded-[16px]">
+                  <p className="text-[15px] text-[#9CA3AF]">No matches for "{query}"</p>
                 </div>
               )}
 
@@ -105,32 +108,37 @@ export default function ListPage() {
                 <Link 
                   key={card.id} 
                   href={`/cards/${card.id}/edit`}
-                  className="flex items-center justify-between p-3 bg-zinc-900/40 hover:bg-zinc-800/60 border border-white/[0.08] rounded-2xl transition-all group active:scale-[0.98]"
+                  // Settings Row / Standard Card Style: #1C1C1E background, 16px radius
+                  className="flex items-center justify-between p-3 bg-[#1C1C1E] hover:bg-[#222222] border border-[#2D2D2F] rounded-[16px] transition-all group active:scale-[0.99] h-[56px]"
                 >
-                  <div className="flex items-center gap-4">
-                    {/* Thumbnail with slight glow/border */}
-                    <div className="w-11 h-11 rounded-xl bg-zinc-800 overflow-hidden flex-shrink-0 flex items-center justify-center border border-white/[0.1] shadow-inner">
+                  <div className="flex items-center gap-3">
+                    {/* Icon/Image Container: Rounded 8px per list_items spec */}
+                    <div className="w-10 h-10 rounded-[8px] bg-[#333333] overflow-hidden flex-shrink-0 flex items-center justify-center border border-[#2D2D2F]">
                       {card.imageUrl ? (
                         <img 
                           src={card.imageUrl} 
                           alt="" 
-                          className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" 
+                          className="w-full h-full object-cover" 
                         />
                       ) : (
-                        <ImageIcon size={18} className="text-zinc-600" />
+                        <ImageIcon size={18} className="text-[#6B7280]" />
                       )}
                     </div>
                     
                     <div className="flex flex-col">
-                      <span className="text-[15px] font-semibold text-zinc-200 group-hover:text-white transition-colors">
+                      {/* Typography: body_large (17px, SemiBold) */}
+                      <span className="text-[15px] font-semibold text-[#FFFFFF]">
                         {card.word}
                       </span>
-                      <span className="text-[11px] text-zinc-500 font-medium">Updated recently</span>
+                      {/* Typography: caption (13px, Medium, Color: secondary) */}
+                      <span className="text-[13px] font-medium text-[#9CA3AF]">
+                        Recently added
+                      </span>
                     </div>
                   </div>
 
-                  <div className="mr-2">
-                    <ChevronRight size={16} className="text-zinc-600 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all" />
+                  <div className="mr-1">
+                    <ChevronRight size={18} className="text-[#6B7280] group-hover:text-[#3B82F6] transition-colors" />
                   </div>
                 </Link>
               ))}
@@ -139,9 +147,10 @@ export default function ListPage() {
         </div>
         
         {!loading && (
-          <footer className="mt-10 mb-10 text-center">
-            <div className="inline-block px-3 py-1 bg-zinc-900/50 border border-white/[0.05] rounded-full">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+          <footer className="mt-8 mb-10 text-center">
+            <div className="inline-block px-4 py-1.5 bg-[#222222] border border-[#2D2D2F] rounded-full">
+              {/* Typography: label (12px, Bold, Uppercase) */}
+              <p className="text-[12px] font-bold uppercase tracking-widest text-[#6B7280]">
                 {results.length} Cards Found
               </p>
             </div>

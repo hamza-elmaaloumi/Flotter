@@ -59,7 +59,6 @@ export default function NewCardPage() {
 
     setSaving(true)
     try {
-      // Use 'regular' or 'small' for better quality than thumb
       const imageUrl = selected?.urls?.regular || selected?.urls?.small || ''
       await axios.post('/api/cards', { word, sentences: cleanSentences, imageUrl })
       setMsg('Success')
@@ -69,52 +68,57 @@ export default function NewCardPage() {
     } finally { setSaving(false) }
   }
 
-  const inputBase = "w-full bg-zinc-900/40 border border-white/[0.06] rounded-md px-3 py-2 text-[13px] text-white placeholder:text-zinc-600 outline-none focus:border-green-500/50 transition-all"
-  const labelBase = "text-[10px] uppercase tracking-wider text-zinc-500 mb-1.5 block font-medium"
+  // --- iStoria Design System Constants ---
+  const inputBase = "w-full bg-[#222222] border border-[#2D2D2F] rounded-[12px] px-3 py-2.5 text-[14px] text-[#FFFFFF] placeholder-[#6B7280] outline-none focus:border-[#3B82F6] transition-all"
+  const labelBase = "text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] mb-2 block" // label scale
+  const cardBase = "bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-2" // standard_card
 
   return (
-    <div className="min-h-screen bg-black text-zinc-300 antialiased pb-24">
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-20 bg-black/80 backdrop-blur-md border-b border-white/[0.05] px-4 py-3 flex items-center justify-between">
-        <button onClick={() => router.back()} className="p-1 -ml-1 text-zinc-500 hover:text-white transition-colors">
-          <ChevronLeft size={18} />
-        </button>
-        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">New Card</span>
+    <div className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-32 font-sans">
+      
+      {/* Header Component (Clean Style) */}
+      <header className="sticky top-0 z-20 bg-[#121212] border-b border-[#262626] px-4 h-[64px] flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <button onClick={() => router.back()} className="p-1 text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors">
+            <ChevronLeft size={24} />
+          </button>
+          <h1 className="text-[17px] font-bold tracking-[-0.5px]">New Card</h1>
+        </div>
         <button 
           onClick={() => handleSubmit()} 
           disabled={saving}
-          className="text-green-500 text-[13px] font-semibold active:opacity-50 disabled:opacity-30"
+          className="text-[#3B82F6] text-[16px] font-bold hover:opacity-80 disabled:opacity-30 transition-opacity"
         >
-          {saving ? <Loader2 size={14} className="animate-spin" /> : 'Create'}
+          {saving ? <Loader2 size={18} className="animate-spin" /> : 'Create'}
         </button>
-      </div>
+      </header>
 
-      <main className="max-w-4xl mx-auto p-4 lg:grid lg:grid-cols-12 lg:gap-8">
+      <main className="max-w-4xl mx-auto p-4 lg:grid lg:grid-cols-12 lg:gap-8 mt-4">
         
         {/* Left Side: Inputs */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-7 space-y-8">
           <section>
-            <label className={labelBase}>Word</label>
+            <label className={labelBase}>Vocabulary Word</label>
             <input 
               value={word} 
               onChange={e => setWord(e.target.value)} 
               placeholder="e.g. Ephemeral" 
-              className={inputBase + " text-[15px] font-medium py-2.5"} 
+              className={`${inputBase} text-[14px] font-bold py-3`} // h2-like style
             />
           </section>
 
           <section>
-            <div className="flex justify-between items-center mb-1.5">
-              <label className={labelBase + " mb-0"}>Context Sentences</label>
+            <div className="flex justify-between items-center mb-2">
+              <label className={labelBase + " mb-0"}>Usage Context</label>
               <button 
                 type="button" 
                 onClick={addSentence}
-                className="text-[10px] text-blue-500 font-bold uppercase flex items-center gap-1 hover:text-blue-400"
+                className="text-[11px] text-[#3B82F6] font-bold uppercase flex items-center gap-1 hover:text-[#1D4ED8]"
               >
-                <Plus size={10} /> Add Another
+                <Plus size={12} strokeWidth={3} /> Add Line
               </button>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {sentences.map((s, i) => (
                 <div key={i} className="group relative flex items-start gap-2">
                   <textarea 
@@ -122,14 +126,14 @@ export default function NewCardPage() {
                     onChange={e => updateSentence(i, e.target.value)} 
                     placeholder={`Sentence ${i + 1}...`}
                     rows={2} 
-                    className={inputBase + " resize-none pr-8"} 
+                    className={inputBase + " resize-none pr-10"} 
                   />
                   <button 
                     type="button" 
                     onClick={() => removeSentence(i)}
-                    className="absolute right-2 top-2 text-zinc-700 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                    className="absolute right-3 top-3 text-[#6B7280] hover:text-[#EF4444] transition-colors"
                   >
-                    <X size={14} />
+                    <X size={16} />
                   </button>
                 </div>
               ))}
@@ -138,16 +142,16 @@ export default function NewCardPage() {
         </div>
 
         {/* Right Side: Image Library */}
-        <div className="lg:col-span-5 mt-8 lg:mt-0 pt-8 lg:pt-0 border-t lg:border-t-0 border-white/[0.05]">
+        <div className="lg:col-span-5 mt-10 lg:mt-0 pt-10 lg:pt-0 border-t lg:border-t-0 border-[#262626]">
           <label className={labelBase}>Visual Search</label>
-          <div className="flex gap-2 mb-3">
+          <div className="flex gap-2 mb-4">
             <div className="relative flex-1">
-              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-600" />
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B7280]" />
               <input 
                 value={query} 
                 onChange={e => setQuery(e.target.value)} 
                 onKeyDown={(e) => e.key === 'Enter' && searchImages()}
-                className={inputBase + " pl-8 h-8"} 
+                className={inputBase + " pl-10 h-11"} 
                 placeholder="Find imagery..." 
               />
             </div>
@@ -155,76 +159,78 @@ export default function NewCardPage() {
               type="button" 
               onClick={searchImages} 
               disabled={loading}
-              className="px-3 h-8 bg-zinc-800 text-[11px] font-bold rounded-md hover:bg-zinc-700 transition-colors disabled:opacity-50"
+              className="px-5 h-11 bg-[#333333] text-[12px] font-bold rounded-[12px] border border-[#2D2D2F] hover:bg-[#374151] transition-colors disabled:opacity-50"
             >
-              {loading ? <Loader2 size={12} className="animate-spin" /> : 'Search'}
+              {loading ? <Loader2 size={16} className="animate-spin" /> : 'Search'}
             </button>
           </div>
 
           {/* Grid Results */}
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 max-h-48 overflow-y-auto pr-1 mb-4 border border-white/[0.05] rounded-lg p-1.5 bg-zinc-900/20 scrollbar-hide">
+          <div className="grid grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-1 mb-6 border border-[#2D2D2F] rounded-[14px] p-2 bg-[#121212]">
             {results.map(r => (
               <button
                 key={r.id}
                 type="button"
                 onClick={() => setSelected(r)}
-                className={`relative w-full rounded-sm overflow-hidden border transition-all ${selected?.id === r.id ? 'border-green-500 ring-1 ring-green-500' : 'border-transparent hover:border-zinc-700'}`}
+                className={`relative aspect-square rounded-[12px] overflow-hidden border-2 transition-all ${selected?.id === r.id ? 'border-[#3B82F6]' : 'border-transparent hover:border-[#333333]'}`}
               >
-                {/* FIX 1: Changed pt-[100%] to aspect-square and img to object-cover.
-                   This makes tiles identical sizes but fills them completely.
-                   If you strictly want NO cropping in grid, change object-cover to object-contain. 
-                */}
-                <div className="aspect-square relative bg-zinc-900">
-                  <img 
-                    src={r.urls.small} // Used 'small' instead of 'thumb' for slightly better resolution
-                    alt={r.alt_description || "image"} 
-                    className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity ${selected?.id === r.id ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`} 
-                  />
-                </div>
+                <img 
+                  src={r.urls.small} 
+                  alt={r.alt_description || "image"} 
+                  className={`w-full h-full object-cover transition-opacity ${selected?.id === r.id ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`} 
+                />
                 {selected?.id === r.id && (
-                  <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
-                    <Check size={14} className="text-white drop-shadow-md" />
+                  <div className="absolute inset-0 bg-[#3B82F6]/20 flex items-center justify-center">
+                    <div className="bg-[#3B82F6] rounded-full p-1 shadow-lg">
+                       <Check size={14} className="text-white" />
+                    </div>
                   </div>
                 )}
               </button>
             ))}
+            {results.length === 0 && !loading && (
+              <div className="col-span-full py-10 flex flex-col items-center justify-center text-[#6B7280]">
+                <Search size={20} className="mb-2 opacity-20" />
+                <span className="text-[12px]">Search to browse library</span>
+              </div>
+            )}
           </div>
 
-          {/* Selected Preview */}
+          {/* Selected Preview - Standard Card Style */}
           {selected && (
-            // FIX 2: Removed aspect-[16/9] to stop cropping the selected image
-            // Added min-h-[100px] to prevent collapse
-            <div className="relative w-full rounded-md overflow-hidden border border-white/[0.1] animate-in fade-in bg-zinc-900">
-              <img 
-                src={selected.urls.regular} 
-                alt="Preview" 
-                // Removed absolute positioning and h-full so image dictates height naturally
-                className="block w-full h-auto object-contain opacity-90" 
-              />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 pt-8">
-                <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Selected Reference</span>
+            <div className={`${cardBase} animate-in fade-in slide-in-from-bottom-2`}>
+              <div className="relative w-full rounded-[14px] overflow-hidden bg-[#121212]">
+                <img 
+                  src={selected.urls.regular} 
+                  alt="Preview" 
+                  className="block w-full h-auto max-h-[300px] object-contain" 
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#121212] to-transparent p-4 pt-10">
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-[#9CA3AF]">Selected Image</span>
+                </div>
               </div>
             </div>
           )}
         </div>
       </main>
 
-      {/* Floating Action Button */}
-      <div className="fixed bottom-12 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">
-        <div className="max-w-xl mx-auto pointer-events-auto">
+      {/* Primary Action Button - Floating State */}
+      <footer className="fixed bottom-12 left-0 right-0 p-6 bg-gradient-to-t from-[#121212] via-[#121212] to-transparent z-10">
+        <div className="max-w-xl mx-auto">
           <button 
             onClick={() => handleSubmit()}
             disabled={saving}
-            className="w-full bg-white text-black h-12 rounded-full text-[13px] font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 hover:bg-zinc-200"
+            className="w-full bg-[#3B82F6] text-[#FFFFFF] h-[56px] rounded-[12px] text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg disabled:bg-[#374151] disabled:text-[#6B7280]"
           >
-            {saving ? <Loader2 size={16} className="animate-spin" /> : <><Plus size={16} /> Save New Card</>}
+            {saving ? <Loader2 size={20} className="animate-spin" /> : <><Plus size={20} strokeWidth={3} /> CREATE NEW CARD</>}
           </button>
         </div>
-      </div>
+      </footer>
 
+      {/* Status Notifications */}
       {msg && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50">
-           <div className="px-4 py-1.5 bg-zinc-900 border border-white/10 rounded-full text-[11px] font-bold text-white shadow-lg">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50">
+           <div className={`px-6 py-2 rounded-full text-[12px] font-bold uppercase shadow-2xl border ${msg === 'Success' ? 'bg-[#10B981]/10 border-[#10B981] text-[#10B981]' : 'bg-[#EF4444]/10 border-[#EF4444] text-[#EF4444]'}`}>
               {msg}
            </div>
         </div>

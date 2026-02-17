@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { signIn, useSession } from 'next-auth/react'
-import { LogIn, Mail, Lock } from 'lucide-react'
+import { LogIn } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -50,30 +50,39 @@ export default function LoginPage() {
     signIn('google', { callbackUrl: '/cards/learning' })
   }
 
-  const inputStyles = "w-full bg-[#1C1C1E] border border-[#2C2C2E] rounded-[14px] px-4 py-[14px] text-white placeholder-[#48484A] transition-all duration-200 focus:outline-none focus:border-emerald-500/50 text-[15px]"
-  const labelStyles = "text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 ml-1 mb-2 block"
+  // Applied Design System Tokens:
+  // background.secondary (#222222), ui_elements.border (#2D2D2F), item_radius (12px)
+  const inputStyles = "w-full bg-[#222222] border border-[#2D2D2F] rounded-[12px] px-4 py-[14px] text-[#FFFFFF] placeholder-[#6B7280] transition-all duration-200 focus:outline-none focus:border-[#3B82F6] text-[14px]"
+  
+  // label typography: 11px, Bold, Uppercase
+  const labelStyles = "text-[11px] font-bold uppercase tracking-widest text-[#6B7280] ml-1 mb-2 block"
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-black text-white antialiased p-4">
-      {/* Neural Glow Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#10B98108_0%,_transparent_65%)] pointer-events-none" />
+    // Global background: primary (#121212)
+    <main className="min-h-screen flex items-center justify-center bg-[#121212] text-[#FFFFFF] antialiased p-4">
+      {/* Brand Blue Glow instead of Emerald */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#3B82F608_0%,_transparent_65%)] pointer-events-none" />
 
       <div className="w-full max-w-[340px] z-10">
-        <div className="bg-[#121212] border border-[#1C1C1E] p-6 md:p-8 rounded-[28px] shadow-2xl relative">
+        {/* card_radius: 14px, background: primary (#121212) */}
+        <div className="bg-[#121212] border border-[#2D2D2F] p-6 md:p-8 rounded-[14px] shadow-2xl relative">
           
           <header className="mb-8 text-center">
-            <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/20 mx-auto mb-4">
-               <LogIn className="text-emerald-500" size={24} />
+            {/* Primary Blue Muted for secondary container feel */}
+            <div className="w-12 h-12 bg-[#1D4ED8]/10 rounded-[12px] flex items-center justify-center border border-[#3B82F6]/20 mx-auto mb-4">
+               <LogIn className="text-[#3B82F6]" size={24} />
             </div>
-            <h1 className="text-2xl font-black tracking-tight">Login</h1>
-            <p className="text-zinc-500 mt-1 text-[13px] font-medium">Welcome back to the training.</p>
+            {/* h1: 19px, Bold */}
+            <h1 className="text-[19px] font-bold tracking-tight">Login</h1>
+            {/* body_medium: 14px, Regular, secondary text color */}
+            <p className="text-[#9CA3AF] mt-1 text-[14px] font-normal">Welcome back to the training.</p>
           </header>
 
-          {/* Google Login */}
+          {/* Google Login - Standardized to item_radius 12px */}
           <button
             onClick={handleGoogleLogin}
             type="button"
-            className="w-full mb-6 bg-white hover:bg-zinc-200 text-black font-black py-[12px] rounded-[14px] transition-all active:scale-[0.98] flex items-center justify-center gap-3 text-[14px]"
+            className="w-full mb-6 bg-[#FFFFFF] hover:bg-[#F3F4F6] text-[#000000] font-bold py-[12px] rounded-[12px] transition-all active:scale-[0.98] flex items-center justify-center gap-3 text-[14px]"
           >
             <svg width="18" height="18" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -86,10 +95,11 @@ export default function LoginPage() {
 
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-[#1C1C1E]"></span>
+              {/* divider: #262626 */}
+              <span className="w-full border-t border-[#262626]"></span>
             </div>
-            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest">
-              <span className="bg-[#121212] px-3 text-zinc-600">Secure Email Login</span>
+            <div className="relative flex justify-center text-[11px] uppercase font-bold tracking-widest">
+              <span className="bg-[#121212] px-3 text-[#6B7280]">Secure Email Login</span>
             </div>
           </div>
 
@@ -122,23 +132,26 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* Primary Button: #3B82F6, radius: 12px */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black py-[14px] rounded-[16px] transition-all active:scale-[0.98] disabled:opacity-50 text-[15px] mt-2 shadow-lg shadow-emerald-500/10"
+              className="w-full bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-[#FFFFFF] font-bold py-[14px] rounded-[12px] transition-all active:scale-[0.98] disabled:opacity-50 text-[15px] mt-2 shadow-lg shadow-[#3B82F6]/10"
             >
               {loading ? 'Authenticating...' : 'Sign In'}
             </button>
 
             {error && (
-              <div className="text-center text-[12px] p-3 rounded-xl border bg-rose-500/5 border-rose-500/20 text-rose-500 font-bold">
+              // Status Color: Error (#EF4444)
+              <div className="text-center text-[12px] p-3 rounded-[12px] border bg-[#EF4444]/5 border-[#EF4444]/20 text-[#EF4444] font-bold">
                 {error}
               </div>
             )}
           </form>
 
-          <p className="mt-8 text-center text-[12px] text-zinc-600 font-medium">
-            Don't have an account? <Link href="/register" className="text-emerald-500 hover:text-emerald-400 font-black ml-1">Sign Up</Link>
+          {/* Caption text: 12px, Medium, secondary color */}
+          <p className="mt-8 text-center text-[12px] text-[#9CA3AF] font-medium">
+            Don't have an account? <Link href="/register" className="text-[#3B82F6] hover:underline font-bold ml-1">Sign Up</Link>
           </p>
         </div>
       </div>
