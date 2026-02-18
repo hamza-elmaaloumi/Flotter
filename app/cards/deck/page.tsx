@@ -8,18 +8,20 @@ import Flashcard from './components/FlashCard'
 import { Sparkles, Loader2, Zap } from 'lucide-react'
 import { useLanguage } from '../../providers/LanguageProvider'
 
-// CONFIGURATION
-const API_KEY = process.env.NEXT_PUBLIC_ELEVEN_LABS_KEY || "sk_af2c6b36ab6dc99603b9e6d639f69a7fd4760ea92548e848";
-const VOICE_ID = "EXAVITQu4vr4xnSDxMaL";
-
 export default function DeckPage() {
   const { user } = useUser()
   const router = useRouter()
   const { t, language } = useLanguage()
+  
+  // State
   const [cards, setCards] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [flipped, setFlipped] = useState<Record<string, boolean>>({})
+  
+  // Audio Refs & Cache
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  // Stores cardId -> blobUrl so we don't fetch twice
+  const audioCacheRef = useRef<Record<string, string>>({}) 
 
   // XP tracking state
   const [flipTimestamps, setFlipTimestamps] = useState<Record<string, number>>({})
@@ -27,6 +29,7 @@ export default function DeckPage() {
   const [sessionXp, setSessionXp] = useState(0)
   const [xpToast, setXpToast] = useState<number | null>(null)
 
+  // 1. Load Cards
   const loadCards = useCallback(async () => {
     if (!user?.id) return
     setLoading(true)
@@ -40,7 +43,68 @@ export default function DeckPage() {
 
   useEffect(() => { loadCards() }, [loadCards])
 
+  // 2. Helper: Fetch Audio URL (Unreal -> Google Fallback)
+  // This function returns the Blob URL string, it does NOT play audio.
+  const fetchAudioUrl = async (text: string): Promise<string> => {
+    const fetchBlob = async (url: string) => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Audio fetch failed");
+      return await res.blob();
+    };
+
+    try {
+      // --- TRY: Unreal Speech ---
+      const blob = await fetchBlob(`/api/tts?text=${encodeURIComponent(text)}&provider=unreal`);
+      return URL.createObjectURL(blob);
+    } catch (error) {
+      console.warn("Unreal Speech pre-fetch failed, trying Google...", error);
+      try {
+        // --- CATCH: Google TTS Fallback ---
+        const blob = await fetchBlob(`/api/tts?text=${encodeURIComponent(text)}&provider=google`);
+        return URL.createObjectURL(blob);
+      } catch (finalError) {
+        console.error("All TTS options failed for text:", text);
+        throw finalError;
+      }
+    }
+  };
+
+  // 3. Pre-fetch Effect
+  // As soon as cards load, we start fetching audio in the background
+  useEffect(() => {
+    if (cards.length === 0) return;
+
+    const preloadAudio = async () => {
+      // We loop through cards. 
+      // Using a for...of loop ensures we don't spam the network with 20 requests at the exact same millisecond,
+      // but rather queue them up reasonably fast.
+      for (const card of cards) {
+        // Check if we already have it in cache to avoid duplicate work
+        if (audioCacheRef.current[card.id]) continue;
+
+        const text = card.sentences[card.currentSentenceIndex];
+        try {
+          const url = await fetchAudioUrl(text);
+          audioCacheRef.current[card.id] = url;
+        } catch (e) {
+          // If pre-fetch fails, we just ignore it. 
+          // The speakSentence function will try again when the user flips.
+        }
+      }
+    };
+
+    preloadAudio();
+
+    // Cleanup: Revoke object URLs when component unmounts to free memory
+    return () => {
+      Object.values(audioCacheRef.current).forEach(url => URL.revokeObjectURL(url));
+      audioCacheRef.current = {};
+    };
+  }, [cards]); // Re-run if cards change (e.g. after a review updates the sentence index)
+
+  // 4. Play Audio Logic
   const speakSentence = async (text: string, cardId: string) => {
+    // Stop previous audio
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
@@ -50,34 +114,32 @@ export default function DeckPage() {
       setAudioCompleted(prev => ({ ...prev, [cardId]: true }))
     }
 
+    // Check Cache First
+    let audioUrl = audioCacheRef.current[cardId];
+
     try {
-      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'xi-api-key': API_KEY,
-        },
-        body: JSON.stringify({
-          text: text,
-          model_id: "eleven_multilingual_v2",
-          voice_settings: { stability: 0.5, similarity_boost: 0.75 }
-        }),
-      });
+      // If NOT in cache (maybe user flipped super fast before pre-fetch finished), fetch it now
+      if (!audioUrl) {
+        audioUrl = await fetchAudioUrl(text);
+        // Add to cache for next time
+        audioCacheRef.current[cardId] = audioUrl;
+      }
 
-      if (!response.ok) throw new Error("ElevenLabs limit reached or error");
-
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      audioRef.current = new Audio(url);
+      audioRef.current = new Audio(audioUrl);
       audioRef.current.addEventListener('ended', onEnded);
-      audioRef.current.play();
+      
+      // If the URL came from our fallback logic (likely Google), we speed it up slightly
+      // We can't easily detect if it's Google or Unreal here without complex logic, 
+      // but 1.1x is usually safe for both. If you only want it for Google, 
+      // you'd need to store metadata. For now, we apply the slight speed boost 
+      // if it sounds too slow.
+      // Note: Unreal usually ignores playbackRate if it's streamed efficiently, but HTML5 audio handles it.
+      // If Unreal is fast enough, you can remove this line, or keep it for the Google fallback.
+      // audioRef.current.playbackRate = 1.1; 
 
+      await audioRef.current.play();
     } catch (error) {
-      console.warn("ElevenLabs failed, switching to Google TTS fallback...");
-      const googleFallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=en&client=tw-ob`;
-      audioRef.current = new Audio(googleFallbackUrl);
-      audioRef.current.addEventListener('ended', onEnded);
-      audioRef.current.play();
+      console.error("Playback failed", error);
     }
   };
 
@@ -118,7 +180,19 @@ export default function DeckPage() {
       if (cardIndex === -1) return prev
       const card = prev[cardIndex]
       const newCards = prev.filter(c => c.id !== cardId)
-      if (result === 'success') return newCards
+      
+      // If success, card is removed. If struggle, it stays but sentence might change.
+      if (result === 'success') {
+        // Clean up cache for removed card to save memory
+        if (audioCacheRef.current[cardId]) {
+            URL.revokeObjectURL(audioCacheRef.current[cardId]);
+            delete audioCacheRef.current[cardId];
+        }
+        return newCards
+      }
+
+      // If we keep the card, we might rotate the sentence.
+      // The useEffect [cards] will detect this change and pre-fetch the NEW sentence audio automatically.
       return [...newCards, { ...card, currentSentenceIndex: (card.currentSentenceIndex + 1) % card.sentences.length }]
     })
 
