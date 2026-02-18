@@ -127,7 +127,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
           {/* FRONT FACE */}
           <div
             onPointerUp={() => !isDragging && isTop && onFlip()}
-            className="absolute inset-0 rounded-[32px] overflow-hidden shadow-2xl bg-zinc-900 border border-white/10"
+            className="absolute inset-0 rounded-[32px] overflow-hidden shadow-2xl bg-[#222222] border border-white/10"
             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
           >
             <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-6">
@@ -163,7 +163,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
           {/* BACK FACE */}
           <div 
             onPointerUp={handleBackClick}
-            className="absolute inset-0 bg-zinc-900 rounded-[32px] overflow-hidden border border-white/10"
+            className="absolute inset-0 bg-[#222222] rounded-[32px] overflow-hidden border border-white/10"
             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
           >
             <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-6">
