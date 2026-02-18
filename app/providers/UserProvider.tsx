@@ -48,12 +48,15 @@ export default function UserProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
       // Initially seed from session
-      setUser(prev => prev || {
-        id: (session.user as any).id,
-        email: session.user.email!,
-        name: session.user.name,
-        image: session.user.image,
+      if (session?.user){
+        const {user} = session
+        setUser(prev => prev || {
+        id: (user as any).id,
+        email: user.email!,
+        name: user.name,
+        image: user.image,
       })
+      }
       // Then fetch full profile for extra details (XP, Rank, better Image handling)
       fetchProfile()
     } else if (status === "unauthenticated") {
