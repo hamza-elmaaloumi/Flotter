@@ -254,6 +254,7 @@ export default function DeckPage() {
               }}
               onReview={handleReview}
               onSwipeXp={(earned) => handleSwipeXp(card.id, earned)}
+              onPlayAudio={() => speakSentence(card.sentences[card.currentSentenceIndex], card.id)}
             />
           ))}
           
@@ -280,7 +281,7 @@ export default function DeckPage() {
         </div>
 
         {!loading && cards.length > 0 && (
-            <footer className="py-8 text-center">
+            <footer className="py-8 flex flex-col items-center gap-3 text-center">
                 <div className="inline-flex items-center gap-4 text-[#6B7280]">
                     <span className="text-[11px] font-bold uppercase tracking-widest">{t('deck.audioActive')}</span>
                 </div>
