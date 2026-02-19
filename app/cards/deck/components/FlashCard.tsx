@@ -113,7 +113,8 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
       <div className="w-full max-w-[310px] md:max-w-[350px] aspect-[2/3.3] relative">
 
         <button
-          onPointerDown={(e) => e.stopPropagation()} // Stop drag start
+          // Use -Capture events to stop propagation before framer-motion's deferred handlers fire
+          onPointerDownCapture={(e) => e.stopPropagation()}
           onClick={(e) => { e.stopPropagation(); router.push(`${card.id}/edit`); }}
           className="absolute top-4 right-4 z-[70] p-3 bg-zinc-800/80 backdrop-blur-md border border-white/10 rounded-full text-zinc-400 hover:text-white transition-all active:scale-90 shadow-xl"
         >
@@ -191,10 +192,18 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
                 {/* Sentence Container with Audio Button inside */}
                 <div className="bg-white/5 p-4 rounded-xl border border-white/5 text-zinc-300 text-xs md:text-sm flex items-start gap-3 text-left">
                   <button
-                    // Stop dragging (PointerDown) and shaking (PointerUp)
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onPointerUp={(e) => e.stopPropagation()}
-                    onClick={(e) => { e.stopPropagation(); onPlayAudio(); }}
+                    // CRITICAL FIX: Use -Capture events to stop propagation before framer-motion's deferred handlers fire
+                    // This prevents the drag gesture from starting when clicking the audio button
+                    onPointerDownCapture={(e) => {
+                      e.stopPropagation();
+                    }}
+                    onPointerUpCapture={(e) => {
+                      e.stopPropagation();
+                    }}
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      onPlayAudio(); 
+                    }}
                     className="shrink-0 p-1.5 bg-white/10 rounded-full text-zinc-200 hover:bg-white/20 transition-colors active:scale-90 cursor-pointer"
                   >
                     <Volume2 size={14} />
