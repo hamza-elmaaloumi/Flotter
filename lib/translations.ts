@@ -168,6 +168,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'newCard.saveFailed': 'Save failed',
     'newCard.searchError': 'Search error',
     'newCard.browseLibrary': 'Search to browse library',
+    'newCard.generating': 'AI Generating...',
 
     // ─── Cards: Search ───
     'searchCards.placeholder': 'Search your collection...',
@@ -418,6 +419,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'newCard.saveFailed': 'فشل الحفظ',
     'newCard.searchError': 'خطأ في البحث',
     'newCard.browseLibrary': 'ابحث لتصفح المكتبة',
+    'newCard.generating': 'جارٍ الإنشاء...',
 
     // ─── Cards: Search ───
     'searchCards.placeholder': 'ابحث في مجموعتك...',

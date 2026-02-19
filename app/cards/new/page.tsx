@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
-import { Plus, Search, Check, ChevronLeft, Loader2, X } from 'lucide-react'
+import { Plus, Search, Check, ChevronLeft, Loader2, X, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '../../providers/LanguageProvider'
 
@@ -22,6 +22,7 @@ export default function NewCardPage() {
   // UI States
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [aiLoading, setAiLoading] = useState(false)
   const [msg, setMsg] = useState('')
 
   // Sentence Handlers
@@ -37,6 +38,22 @@ export default function NewCardPage() {
     const copy = [...sentences]
     copy[index] = val
     setSentences(copy)
+  }
+
+  // AI Sentence Generation logic
+  const handleWordBlur = async () => {
+    if (!word.trim()) return
+    setAiLoading(true)
+    try {
+      const res = await axios.post('/api/ai/generate-sentences', { word })
+      if (res.data.sentences && Array.isArray(res.data.sentences)) {
+        setSentences(res.data.sentences)
+      }
+    } catch (err) {
+      console.error("AI Generation failed", err)
+    } finally {
+      setAiLoading(false)
+    }
   }
 
   async function searchImages() {
@@ -101,17 +118,36 @@ export default function NewCardPage() {
         <div className="lg:col-span-7 space-y-8">
           <section>
             <label className={labelBase}>{t('newCard.word')}</label>
-            <input dir='ltr'
-              value={word} 
-              onChange={e => setWord(e.target.value)} 
-              placeholder={t('newCard.wordPlaceholder')} 
-              className={`${inputBase} text-[14px] font-bold py-3`} // h2-like style
-            />
+            <div className="relative">
+              <input dir='ltr'
+                value={word} 
+                onChange={e => setWord(e.target.value)} 
+                onBlur={handleWordBlur}
+                placeholder={t('newCard.wordPlaceholder')} 
+                className={`${inputBase} text-[14px] font-bold py-3 pr-10`} // h2-like style
+              />
+              {aiLoading && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3B82F6]">
+                  <Loader2 size={18} className="animate-spin" />
+                </div>
+              )}
+            </div>
+            <p className="mt-1.5 text-[10px] text-[#6B7280] italic flex items-center gap-1 opacity-80">
+              <Sparkles size={10} className="text-[#3B82F6]" />
+              {language === 'ar' ? 'تلميح: انقر خارج المربع بعد الكتابة لإنشاء الجمل تلقائياً' : 'Hint: Click outside the box after typing to generate sentences automatically'}
+            </p>
           </section>
 
           <section>
             <div className="flex justify-between items-center mb-2">
-              <label className={labelBase + " mb-0"}>{t('newCard.context')}</label>
+              <div className="flex items-center gap-2">
+                <label className={labelBase + " mb-0"}>{t('newCard.context')}</label>
+                {aiLoading && (
+                  <span className="text-[10px] text-[#3B82F6] animate-pulse font-bold uppercase flex items-center gap-1">
+                    <Sparkles size={10} /> {t('newCard.generating')}
+                  </span>
+                )}
+              </div>
               <button 
                 type="button" 
                 onClick={addSentence}
