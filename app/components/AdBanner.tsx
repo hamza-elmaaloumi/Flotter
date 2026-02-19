@@ -1,23 +1,28 @@
-'use client';
+'use client'
 
 import { useEffect } from 'react';
 
-export default function AdBanner({ dataAdSlot }: { dataAdSlot: string }) {
+type AdBannerProps = {
+  dataAdSlot: string;
+  dataAdClient: string;
+};
+
+export default function AdBanner({ dataAdSlot, dataAdClient }: AdBannerProps) {
   useEffect(() => {
     try {
-      // @ts-ignore
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (err) {
-      console.error("AdSense error", err);
+      // This triggers the Google Adsense script to find and fill this empty div
+      ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+    } catch (err: any) {
+      console.error("AdSense error:", err.message);
     }
   }, []);
 
   return (
-    <div className="flex justify-center my-4">
+    <div className="w-full overflow-hidden my-4 flex justify-center">
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}
-        data-ad-client="ca-pub-9323001864718386"
+        data-ad-client={dataAdClient}
         data-ad-slot={dataAdSlot}
         data-ad-format="auto"
         data-full-width-responsive="true"

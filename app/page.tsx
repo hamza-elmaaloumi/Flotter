@@ -11,7 +11,7 @@ import {
   Layers,
   Activity
 } from 'lucide-react'
-import AdBanner from './components/AdBanner'
+import AdBanner from './components/AdBanner';
 import { useLanguage } from './providers/LanguageProvider'
 
 // --- Feature Card (Mapping to card.standard_card tokens) ---
@@ -102,7 +102,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <AdBanner dataAdSlot="6974039515" />
+      <AdBanner 
+        dataAdClient="ca-pub-9323001864718386" 
+        dataAdSlot="2305168787" 
+      />
 
       {/* INTERACTIVE MOCKUP (Applying interactive_card tokens) */}
       <section className="max-w-[800px] mx-auto px-[20px] mb-[80px]">
