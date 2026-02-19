@@ -65,7 +65,7 @@ Contains the Next.js App Router structure:
 
 ---
 
-## 🎨 Design System: iStoria
+## 🎨 Design System: Flotter
 Flotter follows a strict visual language:
 *   **Palette:** Deep blacks (`#121212`), high-contrast icons (`#3B82F6` Blue, `#EF4444` Red), and subtle borders (`#2D2D2F`).
 *   **Typography:** Bold uppercase labels (11px) for metadata and sharp headliners (19px-24px) for content.

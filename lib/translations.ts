@@ -69,7 +69,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // ─── Logout ───
     'logout.title': 'Terminating...',
     'logout.subtitle': 'Clearing Secure Cache',
-    'logout.brand': 'iStoria System',
+    'logout.brand': 'Flotter System',
 
     // ─── Settings ───
     'settings.title': 'Settings',
@@ -319,7 +319,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // ─── Logout ───
     'logout.title': 'جارٍ الإنهاء...',
     'logout.subtitle': 'مسح الذاكرة المؤقتة الآمنة',
-    'logout.brand': 'نظام iStoria',
+    'logout.brand': 'نظام Flotter',
 
     // ─── Settings ───
     'settings.title': 'الإعدادات',

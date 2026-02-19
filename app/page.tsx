@@ -49,7 +49,7 @@ export default function LandingPage() {
             </div>
             {/* Logo: H2 (16px Bold) */}
             <span className="text-[16px] font-bold tracking-tight text-[#FFFFFF]">
-              iStoria<span className="text-[#3B82F6]">Pulse</span>
+              Flotter<span className="text-[#3B82F6]">Pulse</span>
             </span>
           </div>
           
@@ -175,7 +175,7 @@ export default function LandingPage() {
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center gap-2">
             <Zap size={12} className="text-[#6B7280]" />
-            <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">iStoria OS © 2026</span>
+            <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">Flotter OS © 2026</span>
           </div>
           <div className="flex justify-center gap-6 text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">
             <a href="#" className="hover:text-[#3B82F6] transition-colors">{t('landing.privacy')}</a>

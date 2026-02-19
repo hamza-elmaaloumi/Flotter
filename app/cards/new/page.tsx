@@ -70,7 +70,7 @@ export default function NewCardPage() {
     } finally { setSaving(false) }
   }
 
-  // --- iStoria Design System Constants ---
+  // --- Flotter Design System Constants ---
   const inputBase = "w-full bg-[#222222] border border-[#2D2D2F] rounded-[12px] px-3 py-2.5 text-[14px] text-[#FFFFFF] placeholder-[#6B7280] outline-none focus:border-[#3B82F6] transition-all"
   const labelBase = "text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] mb-2 block" // label scale
   const cardBase = "bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-2" // standard_card
