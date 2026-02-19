@@ -12,15 +12,15 @@ export default function DeckPage() {
   const { user } = useUser()
   const router = useRouter()
   const { t, language } = useLanguage()
-  
+
   // State
   const [cards, setCards] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [flipped, setFlipped] = useState<Record<string, boolean>>({})
-  
+
   // Audio Refs & Cache
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  const audioCacheRef = useRef<Record<string, string>>({}) 
+  const audioCacheRef = useRef<Record<string, string>>({})
   const abortControllerRef = useRef<AbortController | null>(null)
 
   // XP tracking state
@@ -79,7 +79,7 @@ export default function DeckPage() {
       // Pre-fetch the first 5 cards in parallel rather than strictly sequential
       // to avoid one slow request blocking the entire queue.
       const cardsToPreload = cards.slice(0, 5);
-      
+
       for (const card of cardsToPreload) {
         if (audioCacheRef.current[card.id]) continue;
         if (signal.aborted) break;
@@ -125,6 +125,9 @@ export default function DeckPage() {
       }
 
       audioRef.current = new Audio(audioUrl);
+      if (!audioUrl.includes("unreal")) {
+        audioRef.current.playbackRate = 1.2;
+      }
       audioRef.current.addEventListener('ended', onEnded);
       await audioRef.current.play();
     } catch (error) {
@@ -142,11 +145,11 @@ export default function DeckPage() {
     let totalXpThisSwipe = 0
     if (earnedReviewXp) {
       totalXpThisSwipe += 10
-      axios.post('/api/xp/add', { amount: 10, reason: 'card_review' }).catch(() => {})
+      axios.post('/api/xp/add', { amount: 10, reason: 'card_review' }).catch(() => { })
     }
     if (audioCompleted[cardId]) {
       totalXpThisSwipe += 5
-      axios.post('/api/xp/add', { amount: 5, reason: 'audio_listen' }).catch(() => {})
+      axios.post('/api/xp/add', { amount: 5, reason: 'audio_listen' }).catch(() => { })
     }
     if (totalXpThisSwipe > 0) showXpToast(totalXpThisSwipe)
     setFlipTimestamps(prev => { const n = { ...prev }; delete n[cardId]; return n })
@@ -160,11 +163,11 @@ export default function DeckPage() {
       if (cardIndex === -1) return prev
       const card = prev[cardIndex]
       const newCards = prev.filter(c => c.id !== cardId)
-      
+
       if (result === 'success') {
         if (audioCacheRef.current[cardId]) {
-            URL.revokeObjectURL(audioCacheRef.current[cardId]);
-            delete audioCacheRef.current[cardId];
+          URL.revokeObjectURL(audioCacheRef.current[cardId]);
+          delete audioCacheRef.current[cardId];
         }
         return newCards
       }
@@ -177,7 +180,7 @@ export default function DeckPage() {
   return (
     <main dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] py-6 px-4 overflow-hidden flex flex-col justify-between antialiased">
       <div className="max-w-[400px] mx-auto w-full flex-1 flex flex-col">
-        
+
         <header className="mb-8 flex flex-col items-center">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles size={14} className="text-[#3B82F6]" />
@@ -186,7 +189,7 @@ export default function DeckPage() {
             </h1>
           </div>
           <h2 className="text-[19px] font-bold tracking-tight uppercase">{t('deck.title')}</h2>
-          
+
           <div className="mt-4 flex items-center gap-3">
             <div className="h-[1px] w-6 bg-[#262626]" />
             <div className="bg-[#222222] border border-[#2D2D2F] px-4 py-1 rounded-[12px]">
@@ -199,17 +202,17 @@ export default function DeckPage() {
         </header>
 
         <div className="relative flex-1 w-full max-h-[550px] min-h-[400px] flex justify-center items-center" style={{ perspective: '1200px' }}>
-          
+
           {loading && cards.length === 0 && (
             <div className="w-full max-w-[320px] aspect-[2/3.2] bg-[#1C1C1E] border border-[#2D2D2F] rounded-[14px] flex flex-col items-center justify-center space-y-4 animate-pulse">
-                <Loader2 className="animate-spin text-[#6B7280]" size={24} />
-                <span className="text-[#6B7280] text-[11px] font-bold uppercase tracking-widest">{t('deck.preparing')}</span>
+              <Loader2 className="animate-spin text-[#6B7280]" size={24} />
+              <span className="text-[#6B7280] text-[11px] font-bold uppercase tracking-widest">{t('deck.preparing')}</span>
             </div>
           )}
 
           {cards.slice(0, 2).map((card, index) => (
             <Flashcard
-              key={card.id} 
+              key={card.id}
               card={card}
               isTop={index === 0}
               isFlipped={!!flipped[card.id]}
@@ -225,7 +228,7 @@ export default function DeckPage() {
               onPlayAudio={() => speakSentence(card.sentences[card.currentSentenceIndex], card.id)}
             />
           ))}
-          
+
           {cards.length === 0 && !loading && (
             <div className="w-full max-w-[320px] aspect-[2/3.3] flex flex-col items-center justify-center bg-[#121212] border border-[#2D2D2F] rounded-[14px] p-6 text-center shadow-2xl">
               <div className="w-14 h-14 bg-[#1D4ED8]/10 rounded-full flex items-center justify-center mb-4 border border-[#3B82F6]/20">
@@ -235,8 +238,8 @@ export default function DeckPage() {
               <p className="text-[#9CA3AF] text-[14px] leading-relaxed mb-8">
                 {t('deck.allCaughtUpDesc')}
               </p>
-              <button 
-                onClick={() => router.push('/cards/learning')} 
+              <button
+                onClick={() => router.push('/cards/learning')}
                 className="w-full bg-[#3B82F6] text-[#FFFFFF] py-4 rounded-[12px] font-bold uppercase text-[11px] tracking-widest active:scale-95 transition-all"
               >
                 {t('deck.returnHome')}
@@ -246,17 +249,17 @@ export default function DeckPage() {
         </div>
 
         {!loading && cards.length > 0 && (
-            <footer className="py-8 flex flex-col items-center gap-3 text-center">
-                <div className="inline-flex items-center gap-4 text-[#6B7280]">
-                    <span className="text-[11px] font-bold uppercase tracking-widest">{t('deck.audioActive')}</span>
-                </div>
-                {sessionXp > 0 && (
-                  <div className="mt-2 inline-flex items-center gap-1.5 bg-[#222222] border border-[#2D2D2F] px-4 py-1.5 rounded-[12px]">
-                    <Zap size={12} className="text-[#FACC15]" fill="currentColor" />
-                    <span className="text-[#FACC15] text-[11px] font-bold tracking-widest uppercase">+{sessionXp} {t('deck.xpSession')}</span>
-                  </div>
-                )}
-            </footer>
+          <footer className="py-8 flex flex-col items-center gap-3 text-center">
+            <div className="inline-flex items-center gap-4 text-[#6B7280]">
+              <span className="text-[11px] font-bold uppercase tracking-widest">{t('deck.audioActive')}</span>
+            </div>
+            {sessionXp > 0 && (
+              <div className="mt-2 inline-flex items-center gap-1.5 bg-[#222222] border border-[#2D2D2F] px-4 py-1.5 rounded-[12px]">
+                <Zap size={12} className="text-[#FACC15]" fill="currentColor" />
+                <span className="text-[#FACC15] text-[11px] font-bold tracking-widest uppercase">+{sessionXp} {t('deck.xpSession')}</span>
+              </div>
+            )}
+          </footer>
         )}
 
         {xpToast !== null && (
