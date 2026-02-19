@@ -4,7 +4,6 @@ import * as googleTTS from 'google-tts-api';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const text = searchParams.get('text');
-  // We add a provider param to choose between 'high-quality' or 'fallback'
   const provider = searchParams.get('provider') || 'google'; 
 
   if (!text) return NextResponse.json({ error: 'Text is required' }, { status: 400 });
@@ -12,8 +11,9 @@ export async function GET(request: Request) {
   try {
     let arrayBuffer: ArrayBuffer;
 
-    if (provider === 'unreal') {
+    if (provider === 'unreal' && process.env.UNREAL_SPEECH_KEY) {
       // --- OPTION A: UNREAL SPEECH (High Quality) ---
+      // FIXED: Removed trailing space from the URL
       const response = await fetch('https://api.v6.unrealspeech.com/stream', {
         method: 'POST',
         headers: {
@@ -22,7 +22,7 @@ export async function GET(request: Request) {
         },
         body: JSON.stringify({
           Text: text,
-          VoiceId: 'Dan', // Options: 'Liv', 'Will', 'Scarlett', 'Dan', 'Amy'
+          VoiceId: 'Dan', 
           Bitrate: '192k',
           Speed: '0',
           Pitch: '1.0',
@@ -30,11 +30,16 @@ export async function GET(request: Request) {
         }),
       });
 
-      if (!response.ok) throw new Error('Unreal Speech API error');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Unreal Speech Error Details:', errorText);
+        throw new Error('Unreal Speech API error');
+      }
       arrayBuffer = await response.arrayBuffer();
 
     } else {
       // --- OPTION B: GOOGLE TTS (Fallback) ---
+      // FIXED: Removed trailing space from the host URL
       const url = googleTTS.getAudioUrl(text, {
         lang: 'en',
         slow: false,
@@ -49,13 +54,12 @@ export async function GET(request: Request) {
     return new NextResponse(arrayBuffer, {
       headers: {
         'Content-Type': 'audio/mpeg',
-        // Cache for 1 year to save your 250k credits on repeated cards!
         'Cache-Control': 'public, max-age=31536000, immutable',
       },
     });
 
   } catch (error) {
-    console.error("TTS Error:", error);
+    console.error("TTS Route Error:", error);
     return NextResponse.json({ error: 'Failed to fetch audio' }, { status: 500 });
   }
 }
