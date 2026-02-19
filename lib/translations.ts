@@ -242,10 +242,16 @@ export const translations: Record<Language, Record<string, string>> = {
     "editCard.confirmDelete": "Are you sure you want to delete this card permanently?",
     "editCard.deleteFailed": "Failed to delete the card. Please try again.",
     "editCard.sentenceRequired": "You must provide at least one sentence.",
-    "editCard.deleteCard": "Delete Card"
+    "editCard.deleteCard": "Delete Card",
+
+    //loading
+    'global.loading': 'Loading',
   },
 
   ar: {
+    //loading
+    'global.loading': 'جارٍ التحميل',
+
     // ─── Header ───
     'header.login': 'تسجيل الدخول',
     'header.join': 'انضم',

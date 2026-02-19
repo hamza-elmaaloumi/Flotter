@@ -45,19 +45,19 @@ export default function RootLayout({
         {/* NextAuth Provider MUST wrap the UserProvider */}
         <NextAuthSessionProvider>
           <UserProvider>
-          <LanguageProvider>
-            <Script
-              async
-              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9323001864718386"
-              crossOrigin="anonymous"
-              strategy="afterInteractive"
-            />
-            <Header />
-            <main className="pt-16 flex-grow mb-12 flex flex-col relative overflow-hidden">
-              {children}
-            </main>
-            <Footer />
-          </LanguageProvider>
+            <LanguageProvider>
+              <Script
+                async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9323001864718386"
+                crossOrigin="anonymous"
+                strategy="afterInteractive"
+              />
+              <Header />
+              <main className="pt-16 flex-grow mb-12 flex flex-col relative overflow-hidden">
+                {children}
+              </main>
+              <Footer />
+            </LanguageProvider>
           </UserProvider>
         </NextAuthSessionProvider>
       </body>

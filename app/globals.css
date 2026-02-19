@@ -33,3 +33,10 @@ body.lang-ar {
 body.lang-ar .font-sans {
   font-family: var(--font-cairo), Arial, Helvetica, sans-serif;
 }
+
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
