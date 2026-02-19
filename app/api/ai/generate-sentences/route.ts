@@ -14,52 +14,35 @@ export async function POST(req: Request) {
         }
 
         try {
-            // 1. Primary Method: Call Groq (Llama 3)
             const completion = await groq.chat.completions.create({
                 messages: [
                     {
                         role: "system",
-                        content: `You are an elite cognitive scientist specializing in memory encoding. 
-                        Your mission: Generate "Neural Anchor" sentences that maximize vocabulary retention through proven mechanisms:
-                        - Self-Reference Effect (self-relevant processing)
-                        - Multi-sensory binding (visual + tactile + auditory)
-                        - Emotional Salience (surprise, mild embarrassment, or humor)
-                        - Production Effect (rhythm and mouth-feel for speaking aloud)
-                        - Elaborative Encoding (connecting to existing self-knowledge)
+                        content: `Role: Expert Mnemonist.
+                            Task: Create a visual memory anchor.
+                            Return JSON: { "sentences": [3 strings], "imageQuery": "string" }
 
-                        CRITICAL RULES:
-                        1. EXACTLY 12-18 words per sentence (optimal for working memory)
-                        2. ALWAYS use second-person "You" to trigger self-referential processing
-                        3. Include at least ONE concrete sensory detail (texture, temperature, sound)
-                        4. Create mild emotional dissonance (awkward, funny, or slightly shocking)
-                        5. Ensure the target word feels like the "punchline" or climax of the sentence
-                        6. Use present tense for immediacy
-                        7. Avoid abstract concepts; ground everything in physical reality
+                            RULES for Sentences:
+                            1. Count: Exactly 3. Length: 14-18 words.
+                            2. Structure: Start with "You". Use high-contrast sensory imagery (touch, sight, sound).
+                            3. Context: The scenario must force the word's meaning.
+                            4. Vibe: Cinematic, emotional, humor, or visceral.
+                            5. The word must appear in each sentence
+                            6. Ensure the target word feels like the "punchline" or climax of the sentence
 
-                        Return ONLY a JSON array of 3 strings. No markdown, no explanation.`
+                            RULES for ImageQuery:
+                            1. Create a concrete search term (2-4 words) for Unsplash.
+                            2. Must describe the PHYSICAL SCENE in the sentences, NOT the abstract word.
+                            3. Example: If word is "ephemeral" & sentence is about a wilting flower, query is "wilted rose", NOT "ephemeral".`
                     },
                     {
                         role: "user",
-                        content: `Create 3 Neural Anchor sentences for: "${word}"
-
-                        Encoding Requirements:
-                        - SENSORY: Include vivid visual + one other sense (touch/taste/sound)
-                        - EMOTIONAL: Make it slightly absurd, embarrassing, or surprisingly poignant
-                        - SELF-REFERENCE: Force the reader to mentally simulate the scenario as themselves
-                        - RHYTHM: Write for speaking aloud—cadence matters
-                        - CONTEXT: Show the word's meaning through concrete situation, not definition
-
-                        Examples of quality:
-                        Word: "serendipity"
-                        Good: "You find a love letter meant for a stranger tucked in your library book, and your heart flutters with serendipity."
-                        Bad: "Serendipity is when good things happen by accident."
-
-                        Format: ["sentence 1", "sentence 2", "sentence 3"]`
+                        content: `Target Word: "${word}"`
                     },
                 ],
                 model: "llama-3.3-70b-versatile",
-                temperature: 0.85, // Higher for creative emotional combinations
-                max_tokens: 250,
+                temperature: 0.85,
+                max_tokens: 200, // Reduced max_tokens since we want short sentences
                 response_format: { type: "json_object" },
             });
 
@@ -67,21 +50,34 @@ export async function POST(req: Request) {
 
             if (responseContent) {
                 const parsed = JSON.parse(responseContent);
-                // Handle cases where the AI wraps it in an object like { "sentences": [...] }
-                const sentences = Array.isArray(parsed) ? parsed : (parsed.sentences || Object.values(parsed)[0]);
-                return NextResponse.json({ sentences: sentences.slice(0, 3) });
+
+                // Bulletproof extraction for JSON Object mode
+                let sentences = [];
+                let imageQuery = word;
+
+                if (Array.isArray(parsed.sentences)) {
+                    sentences = parsed.sentences;
+                }
+
+                if (parsed.imageQuery) {
+                    imageQuery = parsed.imageQuery;
+                }
+
+                return NextResponse.json({
+                    sentences: sentences.slice(0, 3),
+                    imageQuery
+                });
             }
         } catch (aiError) {
             console.error("Groq AI failed, trying Dictionary Fallback:", aiError);
         }
 
-        // 2. Fallback Method: Free Dictionary API (No Key Needed)
+        // 2. Fallback Method: Free Dictionary API
         const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
         const dictData = await dictRes.json();
 
         if (Array.isArray(dictData)) {
             const examples: string[] = [];
-            // Drill down into the dictionary data to find example sentences
             dictData[0].meanings.forEach((m: any) => {
                 m.definitions.forEach((d: any) => {
                     if (d.example) examples.push(d.example);
@@ -89,13 +85,17 @@ export async function POST(req: Request) {
             });
 
             if (examples.length > 0) {
-                return NextResponse.json({ sentences: examples.slice(0, 3), fallback: true });
+                return NextResponse.json({
+                    sentences: examples.slice(0, 3),
+                    imageQuery: word,
+                    fallback: true
+                });
             }
         }
 
-        // 3. Last Resort: Generic sentence
         return NextResponse.json({
-            sentences: [`This is an example sentence using the word ${word}.`]
+            sentences: [`You find yourself focusing deeply on the concept of ${word} until the meaning is etched into your mind.`],
+            imageQuery: word
         });
 
     } catch (error: any) {

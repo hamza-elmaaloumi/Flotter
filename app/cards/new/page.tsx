@@ -40,31 +40,45 @@ export default function NewCardPage() {
     setSentences(copy)
   }
 
-  // AI Sentence Generation logic
+  // Internal search function that can be triggered by AI or manual search
+  async function performImageSearch(searchTerm: string) {
+    if (!searchTerm) return
+    setLoading(true)
+    try {
+      const res = await axios.get('/api/images/search', { params: { query: searchTerm } })
+      setResults(res.data.results || [])
+    } catch (err) {
+      setMsg(t('newCard.searchError'))
+    } finally { setLoading(false) }
+  }
+
+  // Triggered when clicking search button or pressing enter
+  const handleManualSearch = () => {
+    performImageSearch(query)
+  }
+
+  // AI Sentence & Image Query Generation logic
   const handleWordBlur = async () => {
     if (!word.trim()) return
     setAiLoading(true)
     try {
       const res = await axios.post('/api/ai/generate-sentences', { word })
+      
+      // Update Sentences
       if (res.data.sentences && Array.isArray(res.data.sentences)) {
         setSentences(res.data.sentences)
+      }
+
+      // Update Query and Trigger Search Automatically
+      if (res.data.imageQuery) {
+        setQuery(res.data.imageQuery)
+        performImageSearch(res.data.imageQuery)
       }
     } catch (err) {
       console.error("AI Generation failed", err)
     } finally {
       setAiLoading(false)
     }
-  }
-
-  async function searchImages() {
-    if (!query) return
-    setLoading(true)
-    try {
-      const res = await axios.get('/api/images/search', { params: { query } })
-      setResults(res.data.results || [])
-    } catch (err) {
-      setMsg(t('newCard.searchError'))
-    } finally { setLoading(false) }
   }
 
   async function handleSubmit(e?: React.FormEvent) {
@@ -134,7 +148,7 @@ export default function NewCardPage() {
             </div>
             <p className="mt-1.5 text-[10px] text-[#6B7280] italic flex items-center gap-1 opacity-80">
               <Sparkles size={10} className="text-[#3B82F6]" />
-              {language === 'ar' ? 'تلميح: انقر خارج المربع بعد الكتابة لإنشاء الجمل تلقائياً' : 'Hint: Click outside the box after typing to generate sentences automatically'}
+              {language === 'ar' ? 'تلميح: انقر خارج المربع بعد الكتابة لإنشاء الجمل والبحث عن الصور تلقائياً' : 'Hint: Click outside the box after typing to generate sentences and search images automatically'}
             </p>
           </section>
 
@@ -144,7 +158,7 @@ export default function NewCardPage() {
                 <label className={labelBase + " mb-0"}>{t('newCard.context')}</label>
                 {aiLoading && (
                   <span className="text-[10px] text-[#3B82F6] animate-pulse font-bold uppercase flex items-center gap-1">
-                    <Sparkles size={10} /> {t('newCard.generating')}
+                    <Sparkles size={10} /> {t('newCard.generating') || 'AI Generating...'}
                   </span>
                 )}
               </div>
@@ -188,14 +202,14 @@ export default function NewCardPage() {
               <input dir='ltr' 
                 value={query} 
                 onChange={e => setQuery(e.target.value)} 
-                onKeyDown={(e) => e.key === 'Enter' && searchImages()}
+                onKeyDown={(e) => e.key === 'Enter' && handleManualSearch()}
                 className={inputBase + " pl-10 h-11"} 
                 placeholder="search for an image..." 
               />
             </div>
             <button 
               type="button" 
-              onClick={searchImages} 
+              onClick={handleManualSearch} 
               disabled={loading}
               className="px-5 h-11 bg-[#333333] text-[12px] font-bold rounded-[12px] border border-[#2D2D2F] hover:bg-[#374151] transition-colors disabled:opacity-50"
             >

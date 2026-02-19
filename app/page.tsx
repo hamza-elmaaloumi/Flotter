@@ -1,34 +1,136 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import {
   Zap,
-  Sparkles,
   BrainCircuit,
   Target,
   ArrowRight,
-  Layers,
-  Activity
+  Microscope,
+  Sparkles,
+  ChevronDown,
+  Play,
+  Lock,
+  Eye,
+  Shield
 } from 'lucide-react'
-import AdBanner from './components/AdBanner';
 import { useLanguage } from './providers/LanguageProvider'
 
-// --- Feature Card (Mapping to card.standard_card tokens) ---
-function FeatureCard({ icon: Icon, title, description }: any) {
+// --- Science Badge Component ---
+function ScienceBadge({ children }: { children: React.ReactNode }) {
   return (
-    /* bg: #1C1C1E | border: #2D2D2F | radius: 14px */
-    <div className="bg-[#1C1C1E] p-[20px] rounded-[14px] border border-[#2D2D2F] hover:border-[#3B82F6] transition-all group relative overflow-hidden">
-      {/* Icon Container: item_radius (12px) | Primary Blue: #3B82F6 */}
-      <div className="w-10 h-10 rounded-[12px] bg-[#3B82F6]/10 flex items-center justify-center mb-5 border border-[#3B82F6]/20 group-hover:scale-110 transition-transform">
-        <Icon className="text-[#3B82F6]" size={20} />
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/30 text-[#3B82F6] text-[11px] font-bold uppercase tracking-wider">
+      <Microscope size={12} />
+      {children}
+    </span>
+  )
+}
+
+// --- Memory Demo Component ---
+function MemoryDemo() {
+  const [step, setStep] = useState(0)
+  
+  const stages = [
+    { label: "Abstract", color: "#6B7280", icon: Lock },
+    { label: "Visual", color: "#FACC15", icon: Eye }, // Gold color per design update
+    { label: "Story", color: "#3B82F6", icon: BrainCircuit },
+    { label: "Pathway", color: "#10B981", icon: Zap }
+  ]
+
+  return (
+    /* card_radius: 16px | background: #1C1C1E */
+    <div className="bg-[#1C1C1E] rounded-[16px] p-6 border border-[#2D2D2F]">
+      <div className="flex justify-between mb-6 relative">
+        <div className="absolute top-5 left-0 right-0 h-0.5 bg-[#2D2D2F] -z-10" />
+        <div 
+          className="absolute top-5 left-0 h-0.5 bg-[#3B82F6] transition-all duration-700 -z-10"
+          style={{ width: `${(step / 3) * 100}%` }}
+        />
+        
+        {stages.map((stage, idx) => {
+          const Icon = stage.icon
+          const isActive = idx <= step
+          return (
+            <button
+              key={idx}
+              onClick={() => setStep(idx)}
+              className={`flex flex-col items-center gap-2 transition-all ${isActive ? 'opacity-100' : 'opacity-40'}`}
+            >
+              <div 
+                className="w-10 h-10 rounded-[12px] flex items-center justify-center border-2 transition-all duration-300"
+                style={{ 
+                  borderColor: isActive ? stage.color : '#2D2D2F',
+                  backgroundColor: isActive ? `${stage.color}10` : '#121212'
+                }}
+              >
+                <Icon size={18} style={{ color: isActive ? stage.color : '#6B7280' }} />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF]">
+                {stage.label}
+              </span>
+            </button>
+          )
+        })}
       </div>
-      {/* title: h2 (16px Bold) */}
-      <h3 className="text-[16px] font-bold text-[#FFFFFF] mb-2">{title}</h3>
-      {/* body_medium: 14px Regular | text.secondary: #9CA3AF */}
-      <p className="text-[#9CA3AF] text-[14px] leading-relaxed font-normal">
-        {description}
-      </p>
+
+      {/* item_radius: 12px */}
+      <div className="bg-[#121212] rounded-[12px] p-5 border border-[#2D2D2F] min-h-[140px] flex items-center justify-center">
+        {step === 0 && (
+          <div className="text-center">
+            <p className="text-[#6B7280] text-[14px] mb-2">Traditional apps teach:</p>
+            <p className="text-[19px] font-bold text-[#FFFFFF]">"Ephemeral = Lasting a short time"</p>
+            <p className="text-[#EF4444] text-[12px] mt-2 font-bold uppercase">10% Retention</p>
+          </div>
+        )}
+        {step === 1 && (
+          <div className="text-center">
+            <p className="text-[#6B7280] text-[14px] mb-2">Visual Anchors:</p>
+            <div className="px-4 py-2 bg-[#FACC15]/10 rounded-[8px] border border-[#FACC15]/20 mb-2">
+              <span className="text-[#FACC15] font-bold">🌸 Falling Petals</span>
+            </div>
+            <p className="text-[#9CA3AF] text-[12px]">Visual encoding triggers long-term storage</p>
+          </div>
+        )}
+        {step === 2 && (
+          <div className="text-center space-y-2">
+            <p className="text-[#6B7280] text-[14px]">Contextual Stories:</p>
+            <p className="text-[15px] text-[#FFFFFF] italic font-medium">"Beauty that is <span className="text-[#3B82F6]">ephemeral</span>."</p>
+            <p className="text-[#3B82F6] text-[12px] font-bold uppercase">Sensory binding active</p>
+          </div>
+        )}
+        {step === 3 && (
+          <div className="text-center">
+            <p className="text-[#10B981] text-[14px] font-bold mb-2 uppercase tracking-widest">Neural Pathway Forged</p>
+            <div className="flex items-center justify-center gap-2 text-[#FFFFFF] text-[13px]">
+              <span>Image</span>
+              <ArrowRight size={14} className="text-[#10B981]" />
+              <span>Emotion</span>
+              <ArrowRight size={14} className="text-[#10B981]" />
+              <span className="font-bold text-[#10B981]">Memory</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => setStep(prev => Math.min(prev + 1, 3))}
+          className="text-[11px] font-bold uppercase tracking-widest text-[#3B82F6] disabled:opacity-30 flex items-center gap-1"
+        >
+          {step === 3 ? "Complete" : "Next Phase"} <ChevronDown size={14} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function EvidenceCard({ stat, label, source }: { stat: string, label: string, source: string }) {
+  return (
+    <div className="bg-[#1C1C1E] p-4 rounded-[12px] border border-[#2D2D2F] text-center">
+      <div className="text-[24px] font-bold text-[#3B82F6] mb-1">{stat}</div>
+      <div className="text-[#FFFFFF] text-[13px] font-bold mb-1">{label}</div>
+      <div className="text-[#6B7280] text-[10px] uppercase tracking-wider font-bold">{source}</div>
     </div>
   )
 }
@@ -37,153 +139,123 @@ export default function LandingPage() {
   const { t, language } = useLanguage()
 
   return (
-    /* Global bg: #121212 */
     <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased selection:bg-[#3B82F6]/30">
 
-      {/* NAVIGATION (Aligned with Header design) */}
-      <nav dir="ltr" className="fixed top-0 w-full z-50 border-b border-[#262626] bg-[#121212]/90 backdrop-blur-xl">
-        <div className="max-w-5xl mx-auto px-[16px] h-[64px] flex items-center justify-between">
+      {/* HEADER - Consistent with App Header */}
+      <nav className="fixed top-0 w-full z-50 border-b border-[#262626] bg-[#121212]/95 backdrop-blur-xl">
+        <div className="max-w-5xl mx-auto px-4 h-[64px] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#3B82F6] rounded-[8px] flex items-center justify-center">
-              <Zap size={16} fill="#FFFFFF" className="text-[#FFFFFF]" />
+            <div className="w-9 h-9 bg-[#3B82F6] rounded-[12px] flex items-center justify-center shadow-lg shadow-[#3B82F6]/20">
+              <Zap size={20} fill="white" className="text-white" />
             </div>
-            {/* Logo: H2 (16px Bold) */}
-            <span className="text-[16px] font-bold tracking-tight text-[#FFFFFF]">
-              Flotter<span className="text-[#3B82F6]">Pulse</span>
-            </span>
+            <span className="text-[18px] font-bold tracking-tight">Flotter</span>
           </div>
           
-          <div className="hidden md:flex items-center gap-6 text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">
-            <a href="#method" className="hover:text-[#3B82F6] transition-colors">{t('landing.navAlgorithm')}</a>
-            <a href="#features" className="hover:text-[#3B82F6] transition-colors">{t('landing.navProtocol')}</a>
+          <div className="flex items-center gap-3">
+             <Link href="/ranking" className="p-2 text-[#FACC15]">
+                <Shield size={20} fill="#FACC15" />
+             </Link>
+             <Link 
+                href="/register" 
+                className="bg-[#3B82F6] text-white px-5 py-2.5 rounded-[12px] text-[13px] font-bold uppercase tracking-widest hover:bg-[#1D4ED8] transition-all"
+              >
+                Join
+              </Link>
           </div>
-
-          <Link 
-            href="/login" 
-            className="bg-[#222222] text-[#FFFFFF] px-5 py-2 rounded-[12px] text-[14px] font-semibold border border-[#2D2D2F] hover:bg-[#2D2D2F] transition-all"
-          >
-            {t('landing.enterApp')}
-          </Link>
         </div>
       </nav>
 
       {/* HERO SECTION */}
-      <section className="relative pt-[140px] pb-[80px] px-[20px]">
-        {/* Visual Asset: Brand Blue Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[400px] bg-[#3B82F6]/5 blur-[120px] pointer-events-none" />
-        
+      <section className="relative pt-[140px] pb-[80px] px-4">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#3B82F6]/05 rounded-full blur-[120px]" />
+        </div>
+
         <div className="max-w-4xl mx-auto relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[12px] bg-[#1C1C1E] border border-[#3B82F6]/30 mb-8">
-            <Sparkles size={12} className="text-[#FBBF24]" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#FBBF24]">
-              {t('landing.badge')}
-            </span>
+          <div className="flex justify-center mb-6">
+            <ScienceBadge>Science of Dual Coding</ScienceBadge>
           </div>
 
-          {/* Large Hero Title (Custom 48px for Landing, using bold system weight) */}
-          <h1 className="text-[32px] md:text-[56px] font-bold leading-[1.1] mb-6 text-[#FFFFFF]">
-            {t('landing.heroTitle1')} <br />
-            {t('landing.heroTitle2')} <span className="text-[#EF4444]">{t('landing.heroTitle3')}</span>
+          <h1 className="text-[36px] md:text-[52px] font-bold leading-[1.1] mb-6 text-[#FFFFFF]">
+            Words That <span className="text-[#3B82F6]">Stick</span>.<br />
+            <span className="text-[#9CA3AF]">Not Just Your App.</span>
           </h1>
 
-          {/* body_large: 15px | text.secondary: #9CA3AF */}
-          <p className="text-[#9CA3AF] text-[15px] font-normal max-w-xl mx-auto mb-10 leading-relaxed">
-            {t('landing.heroSub')}
+          <p className="text-[#9CA3AF] text-[16px] md:text-[18px] max-w-2xl mx-auto mb-10 leading-relaxed">
+            Stop memorizing lists. Start encoding <span className="text-[#ee3939] font-bold uppercase text-[15px]">neural pathways</span> using visual anchors and embodied storytelling.
           </p>
 
-          <div className="flex justify-center">
+          <div className="max-w-sm mx-auto mb-12">
+            <MemoryDemo />
+          </div>
+
+          <div className="flex flex-col items-center gap-4">
             <Link 
               href="/register"
-              className="bg-[#3B82F6] text-[#FFFFFF] px-[32px] py-[16px] rounded-[12px] text-[15px] font-bold hover:bg-[#1D4ED8] transition-all flex items-center gap-2 shadow-lg shadow-[#3B82F6]/20"
+              className="bg-[#3B82F6] text-white px-10 py-4 rounded-[12px] text-[15px] font-bold uppercase tracking-widest hover:bg-[#1D4ED8] transition-all flex items-center gap-3 shadow-xl shadow-[#3B82F6]/20 active:scale-95"
             >
-              {t('landing.cta')} <ArrowRight size={18} />
+              Start Neural Training 
+              <ArrowRight size={19} />
             </Link>
+            <p className="text-[#6B7280] text-[11px] font-bold uppercase tracking-widest">No credit card required</p>
           </div>
         </div>
       </section>
 
-      <AdBanner 
-        dataAdClient="ca-pub-9323001864718386" 
-        dataAdSlot="2305168787" 
-      />
+      {/* EVIDENCE SECTION */}
+      <section className="max-w-5xl mx-auto px-4 py-16 border-y border-[#262626]">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <EvidenceCard stat="65%" label="Retention" source="Dual Coding" />
+          <EvidenceCard stat="2x" label="Recall" source="Recall Speed" />
+          <EvidenceCard stat="3x" label="Memory" source="Self-Reference" />
+          <EvidenceCard stat="60k" label="Processing" source="Visual Power" />
+        </div>
+      </section>
 
-      {/* INTERACTIVE MOCKUP (Applying interactive_card tokens) */}
-      <section className="max-w-[800px] mx-auto px-[20px] mb-[80px]">
-        <div className="bg-[#1C1C1E] rounded-[14px] p-8 md:p-10 flex flex-col md:flex-row items-center gap-8 border border-[#2D2D2F]">
-          <div className="flex-1 text-center md:text-left">
-            <div className="flex items-center justify-center md:justify-start gap-2 mb-3 text-[#3B82F6]">
-              <Activity size={18} />
-              <span className="font-bold uppercase text-[11px] tracking-widest">{t('landing.realtimeMastery')}</span>
-            </div>
-            <h2 className="text-[19px] font-bold mb-3 text-[#FFFFFF]">{t('landing.syncSynapses')}</h2>
-            <p className="text-[#9CA3AF] text-[14px] font-normal leading-relaxed">
-              {t('landing.syncDesc')}
-            </p>
+      {/* HOW IT WORKS */}
+      <section className="max-w-4xl mx-auto px-4 py-24">
+        <div className="text-center mb-16">
+          <h2 className="text-[11px] font-bold uppercase text-[#3B82F6] tracking-widest mb-3">The Methodology</h2>
+          <h3 className="text-[28px] font-bold text-[#FFFFFF]">Encoding vs. Memorizing</h3>
+        </div>
+
+        <div className="space-y-[12px]">
+          <div className="bg-[#1C1C1E] rounded-[16px] p-8 border border-[#2D2D2F] flex flex-col md:flex-row gap-8 items-center">
+             <div className="w-16 h-16 rounded-[12px] bg-[#EF4444]/10 border border-[#EF4444]/20 flex items-center justify-center flex-shrink-0">
+               <Lock className="text-[#EF4444]" size={28} />
+             </div>
+             <div className="flex-1 text-center md:text-left">
+               <h4 className="text-[19px] font-bold text-[#FFFFFF] mb-2">The Forgetting Curve</h4>
+               <p className="text-[#9CA3AF] text-[15px] leading-relaxed">
+                 Traditional rote learning lacks emotional hooks. Flotter prevents data-dumping by forging sensory anchors within 24 hours.
+               </p>
+             </div>
           </div>
-          
-          {/* Circular Metric (vocabulary_header logic) */}
-          <div className="relative w-32 h-32 flex items-center justify-center rounded-full border-[6px] border-[#3B82F6] border-t-[#222222]">
-            <div className="flex flex-col items-center">
-              <span className="text-[24px] font-bold text-[#FFFFFF]">85%</span>
-              <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">{t('landing.neural')}</span>
-            </div>
+
+          <div className="bg-[#1C1C1E] rounded-[16px] p-8 border border-[#3B82F6]/20 flex flex-col md:flex-row gap-8 items-center">
+             <div className="w-16 h-16 rounded-[12px] bg-[#3B82F6]/10 border border-[#3B82F6]/20 flex items-center justify-center flex-shrink-0">
+               <Sparkles className="text-[#3B82F6]" size={28} />
+             </div>
+             <div className="flex-1 text-center md:text-left">
+               <h4 className="text-[19px] font-bold text-[#FFFFFF] mb-2">The Flotter Method™</h4>
+               <p className="text-[#9CA3AF] text-[15px] leading-relaxed">
+                 We activate the <span className="text-[#FFFFFF] font-bold">Memory Tetrad</span>: Visual, Sensory, Emotional, and Personal experience traces.
+               </p>
+             </div>
           </div>
         </div>
       </section>
 
-      {/* FEATURES PROTOCOL */}
-      <section id="features" className="max-w-5xl mx-auto px-[16px] py-16 border-t border-[#262626]">
-        <div className="mb-12 text-center">
-          <h2 className="text-[11px] font-bold uppercase text-[#6B7280] mb-2 tracking-widest">{t('landing.theProtocol')}</h2>
-          <h3 className="text-[19px] font-bold text-[#FFFFFF]">{t('landing.precisionEngineered')}</h3>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px]">
-          <FeatureCard 
-            icon={BrainCircuit}
-            title={t('landing.activeRecall')}
-            description={t('landing.activeRecallDesc')}
-          />
-          <FeatureCard 
-            icon={Target}
-            title={t('landing.visualAnchoring')}
-            description={t('landing.visualAnchoringDesc')}
-          />
-          <FeatureCard 
-            icon={Layers}
-            title={t('landing.contextMesh')}
-            description={t('landing.contextMeshDesc')}
-          />
-        </div>
-      </section>
-
-      {/* CTA SECTION (Applying stats_card radius/padding) */}
-      <section className="max-w-3xl mx-auto px-[20px] py-20">
-        <div className="bg-[#1C1C1E] border border-[#2D2D2F] rounded-[14px] p-10 text-center">
-          <h2 className="text-[28px] font-bold mb-4 text-[#FFFFFF]">{t('landing.achieveFluency')}</h2>
-          <p className="text-[#9CA3AF] text-[14px] font-normal max-w-xs mx-auto mb-8">
-            {t('landing.achieveFluencyDesc')}
-          </p>
-          <Link 
-            href="/register"
-            className="bg-[#3B82F6] text-[#FFFFFF] px-10 py-4 rounded-[12px] text-[15px] font-bold hover:bg-[#1D4ED8] transition-all inline-block"
-          >
-            {t('landing.beginInit')}
-          </Link>
-        </div>
-      </section>
-
-      {/* FOOTER (Aligned with Caption System) */}
-      <footer className="py-12 border-t border-[#262626] text-center bg-[#121212]">
+      {/* FOOTER */}
+      <footer className="py-12 border-t border-[#262626] text-center bg-[#121212] mb-16">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Zap size={12} className="text-[#6B7280]" />
-            <span className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest">Flotter OS © 2026</span>
+          <div className="flex items-center gap-2 text-[#6B7280]">
+            <Zap size={14} fill="#6B7280" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em]">Flotter Engine © 2026</span>
           </div>
-          <div className="flex justify-center gap-6 text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">
-            <a href="#" className="hover:text-[#3B82F6] transition-colors">{t('landing.privacy')}</a>
-            <a href="#" className="hover:text-[#3B82F6] transition-colors">{t('landing.terms')}</a>
-          </div>
+          <p className="text-[#4B5563] text-[11px] max-w-xs font-medium">
+            Cognitive Science Framework v1.0.0
+          </p>
         </div>
       </footer>
     </div>
