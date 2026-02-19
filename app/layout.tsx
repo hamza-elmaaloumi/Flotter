@@ -46,12 +46,14 @@ export default function RootLayout({
         <NextAuthSessionProvider>
           <UserProvider>
             <LanguageProvider>
-              <Script
+              <head>
+                <Script
                 async
                 src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9323001864718386"
                 crossOrigin="anonymous"
                 strategy="afterInteractive"
               />
+              </head>
               <Header />
               <main className="pt-16 flex-grow mb-12 flex flex-col relative overflow-hidden">
                 {children}
