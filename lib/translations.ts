@@ -239,6 +239,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'editCard.saveChanges': 'SAVE CHANGES',
     'editCard.wordRequired': 'Word is required',
     'editCard.saveFailed': 'Failed to save',
+    "editCard.confirmDelete": "Are you sure you want to delete this card permanently?",
+    "editCard.deleteFailed": "Failed to delete the card. Please try again.",
+    "editCard.sentenceRequired": "You must provide at least one sentence.",
+    "editCard.deleteCard": "Delete Card"
   },
 
   ar: {
@@ -479,5 +483,9 @@ export const translations: Record<Language, Record<string, string>> = {
     'editCard.saveChanges': 'حفظ التغييرات',
     'editCard.wordRequired': 'الكلمة مطلوبة',
     'editCard.saveFailed': 'فشل الحفظ',
+    "editCard.confirmDelete": "هل أنت متأكد أنك تريد حذف هذه البطاقة نهائياً؟",
+    "editCard.deleteFailed": "فشل حذف البطاقة. يرجى المحاولة مرة أخرى.",
+    "editCard.sentenceRequired": "يجب عليك تقديم جملة واحدة على الأقل.",
+    "editCard.deleteCard": "حذف البطاقة"
   },
 }

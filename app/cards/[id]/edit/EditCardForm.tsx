@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { useUser } from '../../../providers/UserProvider'
 import { useLanguage } from '../../../providers/LanguageProvider'
-import { 
-  Plus, 
-  Trash2, 
-  Search, 
+import {
+  Plus,
+  Trash2,
+  Search,
   ChevronLeft,
   Save,
   Image as ImageIcon,
@@ -38,11 +38,17 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
   const [imageUrl, setImageUrl] = useState(initialCard.imageUrl || '')
   const [sentences, setSentences] = useState<string[]>(initialCard.sentences || [])
   const [loading, setLoading] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<UnsplashResult[]>([])
   const [imagesLoading, setImagesLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const updateSentence = (idx: number, value: string) => {
     setSentences((s) => s.map((r, i) => (i === idx ? value : r)))
@@ -64,11 +70,30 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
     }
   }
 
+  const handleDelete = async () => {
+    if (!confirm(t('editCard.confirmDelete') || 'Are you sure you want to delete this card permanently?')) return
+    setDeleting(true)
+    try {
+      await axios.delete(`/api/cards/${initialCard.id}`)
+      router.push('/cards/learning')
+      router.refresh()
+    } catch (err: any) {
+      setDeleting(false)
+      setError(err?.response?.data?.error || t('editCard.deleteFailed') || 'Failed to delete card')
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     if (!word.trim()) return setError(t('editCard.wordRequired'))
     
+    // Validation: Check if there is at least one non-empty sentence
+    const validSentences = sentences.filter(s => s.trim().length > 0)
+    if (validSentences.length === 0) {
+      return setError(t('editCard.sentenceRequired') || 'At least one sentence is required')
+    }
+
     setLoading(true)
     try {
       const payload: any = {}
@@ -104,7 +129,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
         </div>
         <button 
           onClick={handleSubmit} 
-          disabled={loading}
+          disabled={loading || deleting}
           className="text-[#3B82F6] text-[16px] font-bold hover:opacity-80 disabled:opacity-30 transition-opacity"
         >
           {loading ? <Loader2 size={19} className="animate-spin" /> : t('editCard.save')}
@@ -129,7 +154,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
           <div>
             <label className={labelStyles}>{t('editCard.cardImage')}</label>
             <div className={cardStyles}>
-              {imageUrl ? (
+              {mounted && imageUrl ? (
                 <div className="relative group aspect-video w-full rounded-[14px] overflow-hidden bg-[#222222]">
                   <img 
                     src={imageUrl} 
@@ -225,7 +250,11 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
                 onClick={() => setImageUrl(r.urls.regular || '')} 
                 className={`aspect-square rounded-[12px] overflow-hidden border-2 transition-all relative ${imageUrl === r.urls.regular ? 'border-[#3B82F6]' : 'border-transparent'}`}
               >
-                <img src={r.urls.small} className={`w-full h-full object-cover transition-opacity ${imageUrl === r.urls.regular ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`} />
+                {mounted ? (
+                  <img src={r.urls.small} className={`w-full h-full object-cover transition-opacity ${imageUrl === r.urls.regular ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`} />
+                ) : (
+                  <div className="w-full h-full bg-[#222222]" />
+                )}
                 {imageUrl === r.urls.regular && (
                   <div className="absolute inset-0 bg-[#3B82F6]/30 flex items-center justify-center">
                     <div className="bg-[#3B82F6] rounded-full p-1 shadow-lg">
@@ -243,6 +272,19 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
             )}
           </div>
         </section>
+        
+        {/* Delete Card Section */}
+        <section className="pt-8 border-t border-[#262626] flex justify-center">
+          <button 
+            type="button"
+            onClick={handleDelete}
+            disabled={loading || deleting}
+            className="text-[#EF4444] text-[14px] font-bold flex items-center gap-2 hover:opacity-80 transition-opacity disabled:opacity-50"
+          >
+            {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+            {t('editCard.deleteCard') || 'Delete Card'}
+          </button>
+        </section>
 
         {/* Error Handling */}
         {error && (
@@ -257,7 +299,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
         <div className="max-w-xl mx-auto">
           <button 
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || deleting}
             className="w-60 bg-green-600 text-[#FFFFFF] h-[39px] rounded-[12px] text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-[0_8px_30px_rgb(0,0,0,0.4)] disabled:bg-[#374151] disabled:text-[#6B7280]"
           >
             {loading ? <Loader2 size={20} className="animate-spin" /> : <><Save size={20} /> {t('editCard.saveChanges')}</>}

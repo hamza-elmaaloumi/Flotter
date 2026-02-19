@@ -21,7 +21,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     const card = await prisma.card.findUnique({ where: { id } })
     if (!card) return NextResponse.json({ error: 'card_not_found' }, { status: 404 })
-    
+
     // SECURITY: Ensure user owns this card
     if (card.userId !== userId) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
 
@@ -35,8 +35,36 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     })
 
     return NextResponse.json({ card: sanitizeCard(updated) })
+
   } catch (err) {
     console.error('Update card error', err)
+    return NextResponse.json({ error: 'internal_error' }, { status: 500 })
+  }
+}
+
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    // @ts-ignore
+    const userId = session.user.id
+
+    const { id } = await params
+
+    const card = await prisma.card.findUnique({ where: { id } })
+    if (!card) return NextResponse.json({ error: 'card_not_found' }, { status: 404 })
+
+    // SECURITY: Ensure user owns this card
+    if (card.userId !== userId) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+
+    await prisma.card.delete({
+      where: { id }
+    })
+
+    return NextResponse.json({ success: true })
+
+  } catch (err) {
+    console.error('Delete card error', err)
     return NextResponse.json({ error: 'internal_error' }, { status: 500 })
   }
 }
