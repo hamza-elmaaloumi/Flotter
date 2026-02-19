@@ -22,7 +22,7 @@ export async function GET(request: Request) {
         },
         body: JSON.stringify({
           Text: text,
-          VoiceId: 'Dan', 
+          VoiceId: 'Will', 
           Bitrate: '192k',
           Speed: '0',
           Pitch: '1.0',
