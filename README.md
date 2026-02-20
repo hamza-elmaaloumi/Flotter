@@ -1,35 +1,29 @@
-# Flotter - Neural-Enhanced Vocabulary Mastery
-
-Flotter is a high-performance, dark-themed vocabulary learning platform designed for users who want to master new languages or specialized terminology through **Spaced Repetition (SRS)**, **Visual Association**, and **AI-Powered Audio Context**.
-
-Inspired by modern minimalist design systems, Flotter provides a distraction-free environment that focuses on building long-term memory through multi-sensory engagement.
-
-## 🚀 Key Features
-
-### 1. The Deck (Learning Interface)
-The core of Flotter is **"The Deck"**, an intelligent flashcard system that utilizes a dual-sided learning approach:
-*   **Front Side:** Displays the target vocabulary word and a primary visual cue.
-*   **Back Side:** Reveals context-rich sentences and plays high-quality audio.
-*   **Feedback Loop:** Users categorize their retention as "Success" or "Struggle," which feeds directly into the SRS algorithm.
-
-### 2. Spaced Repetition System (SRS)
-Flotter doesn't just show cards randomly. It calculates the optimal time to review each word based on:
-*   **Ease Factor:** Adjusts dynamically based on your performance.
-*   **Consecutive Successes:** Increases intervals for well-known words.
-*   **Sentence Rotation:** If a card has multiple sentences, Flotter rotates them during reviews to ensure you understand the *word*, not just a specific sentence.
-
-### 3. AI-Powered Audio (ElevenLabs)
-Every word and sentence is brought to life with premium AI audio:
-*   **Primary Engine:** ElevenLabs Multilingual v2 for natural, ultra-realistic pronunciation.
-*   **Fallback:** Robust Google TTS integration ensures audio is always available, even if API limits are reached.
-
-### 4. Integrated Visual Search (Unsplash)
-Building cards is fast and intuitive. When adding a word, Flotter provides an integrated **Unsplash search grid**, allowing you to pick the perfect visual anchor for your new vocabulary in seconds.
-
-### 5. Progress Dashboard
-*   **Momentum Ring:** A visual representation of your daily objective progress.
-*   **Status Tiers:** Track cards through three stages: `Review` (Due now), `Learning` (Active), and `Mastered` (Long-term retention).
-*   **Recent Activity:** A quick view of your latest additions and review history.
+Our app, Flotter, is a flashcard English learning app built for the modern, busy learner. We have been perfecting our algorithm to ensure that every second you spend in the app translates directly into long-term memory.
+When compared to other apps, our added value is clear: we don’t just create random cards or use a generic Spaced Repetition System (SRS). Instead, Flotter is designed to be the fastest, most frictionless path to fluency.
+Here is why Flotter is different:
+1. Instant AI Generation (Zero-Effort Setup)
+Traditional apps require you to spend time writing definitions or finding examples. With Flotter, you simply enter a word. Our AI instantly generates three context-rich sentences and suggests relevant visual imagery. In seconds, a high-quality, professional learning tool is ready. You don’t have time to write essays; we give you the content so you can focus on the learning.
+2. The Power of "Contextual Cooperation"
+We believe a word is only truly learned when it is anchored in reality. Our unique approach uses the cooperation between visual search and sentence variety:
+The Image: Provides an immediate mental anchor.
+The 3 Sentences: Show the word in different "lives" (different grammatical contexts).
+When your brain sees the image and reads the word used in three distinct ways, it creates a "neural lock." This synergy makes the word virtually unforgettable.
+3. Pure Speed: The "Swipe-to-Sync" Interaction
+Most apps feel like work—they require typing, multiple-choice tests, or complex inputs. Flotter turns learning into a reflex. It is simply swiping left (to review) or right (to master).
+No typing.
+No long tests.
+No friction.
+It’s a high-speed experience designed for the person who has 2 minutes in an elevator or 5 minutes on a commute.
+4. Audio-Visual Immersion
+Every card comes with high-quality audio for all sentences. As you flip and swipe, you aren't just reading; you are hearing the correct pronunciation, rhythm, and intonation. This ensures that when you finally use the word in real life, you sound natural and confident.
+5. Scientifically Optimized SRS
+Our Spaced Repetition System (SRS) is the engine under the hood. It doesn't show you cards at random. It tracks your "struggle" and "success" to predict exactly when a word is about to fade from your memory, bringing it back at the perfect moment to move it from short-term to long-term storage.
+6. Psychological Momentum (Streaks & Ranking)
+Learning a language requires consistency, which is the hardest part. Flotter solves this through:
+The Streak Spot: A prominent daily tracker that turns your learning into a "don't break the chain" mission.
+Global Ranking: A competitive monthly leaderboard where you can see how your XP compares to learners worldwide.
+This gamification ensures that even on days when you feel tired, the desire to maintain your rank and streak keeps you "floating" forward.
+Flotter isn't just an app; it's a high-speed neural sync tool. Enter a word, swipe through the context, and master the language without ever feeling like you're studying.
 
 ---
 
