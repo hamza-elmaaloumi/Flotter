@@ -20,6 +20,8 @@ import {
   Heart
 } from 'lucide-react'
 
+import { useLanguage } from './providers/LanguageProvider'
+
 // ==========================================
 // PREMIUM ANIMATED COMPONENTS
 // ==========================================
@@ -174,7 +176,9 @@ const AnimatedCounter = ({ value, suffix = "" }: { value: number, suffix?: strin
   return <span ref={ref}>{count}{suffix}</span>
 }
 
-const AIGenerationSVG = () => (
+const AIGenerationSVG = () => {
+  const { t } = useLanguage()
+  return (
   <svg viewBox="0 0 400 320" className="w-full h-full max-w-lg mx-auto drop-shadow-[0_0_20px_rgba(59,130,246,0.1)]">
     <style>{`
       /* Core Variables & Utilities */
@@ -293,7 +297,7 @@ const AIGenerationSVG = () => (
       <rect x="120" y="140" width="160" height="40" rx="8" fill="#14151A" stroke="#3B82F6" strokeWidth="1.5" filter="drop-shadow(0 4px 12px rgba(59,130,246,0.3))" />
       <g className="anim input-text">
         <text x="200" y="165" fill="#FFFFFF" fontFamily="monospace" fontSize="15" fontWeight="bold" textAnchor="middle" letterSpacing="1">
-          Serendipity<tspan className="cursor" fill="#3B82F6">_</tspan>
+          Ephemeral<tspan className="cursor" fill="#3B82F6">_</tspan>
         </text>
       </g>
     </g>
@@ -316,28 +320,28 @@ const AIGenerationSVG = () => (
       <g className="anim node-c">
         <circle cx="70" cy="160" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
         <circle cx="70" cy="160" r="6" className="anim fill-c" />
-        <text x="70" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">CONTEXT</text>
+        <text x="70" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.contexts').toUpperCase()}</text>
       </g>
 
       {/* Node 2: Image (Top) */}
       <g className="anim node-i">
         <circle cx="200" cy="50" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
         <circle cx="200" cy="50" r="6" className="anim fill-i" />
-        <text x="200" y="16" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">IMAGE</text>
+        <text x="200" y="16" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.semantics').toUpperCase()}</text>
       </g>
 
       {/* Node 3: Vibe (Right) */}
       <g className="anim node-v">
         <circle cx="330" cy="160" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
         <circle cx="330" cy="160" r="6" className="anim fill-v" />
-        <text x="330" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">VIBE</text>
+        <text x="330" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.vibe').toUpperCase()}</text>
       </g>
 
       {/* Node 4: Sensory (Bottom) */}
       <g className="anim node-s">
         <circle cx="200" cy="270" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
         <circle cx="200" cy="270" r="6" className="anim fill-s" />
-        <text x="200" y="310" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">SENSORY</text>
+        <text x="200" y="310" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.visuals').toUpperCase()}</text>
       </g>
     </g>
 
@@ -346,25 +350,33 @@ const AIGenerationSVG = () => (
       {/* Card Base */}
       <rect x="90" y="20" width="220" height="280" rx="16" fill="#1A1D24" stroke="#2D3748" strokeWidth="1.5" filter="drop-shadow(0 20px 40px rgba(0,0,0,0.8))" />
 
-      {/* Card Image Block */}
+      {/* Card Image Block - Real Image of Yellow Flowers */}
       <g className="anim card-img">
-        <rect x="106" y="36" width="188" height="110" rx="10" fill="#101216" stroke="#262626" />
-        <circle cx="200" cy="91" r="30" fill="#3B82F6" opacity="0.15" filter="url(#glow-strong)" />
-        <circle cx="200" cy="91" r="12" fill="#3B82F6" opacity="0.4" filter="url(#glow-strong)" />
-        <path d="M106 100 Q 150 70 200 95 T 294 80 L 294 146 L 106 146 Z" fill="url(#cardImgGrad)" opacity="0.8" clipPath="url(#imgClip)" />
+        <rect x="106" y="36" width="188" height="110" rx="10" fill="#101216" />
+        <image 
+          x="106" 
+          y="36" 
+          width="188" 
+          height="110" 
+          preserveAspectRatio="xMidYMid slice" 
+          href="https://images.unsplash.com/photo-1621789098261-433128ee8d1e?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YmVhY2glMjBmbG93ZXJ8ZW58MHx8MHx8fDA%3D" 
+          clipPath="url(#imgClip)" 
+        />
+        <rect x="106" y="36" width="188" height="110" rx="10" fill="none" stroke="#262626" strokeWidth="2" pointerEvents="none" />
       </g>
 
-      {/* Card Word & Definition */}
+      {/* Card Word & Type */}
       <g className="anim card-word">
-        <text x="200" y="180" fill="#FFFFFF" fontSize="22" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">Serendipity</text>
-        <rect x="175" y="192" width="50" height="18" rx="9" fill="#3B82F6" fillOpacity="0.15" stroke="#3B82F6" strokeOpacity="0.4" strokeWidth="1" />
-        <text x="200" y="205" fill="#60A5FA" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1">NOUN</text>
+        <text x="200" y="176" fill="#FFFFFF" fontSize="22" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">Ephemeral</text>
+        <rect x="165" y="188" width="70" height="18" rx="9" fill="#3B82F6" fillOpacity="0.15" stroke="#3B82F6" strokeOpacity="0.4" strokeWidth="1" />
+        <text x="200" y="201" fill="#60A5FA" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1">ADJECTIVE</text>
       </g>
 
       {/* Card Centered Sentence */}
       <g className="anim card-sent">
-        <text x="200" y="240" fill="#D1D5DB" fontSize="13" textAnchor="middle" letterSpacing="0.2">Finding something beautiful</text>
-        <text x="200" y="260" fill="#D1D5DB" fontSize="13" textAnchor="middle" letterSpacing="0.2">without looking for it.</text>
+        <text x="200" y="232" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">You attempt to capture the</text>
+        <text x="200" y="248" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">ephemeral snowflake, but it melts</text>
+        <text x="200" y="264" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">away, leaving only a memory.</text>
         
         {/* Aesthetic Centered Dots */}
         <circle cx="200" cy="282" r="2" fill="#4B5563" />
@@ -373,10 +385,12 @@ const AIGenerationSVG = () => (
       </g>
     </g>
   </svg>
-)
+  )
+}
 
 const AIGenerationVisualizer = () => {
   const [step, setStep] = useState(0)
+  const { t } = useLanguage()
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -386,14 +400,14 @@ const AIGenerationVisualizer = () => {
   }, [])
   
   const steps = [
-    { icon: Sparkles, label: "Semantics", color: "#3B82F6" },
-    { icon: Brain, label: "Contexts", color: "#FBBF24" },
-    { icon: Layers, label: "Visuals", color: "#EF4444" },
-    { icon: Zap, label: "Locked", color: "#10B981" }
+    { icon: Sparkles, label: t('landing.visualizer.semantics'), color: "#3B82F6" },
+    { icon: Brain, label: t('landing.visualizer.contexts'), color: "#FBBF24" },
+    { icon: Layers, label: t('landing.visualizer.visuals'), color: "#EF4444" },
+    { icon: Zap, label: t('landing.visualizer.locked'), color: "#10B981" }
   ]
   
   return (
-    <div className="relative w-full h-40 bg-[#121212] rounded-xl border border-[#262626] overflow-hidden flex flex-col items-center justify-center">
+    <div className="relative w-full h-40 bg-[#121212] rounded-[12px] border border-[#2D2D2F] overflow-hidden flex flex-col items-center justify-center">
       <AnimatePresence mode="wait">
         <motion.div
           key={step}
@@ -404,15 +418,15 @@ const AIGenerationVisualizer = () => {
           className="flex flex-col items-center"
         >
           {React.createElement(steps[step].icon, {
-            size: 32,
+            size: 28,
             className: "mb-2",
             style: { color: steps[step].color }
           })}
-          <p className="text-xs font-medium text-[#9CA3AF] tracking-wide uppercase">{steps[step].label}</p>
+          <p className="text-[11px] font-bold text-[#9CA3AF] tracking-widest uppercase">{steps[step].label}</p>
         </motion.div>
       </AnimatePresence>
       
-      <div className="absolute bottom-5 w-3/4 h-1 bg-[#1A1A1A] rounded-full overflow-hidden">
+      <div className="absolute bottom-5 w-3/4 h-0.5 bg-[#1C1C1E] rounded-full overflow-hidden">
         <motion.div 
           className="h-full"
           style={{ backgroundColor: steps[step].color }}
@@ -427,6 +441,7 @@ const AIGenerationVisualizer = () => {
 }
 
 const AutoSwipeDemo = () => {
+  const { t } = useLanguage()
   const initialCards = [
     { id: 1, word: "Ephemeral", color: "#3B82F6" },
     { id: 2, word: "Resilient", color: "#10B981" },
@@ -461,7 +476,7 @@ const AutoSwipeDemo = () => {
             <motion.div
               key={card.id}
               layout
-              className="absolute w-full max-w-[200px] h-36 bg-[#121212] rounded-2xl border-2 flex flex-col items-center justify-center shadow-lg"
+              className="absolute w-full max-w-[200px] h-36 bg-[#121212] rounded-[12px] border-2 flex flex-col items-center justify-center shadow-lg"
               style={{ 
                 borderColor: card.color,
                 zIndex: initialCards.length - index,
@@ -481,7 +496,7 @@ const AutoSwipeDemo = () => {
               }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
-              <h3 className="text-lg font-bold text-white">{card.word}</h3>
+              <h3 className="text-[19px] font-bold text-white">{card.word}</h3>
               
               <AnimatePresence>
                 {isCurrent && (
@@ -491,11 +506,11 @@ const AutoSwipeDemo = () => {
                     exit={{ opacity: 0 }}
                     className="flex gap-2 mt-3"
                   >
-                    <div className="px-2.5 py-1 rounded-full bg-[#EF4444]/10 text-[#EF4444] text-[10px] font-medium border border-[#EF4444]/20">
-                      Review
+                    <div className="px-2 py-0.5 rounded-full bg-[#EF4444]/10 text-[#EF4444] text-[10px] font-bold uppercase tracking-wider border border-[#EF4444]/20">
+                      {t('landing.demo.review')}
                     </div>
-                    <div className="px-2.5 py-1 rounded-full bg-[#10B981]/10 text-[#10B981] text-[10px] font-medium border border-[#10B981]/20">
-                      Master
+                    <div className="px-2 py-0.5 rounded-full bg-[#10B981]/10 text-[#10B981] text-[10px] font-bold uppercase tracking-wider border border-[#10B981]/20">
+                      {t('landing.demo.master')}
                     </div>
                   </motion.div>
                 )}
@@ -514,7 +529,7 @@ const AutoSwipeDemo = () => {
             className="absolute inset-0 flex flex-col items-center justify-center text-[#10B981]"
           >
             <Trophy size={28} className="mb-2" />
-            <p className="text-xs font-bold">Session Complete</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest">{t('landing.demo.sessionComplete')}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -523,6 +538,7 @@ const AutoSwipeDemo = () => {
 }
 
 const RetentionGraph = () => {
+  const { t } = useLanguage()
   const data = [
     { day: 0, standard: 100, flotter: 100 },
     { day: 1, standard: 50, flotter: 95 },
@@ -554,7 +570,7 @@ const RetentionGraph = () => {
   const flotterPath = createSmoothPath('flotter')
 
   return (
-    <div className="w-full h-48 bg-[#121212] rounded-xl p-3 border border-[#262626] relative">
+    <div className="w-full h-48 bg-[#121212] rounded-[12px] p-4 border border-[#2D2D2F] relative">
       <svg viewBox="0 0 400 200" className="w-full h-full overflow-visible">
         <defs>
           <linearGradient id="flotterGradient" x1="0" y1="0" x2="0" y2="1">
@@ -568,7 +584,7 @@ const RetentionGraph = () => {
         </defs>
 
         {[0, 100, 200].map(y => (
-          <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#262626" strokeWidth="1" strokeDasharray="4 4" />
+          <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#2D2D2F" strokeWidth="1" strokeDasharray="4 4" />
         ))}
         
         <motion.path
@@ -624,14 +640,14 @@ const RetentionGraph = () => {
         ))}
       </svg>
       
-      <div className="absolute top-3 right-3 flex flex-col gap-1 text-[10px]">
+      <div className="absolute top-3 right-3 flex flex-col gap-1 text-[10px] font-bold uppercase tracking-wider">
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-0.5 bg-[#EF4444] border-dashed" />
-          <span className="text-[#9CA3AF]">Standard</span>
+          <span className="text-[#6B7280]">{t('landing.graph.standard')}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-0.5 bg-[#3B82F6]" />
-          <span className="text-[#FFFFFF]">Flotter</span>
+          <span className="text-[#FFFFFF]">{t('landing.graph.flotter')}</span>
         </div>
       </div>
     </div>
@@ -639,6 +655,7 @@ const RetentionGraph = () => {
 }
 
 const AudioWaveform = () => {
+  const { language } = useLanguage()
   return (
     <div className="flex items-center justify-center gap-1 h-10">
       {[...Array(16)].map((_, i) => (
@@ -657,7 +674,7 @@ const AudioWaveform = () => {
           }}
         />
       ))}
-      <Volume2 className="ml-2 text-[#3B82F6]" size={16} />
+      <Volume2 className={`text-[#3B82F6] ${language === 'ar' ? 'mr-2' : 'ml-2'}`} size={16} />
     </div>
   )
 }
@@ -667,6 +684,7 @@ const AudioWaveform = () => {
 // ==========================================
 
 export default function LandingPage() {
+  const { t, language } = useLanguage()
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -678,7 +696,7 @@ export default function LandingPage() {
   const isHeroInView = useInView(heroRef, { once: true })
   
   return (
-    <div className="min-h-screen bg-[#121212] text-white antialiased overflow-x-hidden selection:bg-[#3B82F6]/30">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-white antialiased overflow-x-hidden selection:bg-[#3B82F6]/30">
       <NeuralBackground />
       
       <motion.div
@@ -686,40 +704,40 @@ export default function LandingPage() {
         style={{ scaleX }}
       />
       
-      <nav className="fixed top-0 w-full z-40 border-b border-[#262626] bg-[#121212]/90 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <nav className="fixed top-0 w-full z-40 border-b border-[#262626] bg-[#121212]/95 backdrop-blur-xl">
+        <div className="max-w-5xl mx-auto px-4 h-[64px] flex items-center justify-between">
           <motion.div 
-            className="flex items-center gap-2"
+            className="flex items-center gap-3"
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <div className="w-7 h-7 bg-[#3B82F6] rounded-md flex items-center justify-center shadow-[0_0_12px_rgba(59,130,246,0.3)]">
-              <Zap size={14} className="text-white" fill="currentColor" />
+            <div className="w-9 h-9 bg-[#3B82F6] rounded-[12px] flex items-center justify-center shadow-lg shadow-[#3B82F6]/20">
+              <Zap size={20} className="text-white" fill="white" />
             </div>
-            <span className="text-base font-bold tracking-tight">
+            <span className="text-[18px] font-bold tracking-tight">
               Flotter<span className="text-[#3B82F6]">.</span>
             </span>
           </motion.div>
           
           <motion.div 
-            className="flex items-center gap-4"
+            className="flex items-center gap-3"
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <Link href="/login" className="hidden sm:block text-[#9CA3AF] hover:text-white text-xs font-medium transition-colors">
-              Sign In
+            <Link href="/login" className="hidden sm:block text-[#6B7280] hover:text-white text-[11px] font-bold uppercase tracking-widest transition-colors">
+              {t('landing.nav.signIn')}
             </Link>
-            <Link href="/register" className="bg-[#3B82F6] text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-[#2563EB] transition-all">
-              Get Started
+            <Link href="/register" className="bg-[#3B82F6] text-white px-5 py-2.5 rounded-[12px] text-[13px] font-bold uppercase tracking-widest hover:bg-[#1D4ED8] transition-all">
+              {t('landing.nav.getStarted')}
             </Link>
           </motion.div>
         </div>
       </nav>
 
       {/* HERO SECTION */}
-      <section ref={heroRef} className="relative pt-24 pb-12 md:pt-32 md:pb-20 px-4 overflow-hidden flex items-center justify-center min-h-[90vh] bg-[#121212]">
-        <div className="max-w-6xl mx-auto relative z-10 w-full">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
+      <section ref={heroRef} className="relative pt-[140px] pb-[80px] px-4 overflow-hidden flex items-center justify-center min-h-[90vh] bg-[#121212]">
+        <div className="max-w-5xl mx-auto relative z-10 w-full">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
@@ -727,7 +745,7 @@ export default function LandingPage() {
               className="text-center lg:text-left"
             >
               <motion.div 
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#121212] border border-[#3B82F6]/30 mb-5"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/30 mb-6"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1 }}
@@ -736,37 +754,37 @@ export default function LandingPage() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3B82F6] opacity-75" />
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#3B82F6]" />
                 </span>
-                <span className="text-[10px] font-semibold text-[#3B82F6] uppercase tracking-wider">
-                  Neural Sync Technology
+                <span className="text-[11px] font-bold text-[#3B82F6] uppercase tracking-wider">
+                  {t('landing.hero.neuralSync')}
                 </span>
               </motion.div>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-4">
-                Master Words at{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3B82F6] to-[#60A5FA]">
-                  Neural Speed
+              <h1 className="text-[36px] md:text-[52px] font-bold leading-[1.1] mb-6">
+                {t('landing.hero.title1')}
+                <span className="text-[#3B82F6]">
+                  {t('landing.hero.title2')}
                 </span>
               </h1>
               
-              <p className="text-sm md:text-base text-[#9CA3AF] mb-8 max-w-sm mx-auto lg:mx-0 leading-relaxed">
-                The flashcard app that doesn't just show you words—it 
-                <span className="text-white font-medium"> implants them</span>. 
-                AI-generated contexts and zero-friction swiping.
+              <p className="text-[16px] md:text-[18px] text-[#9CA3AF] mb-10 max-w-sm mx-auto lg:mx-0 leading-relaxed">
+                {t('landing.hero.desc1')}
+                <span className="text-white font-bold uppercase text-[15px]"> {t('landing.hero.desc2')}</span>
+                {t('landing.hero.desc3')}
               </p>
               
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <Link 
                   href="/register"
-                  className="w-full sm:w-auto group relative inline-flex items-center justify-center px-6 py-3 bg-[#3B82F6] rounded-xl font-semibold text-white overflow-hidden transition-all hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] text-sm"
+                  className="w-full sm:w-auto group relative inline-flex items-center justify-center px-10 py-4 bg-[#3B82F6] rounded-[12px] font-bold text-white text-[15px] uppercase tracking-widest transition-all hover:bg-[#1D4ED8] shadow-xl shadow-[#3B82F6]/20 active:scale-95"
                 >
-                  <span className="relative z-10 flex items-center gap-2">
-                    Start Free Trial <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  <span className="relative z-10 flex items-center gap-3">
+                    {t('landing.hero.startTrial')} <ArrowRight size={19} className={`transition-transform ${language === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
                   </span>
                 </Link>
                 
-                <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-[#262626] text-[#9CA3AF] hover:text-white hover:bg-[#1A1A1A] transition-all text-sm font-medium">
-                  <Play size={14} className="text-[#FBBF24]" />
-                  Watch Demo
+                <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-[12px] border border-[#262626] text-[#6B7280] hover:text-white hover:bg-[#1A1A1A] transition-all text-[13px] font-bold uppercase tracking-widest">
+                  <Play size={14} fill="#FACC15" className="text-[#FACC15]" />
+                  {t('landing.hero.watchDemo')}
                 </button>
               </div>
             </motion.div>
@@ -777,7 +795,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative mx-auto w-full max-w-sm"
             >
-              <div className="absolute inset-0 bg-[#3B82F6]/10 blur-[60px] rounded-full" />
+              <div className="absolute inset-0 bg-[#3B82F6]/05 blur-[120px] rounded-full" />
               <div className="relative z-10 p-2">
                 <AIGenerationSVG />
               </div>
@@ -788,25 +806,27 @@ export default function LandingPage() {
 
       {/* STATS */}
       <section className="border-y border-[#262626] bg-[#121212]">
-        <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
+        <div className="max-w-5xl mx-auto px-4 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
-              { value: 94, suffix: "%", label: "Retention Rate", color: "#3B82F6" },
-              { value: 3, suffix: "x", label: "Faster Learning", color: "#FBBF24" },
-              { value: 50, suffix: "ms", label: "Generation", color: "#10B981" },
-              { value: 2, suffix: "min", label: "Daily Average", color: "#EF4444" }
+              { value: 94, suffix: "%", label: t('landing.stats.retentionRate'), color: "#3B82F6", source: t('landing.stats.neuralSync') },
+              { value: 3, suffix: "x", label: t('landing.stats.fasterLearning'), color: "#FACC15", source: t('landing.stats.cognitiveLoad') },
+              { value: 50, suffix: "ms", label: t('landing.stats.generation'), color: "#10B981", source: t('landing.stats.edgeEngine') },
+              { value: 2, suffix: "min", label: t('landing.stats.dailyAverage'), color: "#EF4444", source: t('landing.stats.sessionFlow') }
             ].map((stat, i) => (
               <motion.div 
                 key={i}
+                className="bg-[#1C1C1E] p-4 rounded-[12px] border border-[#2D2D2F]"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
                 viewport={{ once: true }}
               >
-                <div className="text-xl md:text-2xl font-bold mb-0.5" style={{ color: stat.color }}>
+                <div className="text-[24px] font-bold mb-1" style={{ color: stat.color }}>
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 </div>
-                <div className="text-[10px] md:text-xs text-[#6B7280]">{stat.label}</div>
+                <div className="text-[#FFFFFF] text-[13px] font-bold mb-1">{stat.label}</div>
+                <div className="text-[#6B7280] text-[10px] uppercase tracking-wider font-bold">{stat.source}</div>
               </motion.div>
             ))}
           </div>
@@ -814,14 +834,15 @@ export default function LandingPage() {
       </section>
 
       {/* PROBLEM SECTION */}
-      <section className="py-12 md:py-20 px-4 bg-[#121212]">
+      <section className="py-24 px-4 bg-[#121212]">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">The Memory Epidemic</h2>
-            <p className="text-[#9CA3AF] text-xs md:text-sm max-w-sm mx-auto">Why traditional flashcards fail within 72 hours</p>
+          <div className="text-center mb-16">
+            <h2 className="text-[11px] font-bold uppercase text-[#EF4444] tracking-widest mb-3">{t('landing.problem.challenge')}</h2>
+            <h3 className="text-[28px] font-bold text-[#FFFFFF]">{t('landing.problem.title')}</h3>
+            <p className="text-[#9CA3AF] text-[15px] mt-2">{t('landing.problem.subtitle')}</p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -831,23 +852,23 @@ export default function LandingPage() {
             </motion.div>
             
             <motion.div 
-              className="space-y-5"
+              className="space-y-[12px]"
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
               {[
-                { title: "Passive Recognition", desc: "Reading pairs creates shallow memory traces that decay rapidly." },
-                { title: "No Contextual Binding", desc: "Without anchors, words float in isolation, unconnected to you." },
-                { title: "Cognitive Friction", desc: "Typing answers and complex menus create impossible resistance." }
+                { title: t('landing.problem.passiveTitle'), desc: t('landing.problem.passiveDesc') },
+                { title: t('landing.problem.contextTitle'), desc: t('landing.problem.contextDesc') },
+                { title: t('landing.problem.frictionTitle'), desc: t('landing.problem.frictionDesc') }
               ].map((item, i) => (
-                <div key={i} className="flex gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#EF4444]/10 flex items-center justify-center flex-shrink-0 border border-[#EF4444]/20">
-                    <X className="text-[#EF4444]" size={16} />
+                <div key={i} className="bg-[#1C1C1E] rounded-[12px] p-5 border border-[#2D2D2F] flex gap-4">
+                  <div className="w-10 h-10 rounded-[12px] bg-[#EF4444]/10 flex items-center justify-center flex-shrink-0 border border-[#EF4444]/20">
+                    <X className="text-[#EF4444]" size={18} />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold mb-0.5">{item.title}</h3>
-                    <p className="text-[#9CA3AF] text-xs leading-relaxed">{item.desc}</p>
+                    <h3 className="text-[15px] font-bold text-white mb-1">{item.title}</h3>
+                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -857,75 +878,76 @@ export default function LandingPage() {
       </section>
 
       {/* FEATURES GRID */}
-      <section className="py-12 md:py-20 px-4 bg-[#121212] relative border-t border-[#262626]">
+      <section className="py-24 px-4 bg-[#121212] relative border-t border-[#262626]">
         <div className="max-w-5xl mx-auto relative z-10">
-          <div className="text-center mb-10 md:mb-14">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">The <span className="text-[#3B82F6]">Flotter</span> Method</h2>
-            <p className="text-[#9CA3AF] text-xs md:text-sm max-w-sm mx-auto">Four pillars of neural-optimal language acquisition</p>
+          <div className="text-center mb-16">
+            <h2 className="text-[11px] font-bold uppercase text-[#3B82F6] tracking-widest mb-3">{t('landing.methodology.title')}</h2>
+            <h3 className="text-[28px] font-bold text-[#FFFFFF]">{t('landing.methodology.heading1')}<span className="text-[#3B82F6]">Flotter</span>{t('landing.methodology.heading2')}</h3>
+            <p className="text-[#9CA3AF] text-[15px] mt-2">{t('landing.methodology.subtitle')}</p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-4">
-            <HolographicCard className="bg-[#121212] rounded-2xl border border-[#262626] p-5 group">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-[#3B82F6]/10 flex items-center justify-center border border-[#3B82F6]/20">
-                  <Sparkles className="text-[#3B82F6]" size={18} />
+          <div className="grid md:grid-cols-2 gap-[12px]">
+            <HolographicCard className="bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-8 group">
+              <div className="flex items-start justify-between mb-6">
+                <div className="w-16 h-16 rounded-[12px] bg-[#3B82F6]/10 flex items-center justify-center border border-[#3B82F6]/20">
+                  <Sparkles className="text-[#3B82F6]" size={28} />
                 </div>
-                <span className="text-[10px] font-mono text-[#3B82F6] bg-[#3B82F6]/10 px-2 py-1 rounded">01</span>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#3B82F6] bg-[#3B82F6]/10 px-3 py-1 rounded-full">{t('landing.methodology.step1')}</span>
               </div>
-              <h3 className="text-base font-bold mb-1.5">Instant Generation</h3>
-              <p className="text-[#9CA3AF] text-xs mb-5">Enter any word and watch our neural engine craft rich contexts instantly.</p>
+              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.methodology.step1Title')}</h3>
+              <p className="text-[#9CA3AF] text-[15px] mb-8 leading-relaxed">{t('landing.methodology.step1Desc')}</p>
               <AIGenerationVisualizer />
             </HolographicCard>
             
-            <HolographicCard className="bg-[#121212] rounded-2xl border border-[#262626] p-5 group">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-[#FBBF24]/10 flex items-center justify-center border border-[#FBBF24]/20">
-                  <Layers className="text-[#FBBF24]" size={18} />
+            <HolographicCard className="bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-8 group">
+              <div className="flex items-start justify-between mb-6">
+                <div className="w-16 h-16 rounded-[12px] bg-[#FACC15]/10 flex items-center justify-center border border-[#FACC15]/20">
+                  <Layers className="text-[#FACC15]" size={28} />
                 </div>
-                <span className="text-[10px] font-mono text-[#FBBF24] bg-[#FBBF24]/10 px-2 py-1 rounded">02</span>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#FACC15] bg-[#FACC15]/10 px-3 py-1 rounded-full">{t('landing.methodology.step2')}</span>
               </div>
-              <h3 className="text-base font-bold mb-1.5">Neural Lock™</h3>
-              <p className="text-[#9CA3AF] text-xs mb-5">Visual, Verbal, Emotional, and Tactile cues create redundant memory pathways.</p>
-              <div className="grid grid-cols-3 gap-2 mt-auto">
+              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.methodology.step2Title')}</h3>
+              <p className="text-[#9CA3AF] text-[15px] mb-8 leading-relaxed">{t('landing.methodology.step2Desc')}</p>
+              <div className="grid grid-cols-3 gap-3">
                 {[
-                  { label: "Visual", color: "#3B82F6", icon: Eye },
-                  { label: "Context", color: "#FBBF24", icon: BookOpen },
-                  { label: "Emotion", color: "#EF4444", icon: Heart }
+                  { label: t('landing.methodology.visual'), color: "#3B82F6", icon: Eye },
+                  { label: t('landing.methodology.context'), color: "#FACC15", icon: BookOpen },
+                  { label: t('landing.methodology.emotion'), color: "#EF4444", icon: Heart }
                 ].map((item, i) => (
-                  <div key={i} className="flex flex-col items-center justify-center text-center p-2 rounded-xl border border-[#262626] bg-[#121212]">
-                    <item.icon size={16} className="mb-1.5" style={{ color: item.color }} />
-                    <div className="text-[9px] font-medium uppercase tracking-wide" style={{ color: item.color }}>{item.label}</div>
+                  <div key={i} className="flex flex-col items-center justify-center text-center p-3 rounded-[12px] border border-[#2D2D2F] bg-[#121212]">
+                    <item.icon size={20} className="mb-2" style={{ color: item.color }} />
+                    <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: item.color }}>{item.label}</div>
                   </div>
                 ))}
               </div>
             </HolographicCard>
             
-            <HolographicCard className="bg-[#121212] rounded-2xl border border-[#262626] p-5 group">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/20">
-                  <Zap className="text-[#10B981]" size={18} />
+            <HolographicCard className="bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-8 group">
+              <div className="flex items-start justify-between mb-6">
+                <div className="w-16 h-16 rounded-[12px] bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/20">
+                  <Zap className="text-[#10B981]" size={28} />
                 </div>
-                <span className="text-[10px] font-mono text-[#10B981] bg-[#10B981]/10 px-2 py-1 rounded">03</span>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#10B981] bg-[#10B981]/10 px-3 py-1 rounded-full">{t('landing.methodology.step3')}</span>
               </div>
-              <h3 className="text-base font-bold mb-1.5">Pure Speed</h3>
-              <p className="text-[#9CA3AF] text-xs mb-5">Swipe-to-sync. No typing. Just pure reflex-based learning for 2-minute sessions.</p>
+              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.methodology.step3Title')}</h3>
+              <p className="text-[#9CA3AF] text-[15px] mb-8 leading-relaxed">{t('landing.methodology.step3Desc')}</p>
               <AutoSwipeDemo />
             </HolographicCard>
             
-            <HolographicCard className="bg-[#121212] rounded-2xl border border-[#262626] p-5 group">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-[#EF4444]/10 flex items-center justify-center border border-[#EF4444]/20">
-                  <Volume2 className="text-[#EF4444]" size={18} />
+            <HolographicCard className="bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-8 group">
+              <div className="flex items-start justify-between mb-6">
+                <div className="w-16 h-16 rounded-[12px] bg-[#EF4444]/10 flex items-center justify-center border border-[#EF4444]/20">
+                  <Volume2 className="text-[#EF4444]" size={28} />
                 </div>
-                <span className="text-[10px] font-mono text-[#EF4444] bg-[#EF4444]/10 px-2 py-1 rounded">04</span>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#EF4444] bg-[#EF4444]/10 px-3 py-1 rounded-full">{t('landing.methodology.step4')}</span>
               </div>
-              <h3 className="text-base font-bold mb-1.5">Audio Immersion</h3>
-              <p className="text-[#9CA3AF] text-xs mb-5">Native-speaker audio trains your ear for rhythm, intonation, and patterns.</p>
-              <div className="mt-auto bg-[#121212] p-3 rounded-xl border border-[#262626]">
+              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.methodology.step4Title')}</h3>
+              <p className="text-[#9CA3AF] text-[15px] mb-8 leading-relaxed">{t('landing.methodology.step4Desc')}</p>
+              <div className="bg-[#121212] p-4 rounded-[12px] border border-[#2D2D2F]">
                 <AudioWaveform />
-                <div className="mt-2 flex justify-between text-[9px] text-[#6B7280] font-mono">
+                <div className="mt-2 flex justify-between text-[10px] text-[#6B7280] font-bold uppercase tracking-widest">
                   <span>0:00</span>
-                  <span>"The ephemeral beauty..."</span>
+                  <span className="text-[#3B82F6]">{t('landing.audio.processing')}</span>
                   <span>0:05</span>
                 </div>
               </div>
@@ -935,37 +957,37 @@ export default function LandingPage() {
       </section>
 
       {/* SRS ENGINE */}
-      <section className="py-12 md:py-20 px-4 bg-[#121212] border-t border-[#262626]">
-        <div className="max-w-4xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+      <section className="py-24 px-4 bg-[#121212] border-t border-[#262626]">
+        <div className="max-w-4xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             className="order-2 lg:order-1 relative"
           >
-            <div className="absolute inset-0 bg-[#3B82F6]/10 blur-[40px] rounded-full" />
-            <div className="relative bg-[#121212] rounded-2xl border border-[#262626] p-5">
-              <div className="flex items-center justify-between mb-5">
+            <div className="absolute inset-0 bg-[#3B82F6]/10 blur-[80px] rounded-full" />
+            <div className="relative bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-8">
+              <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h4 className="text-sm font-bold">Prediction Engine</h4>
-                  <p className="text-[10px] text-[#6B7280]">Optimizing intervals</p>
+                  <h4 className="text-[15px] font-bold text-white">{t('landing.srs.predictionEngine')}</h4>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">{t('landing.srs.optimizingIntervals')}</p>
                 </div>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#10B981]/10 border border-[#10B981]/20">
-                  <div className="w-1 h-1 rounded-full bg-[#10B981] animate-pulse" />
-                  <span className="text-[9px] text-[#10B981] font-medium uppercase">Active</span>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10B981]/10 border border-[#10B981]/30">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+                  <span className="text-[10px] text-[#10B981] font-bold uppercase tracking-widest">{t('landing.srs.active')}</span>
                 </div>
               </div>
               
-              <div className="space-y-2.5">
+              <div className="space-y-4">
                 {[
                   { word: "Ephemeral", interval: "2.4d", strength: 85, color: "#3B82F6" },
                   { word: "Resilient", interval: "5.1d", strength: 92, color: "#10B981" },
-                  { word: "Luminous", interval: "12.3d", strength: 78, color: "#FBBF24" },
+                  { word: "Luminous", interval: "12.3d", strength: 78, color: "#FACC15" },
                   { word: "Cacophony", interval: "1.2d", strength: 45, color: "#EF4444" }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-2.5 p-2 rounded-lg bg-[#121212] border border-[#262626]">
-                    <div className="w-16 font-medium text-[11px]">{item.word}</div>
-                    <div className="flex-1 h-1 bg-[#262626] rounded-full overflow-hidden">
+                  <div key={i} className="flex items-center gap-4 p-3 rounded-[12px] bg-[#121212] border border-[#2D2D2F]">
+                    <div className="w-20 font-bold text-[13px] text-white">{item.word}</div>
+                    <div className="flex-1 h-1.5 bg-[#1C1C1E] rounded-full overflow-hidden">
                       <motion.div 
                         className="h-full rounded-full"
                         style={{ backgroundColor: item.color }}
@@ -975,7 +997,7 @@ export default function LandingPage() {
                         viewport={{ once: true }}
                       />
                     </div>
-                    <div className="text-[9px] text-[#6B7280] font-mono w-8 text-right">{item.interval}</div>
+                    <div className="text-[10px] text-[#6B7280] font-bold w-10 text-right uppercase">{item.interval}</div>
                   </div>
                 ))}
               </div>
@@ -988,26 +1010,28 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="order-1 lg:order-2"
           >
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">
-              Optimized <span className="text-[#3B82F6]">SRS</span>
-            </h2>
-            <p className="text-[#9CA3AF] text-xs md:text-sm mb-5 leading-relaxed">
-              Our algorithm tracks <span className="text-white font-medium">hesitation</span>, 
-              <span className="text-white font-medium"> swipe velocity</span>, and 
-              <span className="text-white font-medium"> time-to-recall</span> to predict fading memories.
+            <h2 className="text-[11px] font-bold uppercase text-[#3B82F6] tracking-widest mb-3">{t('landing.srs.recallOptimization')}</h2>
+            <h3 className="text-[28px] font-bold text-[#FFFFFF] mb-4">
+              {t('landing.srs.optimized')}<span className="text-[#3B82F6]">{t('landing.srs.srs')}</span>
+            </h3>
+            <p className="text-[#9CA3AF] text-[15px] mb-8 leading-relaxed">
+              {t('landing.srs.desc1')}<span className="text-white font-bold">{t('landing.srs.desc2')}</span>
+              <span className="text-white font-bold">{t('landing.srs.desc3')}</span>
+              <span className="text-white font-bold">{t('landing.srs.desc4')}</span>
+              {t('landing.srs.desc5')}
             </p>
             
-            <ul className="space-y-2.5">
+            <ul className="space-y-4">
               {[
-                "Predictive forgetting curves",
-                "Dynamic difficulty adjustment",
-                "Immediate reinforcement on struggle"
+                t('landing.srs.feature1'),
+                t('landing.srs.feature2'),
+                t('landing.srs.feature3')
               ].map((item, i) => (
-                <li key={i} className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-[#3B82F6]/10 flex items-center justify-center flex-shrink-0">
-                    <ChevronRight size={10} className="text-[#3B82F6]" />
+                <li key={i} className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#3B82F6]/10 flex items-center justify-center flex-shrink-0 border border-[#3B82F6]/20">
+                    <ChevronRight size={14} className={`text-[#3B82F6] ${language === 'ar' ? 'rotate-180' : ''}`} />
                   </div>
-                  <span className="text-xs text-[#D1D5DB]">{item}</span>
+                  <span className="text-[15px] font-medium text-[#D1D5DB]">{item}</span>
                 </li>
               ))}
             </ul>
@@ -1016,59 +1040,60 @@ export default function LandingPage() {
       </section>
 
       {/* GAMIFICATION */}
-      <section className="py-12 md:py-20 px-4 bg-[#121212] border-t border-[#262626]">
+      <section className="py-24 px-4 bg-[#121212] border-t border-[#262626]">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">Psychological Momentum</h2>
-            <p className="text-[#9CA3AF] text-xs md:text-sm mb-8 max-w-sm mx-auto">
-              Consistency solved through calibrated behavioral psychology.
+            <h2 className="text-[11px] font-bold uppercase text-[#FACC15] tracking-widest mb-3">{t('landing.gamification.habits')}</h2>
+            <h3 className="text-[28px] font-bold text-white mb-4">{t('landing.gamification.momentum')}</h3>
+            <p className="text-[#9CA3AF] text-[15px] mb-12 max-w-sm mx-auto">
+              {t('landing.gamification.consistency')}
             </p>
           </motion.div>
           
           <div className="grid md:grid-cols-2 gap-4">
-            <motion.div className="bg-[#121212] rounded-2xl p-5 border border-[#262626] relative overflow-hidden text-left">
-              <div className="absolute -top-10 -right-10 w-24 h-24 bg-[#FBBF24]/10 rounded-full blur-2xl" />
-              <div className="w-8 h-8 rounded-lg bg-[#FBBF24]/10 flex items-center justify-center mb-3 border border-[#FBBF24]/20">
-                <Clock className="text-[#FBBF24]" size={16} />
+            <motion.div className="bg-[#1C1C1E] rounded-[16px] p-8 border border-[#2D2D2F] relative overflow-hidden text-left">
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FACC15]/05 rounded-full blur-[80px]" />
+              <div className="w-16 h-16 rounded-[12px] bg-[#FACC15]/10 flex items-center justify-center mb-6 border border-[#FACC15]/20">
+                <Clock className="text-[#FACC15]" size={28} />
               </div>
-              <h3 className="text-sm font-bold mb-1.5">The Streak Spot</h3>
-              <p className="text-[#9CA3AF] text-[11px] mb-4">
-                Transform learning into a "don't break the chain" mission.
+              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.gamification.streakTitle')}</h3>
+              <p className="text-[#9CA3AF] text-[15px] mb-8">
+                {t('landing.gamification.streakDesc')}
               </p>
-              <div className="flex justify-start gap-1">
+              <div className="flex justify-start gap-2">
                 {[...Array(7)].map((_, i) => (
-                  <div key={i} className={`w-6 h-8 rounded-md ${i < 5 ? 'bg-[#FBBF24]' : 'bg-[#262626]'} flex items-center justify-center`}>
-                    {i < 5 && <Zap size={12} className="text-[#121212]" fill="currentColor" />}
+                  <div key={i} className={`w-8 h-10 rounded-[8px] ${i < 5 ? 'bg-[#FACC15]' : 'bg-[#121212] border border-[#2D2D2F]'} flex items-center justify-center`}>
+                    {i < 5 && <Zap size={16} className="text-[#121212]" fill="currentColor" />}
                   </div>
                 ))}
               </div>
-              <div className="mt-2 text-[10px] font-bold text-[#FBBF24]">5 Day Streak 🔥</div>
+              <div className="mt-4 text-[11px] font-bold uppercase tracking-widest text-[#FACC15]">{t('landing.gamification.streakCount')}</div>
             </motion.div>
             
-            <motion.div className="bg-[#121212] rounded-2xl p-5 border border-[#262626] relative overflow-hidden text-left">
-              <div className="absolute -top-10 -left-10 w-24 h-24 bg-[#3B82F6]/10 rounded-full blur-2xl" />
-              <div className="w-8 h-8 rounded-lg bg-[#3B82F6]/10 flex items-center justify-center mb-3 border border-[#3B82F6]/20">
-                <Trophy className="text-[#3B82F6]" size={16} />
+            <motion.div className="bg-[#1C1C1E] rounded-[16px] p-8 border border-[#2D2D2F] relative overflow-hidden text-left">
+              <div className="absolute -top-10 -left-10 w-32 h-32 bg-[#3B82F6]/05 rounded-full blur-[80px]" />
+              <div className="w-16 h-16 rounded-[12px] bg-[#3B82F6]/10 flex items-center justify-center mb-6 border border-[#3B82F6]/20">
+                <Trophy className="text-[#3B82F6]" size={28} />
               </div>
-              <h3 className="text-sm font-bold mb-1.5">Global Ranking</h3>
-              <p className="text-[#9CA3AF] text-[11px] mb-4">
-                Compete with learners worldwide. Maintain rank to drive consistency.
+              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.gamification.rankingTitle')}</h3>
+              <p className="text-[#9CA3AF] text-[15px] mb-8">
+                {t('landing.gamification.rankingDesc')}
               </p>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {[
-                  { rank: 1, name: "Alex M.", xp: "12k", color: "#FBBF24" },
-                  { rank: 2, name: "You", xp: "11k", color: "#3B82F6", highlight: true }
+                  { rank: 1, name: "Alex M.", xp: "12k", color: "#FACC15" },
+                  { rank: 2, name: t('landing.gamification.you'), xp: "11k", color: "#3B82F6", highlight: true }
                 ].map((user, i) => (
-                  <div key={i} className={`flex items-center justify-between p-2 rounded-lg ${user.highlight ? 'bg-[#3B82F6]/10 border border-[#3B82F6]/30' : 'bg-[#121212]'}`}>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold w-4" style={{ color: user.color }}>#{user.rank}</span>
-                      <span className={`text-[11px] ${user.highlight ? "text-white font-medium" : "text-[#9CA3AF]"}`}>{user.name}</span>
+                  <div key={i} className={`flex items-center justify-between p-3 rounded-[12px] ${user.highlight ? 'bg-[#3B82F6]/10 border border-[#3B82F6]/30' : 'bg-[#121212] border border-[#2D2D2F]'}`}>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[13px] font-bold w-6" style={{ color: user.color }}>#{user.rank}</span>
+                      <span className={`text-[13px] font-bold ${user.highlight ? "text-white" : "text-[#6B7280]"}`}>{user.name}</span>
                     </div>
-                    <span className="text-[9px] font-mono text-[#6B7280]">{user.xp} XP</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">{user.xp} XP</span>
                   </div>
                 ))}
               </div>
@@ -1078,33 +1103,33 @@ export default function LandingPage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-16 md:py-24 px-4 bg-[#121212] relative overflow-hidden border-t border-[#262626]">
+      <section className="py-24 px-4 bg-[#121212] relative overflow-hidden border-t border-[#262626]">
         <div className="max-w-2xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-3 leading-tight">
-              Upgrade Your{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3B82F6] to-[#60A5FA]">
-                Neural Pathways
+            <h2 className="text-[36px] md:text-[52px] font-bold mb-4 leading-tight">
+              {t('landing.cta.upgrade')}
+              <span className="text-[#3B82F6]">
+                {t('landing.cta.pathways')}
               </span>
             </h2>
-            <p className="text-xs md:text-sm text-[#9CA3AF] mb-6 max-w-sm mx-auto">
-              Join thousands who have replaced grinding with flowing. Your first 50 cards are free.
+            <p className="text-[16px] md:text-[18px] text-[#9CA3AF] mb-10 max-w-sm mx-auto leading-relaxed">
+              {t('landing.cta.join')}
             </p>
             
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-4">
               <Link 
                 href="/register"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-6 py-3 bg-white text-[#121212] rounded-xl font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.15)]"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-4 bg-white text-[#121212] rounded-[12px] font-bold text-[15px] uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-white/10 group"
               >
-                Start Free Protocol
-                <ArrowRight size={14} />
+                {t('landing.cta.startProtocol')}
+                <ArrowRight size={19} className={`transition-transform ${language === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
               </Link>
-              <p className="text-[9px] text-[#6B7280]">
-                No credit card required • Cancel anytime
+              <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">
+                {t('landing.cta.noCreditCard')}
               </p>
             </div>
           </motion.div>
@@ -1112,23 +1137,29 @@ export default function LandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-[#262626] py-6 px-4 bg-[#121212]">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 bg-[#3B82F6] rounded flex items-center justify-center">
-              <Zap size={10} className="text-white" fill="currentColor" />
+      <footer className="border-t border-[#262626] py-12 px-4 bg-[#121212]">
+        <div className="max-w-5xl mx-auto flex flex-col items-center gap-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#3B82F6] rounded-[8px] flex items-center justify-center">
+              <Zap size={16} className="text-white" fill="white" />
             </div>
-            <span className="font-bold text-xs">Flotter</span>
+            <span className="font-bold text-[18px] tracking-tight">Flotter</span>
           </div>
           
-          <div className="flex gap-4 text-[10px] text-[#6B7280]">
-            <Link href="#" className="hover:text-white transition-colors">Science</Link>
-            <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms</Link>
+          <div className="flex gap-8 text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">
+            <Link href="#" className="hover:text-white transition-colors">{t('landing.footer.science')}</Link>
+            <Link href="#" className="hover:text-white transition-colors">{t('landing.footer.privacy')}</Link>
+            <Link href="#" className="hover:text-white transition-colors">{t('landing.footer.terms')}</Link>
           </div>
           
-          <div className="text-[9px] text-[#6B7280]">
-            © 2026 Flotter OS. All rights reserved.
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center gap-2 text-[#6B7280]">
+              <Zap size={14} fill="#6B7280" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em]">{t('landing.footer.copyright')}</span>
+            </div>
+            <p className="text-[#4B5563] text-[11px] font-medium">
+              {t('landing.footer.framework')}
+            </p>
           </div>
         </div>
       </footer>
