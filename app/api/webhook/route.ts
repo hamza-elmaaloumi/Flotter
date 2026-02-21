@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const body = await req.text()
     const headers = Object.fromEntries(req.headers.entries())
 
-    // Verify the webhook signature if secret is configured
+    // Verify the webhook signature — required in production
     let event: any
     if (process.env.POLAR_WEBHOOK_SECRET) {
       try {
@@ -22,8 +22,13 @@ export async function POST(req: Request) {
         }
         throw err
       }
+    } else if (process.env.NODE_ENV === 'production') {
+      // In production, POLAR_WEBHOOK_SECRET must be configured
+      console.error('POLAR_WEBHOOK_SECRET is not configured in production!')
+      return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
     } else {
-      // No secret configured yet — parse raw body (dev mode)
+      // Development only — parse raw body without verification
+      console.warn('⚠️ Webhook signature verification skipped (dev mode)')
       event = JSON.parse(body)
     }
 

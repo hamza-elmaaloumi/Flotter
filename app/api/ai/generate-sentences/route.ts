@@ -3,6 +3,7 @@ import Groq from 'groq-sdk';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY,
@@ -18,6 +19,12 @@ export async function POST(req: Request) {
         }
         // @ts-ignore
         const userId = session.user.id;
+
+        // Rate limit: 10 AI generation requests per minute per user
+        const rateLimitResult = checkRateLimit(`ai:${userId}`, { maxRequests: 10, windowMs: 60 * 1000 });
+        if (!rateLimitResult.success) {
+            return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+        }
 
         // Check subscription & daily limit for free users
         const user = await prisma.user.findUnique({
@@ -51,6 +58,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Word is required" }, { status: 400 });
         }
 
+        // VUL-009: Sanitize input to prevent prompt injection
+        // Only allow alphabetic characters, hyphens, and spaces (valid for English words)
+        const sanitizedWord = String(word).trim().slice(0, 50)
+        if (!/^[a-zA-Z\s-]+$/.test(sanitizedWord)) {
+            return NextResponse.json({ error: "Invalid word format. Only letters, spaces, and hyphens are allowed." }, { status: 400 });
+        }
+
         try {
             const completion = await groq.chat.completions.create({
                 messages: [
@@ -75,7 +89,7 @@ export async function POST(req: Request) {
                     },
                     {
                         role: "user",
-                        content: `Target Word: "${word}"`
+                        content: `Target Word: "${sanitizedWord}"`
                     },
                 ],
                 model: "llama-3.3-70b-versatile",
@@ -120,7 +134,7 @@ export async function POST(req: Request) {
         }
 
         // 2. Fallback Method: Free Dictionary API
-        const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+        const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(sanitizedWord)}`);
         const dictData = await dictRes.json();
 
         if (Array.isArray(dictData)) {
@@ -143,7 +157,7 @@ export async function POST(req: Request) {
 
                 return NextResponse.json({
                     sentences: examples.slice(0, 3),
-                    imageQuery: word,
+                    imageQuery: sanitizedWord,
                     fallback: true
                 });
             }
@@ -159,8 +173,8 @@ export async function POST(req: Request) {
         });
 
         return NextResponse.json({
-            sentences: [`You find yourself focusing deeply on the concept of ${word} until the meaning is etched into your mind.`],
-            imageQuery: word
+            sentences: [`You find yourself focusing deeply on the concept of ${sanitizedWord} until the meaning is etched into your mind.`],
+            imageQuery: sanitizedWord
         });
 
     } catch (error: any) {

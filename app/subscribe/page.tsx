@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useLanguage } from '../providers/LanguageProvider'
+import { useTheme } from '../providers/ThemeProvider'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -20,6 +21,7 @@ import {
 
 export default function SubscribePage() {
   const { t, language } = useLanguage()
+  const { isDark } = useTheme()
   const searchParams = useSearchParams()
   const success = searchParams.get('success')
   const [loading, setLoading] = useState(false)
@@ -39,7 +41,7 @@ export default function SubscribePage() {
 
   if (success === 'true') {
     return (
-      <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased flex items-center justify-center p-6">
+      <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen antialiased flex items-center justify-center p-6 ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
         <div className="max-w-md w-full text-center">
           <div className="relative mb-8">
             <div className="w-24 h-24 mx-auto bg-[#10B981]/10 rounded-full flex items-center justify-center border-2 border-[#10B981]/20">
@@ -49,7 +51,7 @@ export default function SubscribePage() {
           </div>
 
           <h1 className="text-[24px] font-bold mb-3">{t('subscribe.successTitle')}</h1>
-          <p className="text-[#9CA3AF] text-[14px] mb-8 leading-relaxed">
+          <p className={`text-[14px] mb-8 leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
             {t('subscribe.successDesc')}
           </p>
 
@@ -104,10 +106,10 @@ export default function SubscribePage() {
   ]
 
   return (
-    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-[100px]">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen antialiased pb-[100px] ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
       {/* Header */}
-      <header dir="ltr" className="sticky top-0 z-20 bg-[#121212]/80 backdrop-blur-xl border-b border-[#262626] px-4 h-[64px] flex items-center">
-        <Link href="/cards/learning" className="p-1 text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors">
+      <header dir="ltr" className={`sticky top-0 z-20 backdrop-blur-xl border-b px-4 h-[64px] flex items-center ${isDark ? 'bg-[#121212]/80 border-[#262626]' : 'bg-white/80 border-[#E2E4E9]'}`}>
+        <Link href="/cards/learning" className={`p-1 transition-colors ${isDark ? 'text-[#9CA3AF] hover:text-[#FFFFFF]' : 'text-[#6B7280] hover:text-[#111827]'}`}>
           <ChevronLeft size={24} />
         </Link>
       </header>
@@ -125,20 +127,20 @@ export default function SubscribePage() {
             <span className="text-[#FACC15]">{t('subscribe.heroTitle2')}</span>
           </h1>
 
-          <p className="text-[#9CA3AF] text-[14px] leading-relaxed max-w-sm mx-auto">
-            {t('subscribe.heroDesc1')}<span className="text-[#FFFFFF] font-bold">{t('subscribe.heroPrice')}</span>{t('subscribe.heroDesc2')}
+          <p className={`text-[14px] leading-relaxed max-w-sm mx-auto ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
+            {t('subscribe.heroDesc1')}<span className={`font-bold ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>{t('subscribe.heroPrice')}</span>{t('subscribe.heroDesc2')}
           </p>
         </div>
 
         {/* Price Card */}
-        <div className="relative overflow-hidden bg-[#1C1C1E] border border-[#FACC15]/20 rounded-[20px] p-6 mb-8">
+        <div className={`relative overflow-hidden border border-[#FACC15]/20 rounded-[20px] p-6 mb-8 ${isDark ? 'bg-[#1C1C1E]' : 'bg-white'}`}>
           <div className="absolute top-[-40px] right-[-40px] w-[160px] h-[160px] blur-[80px] rounded-full bg-[#FACC15]/10" />
 
           <div className="relative z-10 flex items-end gap-1 mb-1">
-            <span className="text-[48px] font-bold text-[#FFFFFF] leading-none">{t('subscribe.price')}</span>
+            <span className={`text-[48px] font-bold leading-none ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>{t('subscribe.price')}</span>
             <span className="text-[16px] text-[#6B7280] font-medium mb-2">{t('subscribe.perMonth')}</span>
           </div>
-          <p className="text-[#9CA3AF] text-[13px] mb-6">
+          <p className={`text-[13px] mb-6 ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
             {t('subscribe.priceSubtext')}
           </p>
 
@@ -167,15 +169,15 @@ export default function SubscribePage() {
           {features.map((feature, i) => (
             <div
               key={i}
-              className="bg-[#1C1C1E] border border-[#2D2D2F] rounded-[14px] p-4 transition-all hover:border-[#FACC15]/20"
+              className={`border rounded-[14px] p-4 transition-all hover:border-[#FACC15]/20 ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}
             >
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-[10px] bg-[#FACC15]/10 border border-[#FACC15]/20 flex items-center justify-center flex-shrink-0">
                   <feature.icon size={18} className="text-[#FACC15]" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-[14px] font-bold text-[#FFFFFF] mb-0.5">{feature.title}</p>
-                  <p className="text-[12px] text-[#9CA3AF] leading-relaxed mb-2">{feature.description}</p>
+                  <p className={`text-[14px] font-bold mb-0.5 ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>{feature.title}</p>
+                  <p className={`text-[12px] leading-relaxed mb-2 ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>{feature.description}</p>
                   <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest">
                     <span className="text-[#EF4444]/60 line-through">{t('subscribe.free')}: {feature.freeLimit}</span>
                     <span className="text-[#10B981]">{t('subscribe.pro')}: {feature.proLimit}</span>

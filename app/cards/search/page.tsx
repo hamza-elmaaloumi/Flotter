@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Search, Loader2, ChevronRight, Image as ImageIcon, Plus } from 'lucide-react'
 import { useLanguage } from '../../providers/LanguageProvider'
+import { useTheme } from '../../providers/ThemeProvider'
 
 interface SearchResult {
   id: string
@@ -17,6 +18,7 @@ export default function ListPage() {
   const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(true)
   const { t, language } = useLanguage()
+  const { isDark } = useTheme()
 
   const extractDisplayWord = (card: any): string => {
     if (card.word && typeof card.word === 'string') return card.word;
@@ -63,9 +65,9 @@ export default function ListPage() {
   }, [query, allCards])
 
   return (
-    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased selection:bg-[#3B82F6]/30">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen antialiased selection:bg-[#3B82F6]/30 ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
       {/* Header - Clean Style, Left Aligned per Design System */}
-      <div className="sticky top-0 z-10 bg-[#121212]/95 backdrop-blur-md border-b border-[#262626]">
+      <div className={`sticky top-0 z-10 backdrop-blur-md border-b ${isDark ? 'bg-[#121212]/95 border-[#262626]' : 'bg-white/95 border-[#E2E4E9]'}`}>
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
             <div className="relative flex-1">
@@ -76,7 +78,7 @@ export default function ListPage() {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t('searchCards.placeholder')}
                 // Typography: body_medium (15px)
-                className="w-full bg-[#222222] border border-[#2D2D2F] rounded-[12px] py-2.5 pl-10 pr-4 text-[15px] text-[#FFFFFF] placeholder-[#6B7280] outline-none focus:border-[#3B82F6] transition-all"
+                className={`w-full rounded-[12px] py-2.5 pl-10 pr-4 text-[15px] placeholder-[#6B7280] outline-none focus:border-[#3B82F6] transition-all ${isDark ? 'bg-[#222222] border border-[#2D2D2F] text-[#FFFFFF]' : 'bg-white border border-[#E2E4E9] text-[#111827]'}`}
               />
             </div>
             <Link 
@@ -101,7 +103,7 @@ export default function ListPage() {
           ) : (
             <>
               {results.length === 0 && (
-                <div className="py-20 text-center border border-dashed border-[#2D2D2F] rounded-[16px]">
+                <div className={`py-20 text-center border border-dashed rounded-[16px] ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'}`}>
                   <p className="text-[15px] text-[#9CA3AF]">{t('searchCards.noMatches')} "{query}"</p>
                 </div>
               )}
@@ -111,11 +113,11 @@ export default function ListPage() {
                   key={card.id} 
                   href={`/cards/${card.id}/edit`}
                   // Settings Row / Standard Card Style: #1C1C1E background, 16px radius
-                  className="flex items-center justify-between p-3 bg-[#1C1C1E] hover:bg-[#222222] border border-[#2D2D2F] rounded-[16px] transition-all group active:scale-[0.99] h-[56px]"
+                  className={`flex items-center justify-between p-3 border rounded-[16px] transition-all group active:scale-[0.99] h-[56px] ${isDark ? 'bg-[#1C1C1E] hover:bg-[#222222] border-[#2D2D2F]' : 'bg-white hover:bg-[#F0F1F3] border-[#E2E4E9]'}`}
                 >
                   <div className="flex items-center gap-3">
                     {/* Icon/Image Container: Rounded 8px per list_items spec */}
-                    <div className="w-10 h-10 rounded-[8px] bg-[#333333] overflow-hidden flex-shrink-0 flex items-center justify-center border border-[#2D2D2F]">
+                    <div className={`w-10 h-10 rounded-[8px] overflow-hidden flex-shrink-0 flex items-center justify-center border ${isDark ? 'bg-[#333333] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'}`}>
                       {card.imageUrl ? (
                         <img 
                           src={card.imageUrl} 
@@ -129,7 +131,7 @@ export default function ListPage() {
                     
                     <div className="flex flex-col">
                       {/* Typography: body_large (17px, SemiBold) */}
-                      <span className="text-[15px] font-semibold text-[#FFFFFF]">
+                      <span className={`text-[15px] font-semibold ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>
                         {card.word}
                       </span>
                       {/* Typography: caption (13px, Medium, Color: secondary) */}
@@ -150,7 +152,7 @@ export default function ListPage() {
         
         {!loading && (
           <footer className="mt-8 mb-10 text-center">
-            <div className="inline-block px-4 py-1.5 bg-[#222222] border border-[#2D2D2F] rounded-full">
+            <div className={`inline-block px-4 py-1.5 border rounded-full ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'}`}>
               {/* Typography: label (12px, Bold, Uppercase) */}
               <p className="text-[12px] font-bold uppercase tracking-widest text-[#6B7280]">
                 {results.length} {t('searchCards.cardsFound')}

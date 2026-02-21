@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { useUser } from '../../../providers/UserProvider'
 import { useLanguage } from '../../../providers/LanguageProvider'
+import { useTheme } from '../../../providers/ThemeProvider'
 import {
   Plus,
   Trash2,
@@ -33,6 +34,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
   const router = useRouter()
   const { user } = useUser()
   const { t, language } = useLanguage()
+  const { isDark } = useTheme()
 
   const [word, setWord] = useState(initialCard.word || '')
   const [imageUrl, setImageUrl] = useState(initialCard.imageUrl || '')
@@ -112,15 +114,15 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
   }
 
   // --- Design System Constant Styles ---
-  const inputStyles = "w-full bg-[#222222] border border-[#2D2D2F] rounded-[12px] px-3 py-2.5 text-[14px] text-[#FFFFFF] placeholder-[#6B7280] outline-none focus:border-[#3B82F6] transition-all"
-  const labelStyles = "text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] mb-2 block" // Typography: label
-  const cardStyles = "bg-[#1C1C1E] rounded-[16px] p-2 border border-[#2D2D2F]" // Component: standard_card
+  const inputStyles = `w-full rounded-[12px] px-3 py-2.5 text-[14px] placeholder-[#6B7280] outline-none focus:border-[#3B82F6] transition-all ${isDark ? 'bg-[#222222] border border-[#2D2D2F] text-[#FFFFFF]' : 'bg-white border border-[#E2E4E9] text-[#111827]'}`
+  const labelStyles = `text-[11px] font-bold uppercase tracking-wider mb-2 block ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`
+  const cardStyles = `rounded-[16px] p-2 border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`
 
   return (
-    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-40 font-sans">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen antialiased pb-40 font-sans ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
       
       {/* Header - Clean Style */}
-      <header dir="ltr" className="sticky top-0 z-10 bg-[#121212] border-b border-[#262626] px-4 h-[64px] flex items-center justify-between">
+      <header dir="ltr" className={`sticky top-0 z-10 border-b px-4 h-[64px] flex items-center justify-between ${isDark ? 'bg-[#121212] border-[#262626]' : 'bg-white border-[#E2E4E9]'}`}>
         <div className="flex items-center gap-2">
           <button onClick={() => router.back()} className="p-1 text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors">
             <ChevronLeft size={24} />
@@ -172,7 +174,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
                   </div>
                 </div>
               ) : (
-                <div className="aspect-video w-full rounded-[14px] border-2 border-dashed border-[#2D2D2F] flex flex-col items-center justify-center bg-[#121212] text-[#6B7280]">
+                <div className={`aspect-video w-full rounded-[14px] border-2 border-dashed flex flex-col items-center justify-center ${isDark ? 'border-[#2D2D2F] bg-[#121212] text-[#6B7280]' : 'border-[#E2E4E9] bg-[#F0F1F3] text-[#6B7280]'}`}>
                   <ImageIcon size={32} className="mb-2 text-[#333333]" />
                   <p className="text-[14px]">{t('editCard.noImage')}</p>
                   <p className="text-[12px] text-[#9CA3AF]">{t('editCard.selectFromLibrary')}</p>
@@ -216,7 +218,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
         </section>
 
         {/* Unsplash Search Section */}
-        <section className="pt-8 border-t border-[#262626]">
+        <section className={`pt-8 border-t ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
           <div className="flex items-center justify-between mb-4">
             <label className={labelStyles + " mb-0"}>{t('editCard.unsplash')}</label>
             {imagesLoading && <Loader2 size={16} className="animate-spin text-[#3B82F6]" />}
@@ -236,7 +238,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
             <button 
               type="button" 
               onClick={searchImages} 
-              className="px-6 bg-[#333333] text-[14px] font-bold rounded-[12px] border border-[#2D2D2F] hover:bg-[#374151] transition-colors"
+              className={`px-6 text-[14px] font-bold rounded-[12px] border transition-colors ${isDark ? 'bg-[#333333] border-[#2D2D2F] hover:bg-[#374151]' : 'bg-[#E2E4E9] border-[#E2E4E9] hover:bg-[#D1D5DB] text-[#111827]'}`}
             >
               {t('editCard.searchBtn')}
             </button>
@@ -265,7 +267,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
               </button>
             ))}
             {results.length === 0 && !imagesLoading && (
-              <div className="col-span-full py-12 flex flex-col items-center justify-center border border-dashed border-[#2D2D2F] rounded-[16px] bg-[#1C1C1E]/50">
+              <div className={`col-span-full py-12 flex flex-col items-center justify-center border border-dashed rounded-[16px] ${isDark ? 'border-[#2D2D2F] bg-[#1C1C1E]/50' : 'border-[#E2E4E9] bg-[#F0F1F3]/50'}`}>
                 <Search size={24} className="text-[#333333] mb-2" />
                 <span className="text-[12px] text-[#6B7280] font-medium">{t('editCard.discoverImages')}</span>
               </div>
@@ -274,7 +276,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
         </section>
         
         {/* Delete Card Section */}
-        <section className="pt-8 border-t border-[#262626] flex justify-center">
+        <section className={`pt-8 border-t flex justify-center ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
           <button 
             type="button"
             onClick={handleDelete}
@@ -295,7 +297,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
       </main>
 
       {/* Primary Action Button - Floating Style */}
-      <footer className="fixed bottom-12 left-0 right-0 flex justify-center  p-6 bg-gradient-to-t from-[#121212] via-[#121212] to-transparent z-20">
+      <footer className={`fixed bottom-12 left-0 right-0 flex justify-center  p-6 bg-gradient-to-t ${isDark ? 'from-[#121212] via-[#121212]' : 'from-[#F8F9FA] via-[#F8F9FA]'} to-transparent z-20`}>
         <div className="max-w-xl mx-auto">
           <button 
             onClick={handleSubmit}

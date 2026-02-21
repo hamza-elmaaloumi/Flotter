@@ -1,9 +1,17 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '../../../../lib/prisma'
-import crypto from 'crypto'
+import bcrypt from 'bcryptjs'
+import { checkRateLimit, getClientIp } from '../../../../lib/rate-limit'
 
 export async function POST(req: Request) {
   try {
+    // Rate limit: 5 registration attempts per 15 minutes per IP
+    const ip = getClientIp(req)
+    const rateLimitResult = checkRateLimit(`register:${ip}`, { maxRequests: 5, windowMs: 15 * 60 * 1000 })
+    if (!rateLimitResult.success) {
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+    }
+
     const body = await req.json()
     const { email, password } = body || {}
 
@@ -23,8 +31,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'User already exists' }, { status: 409 })
     }
 
-    // Hash password (Your existing logic)
-    const passwordHash = crypto.createHash('sha256').update(password).digest('hex')
+    // Hash password with bcrypt (secure salted hashing)
+    const passwordHash = await bcrypt.hash(password, 12)
 
     // Create user
     const user = await prisma.user.create({

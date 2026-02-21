@@ -8,6 +8,7 @@ import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { UserPlus, Sparkles } from "lucide-react"
 import { useLanguage } from '../providers/LanguageProvider'
+import { useTheme } from '../providers/ThemeProvider'
 
 type FormData = {
   email: string
@@ -18,6 +19,7 @@ export default function RegisterPage() {
   const router = useRouter()
   const session = useSession()
   const { t, language } = useLanguage()
+  const { isDark } = useTheme()
 
   useEffect(() => {
     if (session.status === "authenticated") {
@@ -61,20 +63,20 @@ export default function RegisterPage() {
 
   // Applied Design System Tokens:
   // background.secondary (#222222), ui_elements.border (#2D2D2F), item_radius (12px)
-  const inputStyles = "w-full bg-[#222222] border border-[#2D2D2F] rounded-[12px] px-4 py-[14px] text-[#FFFFFF] placeholder-[#6B7280] transition-all duration-200 focus:outline-none focus:border-[#3B82F6] text-[14px]"
+  const inputStyles = `w-full rounded-[12px] px-4 py-[14px] placeholder-[#6B7280] transition-all duration-200 focus:outline-none focus:border-[#3B82F6] text-[14px] ${isDark ? 'bg-[#222222] border border-[#2D2D2F] text-[#FFFFFF]' : 'bg-white border border-[#E2E4E9] text-[#111827]'}`
   
   // label typography: 11px, Bold, Uppercase
   const labelStyles = "text-[11px] font-bold uppercase tracking-widest text-[#6B7280] ml-1 mb-2 block"
 
   return (
     // Global background: primary (#121212)
-    <main dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen flex items-center justify-center bg-[#121212] text-[#FFFFFF] antialiased p-4">
+    <main dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen flex items-center justify-center antialiased p-4 ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
       {/* Brand Blue Glow Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#3B82F608_0%,_transparent_65%)] pointer-events-none" />
 
       <div className="w-full max-w-[340px] z-10">
         {/* card_radius: 14px, background: primary (#121212) */}
-        <div className="bg-[#121212] border border-[#2D2D2F] p-6 md:p-8 rounded-[14px] shadow-2xl relative">
+        <div className={`p-6 md:p-8 rounded-[14px] shadow-2xl relative border ${isDark ? 'bg-[#121212] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
           
           <header className="mb-8 text-center">
             {/* Primary Blue Muted for icon container */}

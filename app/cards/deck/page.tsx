@@ -7,6 +7,7 @@ import { useUser } from '../../providers/UserProvider'
 import Flashcard from './components/FlashCard'
 import { Sparkles, Loader2, Zap, Crown, X } from 'lucide-react'
 import { useLanguage } from '../../providers/LanguageProvider'
+import { useTheme } from '../../providers/ThemeProvider'
 import Link from 'next/link'
 import StreakCelebration from './components/StreakCelebration'
 
@@ -14,6 +15,7 @@ export default function DeckPage() {
   const { user } = useUser()
   const router = useRouter()
   const { t, language } = useLanguage()
+  const { isDark } = useTheme()
 
   // State
   const [cards, setCards] = useState<any[]>([])
@@ -172,11 +174,11 @@ export default function DeckPage() {
     let totalXpThisSwipe = 0
     if (earnedReviewXp) {
       totalXpThisSwipe += 10
-      axios.post('/api/xp/add', { amount: 10, reason: 'card_review' }).catch(() => { })
+      // XP is now awarded server-side in the card review PATCH endpoint
     }
     if (audioCompleted[cardId]) {
       totalXpThisSwipe += 5
-      axios.post('/api/xp/add', { amount: 5, reason: 'audio_listen' }).catch(() => { })
+      // XP is now awarded server-side in the TTS endpoint
     }
     if (totalXpThisSwipe > 0) showXpToast(totalXpThisSwipe)
     setFlipTimestamps(prev => { const n = { ...prev }; delete n[cardId]; return n })
@@ -229,7 +231,7 @@ export default function DeckPage() {
   }
 
   return (
-    <main dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] py-6 px-4 overflow-hidden flex flex-col justify-between antialiased">
+    <main dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen py-6 px-4 overflow-hidden flex flex-col justify-between antialiased ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
       <div className="max-w-[400px] mx-auto w-full flex-1 flex flex-col">
 
         <header className="mb-8 flex flex-col items-center">
@@ -242,20 +244,20 @@ export default function DeckPage() {
           <h2 className="text-[19px] font-bold tracking-tight uppercase">{t('deck.title')}</h2>
 
           <div className="mt-4 flex items-center gap-3">
-            <div className="h-[1px] w-6 bg-[#262626]" />
-            <div className="bg-[#222222] border border-[#2D2D2F] px-4 py-1 rounded-[12px]">
+            <div className={`h-[1px] w-6 ${isDark ? 'bg-[#262626]' : 'bg-[#E2E4E9]'}`} />
+            <div className={`px-4 py-1 rounded-[12px] border ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
               <span className="text-[#3B82F6] font-bold text-[11px] tracking-widest uppercase">
                 {cards.length} {cards.length === 1 ? t('deck.cardLeft') : t('deck.cardsLeft')}
               </span>
             </div>
-            <div className="h-[1px] w-6 bg-[#262626]" />
+            <div className={`h-[1px] w-6 ${isDark ? 'bg-[#262626]' : 'bg-[#E2E4E9]'}`} />
           </div>
         </header>
 
         <div className="relative flex-1 w-full max-h-[550px] min-h-[400px] flex justify-center items-center" style={{ perspective: '1200px' }}>
 
           {loading && cards.length === 0 && (
-            <div className="w-full max-w-[320px] aspect-[2/3.2] bg-[#1C1C1E] border border-[#2D2D2F] rounded-[14px] flex flex-col items-center justify-center space-y-4 animate-pulse">
+            <div className={`w-full max-w-[320px] aspect-[2/3.2] border rounded-[14px] flex flex-col items-center justify-center space-y-4 animate-pulse ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
               <Loader2 className="animate-spin text-[#6B7280]" size={24} />
               <span className="text-[#6B7280] text-[11px] font-bold uppercase tracking-widest">{t('deck.preparing')}</span>
             </div>
@@ -281,12 +283,12 @@ export default function DeckPage() {
           ))}
 
           {cards.length === 0 && !loading && (
-            <div className="w-full max-w-[320px] aspect-[2/3.3] flex flex-col items-center justify-center bg-[#121212] border border-[#2D2D2F] rounded-[14px] p-6 text-center shadow-2xl">
+            <div className={`w-full max-w-[320px] aspect-[2/3.3] flex flex-col items-center justify-center border rounded-[14px] p-6 text-center shadow-2xl ${isDark ? 'bg-[#121212] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
               <div className="w-14 h-14 bg-[#1D4ED8]/10 rounded-full flex items-center justify-center mb-4 border border-[#3B82F6]/20">
                 <Sparkles className="text-[#3B82F6]" size={24} />
               </div>
               <h3 className="text-[19px] font-bold mb-2 uppercase">{t('deck.allCaughtUp')}</h3>
-              <p className="text-[#9CA3AF] text-[14px] leading-relaxed mb-8">
+              <p className={`text-[14px] leading-relaxed mb-8 ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
                 {t('deck.allCaughtUpDesc')}
               </p>
               <button
@@ -305,7 +307,7 @@ export default function DeckPage() {
               <span className="text-[11px] font-bold uppercase tracking-widest">{t('deck.audioActive')}</span>
             </div>
             {sessionXp > 0 && (
-              <div className="mt-2 inline-flex items-center gap-1.5 bg-[#222222] border border-[#2D2D2F] px-4 py-1.5 rounded-[12px]">
+              <div className={`mt-2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-[12px] border ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
                 <Zap size={12} className="text-[#FACC15]" fill="currentColor" />
                 <span className="text-[#FACC15] text-[11px] font-bold tracking-widest uppercase">+{sessionXp} {t('deck.xpSession')}</span>
               </div>
@@ -322,44 +324,77 @@ export default function DeckPage() {
           </div>
         )}
 
-        {/* 10-CARD UPSELL MODAL FOR FREE USERS */}
+        {/* 10-CARD UPSELL — INLINE PRO PROMPT */}
         {showUpsell && !isPro && (
-          <div className="fixed inset-0 z-[300] bg-black/70 flex items-center justify-center p-6 animate-in fade-in duration-200">
-            <div className="relative max-w-sm w-full bg-[#1C1C1E] border border-[#FACC15]/30 rounded-[20px] p-6 text-center">
+          <div className="fixed inset-0 z-[300] flex items-center justify-center p-6 animate-in fade-in duration-300">
+            {/* Backdrop with blur */}
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={() => setShowUpsell(false)} />
+            
+            <div className={`relative max-w-[340px] w-full rounded-[24px] overflow-hidden border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`} style={{ animation: 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+              {/* Close button */}
               <button
                 onClick={() => setShowUpsell(false)}
-                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#222222] border border-[#2D2D2F] flex items-center justify-center text-[#6B7280] hover:text-white transition-colors"
+                className={`absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isDark ? 'bg-[#222222] text-[#6B7280] hover:text-white' : 'bg-[#F0F1F3] text-[#9CA3AF] hover:text-[#111827]'}`}
               >
-                <X size={16} />
+                <X size={14} />
               </button>
 
-              <div className="w-16 h-16 mx-auto mb-4 bg-[#FACC15]/10 rounded-full flex items-center justify-center border border-[#FACC15]/20">
-                <Crown size={28} className="text-[#FACC15]" fill="currentColor" />
+              {/* Header section */}
+              <div className="pt-8 pb-4 flex flex-col items-center">
+                <div className="w-14 h-14 rounded-full bg-[#FACC15]/10 border border-[#FACC15]/20 flex items-center justify-center mb-3">
+                  <Crown size={24} className="text-[#FACC15]" fill="currentColor" />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FACC15] mb-1">Flotter Pro</span>
               </div>
 
-              <h3 className="text-[19px] font-bold text-[#FFFFFF] mb-2">{t('deck.onFire')}</h3>
-              <p className="text-[13px] text-[#9CA3AF] mb-1">
-                {t('deck.reviewedCards1')}<span className="text-[#FACC15] font-bold">{swipeCount} {t('deck.reviewedCards2')}</span>
-              </p>
-              <p className="text-[12px] text-[#6B7280] mb-5 leading-relaxed">
-                {t('deck.upsellDesc')}
-              </p>
+              {/* Content */}
+              <div className="px-5 pb-5">
+                <div className="text-center mb-4">
+                  <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${isDark ? 'text-[#3B82F6]' : 'text-[#2563EB]'}`}>
+                    {swipeCount} {t('deck.reviewedCards2')}
+                  </p>
+                  <h3 className="text-[18px] font-bold mb-1">{t('deck.adTitle')}</h3>
+                  <p className={`text-[12px] leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
+                    {t('deck.adDesc')}
+                  </p>
+                </div>
 
-              <div className="flex flex-col gap-2">
-                <Link
-                  href="/subscribe"
-                  className="w-full inline-flex items-center justify-center gap-2 bg-[#FACC15] text-[#000000] py-3.5 rounded-[12px] font-bold text-[13px] transition-all active:scale-95"
-                >
-                  <Crown size={14} fill="currentColor" />
-                  {t('deck.getProBtn')}
-                </Link>
-                <button
-                  onClick={() => setShowUpsell(false)}
-                  className="w-full py-3 text-[12px] font-bold text-[#6B7280] uppercase tracking-widest hover:text-white transition-colors"
-                >
-                  {t('deck.continueLearning')}
-                </button>
+                {/* Feature pills */}
+                <div className="flex flex-wrap justify-center gap-1.5 mb-5">
+                  {[t('learning.tagUnlimited'), t('learning.tagNoAds'), t('learning.tagStreakFreeze')].map((tag) => (
+                    <span key={tag} className={`px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider ${isDark ? 'bg-[#FACC15]/10 border border-[#FACC15]/20 text-[#FACC15]' : 'bg-[#D97706]/5 border border-[#D97706]/15 text-[#D97706]'}`}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Divider */}
+                <div className={`h-[1px] w-full mb-5 ${isDark ? 'bg-[#2D2D2F]' : 'bg-[#E2E4E9]'}`} />
+
+                {/* CTA */}
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href="/subscribe"
+                    className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-[14px] font-bold text-[13px] transition-all active:scale-[0.97] bg-[#3B82F6] text-white"
+                  >
+                    <Zap size={14} fill="currentColor" />
+                    {t('deck.adCta')}
+                  </Link>
+                  <button
+                    onClick={() => setShowUpsell(false)}
+                    className={`w-full py-3 text-[11px] font-bold uppercase tracking-widest transition-colors ${isDark ? 'text-[#6B7280] hover:text-white' : 'text-[#9CA3AF] hover:text-[#111827]'}`}
+                  >
+                    {t('deck.adDismiss')}
+                  </button>
+                </div>
               </div>
+
+              <style>{`
+                @keyframes slideUp {
+                  from { opacity: 0; transform: translateY(30px) scale(0.96); }
+                  to { opacity: 1; transform: translateY(0) scale(1); }
+                }
+              `}</style>
             </div>
           </div>
         )}

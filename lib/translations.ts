@@ -426,6 +426,38 @@ export const translations: Record<Language, Record<string, string>> = {
     'newCard.limitTitle': 'Daily AI Limit Reached',
     'newCard.limitDesc': "You've used all 3 free AI generations for today. You can still create cards manually, or upgrade to Pro for unlimited AI-powered card creation.",
     'newCard.limitCta': 'Get Unlimited AI Cards — $1/mo',
+
+    // ─── New Card Help Tooltip ───
+    'newCard.helpTitle': 'How AI Card Creation Works',
+    'newCard.helpStep1': 'Type a single word in the vocabulary field',
+    'newCard.helpStep2': 'Click outside the field (or tap elsewhere)',
+    'newCard.helpStep3': 'AI generates example sentences and finds a matching image automatically',
+    'newCard.helpStep4': 'Review, adjust if needed, then tap Create',
+    'newCard.helpTip': 'That\'s it — just one word and the AI does the rest!',
+    'newCard.helpClose': 'Got it',
+
+    // ─── New User Welcome ───
+    'learning.welcomeTitle': 'Welcome to Flotter!',
+    'learning.welcomeSubtitle': 'Start your language mastery journey',
+    'learning.welcomeDesc': 'Create your first flashcard to begin. Just type a single word and our AI will generate everything else for you.',
+    'learning.welcomeCta': 'Create Your First Card',
+    'learning.welcomeStep1': 'Add a word',
+    'learning.welcomeStep1Desc': 'Type any vocabulary word you want to learn',
+    'learning.welcomeStep2': 'AI does the rest',
+    'learning.welcomeStep2Desc': 'Sentences, images, and audio are generated automatically',
+    'learning.welcomeStep3': 'Review daily',
+    'learning.welcomeStep3Desc': 'Swipe through cards to build lasting memory',
+
+    // ─── Settings: Theme ───
+    'settings.theme': 'Appearance',
+    'settings.themeDark': 'Dark',
+    'settings.themeLight': 'Light',
+
+    // ─── Deck: Redesigned Ad ───
+    'deck.adTitle': 'Level up your learning',
+    'deck.adDesc': 'Remove distractions and unlock your full potential with Flotter Pro.',
+    'deck.adCta': 'Try Pro — $1/month',
+    'deck.adDismiss': 'Maybe later',
   },
 
   ar: {
@@ -853,5 +885,37 @@ export const translations: Record<Language, Record<string, string>> = {
     'newCard.limitTitle': 'تم الوصول للحد اليومي للذكاء الاصطناعي',
     'newCard.limitDesc': 'لقد استخدمت جميع الإنشاءات الثلاثة المجانية بالذكاء الاصطناعي لهذا اليوم. يمكنك إنشاء بطاقات يدوياً، أو الترقية إلى برو لإنشاء بطاقات غير محدودة بالذكاء الاصطناعي.',
     'newCard.limitCta': 'بطاقات ذكاء اصطناعي غير محدودة — $1/شهرياً',
+
+    // ─── تلميح المساعدة للبطاقة الجديدة ───
+    'newCard.helpTitle': 'كيف يعمل إنشاء البطاقات بالذكاء الاصطناعي',
+    'newCard.helpStep1': 'اكتب كلمة واحدة في حقل المفردات',
+    'newCard.helpStep2': 'انقر خارج الحقل (أو اضغط في أي مكان آخر)',
+    'newCard.helpStep3': 'يقوم الذكاء الاصطناعي بإنشاء جمل أمثلة ويجد صورة مطابقة تلقائياً',
+    'newCard.helpStep4': 'راجع، عدّل إذا لزم الأمر، ثم اضغط إنشاء',
+    'newCard.helpTip': 'هذا كل شيء — كلمة واحدة فقط والذكاء الاصطناعي يقوم بالباقي!',
+    'newCard.helpClose': 'فهمت',
+
+    // ─── ترحيب المستخدم الجديد ───
+    'learning.welcomeTitle': 'مرحباً بك في فلوتر!',
+    'learning.welcomeSubtitle': 'ابدأ رحلة إتقان اللغة',
+    'learning.welcomeDesc': 'أنشئ بطاقتك الأولى للبدء. فقط اكتب كلمة واحدة وسيقوم الذكاء الاصطناعي بإنشاء كل شيء آخر لك.',
+    'learning.welcomeCta': 'أنشئ بطاقتك الأولى',
+    'learning.welcomeStep1': 'أضف كلمة',
+    'learning.welcomeStep1Desc': 'اكتب أي كلمة مفردات تريد تعلمها',
+    'learning.welcomeStep2': 'الذكاء الاصطناعي يقوم بالباقي',
+    'learning.welcomeStep2Desc': 'يتم إنشاء الجمل والصور والصوت تلقائياً',
+    'learning.welcomeStep3': 'راجع يومياً',
+    'learning.welcomeStep3Desc': 'اسحب البطاقات لبناء ذاكرة دائمة',
+
+    // ─── الإعدادات: المظهر ───
+    'settings.theme': 'المظهر',
+    'settings.themeDark': 'داكن',
+    'settings.themeLight': 'فاتح',
+
+    // ─── المراجعة: الإعلان المعاد تصميمه ───
+    'deck.adTitle': 'ارتقِ بتعلمك',
+    'deck.adDesc': 'أزل المشتتات وأطلق العنان لإمكاناتك الكاملة مع فلوتر برو.',
+    'deck.adCta': 'جرب برو — $1/شهرياً',
+    'deck.adDismiss': 'ربما لاحقاً',
   },
 }

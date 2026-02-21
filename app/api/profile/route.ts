@@ -68,6 +68,17 @@ export async function PATCH(req: Request) {
     const body = await req.json()
     const { name, image } = body
 
+    // VUL-008: Validate image size (max 500KB for base64 strings)
+    if (image !== undefined && typeof image === 'string') {
+      const MAX_IMAGE_SIZE = 500 * 1024 // 500KB
+      if (image.length > MAX_IMAGE_SIZE) {
+        return NextResponse.json(
+          { error: 'Image too large. Maximum size is 500KB.' },
+          { status: 413 }
+        )
+      }
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {

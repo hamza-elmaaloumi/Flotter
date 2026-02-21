@@ -21,9 +21,10 @@ type ProfileFormProps = {
     image: string | null
     email: string | null
   }
+  isDark?: boolean
 }
 
-export default function ProfileForm({ user }: ProfileFormProps) {
+export default function ProfileForm({ user, isDark = true }: ProfileFormProps) {
   const router = useRouter()
   const { t } = useLanguage()
   const [name, setName] = useState(user.name || '')
@@ -71,7 +72,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex flex-col items-center gap-4">
         <div className="relative group">
-          <div className="w-24 h-24 rounded-[16px] bg-[#222222] border border-[#2D2D2F] overflow-hidden flex items-center justify-center shadow-xl transition-all group-hover:border-[#3B82F6]/50">
+          <div className={`w-24 h-24 rounded-[16px] border overflow-hidden flex items-center justify-center shadow-xl transition-all group-hover:border-[#3B82F6]/50 ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'}`}>
             {image ? (
               <img src={image} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
@@ -81,7 +82,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
           <button 
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="absolute -bottom-2 -right-2 bg-[#3B82F6] p-2 rounded-[10px] border-[3px] border-[#121212] hover:scale-105 transition-transform shadow-lg"
+            className={`absolute -bottom-2 -right-2 bg-[#3B82F6] p-2 rounded-[10px] border-[3px] hover:scale-105 transition-transform shadow-lg ${isDark ? 'border-[#121212]' : 'border-[#F8F9FA]'}`}
           >
             <Camera size={14} className="text-white" />
           </button>
@@ -104,13 +105,13 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={t('profileForm.namePlaceholder')}
-            className="w-full h-[52px] bg-[#1C1C1E] border border-[#2D2D2F] rounded-[14px] px-5 text-[15px] text-white placeholder-[#4B5563] focus:border-[#3B82F6] outline-none transition-all"
+            className={`w-full h-[52px] border rounded-[14px] px-5 text-[15px] placeholder-[#4B5563] focus:border-[#3B82F6] outline-none transition-all ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F] text-white' : 'bg-white border-[#E2E4E9] text-[#111827]'}`}
           />
         </div>
 
         <div>
           <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-2 block px-1">{t('profileForm.emailReadOnly')}</label>
-          <div className="w-full h-[52px] bg-[#1C1C1E] opacity-50 border border-[#2D2D2F] rounded-[14px] px-5 flex items-center text-[15px] text-[#9CA3AF]">
+          <div className={`w-full h-[52px] opacity-50 border rounded-[14px] px-5 flex items-center text-[15px] ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F] text-[#9CA3AF]' : 'bg-[#F0F1F3] border-[#E2E4E9] text-[#6B7280]'}`}>
             {user.email}
           </div>
         </div>

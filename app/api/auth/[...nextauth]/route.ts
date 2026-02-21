@@ -3,7 +3,8 @@ import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
-import crypto from "crypto"
+import bcrypt from 'bcryptjs'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -11,8 +12,6 @@ export const authOptions: AuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      // THIS FIXES THE 'OAuthAccountNotLinked' ERROR:
-      allowDangerousEmailAccountLinking: true, 
     }),
     CredentialsProvider({
       name: "credentials",
@@ -26,6 +25,12 @@ export const authOptions: AuthOptions = {
         }
 
         const normalizedEmail = credentials.email.toLowerCase().trim()
+
+        // Rate limit: 10 login attempts per 15 minutes per email
+        const rateLimitResult = checkRateLimit(`login:${normalizedEmail}`, { maxRequests: 10, windowMs: 15 * 60 * 1000 })
+        if (!rateLimitResult.success) {
+          throw new Error('Too many login attempts. Please try again later.')
+        }
         
         const user = await prisma.user.findUnique({
           where: { email: normalizedEmail }
@@ -35,10 +40,8 @@ export const authOptions: AuthOptions = {
           throw new Error('Invalid credentials')
         }
 
-        const computedHash = crypto.createHash('sha256').update(credentials.password).digest()
-        const storedHash = Buffer.from(user.passwordHash, 'hex')
-
-        if (storedHash.length !== computedHash.length || !crypto.timingSafeEqual(storedHash, computedHash)) {
+        const isValid = await bcrypt.compare(credentials.password, user.passwordHash)
+        if (!isValid) {
           throw new Error('Invalid credentials')
         }
 

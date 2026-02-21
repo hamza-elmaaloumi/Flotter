@@ -3,15 +3,17 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
-import { Plus, Search, Check, ChevronLeft, Loader2, X, Sparkles, Crown } from 'lucide-react'
+import { Plus, Search, Check, ChevronLeft, Loader2, X, Sparkles, Crown, HelpCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '../../providers/LanguageProvider'
+import { useTheme } from '../../providers/ThemeProvider'
 import Link from 'next/link'
 
 export default function NewCardPage() {
   const { user } = useUser()
   const router = useRouter()
   const { t, language } = useLanguage()
+  const { isDark } = useTheme()
   
   // State
   const [word, setWord] = useState('')
@@ -26,6 +28,7 @@ export default function NewCardPage() {
   const [aiLoading, setAiLoading] = useState(false)
   const [msg, setMsg] = useState('')
   const [limitReached, setLimitReached] = useState(false)
+  const [showHelp, setShowHelp] = useState(false)
 
   // Sentence Handlers
   const addSentence = () => setSentences([...sentences, ''])
@@ -110,15 +113,15 @@ export default function NewCardPage() {
   }
 
   // --- Flotter Design System Constants ---
-  const inputBase = "w-full bg-[#222222] border border-[#2D2D2F] rounded-[12px] px-3 py-2.5 text-[14px] text-[#FFFFFF] placeholder-[#6B7280] outline-none focus:border-[#3B82F6] transition-all"
-  const labelBase = "text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF] mb-2 block" // label scale
-  const cardBase = "bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-2" // standard_card
+  const inputBase = `w-full rounded-[12px] px-3 py-2.5 text-[14px] placeholder-[#6B7280] outline-none focus:border-[#3B82F6] transition-all ${isDark ? 'bg-[#222222] border border-[#2D2D2F] text-[#FFFFFF]' : 'bg-white border border-[#E2E4E9] text-[#111827]'}`
+  const labelBase = `text-[11px] font-bold uppercase tracking-wider mb-2 block ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`
+  const cardBase = `rounded-[16px] p-2 border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`
 
   return (
-    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-[#FFFFFF] antialiased pb-32 font-sans">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen antialiased pb-32 font-sans ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
       
       {/* Header Component (Clean Style) */}
-      <header dir="ltr" className="sticky top-0 z-20 bg-[#121212] border-b border-[#262626] px-4 h-[64px] flex items-center justify-between">
+      <header dir="ltr" className={`sticky top-0 z-20 border-b px-4 h-[64px] flex items-center justify-between ${isDark ? 'bg-[#121212] border-[#262626]' : 'bg-white border-[#E2E4E9]'}`}>
         <div className="flex items-center gap-2">
           <button onClick={() => router.back()} className="p-1 text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors">
             <ChevronLeft size={24} />
@@ -166,7 +169,16 @@ export default function NewCardPage() {
         {/* Left Side: Inputs */}
         <div className="lg:col-span-7 space-y-8">
           <section>
-            <label className={labelBase}>{t('newCard.word')}</label>
+            <div className="flex items-center gap-2 mb-2">
+              <label className={labelBase + " mb-0"}>{t('newCard.word')}</label>
+              <button
+                type="button"
+                onClick={() => setShowHelp(true)}
+                className={`w-5 h-5 rounded-full flex items-center justify-center transition-all active:scale-90 ${isDark ? 'bg-[#2D2D2F] text-[#6B7280] hover:text-[#3B82F6] hover:bg-[#3B82F6]/10' : 'bg-[#E2E4E9] text-[#6B7280] hover:text-[#2563EB] hover:bg-[#2563EB]/10'}`}
+              >
+                <HelpCircle size={12} />
+              </button>
+            </div>
             <div className="relative">
               <input dir='ltr'
                 value={word} 
@@ -246,14 +258,14 @@ export default function NewCardPage() {
               type="button" 
               onClick={handleManualSearch} 
               disabled={loading}
-              className="px-5 h-11 bg-[#333333] text-[12px] font-bold rounded-[12px] border border-[#2D2D2F] hover:bg-[#374151] transition-colors disabled:opacity-50"
+              className={`px-5 h-11 text-[12px] font-bold rounded-[12px] border transition-colors disabled:opacity-50 ${isDark ? 'bg-[#333333] border-[#2D2D2F] hover:bg-[#374151]' : 'bg-[#E2E4E9] border-[#E2E4E9] hover:bg-[#D1D5DB] text-[#111827]'}`}
             >
               {loading ? <Loader2 size={16} className="animate-spin" /> : t('newCard.search')}
             </button>
           </div>
 
           {/* Grid Results */}
-          <div className="grid grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-1 mb-6 border border-[#2D2D2F] rounded-[14px] p-2 bg-[#121212]">
+          <div className={`grid grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-1 mb-6 border rounded-[14px] p-2 ${isDark ? 'border-[#2D2D2F] bg-[#121212]' : 'border-[#E2E4E9] bg-[#F0F1F3]'}`}>
             {results.map(r => (
               <button
                 key={r.id}
@@ -302,7 +314,7 @@ export default function NewCardPage() {
       </main>
 
       {/* Primary Action Button - Floating State */}
-      <footer className="fixed bottom-12 left-0 right-0 flex justify-center p-6 bg-gradient-to-t from-[#121212] via-[#121212] to-transparent z-10">
+      <footer className={`fixed bottom-12 left-0 right-0 flex justify-center p-6 z-10 bg-gradient-to-t ${isDark ? 'from-[#121212] via-[#121212]' : 'from-[#F8F9FA] via-[#F8F9FA]'} to-transparent`}>
         <div className="max-w-xl mx-auto">
           <button 
             onClick={() => handleSubmit()}
@@ -320,6 +332,54 @@ export default function NewCardPage() {
            <div className={`px-6 py-2 rounded-full text-[12px] font-bold uppercase shadow-2xl border ${msg === 'Success' ? 'bg-[#10B981]/10 border-[#10B981] text-[#10B981]' : 'bg-[#EF4444]/10 border-[#EF4444] text-[#EF4444]'}`}>
               {msg}
            </div>
+        </div>
+      )}
+
+      {/* AI HELP MODAL */}
+      {showHelp && (
+        <div className="fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-200">
+          <div className={`relative max-w-sm w-full rounded-[20px] p-6 border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+            <button
+              onClick={() => setShowHelp(false)}
+              className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isDark ? 'bg-[#222222] border border-[#2D2D2F] text-[#6B7280] hover:text-white' : 'bg-[#F0F1F3] border border-[#E2E4E9] text-[#6B7280] hover:text-[#111827]'}`}
+            >
+              <X size={14} />
+            </button>
+
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-9 h-9 rounded-[10px] bg-[#3B82F6]/10 border border-[#3B82F6]/20 flex items-center justify-center">
+                <Sparkles size={16} className="text-[#3B82F6]" />
+              </div>
+              <h3 className="text-[16px] font-bold">{t('newCard.helpTitle')}</h3>
+            </div>
+
+            <div className="space-y-3 mb-5">
+              {[
+                { num: '1', text: t('newCard.helpStep1') },
+                { num: '2', text: t('newCard.helpStep2') },
+                { num: '3', text: t('newCard.helpStep3') },
+                { num: '4', text: t('newCard.helpStep4') },
+              ].map((step, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <span className="w-6 h-6 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/20 flex items-center justify-center text-[11px] font-bold text-[#3B82F6] flex-shrink-0">
+                    {step.num}
+                  </span>
+                  <p className={`text-[13px] leading-relaxed pt-0.5 ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>{step.text}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className={`p-3 rounded-[12px] mb-5 ${isDark ? 'bg-[#10B981]/10 border border-[#10B981]/20' : 'bg-[#059669]/5 border border-[#059669]/20'}`}>
+              <p className="text-[12px] font-bold text-[#10B981]">{t('newCard.helpTip')}</p>
+            </div>
+
+            <button
+              onClick={() => setShowHelp(false)}
+              className="w-full bg-[#3B82F6] text-white py-3 rounded-[12px] font-bold text-[13px] active:scale-95 transition-all"
+            >
+              {t('newCard.helpClose')}
+            </button>
+          </div>
         </div>
       )}
     </div>

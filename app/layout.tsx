@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Cairo } from "next/font/google";
 import "./globals.css";
 import UserProvider from "./providers/UserProvider";
 import LanguageProvider from "./providers/LanguageProvider";
+import ThemeProvider from "./providers/ThemeProvider";
 import NextAuthSessionProvider from "./providers/NextAuthSessionProvider"; // Import the new wrapper
 import Header from "./components/header";
 import Footer from "./components/footer";
@@ -40,12 +41,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${cairo.variable} antialiased bg-[#09090b] text-zinc-100 min-h-screen flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} ${cairo.variable} antialiased min-h-screen flex flex-col`}
+        style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
       >
         {/* NextAuth Provider MUST wrap the UserProvider */}
         <NextAuthSessionProvider>
           <UserProvider>
             <LanguageProvider>
+              <ThemeProvider>
               <head>
                 <Script
                 async
@@ -59,6 +62,7 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
+            </ThemeProvider>
             </LanguageProvider>
           </UserProvider>
         </NextAuthSessionProvider>

@@ -1,7 +1,15 @@
 import { NextResponse } from 'next/server';
 import * as googleTTS from 'google-tts-api';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]/route';
+import { awardXp } from '@/lib/xp';
 
 export async function GET(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const text = searchParams.get('text');
   const provider = searchParams.get('provider') || 'google'; 
@@ -50,6 +58,11 @@ export async function GET(request: Request) {
       if (!response.ok) throw new Error('Google TTS error');
       arrayBuffer = await response.arrayBuffer();
     }
+
+    // Award +5 XP for audio listen (server-side verified)
+    // @ts-ignore
+    const userId = session.user.id
+    await awardXp(userId, 5).catch(() => {})
 
     return new NextResponse(arrayBuffer, {
       headers: {

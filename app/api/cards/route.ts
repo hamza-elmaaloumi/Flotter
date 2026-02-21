@@ -65,14 +65,19 @@ export async function GET(req: Request) {
     })
 
     if (doRotate && cards.length > 0) {
-      const updates = cards.map((c: any) => {
+      // Limit batch rotation to 50 cards max to avoid DB timeouts
+      const cardsToRotate = cards.slice(0, 50)
+      const updates = cardsToRotate.map((c: any) => {
         const nextIndex = (c.currentSentenceIndex + 1) % c.sentences.length
         return prisma.card.update({
           where: { id: c.id },
           data: { currentSentenceIndex: nextIndex },
         })
       })
-      cards = await prisma.$transaction(updates)
+      const updatedCards = await prisma.$transaction(updates)
+      // Merge updated cards back, keeping the rest unchanged
+      const updatedMap = new Map(updatedCards.map((c: any) => [c.id, c]))
+      cards = cards.map((c: any) => updatedMap.get(c.id) || c)
     }
 
     return NextResponse.json({ cards: cards.map(sanitizeCard) })
@@ -118,6 +123,8 @@ export async function PATCH(req: Request) {
             nextReviewAt: new Date(Date.now() + intervalMs),
           },
         })
+        // Award +10 XP for successful card review (server-side verified)
+        await awardXp(userId, 10)
         return NextResponse.json({ card: sanitizeCard(updated) })
       }
 

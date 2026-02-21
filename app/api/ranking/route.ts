@@ -3,17 +3,21 @@ import { prisma } from '@/lib/prisma'
 
 /**
  * GET /api/ranking
- * Returns all users ranked by monthly XP (descending).
+ * Returns top users ranked by monthly XP (descending).
  * Public endpoint — visible to everybody.
- * Automatically resets monthlyXp for users whose monthlyXpResetAt is in a previous month.
+ * Paginated: defaults to top 100, supports ?limit= and ?offset= query params.
  */
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const url = new URL(req.url)
+    const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '100'), 1), 100)
+    const offset = Math.max(parseInt(url.searchParams.get('offset') || '0'), 0)
+
     const now = new Date()
     const currentMonth = now.getUTCMonth()
     const currentYear = now.getUTCFullYear()
 
-    // Fetch all users with XP data
+    // Fetch only the requested page of users
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -26,6 +30,8 @@ export async function GET() {
         isPro: true,
       },
       orderBy: { monthlyXp: 'desc' },
+      take: limit,
+      skip: offset,
     })
 
     // Build ranking with stale-month detection
@@ -48,9 +54,9 @@ export async function GET() {
 
     // Re-sort after stale correction
     ranked.sort((a, b) => b.monthlyXp - a.monthlyXp || b.totalXp - a.totalXp)
-    ranked.forEach((u, i) => (u.rank = i + 1))
+    ranked.forEach((u, i) => (u.rank = offset + i + 1))
 
-    return NextResponse.json({ ranking: ranked })
+    return NextResponse.json({ ranking: ranked, limit, offset })
   } catch (err) {
     console.error('Ranking error', err)
     return NextResponse.json({ error: 'internal_error' }, { status: 500 })
