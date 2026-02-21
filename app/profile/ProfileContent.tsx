@@ -16,7 +16,9 @@ import {
   Zap,
   Flame,
   Trophy,
-  X
+  X,
+  Crown,
+  Shield
 } from 'lucide-react'
 
 type ProfileUser = {
@@ -29,6 +31,10 @@ type ProfileUser = {
   totalXp: number
   monthlyXp: number
   streakCount: number
+  isPro: boolean
+  subscriptionStatus: string | null
+  subscriptionStartedAt: string | null
+  subscriptionEndsAt: string | null
 }
 
 type ProfileContentProps = {
@@ -129,6 +135,58 @@ export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditi
             <Link href="/ranking" className="text-[11px] font-bold uppercase tracking-widest text-[#3B82F6] hover:opacity-80 transition-opacity">
               {t('profile.viewRankings')}
             </Link>
+          </div>
+        </div>
+
+        {/* Subscription Status Section */}
+        <div className={`border rounded-[16px] overflow-hidden mb-[20px] ${
+          user.isPro 
+            ? 'bg-[#1C1C1E] border-[#FACC15]/20' 
+            : 'bg-[#1C1C1E] border-[#2D2D2F]'
+        }`}>
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                {user.isPro ? (
+                  <Crown size={16} className="text-[#FACC15]" fill="currentColor" />
+                ) : (
+                  <Shield size={16} className="text-[#6B7280]" />
+                )}
+                <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">
+                  {t('profile.currentPlan')}
+                </p>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                user.isPro
+                  ? 'bg-[#FACC15]/10 text-[#FACC15] border border-[#FACC15]/20'
+                  : 'bg-[#222222] text-[#6B7280] border border-[#2D2D2F]'
+              }`}>
+                {user.isPro ? t('profile.planPro') : t('profile.planFree')}
+              </span>
+            </div>
+            
+            {user.isPro ? (
+              <div>
+                <p className="text-[14px] font-bold text-[#FACC15] mb-1">{t('profile.planName')}</p>
+                <p className="text-[12px] text-[#9CA3AF]">
+                  {user.subscriptionStatus === 'active' ? t('profile.activeSub') : user.subscriptionStatus}
+                  {user.subscriptionEndsAt && ` · ${t('profile.renews')} ${new Date(user.subscriptionEndsAt).toLocaleDateString()}`}
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-[14px] text-[#9CA3AF] mb-3">
+                  {t('profile.upgradeDesc')}
+                </p>
+                <Link
+                  href="/subscribe"
+                  className="inline-flex items-center gap-2 bg-[#FACC15] text-[#000000] px-5 py-2.5 rounded-[10px] font-bold text-[12px] transition-all active:scale-95"
+                >
+                  <Crown size={14} fill="currentColor" />
+                  {t('profile.upgradeToPro')}
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 

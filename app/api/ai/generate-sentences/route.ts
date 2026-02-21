@@ -1,12 +1,50 @@
 import { NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../../auth/[...nextauth]/route';
+import { prisma } from '@/lib/prisma';
 
 const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY,
 });
 
+const FREE_DAILY_LIMIT = 3;
+
 export async function POST(req: Request) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        // @ts-ignore
+        const userId = session.user.id;
+
+        // Check subscription & daily limit for free users
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { isPro: true, aiGenerationsToday: true, aiGenerationsResetAt: true },
+        });
+
+        if (!user) {
+            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        }
+
+        // Reset daily counter if it's a new day
+        const now = new Date();
+        const lastReset = new Date(user.aiGenerationsResetAt);
+        const isNewDay = now.toISOString().slice(0, 10) !== lastReset.toISOString().slice(0, 10);
+
+        let currentGenerations = isNewDay ? 0 : user.aiGenerationsToday;
+
+        if (!user.isPro && currentGenerations >= FREE_DAILY_LIMIT) {
+            return NextResponse.json({
+                error: 'daily_limit_reached',
+                message: `You've used all ${FREE_DAILY_LIMIT} free AI generations for today. Subscribe to Pro for unlimited generations!`,
+                limit: FREE_DAILY_LIMIT,
+                used: currentGenerations,
+            }, { status: 429 });
+        }
+
         const { word } = await req.json();
 
         if (!word) {
@@ -63,6 +101,15 @@ export async function POST(req: Request) {
                     imageQuery = parsed.imageQuery;
                 }
 
+                // Increment generation counter
+                await prisma.user.update({
+                    where: { id: userId },
+                    data: {
+                        aiGenerationsToday: isNewDay ? 1 : { increment: 1 },
+                        aiGenerationsResetAt: isNewDay ? now : undefined,
+                    },
+                });
+
                 return NextResponse.json({
                     sentences: sentences.slice(0, 3),
                     imageQuery
@@ -85,6 +132,15 @@ export async function POST(req: Request) {
             });
 
             if (examples.length > 0) {
+                // Increment generation counter
+                await prisma.user.update({
+                    where: { id: userId },
+                    data: {
+                        aiGenerationsToday: isNewDay ? 1 : { increment: 1 },
+                        aiGenerationsResetAt: isNewDay ? now : undefined,
+                    },
+                });
+
                 return NextResponse.json({
                     sentences: examples.slice(0, 3),
                     imageQuery: word,
@@ -92,6 +148,15 @@ export async function POST(req: Request) {
                 });
             }
         }
+
+        // Increment generation counter
+        await prisma.user.update({
+            where: { id: userId },
+            data: {
+                aiGenerationsToday: isNewDay ? 1 : { increment: 1 },
+                aiGenerationsResetAt: isNewDay ? now : undefined,
+            },
+        });
 
         return NextResponse.json({
             sentences: [`You find yourself focusing deeply on the concept of ${word} until the meaning is etched into your mind.`],

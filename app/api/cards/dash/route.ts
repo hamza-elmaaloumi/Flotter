@@ -34,10 +34,10 @@ export async function GET(req: Request) {
             orderBy: { nextReviewAt: 'asc' }
         })
 
-        // Fetch user streak & XP
+        // Fetch user streak & XP & subscription
         const userXp = await prisma.user.findUnique({
             where: { id: userId },
-            select: { totalXp: true, monthlyXp: true, streakCount: true, lastActiveDate: true },
+            select: { totalXp: true, monthlyXp: true, streakCount: true, lastActiveDate: true, isPro: true },
         })
 
         return NextResponse.json({ 
@@ -48,6 +48,7 @@ export async function GET(req: Request) {
             streak: userXp?.streakCount ?? 0,
             lastActiveDate: userXp?.lastActiveDate,
             totalXp: userXp?.totalXp ?? 0,
+            isPro: userXp?.isPro ?? false,
         })
     } catch (err) {
         console.error("Dashboard API Error:", err)

@@ -3,9 +3,10 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
-import { Plus, Search, Check, ChevronLeft, Loader2, X, Sparkles } from 'lucide-react'
+import { Plus, Search, Check, ChevronLeft, Loader2, X, Sparkles, Crown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '../../providers/LanguageProvider'
+import Link from 'next/link'
 
 export default function NewCardPage() {
   const { user } = useUser()
@@ -24,6 +25,7 @@ export default function NewCardPage() {
   const [saving, setSaving] = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
   const [msg, setMsg] = useState('')
+  const [limitReached, setLimitReached] = useState(false)
 
   // Sentence Handlers
   const addSentence = () => setSentences([...sentences, ''])
@@ -61,6 +63,7 @@ export default function NewCardPage() {
   const handleWordBlur = async () => {
     if (!word.trim()) return
     setAiLoading(true)
+    setLimitReached(false)
     try {
       const res = await axios.post('/api/ai/generate-sentences', { word })
       
@@ -74,8 +77,13 @@ export default function NewCardPage() {
         setQuery(res.data.imageQuery)
         performImageSearch(res.data.imageQuery)
       }
-    } catch (err) {
-      console.error("AI Generation failed", err)
+    } catch (err: any) {
+      if (err?.response?.status === 429 && err?.response?.data?.error === 'daily_limit_reached') {
+        setLimitReached(true)
+        setMsg(err.response.data.message || 'Daily AI generation limit reached. Subscribe to Pro for unlimited generations!')
+      } else {
+        console.error("AI Generation failed", err)
+      }
     } finally {
       setAiLoading(false)
     }
@@ -127,6 +135,33 @@ export default function NewCardPage() {
       </header>
 
       <main className="max-w-4xl mx-auto p-4 lg:grid lg:grid-cols-12 lg:gap-8 mt-4">
+
+        {/* AI LIMIT REACHED BANNER */}
+        {limitReached && (
+          <div className="lg:col-span-12 mb-6">
+            <div className="relative overflow-hidden rounded-[14px] bg-[#1C1C1E] border border-[#EF4444]/30 p-5">
+              <div className="absolute top-[-30px] right-[-30px] w-[120px] h-[120px] blur-[60px] rounded-full bg-[#EF4444]/10" />
+              <div className="relative z-10 flex items-start gap-3">
+                <div className="w-10 h-10 rounded-[10px] bg-[#EF4444]/10 border border-[#EF4444]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Sparkles size={18} className="text-[#EF4444]" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[14px] font-bold text-[#FFFFFF] mb-1">{t('newCard.limitTitle')}</p>
+                  <p className="text-[12px] text-[#9CA3AF] leading-relaxed mb-3">
+                    {t('newCard.limitDesc')}
+                  </p>
+                  <Link
+                    href="/subscribe"
+                    className="inline-flex items-center gap-2 bg-[#FACC15] text-[#000000] px-4 py-2.5 rounded-[10px] font-bold text-[11px] transition-all active:scale-95"
+                  >
+                    <Crown size={12} fill="currentColor" />
+                    {t('newCard.limitCta')}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* Left Side: Inputs */}
         <div className="lg:col-span-7 space-y-8">

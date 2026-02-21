@@ -13,6 +13,7 @@ type User = {
   monthlyXp?: number
   streakCount?: number
   rank?: number
+  isPro?: boolean
 }
 
 type UserContextValue = {

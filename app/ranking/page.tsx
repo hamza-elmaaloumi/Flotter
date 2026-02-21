@@ -15,6 +15,7 @@ interface RankedUser {
   totalXp: number
   monthlyXp: number
   streakCount: number
+  isPro: boolean
 }
 
 function getRankIcon(rank: number) {
@@ -102,7 +103,14 @@ export default function RankingPage() {
                         )}
                       </div>
                       <div className="mb-1">{getRankIcon(u.rank)}</div>
-                      <p className="text-[12px] font-bold text-[#FFFFFF] truncate max-w-full">{u.name}</p>
+                      <p className="text-[12px] font-bold text-[#FFFFFF] truncate max-w-full">
+                        {u.name}
+                        {u.isPro && (
+                          <span className="inline-flex items-center ml-1 px-1.5 py-0.5 rounded-full bg-[#FACC15]/10 border border-[#FACC15]/20 align-middle">
+                            <Crown size={8} className="text-[#FACC15]" fill="currentColor" />
+                          </span>
+                        )}
+                      </p>
                       <div className="flex items-center gap-1 mt-1">
                         <Zap size={10} className="text-[#FACC15]" fill="currentColor" />
                         <span className="text-[11px] font-bold text-[#FACC15]">{u.monthlyXp}</span>
@@ -146,6 +154,11 @@ export default function RankingPage() {
                       <div>
                         <p className={`text-[14px] font-semibold ${isMe ? 'text-[#3B82F6]' : 'text-[#FFFFFF]'}`}>
                           {u.name} {isMe && <span className="text-[10px] text-[#3B82F6] opacity-60">{t('ranking.you')}</span>}
+                          {u.isPro && (
+                            <span className="inline-flex items-center ml-1 px-1.5 py-0.5 rounded-full bg-[#FACC15]/10 border border-[#FACC15]/20 align-middle">
+                              <Crown size={8} className="text-[#FACC15]" fill="currentColor" />
+                            </span>
+                          )}
                         </p>
                         <p className="text-[11px] text-[#6B7280]">
                           {t('ranking.total')} {u.totalXp.toLocaleString()} XP

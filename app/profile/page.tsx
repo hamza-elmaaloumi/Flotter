@@ -24,6 +24,8 @@ export default async function ProfilePage(props: { searchParams: Promise<{ edit?
       createdAt: true, updatedAt: true,
       totalXp: true, monthlyXp: true, monthlyXpResetAt: true,
       streakCount: true, lastActiveDate: true,
+      isPro: true, subscriptionStatus: true,
+      subscriptionStartedAt: true, subscriptionEndsAt: true,
     },
   })
 
@@ -66,6 +68,10 @@ export default async function ProfilePage(props: { searchParams: Promise<{ edit?
     totalXp: user.totalXp,
     monthlyXp: user.monthlyXp,
     streakCount: user.streakCount,
+    isPro: user.isPro,
+    subscriptionStatus: user.subscriptionStatus,
+    subscriptionStartedAt: user.subscriptionStartedAt?.toISOString() ?? null,
+    subscriptionEndsAt: user.subscriptionEndsAt?.toISOString() ?? null,
   }
 
   return (

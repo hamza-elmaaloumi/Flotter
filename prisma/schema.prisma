@@ -27,6 +27,16 @@ model User {
   streakCount      Int       @default(0) @map("streak_count")
   lastActiveDate   DateTime? @map("last_active_date")
 
+  // Subscription System
+  isPro                 Boolean   @default(false) @map("is_pro")
+  polarCustomerId       String?   @map("polar_customer_id")
+  polarSubscriptionId   String?   @map("polar_subscription_id")
+  subscriptionStatus    String?   @map("subscription_status") // active, canceled, past_due
+  subscriptionStartedAt DateTime? @map("subscription_started_at")
+  subscriptionEndsAt    DateTime? @map("subscription_ends_at")
+  aiGenerationsToday    Int       @default(0) @map("ai_generations_today")
+  aiGenerationsResetAt  DateTime  @default(now()) @map("ai_generations_reset_at")
+
   cards         Card[]
   accounts      Account[]
   sessions      Session[]

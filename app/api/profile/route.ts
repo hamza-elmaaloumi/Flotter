@@ -17,6 +17,8 @@ export async function GET(req: Request) {
         createdAt: true, updatedAt: true,
         totalXp: true, monthlyXp: true, monthlyXpResetAt: true,
         streakCount: true, lastActiveDate: true,
+        isPro: true, subscriptionStatus: true,
+        subscriptionStartedAt: true, subscriptionEndsAt: true,
       },
     })
 

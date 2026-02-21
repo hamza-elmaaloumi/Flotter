@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
 import Flashcard from './components/FlashCard'
-import { Sparkles, Loader2, Zap } from 'lucide-react'
+import { Sparkles, Loader2, Zap, Crown, Flame, X } from 'lucide-react'
 import { useLanguage } from '../../providers/LanguageProvider'
+import Link from 'next/link'
 
 export default function DeckPage() {
   const { user } = useUser()
@@ -28,6 +29,15 @@ export default function DeckPage() {
   const [audioCompleted, setAudioCompleted] = useState<Record<string, boolean>>({})
   const [sessionXp, setSessionXp] = useState(0)
   const [xpToast, setXpToast] = useState<number | null>(null)
+
+  // Swipe counter & upsell
+  const [swipeCount, setSwipeCount] = useState(0)
+  const [showUpsell, setShowUpsell] = useState(false)
+  const isPro = user?.isPro || false
+
+  // Streak celebration
+  const [showStreakCelebration, setShowStreakCelebration] = useState(false)
+  const [sessionStartStreak, setSessionStartStreak] = useState<number | null>(null)
 
   // 1. Load Cards
   const loadCards = useCallback(async () => {
@@ -158,6 +168,14 @@ export default function DeckPage() {
 
   const handleReview = (cardId: string, result: 'success' | 'struggle') => {
     if (audioRef.current) audioRef.current.pause();
+
+    // Track swipe count for free users
+    const newSwipeCount = swipeCount + 1
+    setSwipeCount(newSwipeCount)
+    if (!isPro && newSwipeCount > 0 && newSwipeCount % 10 === 0) {
+      setShowUpsell(true)
+    }
+
     setCards((prev) => {
       const cardIndex = prev.findIndex(c => c.id === cardId)
       if (cardIndex === -1) return prev
@@ -169,6 +187,13 @@ export default function DeckPage() {
           URL.revokeObjectURL(audioCacheRef.current[cardId]);
           delete audioCacheRef.current[cardId];
         }
+
+        // Check if this was the last card — session complete
+        if (newCards.length === 0) {
+          // Show streak celebration for users who just completed a session
+          setShowStreakCelebration(true)
+        }
+
         return newCards
       }
       return [...newCards, { ...card, currentSentenceIndex: (card.currentSentenceIndex + 1) % card.sentences.length }]
@@ -267,6 +292,108 @@ export default function DeckPage() {
             <div className="bg-[#FACC15] text-[#000000] px-6 py-2.5 rounded-[12px] font-black text-[14px] flex items-center gap-2 shadow-[0_10px_30px_rgba(250,204,21,0.3)]">
               <Zap size={16} fill="currentColor" />
               +{xpToast} XP
+            </div>
+          </div>
+        )}
+
+        {/* 10-CARD UPSELL MODAL FOR FREE USERS */}
+        {showUpsell && !isPro && (
+          <div className="fixed inset-0 z-[300] bg-black/70 flex items-center justify-center p-6 animate-in fade-in duration-200">
+            <div className="relative max-w-sm w-full bg-[#1C1C1E] border border-[#FACC15]/30 rounded-[20px] p-6 text-center">
+              <button
+                onClick={() => setShowUpsell(false)}
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#222222] border border-[#2D2D2F] flex items-center justify-center text-[#6B7280] hover:text-white transition-colors"
+              >
+                <X size={16} />
+              </button>
+
+              <div className="w-16 h-16 mx-auto mb-4 bg-[#FACC15]/10 rounded-full flex items-center justify-center border border-[#FACC15]/20">
+                <Crown size={28} className="text-[#FACC15]" fill="currentColor" />
+              </div>
+
+              <h3 className="text-[19px] font-bold text-[#FFFFFF] mb-2">{t('deck.onFire')}</h3>
+              <p className="text-[13px] text-[#9CA3AF] mb-1">
+                {t('deck.reviewedCards1')}<span className="text-[#FACC15] font-bold">{swipeCount} {t('deck.reviewedCards2')}</span>
+              </p>
+              <p className="text-[12px] text-[#6B7280] mb-5 leading-relaxed">
+                {t('deck.upsellDesc')}
+              </p>
+
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/subscribe"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-[#FACC15] text-[#000000] py-3.5 rounded-[12px] font-bold text-[13px] transition-all active:scale-95"
+                >
+                  <Crown size={14} fill="currentColor" />
+                  {t('deck.getProBtn')}
+                </Link>
+                <button
+                  onClick={() => setShowUpsell(false)}
+                  className="w-full py-3 text-[12px] font-bold text-[#6B7280] uppercase tracking-widest hover:text-white transition-colors"
+                >
+                  {t('deck.continueLearning')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* STREAK CELEBRATION MODAL */}
+        {showStreakCelebration && (
+          <div className="fixed inset-0 z-[300] bg-black/70 flex items-center justify-center p-6 animate-in fade-in duration-300">
+            <div className="relative max-w-sm w-full bg-[#1C1C1E] border border-[#10B981]/30 rounded-[20px] p-8 text-center overflow-hidden">
+              {/* Decorative SVG shapes */}
+              <svg className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10" viewBox="0 0 400 400">
+                <circle cx="50" cy="50" r="40" fill="#10B981" />
+                <circle cx="350" cy="80" r="25" fill="#FACC15" />
+                <circle cx="320" cy="320" r="35" fill="#3B82F6" />
+                <circle cx="70" cy="350" r="20" fill="#EF4444" />
+                <polygon points="200,20 220,70 180,70" fill="#FACC15" />
+                <polygon points="380,200 360,240 340,200" fill="#10B981" />
+                <rect x="10" y="180" width="30" height="30" rx="6" fill="#3B82F6" transform="rotate(30 25 195)" />
+                <rect x="290" y="30" width="20" height="20" rx="4" fill="#EF4444" transform="rotate(45 300 40)" />
+              </svg>
+
+              <div className="relative z-10">
+                <div className="w-20 h-20 mx-auto mb-4 bg-[#10B981]/10 rounded-full flex items-center justify-center border-2 border-[#10B981]/20">
+                  <Flame size={36} className="text-[#EF4444]" fill="currentColor" />
+                </div>
+
+                <h3 className="text-[22px] font-bold text-[#FFFFFF] mb-2">{t('deck.sessionComplete')}</h3>
+                <p className="text-[14px] text-[#10B981] font-bold mb-1">
+                  {t('deck.streakAlive')}
+                </p>
+                <p className="text-[12px] text-[#9CA3AF] leading-relaxed mb-2">
+                  {t('deck.sessionSummary1')}<span className="text-white font-bold">{swipeCount}</span>{t('deck.sessionSummary2')}<span className="text-[#FACC15] font-bold">+{sessionXp} XP</span>{t('deck.sessionSummary3')}
+                </p>
+
+                {!isPro && (
+                  <p className="text-[11px] text-[#FACC15] mb-4">
+                    {t('deck.proStreakHint')}
+                  </p>
+                )}
+
+                <div className="flex flex-col gap-2 mt-4">
+                  <button
+                    onClick={() => {
+                      setShowStreakCelebration(false)
+                      router.push('/cards/learning')
+                    }}
+                    className="w-full bg-[#10B981] text-[#000000] py-3.5 rounded-[12px] font-bold text-[13px] transition-all active:scale-95"
+                  >
+                    {t('deck.backToDashboard')}
+                  </button>
+                  {!isPro && (
+                    <Link
+                      href="/subscribe"
+                      className="w-full inline-flex items-center justify-center gap-2 bg-[#FACC15]/10 border border-[#FACC15]/20 text-[#FACC15] py-3 rounded-[12px] font-bold text-[12px] transition-all active:scale-95"
+                    >
+                      <Crown size={12} fill="currentColor" />
+                      {t('deck.protectStreak')}
+                    </Link>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )}

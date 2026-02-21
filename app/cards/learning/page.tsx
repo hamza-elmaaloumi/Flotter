@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
 import Link from 'next/link'
-import { Plus, Calendar, GraduationCap, ChevronDown, Image as ImageIcon, BookOpen, Sparkles, Zap, Check, Flame } from 'lucide-react'
+import { Plus, Calendar, GraduationCap, ChevronDown, Image as ImageIcon, BookOpen, Sparkles, Zap, Check, Flame, Crown, Shield } from 'lucide-react'
 import { useLanguage } from '../../providers/LanguageProvider'
+import AdBanner from '../../components/AdBanner'
 
 // --- Sub-components ---
 function StatCard({ label, value, loading, icon: Icon, colorClass }: any) {
@@ -55,6 +56,7 @@ export default function Home() {
   const streak = data?.streak || 0
   const totalXp = data?.totalXp || 0
   const lastActiveDate = data?.lastActiveDate
+  const isPro = data?.isPro || user?.isPro || false
   const isFinished = data && due === 0 && total > 0
   const completionPercentage = isFinished ? 100 : (total > 0 ? ((total - due) / total) * 100 : 0)
 
@@ -193,6 +195,12 @@ export default function Home() {
                     <span className="text-[11px] font-bold uppercase tracking-widest text-[#9CA3AF]">
                       {t('learning.dayStreak')}
                     </span>
+                    {isPro && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FACC15]/10 border border-[#FACC15]/20">
+                        <Shield size={8} className="text-[#FACC15]" />
+                        <span className="text-[8px] font-bold text-[#FACC15] uppercase tracking-widest">{t('learning.frozen')}</span>
+                      </span>
+                    )}
                   </div>
                   <p className="text-[11px] text-[#6B7280] mt-0.5">
                     {isActiveToday
@@ -255,6 +263,80 @@ export default function Home() {
             )}
           </div>
         </section>
+
+        {/* STREAK FREEZE UPSELL FOR FREE USERS */}
+        {!isPro && !loading && streak > 0 && (
+          <section className="mb-[20px]">
+            <div className="relative overflow-hidden rounded-[14px] bg-[#1C1C1E] border border-[#FACC15]/20 p-4">
+              <div className="absolute top-[-30px] right-[-30px] w-[100px] h-[100px] blur-[50px] rounded-full bg-[#FACC15]/10" />
+              <div className="relative z-10 flex items-start gap-3">
+                <div className="w-10 h-10 rounded-[10px] bg-[#FACC15]/10 border border-[#FACC15]/20 flex items-center justify-center flex-shrink-0">
+                  <Shield size={18} className="text-[#FACC15]" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[13px] font-bold text-[#FFFFFF] mb-1">{t('learning.protectStreak')}{streak}{t('learning.dayStreakBang')}</p>
+                  <p className="text-[11px] text-[#9CA3AF] leading-relaxed mb-2">
+                    {t('learning.streakUpsellDesc')}
+                  </p>
+                  <Link
+                    href="/subscribe"
+                    className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-[#FACC15] hover:opacity-80 transition-opacity"
+                  >
+                    <Crown size={10} fill="currentColor" />
+                    {t('learning.getStreakProtection')}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* SUBSCRIBE BANNER FOR FREE USERS */}
+        {!isPro && !loading && (
+          <section className="mb-[20px]">
+            <div className="relative overflow-hidden rounded-[14px] border border-[#FACC15]/30 bg-gradient-to-br from-[#1C1C1E] to-[#1a1a0f] p-5">
+              <div className="absolute top-[-40px] right-[-40px] w-[160px] h-[160px] blur-[80px] rounded-full bg-[#FACC15]/10" />
+              <div className="absolute bottom-[-20px] left-[-20px] w-[80px] h-[80px] blur-[40px] rounded-full bg-[#FACC15]/5" />
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-2">
+                  <Crown size={14} className="text-[#FACC15]" fill="currentColor" />
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-[#FACC15]">Flotter Pro</span>
+                </div>
+                
+                <h3 className="text-[17px] font-bold text-[#FFFFFF] mb-1">
+                  {t('learning.unlockPotential')}
+                </h3>
+                <p className="text-[12px] text-[#9CA3AF] leading-relaxed mb-4">
+                  {t('learning.bannerDesc1')}<span className="text-[#FACC15] font-bold">{t('subscribe.heroPrice')}</span>{t('learning.bannerDesc2')}
+                </p>
+                
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {[t('learning.tagUnlimited'), t('learning.tagNoAds'), t('learning.tagStreakFreeze'), t('learning.tagProBadge')].map((tag) => (
+                    <span key={tag} className="px-2 py-1 rounded-full bg-[#FACC15]/10 border border-[#FACC15]/20 text-[9px] font-bold uppercase tracking-widest text-[#FACC15]">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                
+                <Link
+                  href="/subscribe"
+                  className="inline-flex items-center gap-2 bg-[#FACC15] text-[#000000] px-5 py-3 rounded-[10px] font-bold text-[12px] transition-all active:scale-95 shadow-[0_8px_24px_rgba(250,204,21,0.15)]"
+                >
+                  <Zap size={14} fill="currentColor" />
+                  {t('learning.subscribeBtn')}
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* AD BANNER FOR FREE USERS */}
+        {!isPro && !loading && (
+          <section className="mb-[20px]">
+            <AdBanner dataAdClient="ca-pub-XXXXXXXXXXXXXXXX" dataAdSlot="XXXXXXXXXX" />
+          </section>
+        )}
 
         {/* OVERVIEW SECTION - Section Gap: 20px */}
         <section className="mb-[20px]">

@@ -23,6 +23,7 @@ export async function GET() {
         monthlyXp: true,
         monthlyXpResetAt: true,
         streakCount: true,
+        isPro: true,
       },
       orderBy: { monthlyXp: 'desc' },
     })
@@ -41,6 +42,7 @@ export async function GET() {
         totalXp: u.totalXp,
         monthlyXp: isStale ? 0 : u.monthlyXp,
         streakCount: u.streakCount,
+        isPro: u.isPro,
       }
     })
 
