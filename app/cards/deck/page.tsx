@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
 import Flashcard from './components/FlashCard'
-import { Sparkles, Loader2, Zap, Crown, Flame, X } from 'lucide-react'
+import { Sparkles, Loader2, Zap, Crown, X } from 'lucide-react'
 import { useLanguage } from '../../providers/LanguageProvider'
 import Link from 'next/link'
+import StreakCelebration from './components/StreakCelebration'
 
 export default function DeckPage() {
   const { user } = useUser()
@@ -37,7 +38,8 @@ export default function DeckPage() {
 
   // Streak celebration
   const [showStreakCelebration, setShowStreakCelebration] = useState(false)
-  const [sessionStartStreak, setSessionStartStreak] = useState<number | null>(null)
+  const [dashData, setDashData] = useState<any>(null)
+  const hasSwipedRef = useRef(false)
 
   // 1. Load Cards
   const loadCards = useCallback(async () => {
@@ -52,6 +54,21 @@ export default function DeckPage() {
   }, [user?.id])
 
   useEffect(() => { loadCards() }, [loadCards])
+
+  // Fetch dashboard data for streak info
+  useEffect(() => {
+    if (!user?.id) return
+    axios.get('/api/cards/dash').then(res => setDashData(res.data)).catch(console.error)
+  }, [user?.id])
+
+  // Celebration dismiss handler — marks today as celebrated in localStorage
+  const handleCelebrationDismiss = useCallback(() => {
+    setShowStreakCelebration(false)
+    const todayStr = new Date().toISOString().slice(0, 10)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`flotter-streak-celebrated-${todayStr}`, 'true')
+    }
+  }, [])
 
   // 2. Helper: Fetch Audio URL
   const fetchAudioUrl = async (text: string, signal?: AbortSignal): Promise<string> => {
@@ -169,6 +186,21 @@ export default function DeckPage() {
   const handleReview = (cardId: string, result: 'success' | 'struggle') => {
     if (audioRef.current) audioRef.current.pause();
 
+    // First-swipe streak celebration (once per day, only if user was not yet active today)
+    if (!hasSwipedRef.current && dashData) {
+      hasSwipedRef.current = true
+      const todayStr = new Date().toISOString().slice(0, 10)
+      const wasActiveBeforeSession = dashData.lastActiveDate
+        ? new Date(dashData.lastActiveDate).toISOString().slice(0, 10) === todayStr
+        : false
+      const celebratedToday = typeof window !== 'undefined'
+        ? localStorage.getItem(`flotter-streak-celebrated-${todayStr}`) === 'true'
+        : true
+      if (!wasActiveBeforeSession && !celebratedToday) {
+        setTimeout(() => setShowStreakCelebration(true), 800)
+      }
+    }
+
     // Track swipe count for free users
     const newSwipeCount = swipeCount + 1
     setSwipeCount(newSwipeCount)
@@ -186,12 +218,6 @@ export default function DeckPage() {
         if (audioCacheRef.current[cardId]) {
           URL.revokeObjectURL(audioCacheRef.current[cardId]);
           delete audioCacheRef.current[cardId];
-        }
-
-        // Check if this was the last card — session complete
-        if (newCards.length === 0) {
-          // Show streak celebration for users who just completed a session
-          setShowStreakCelebration(true)
         }
 
         return newCards
@@ -339,64 +365,17 @@ export default function DeckPage() {
         )}
 
         {/* STREAK CELEBRATION MODAL */}
-        {showStreakCelebration && (
-          <div className="fixed inset-0 z-[300] bg-black/70 flex items-center justify-center p-6 animate-in fade-in duration-300">
-            <div className="relative max-w-sm w-full bg-[#1C1C1E] border border-[#10B981]/30 rounded-[20px] p-8 text-center overflow-hidden">
-              {/* Decorative SVG shapes */}
-              <svg className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10" viewBox="0 0 400 400">
-                <circle cx="50" cy="50" r="40" fill="#10B981" />
-                <circle cx="350" cy="80" r="25" fill="#FACC15" />
-                <circle cx="320" cy="320" r="35" fill="#3B82F6" />
-                <circle cx="70" cy="350" r="20" fill="#EF4444" />
-                <polygon points="200,20 220,70 180,70" fill="#FACC15" />
-                <polygon points="380,200 360,240 340,200" fill="#10B981" />
-                <rect x="10" y="180" width="30" height="30" rx="6" fill="#3B82F6" transform="rotate(30 25 195)" />
-                <rect x="290" y="30" width="20" height="20" rx="4" fill="#EF4444" transform="rotate(45 300 40)" />
-              </svg>
-
-              <div className="relative z-10">
-                <div className="w-20 h-20 mx-auto mb-4 bg-[#10B981]/10 rounded-full flex items-center justify-center border-2 border-[#10B981]/20">
-                  <Flame size={36} className="text-[#EF4444]" fill="currentColor" />
-                </div>
-
-                <h3 className="text-[22px] font-bold text-[#FFFFFF] mb-2">{t('deck.sessionComplete')}</h3>
-                <p className="text-[14px] text-[#10B981] font-bold mb-1">
-                  {t('deck.streakAlive')}
-                </p>
-                <p className="text-[12px] text-[#9CA3AF] leading-relaxed mb-2">
-                  {t('deck.sessionSummary1')}<span className="text-white font-bold">{swipeCount}</span>{t('deck.sessionSummary2')}<span className="text-[#FACC15] font-bold">+{sessionXp} XP</span>{t('deck.sessionSummary3')}
-                </p>
-
-                {!isPro && (
-                  <p className="text-[11px] text-[#FACC15] mb-4">
-                    {t('deck.proStreakHint')}
-                  </p>
-                )}
-
-                <div className="flex flex-col gap-2 mt-4">
-                  <button
-                    onClick={() => {
-                      setShowStreakCelebration(false)
-                      router.push('/cards/learning')
-                    }}
-                    className="w-full bg-[#10B981] text-[#000000] py-3.5 rounded-[12px] font-bold text-[13px] transition-all active:scale-95"
-                  >
-                    {t('deck.backToDashboard')}
-                  </button>
-                  {!isPro && (
-                    <Link
-                      href="/subscribe"
-                      className="w-full inline-flex items-center justify-center gap-2 bg-[#FACC15]/10 border border-[#FACC15]/20 text-[#FACC15] py-3 rounded-[12px] font-bold text-[12px] transition-all active:scale-95"
-                    >
-                      <Crown size={12} fill="currentColor" />
-                      {t('deck.protectStreak')}
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        <StreakCelebration
+          visible={showStreakCelebration}
+          onDismiss={handleCelebrationDismiss}
+          streak={dashData?.streak || 0}
+          swipeCount={swipeCount}
+          sessionXp={sessionXp}
+          isPro={isPro}
+          language={language}
+          lastActiveDate={dashData?.lastActiveDate || null}
+          t={t}
+        />
       </div>
     </main>
   )

@@ -7,9 +7,16 @@ import { prisma } from '@/lib/prisma'
  * - Updates daily streak: increments if last active was yesterday, resets to 1 if gap > 1 day.
  */
 export async function awardXp(userId: string, amount: number) {
+  // Fetch user details including pro status for streak protection
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { monthlyXp: true, monthlyXpResetAt: true, streakCount: true, lastActiveDate: true },
+    select: { 
+      monthlyXp: true, 
+      monthlyXpResetAt: true, 
+      streakCount: true, 
+      lastActiveDate: true,
+      isPro: true 
+    },
   })
 
   if (!user) throw new Error('User not found')
@@ -26,7 +33,7 @@ export async function awardXp(userId: string, amount: number) {
   const isNewMonth = currentMonth !== resetMonth || currentYear !== resetYear
   const newMonthlyXp = isNewMonth ? amount : user.monthlyXp + amount
 
-  // --- Streak Logic ---
+  // --- Streak Logic with Pro Freeze Protection ---
   let newStreak = user.streakCount
   if (user.lastActiveDate) {
     const lastStr = user.lastActiveDate.toISOString().slice(0, 10)
@@ -36,8 +43,14 @@ export async function awardXp(userId: string, amount: number) {
       const lastDate = new Date(lastStr)
       const todayDate = new Date(todayStr)
       const diffMs = todayDate.getTime() - lastDate.getTime()
-      const diffDays = diffMs / (1000 * 60 * 60 * 24)
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+      
       if (diffDays === 1) {
+        newStreak = user.streakCount + 1
+      } else if (user.isPro) {
+        // Streak Protection: Pro users keep their streak count even if they miss days
+        // It doesn't INCREMENT for missed days, but it doesn't RESET either.
+        // We'll increment from their last streak count now that they are active again.
         newStreak = user.streakCount + 1
       } else {
         newStreak = 1 // broke streak

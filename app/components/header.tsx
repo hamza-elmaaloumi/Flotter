@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useUser } from '../providers/UserProvider'
 import { useLanguage } from '../providers/LanguageProvider'
-import { User, Zap, Layers, LifeBuoy, Settings, Shield } from 'lucide-react'
+import { User, Zap, Layers, LifeBuoy, Settings, Trophy } from 'lucide-react'
 
 export default function Header() {
   const { user, isLoading } = useUser()
@@ -36,22 +36,13 @@ export default function Header() {
             <>
               {user ? (
                 <>
-                  {/* Action Button: Premium Gold Ranking Shield */}
+                  {/* Action Button: Ranking */}
                   <Link
                     href="/ranking"
-                    className="p-2 transition-all relative group flex items-center justify-center"
+                    className="p-2 text-[#9CA3AF] hover:text-[#3B82F6] transition-colors"
                     title="Rankings"
                   >
-                    <div className="relative">
-                      {/* Inner Glow/Shadow for depth */}
-                      <Shield
-                        size={20}
-                        className="text-[#FACC15] fill-[#FACC15] filter drop-shadow-[0_0_8px_rgba(250,204,21,0.4)] transition-transform group-hover:scale-110 group-active:scale-95"
-                        strokeWidth={2.5}
-                      />
-                      {/* Subtle highlight to make it look "metallic" */}
-                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent rounded-full pointer-events-none" />
-                    </div>
+                    <Trophy size={19} />
                   </Link>
 
                   {/* Action Button: Settings */}

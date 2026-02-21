@@ -21,6 +21,113 @@ import {
   Shield
 } from 'lucide-react'
 
+const RedAnimatedFlame = ({ size = 20, active = false, className = "" }: { size?: number, active?: boolean, className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 120 120" fill="none" className={`overflow-visible ${className}`}>
+    <defs>
+      {/* Outer Flame Gradient - Deep reds to base #EF4444 */}
+      <linearGradient id="flameOuterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor={active ? "#EF4444" : "#4B5563"}>
+          {active && <animate attributeName="stop-color" values="#EF4444; #F87171; #EF4444" dur="2s" repeatCount="indefinite" />}
+        </stop>
+        <stop offset="100%" stopColor={active ? "#991B1B" : "#1F2937"}>
+          {active && <animate attributeName="stop-color" values="#991B1B; #B91C1C; #991B1B" dur="2s" repeatCount="indefinite" />}
+        </stop>
+      </linearGradient>
+
+      {/* Inner Flame Gradient - White-hot red core for realistic heat depth */}
+      <linearGradient id="flameInnerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor={active ? "#FEE2E2" : "#D1D5DB"}>
+          {active && <animate attributeName="stop-color" values="#FEE2E2; #FECACA; #FEE2E2" dur="1.5s" repeatCount="indefinite" />}
+        </stop>
+        <stop offset="100%" stopColor={active ? "#EF4444" : "#4B5563"}>
+          {active && <animate attributeName="stop-color" values="#EF4444; #DC2626; #EF4444" dur="1.5s" repeatCount="indefinite" />}
+        </stop>
+      </linearGradient>
+
+      {/* Ambient Glow Filters */}
+      <filter id="glowAmbientRed" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation={active ? "12" : "4"} result="blur" />
+      </filter>
+
+      <filter id="glowCoreRed" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="3" result="blur" />
+      </filter>
+
+      {/* Base Flame Shape */}
+      <path id="streakPathRed" d="M 58 25 C 50 35, 36 55, 36 80 C 36 95, 47 102, 60 102 C 73 102, 84 95, 84 80 C 84 65, 82 55, 78 52 C 74 49, 68 56, 65 62 C 62 68, 65 45, 58 25 Z" />
+    </defs>
+
+    <style>{`
+      .flame-base-red {
+        transform-origin: 60px 95px;
+      }
+      .glow-layer-red {
+        ${active ? 'animation: pulseAmbientRed 2s ease-in-out infinite;' : 'opacity: 0.1;'}
+      }
+      .flame-outer-red {
+        ${active ? 'animation: flickerOuterRed 2s ease-in-out infinite;' : ''}
+      }
+      .flame-inner-red {
+        transform: scale(0.55);
+        ${active ? 'animation: flickerInnerRed 1.7s ease-in-out infinite;' : ''}
+      }
+
+      /* Parallax dancing: Outer and Inner layers move at slightly different speeds/angles */
+      @keyframes flickerOuterRed {
+        0%   { transform: scaleX(1) scaleY(1) skewX(0deg); }
+        20%  { transform: scaleX(0.95) scaleY(1.05) skewX(-2deg); }
+        40%  { transform: scaleX(1.02) scaleY(0.98) skewX(2deg); }
+        60%  { transform: scaleX(0.98) scaleY(1.02) skewX(-1deg); }
+        80%  { transform: scaleX(1.04) scaleY(0.96) skewX(1deg); }
+        100% { transform: scaleX(1) scaleY(1) skewX(0deg); }
+      }
+      
+      @keyframes flickerInnerRed {
+        0%   { transform: scale(0.55) skewX(0deg); }
+        25%  { transform: scaleX(0.50) scaleY(0.60) skewX(3deg); }
+        50%  { transform: scaleX(0.60) scaleY(0.50) skewX(-2deg); }
+        75%  { transform: scaleX(0.52) scaleY(0.58) skewX(1deg); }
+        100% { transform: scale(0.55) skewX(0deg); }
+      }
+
+      @keyframes pulseAmbientRed {
+        0%   { opacity: 0.35; transform: scale(0.95); }
+        50%  { opacity: 0.65; transform: scale(1.08); }
+        100% { opacity: 0.35; transform: scale(0.95); }
+      }
+    `}</style>
+
+    {/* 1. Large Ambient Red Back-Glow */}
+    <use 
+      href="#streakPathRed" 
+      className="flame-base-red glow-layer-red" 
+      fill="none" 
+      stroke={active ? "#EF4444" : "#4B5563"} 
+      strokeWidth="16" 
+      filter="url(#glowAmbientRed)" 
+      strokeLinejoin="round" 
+    />
+
+    {/* 2. Primary Outer Flame Body */}
+    <use 
+      href="#streakPathRed" 
+      className="flame-base-red flame-outer-red" 
+      fill="url(#flameOuterGrad)" 
+      stroke="url(#flameOuterGrad)" 
+      strokeWidth="4" 
+      strokeLinejoin="round" 
+    />
+
+    {/* 3. Bright Inner Flame Core (Creates the 3D realistic hollow heat effect) */}
+    <use 
+      href="#streakPathRed" 
+      className="flame-base-red flame-inner-red" 
+      fill="url(#flameInnerGrad)" 
+      filter="url(#glowCoreRed)"
+    />
+  </svg>
+)
+
 type ProfileUser = {
   id: string
   name: string | null
@@ -115,7 +222,7 @@ export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditi
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mt-0.5">{t('profile.totalXp')}</p>
           </div>
           <div className="bg-[#1C1C1E] border border-[#EF4444]/10 p-4 rounded-[16px] flex flex-col items-center text-center">
-            <Flame size={16} className="text-[#EF4444] mb-1" fill={user.streakCount > 0 ? 'currentColor' : 'none'} />
+            <RedAnimatedFlame size={28} active={user.streakCount > 0} className="" />
             <p className={`text-[19px] font-bold ${user.streakCount > 0 ? 'text-[#EF4444]' : 'text-[#6B7280]'}`}>{user.streakCount}</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mt-0.5">{t('profile.dayStreak')}</p>
           </div>

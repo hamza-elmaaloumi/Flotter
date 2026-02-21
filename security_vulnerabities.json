@@ -1,0 +1,112 @@
+[
+  {
+    "id": "VUL-001",
+    "title": "Weak Password Hashing (SHA-256 no salt)",
+    "severity": "Critical",
+    "status": "Open",
+    "description": "The registration and authentication modules use SHA-256 to hash passwords without any salt or iterative hashing (like bcrypt, Argon2). This makes the password hashes extremely vulnerable to offline brute-force and rainbow table attacks if the database is compromised.",
+    "location": "app/api/auth/register/route.ts, app/api/auth/[...nextauth]/route.ts",
+    "detected_at": "2026-02-21T14:45:00Z",
+    "remediation": "Replace crypto.createHash('sha256') with a secure password hashing library like bcryptjs or argon2."
+  },
+  {
+    "id": "VUL-002",
+    "title": "Unauthenticated Sensitive API Access",
+    "severity": "High",
+    "status": "Open",
+    "description": "The TTS (Text-to-Speech) API route does not implement any authentication or authorization checks. Anyone can call this endpoint to generate speech, which consumes external API credits (Unreal Speech or Google TTS), leading to potential financial exploitation.",
+    "location": "app/api/tts/route.ts",
+    "detected_at": "2026-02-21T14:50:00Z",
+    "remediation": "Add getServerSession(authOptions) to the GET method and return 401 if unauthorized."
+  },
+  {
+    "id": "VUL-003",
+    "title": "Conditional Webhook Signature Skipping",
+    "severity": "High",
+    "status": "Open",
+    "description": "The Polar webhook handler explicitly skips signature verification if POLAR_WEBHOOK_SECRET is not configured in the environment. This is a significant risk in production if the variable is accidentally misconfigured, allowing attackers to forge subscription events.",
+    "location": "app/api/webhook/route.ts",
+    "detected_at": "2026-02-21T14:55:00Z",
+    "remediation": "Enforce signature verification in all non-development environments and throw an error if the secret is missing."
+  },
+  {
+    "id": "VUL-004",
+    "title": "Dangerous OAuth Account Linking",
+    "severity": "Medium",
+    "status": "Open",
+    "description": "The 'allowDangerousEmailAccountLinking: true' setting in GoogleProvider allows NextAuth to link existing accounts with the same email. Since there is no email verification on the registration route, an attacker can pre-register a victim's email, taking control of the account before the victim tries to log in via Google.",
+    "location": "app/api/auth/[...nextauth]/route.ts",
+    "detected_at": "2026-02-21T15:00:00Z",
+    "remediation": "Disable allowDangerousEmailAccountLinking or implement mandatory email verification for all registration types."
+  },
+  {
+    "id": "VUL-005",
+    "title": "Missing Middleware Protection for Critical Paths",
+    "severity": "Low",
+    "status": "Open",
+    "description": "The NextAuth middleware config matcher omits several internal API routes like /api/tts. While some routes have internal checks, a unified security layer via middleware is recommended to prevent accidental exposure of new or modified routes.",
+    "location": "middleware.ts",
+    "detected_at": "2026-02-21T15:05:00Z",
+    "remediation": "Update the middleware config matcher to include all /api/ paths except public ones like /api/auth and /api/webhook."
+  },
+  {
+    "id": "VUL-006",
+    "title": "Lack of Global Rate Limiting",
+    "severity": "Medium",
+    "status": "Open",
+    "description": "There is no global rate limiting implemented for authentication routes (login/register) or feature-heavy APIs (AI generation). This leaves the application vulnerable to credential stuffing, brute-force, and resource exhaustion attacks.",
+    "location": "Application-wide",
+    "detected_at": "2026-02-21T15:10:00Z",
+    "remediation": "Implement a rate limiting solution using Upstash Redis or similar middleware to restrict repeated attempts from the same IP."
+  },
+  {
+    "id": "VUL-007",
+    "title": "Inefficient Transactional Loop in GET Request",
+    "severity": "Low",
+    "status": "Open",
+    "description": "The GET /api/cards route performs individual card updates inside a prisma. for every card a user owns if the 'rotate' flag is set. For users with large card counts, this can lead to database timeouts and performance degradation, potentially being used as a small-scale DDoS vector.",
+    "location": "app/api/cards/route.ts",
+    "detected_at": "2026-02-21T15:15:00Z",
+    "remediation": "Optimize the update logic using prisma.updateMany if possible, or limit the number of cards processed per request."
+  },
+  {
+    "id": "VUL-008",
+    "title": "Unrestricted Large Payload in Profile Update",
+    "severity": "Medium",
+    "status": "Open",
+    "description": "The PATCH /api/profile endpoint accepts a raw base64 string for the user's profile image without any size validation. This can lead to database bloat, performance issues when fetching user records, and potential 431 errors (Request Header Fields Too Large) since NextAuth includes the image field in some session tokens.",
+    "location": "app/api/profile/route.ts",
+    "detected_at": "2026-02-21T15:20:00Z",
+    "remediation": "Implement a size limit (e.g., 500KB) for the image string in the API route, or use an external image hosting service like Cloudinary or S3."
+  },
+  {
+    "id": "VUL-009",
+    "title": "Prompt Injection in AI Generation",
+    "severity": "Medium",
+    "status": "Open",
+    "description": "The AI sentence generation route takes user input ('word') and directly interpolates it into the system prompt without sanitization. A malicious user could craft a payload to override the system instructions, potentially causing the AI to generate inappropriate content or leak information.",
+    "location": "app/api/ai/generate-sentences/route.ts",
+    "detected_at": "2026-02-21T15:25:00Z",
+    "remediation": "Sanitize the user input before passing it to the AI model, or use a more structured prompt format that separates instructions from user data."
+  },
+  {
+    "id": "VUL-010",
+    "title": "Lack of Action Verification in XP System",
+    "severity": "High",
+    "status": "Open",
+    "description": "The XP addition route allows users to arbitrarily add XP to their account by sending a POST request with a valid reason and amount. There is no server-side verification that the action (e.g., 'card_create', 'card_review') was actually performed, allowing users to easily manipulate their XP and ranking.",
+    "location": "app/api/xp/add/route.ts",
+    "detected_at": "2026-02-21T15:30:00Z",
+    "remediation": "Implement server-side validation to ensure the user actually performed the action before awarding XP, or move the XP awarding logic directly into the respective action routes (e.g., award XP inside the card creation route)."
+  },
+  {
+    "id": "VUL-011",
+    "title": "Unpaginated Database Query (DoS Risk)",
+    "severity": "Medium",
+    "status": "Open",
+    "description": "The ranking route fetches all users in the database to calculate the leaderboard. As the user base grows, this unpaginated query will consume significant memory and processing time, potentially leading to a Denial of Service (DoS) or application crashes.",
+    "location": "app/api/ranking/route.ts",
+    "detected_at": "2026-02-21T15:35:00Z",
+    "remediation": "Implement pagination or limit the number of users fetched (e.g., top 100). For a global ranking, consider using a more efficient data structure like Redis sorted sets."
+  }
+]
