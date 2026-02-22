@@ -11,7 +11,8 @@ export async function GET(req: Request) {
   try {
     const url = new URL(req.url)
     const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '100'), 1), 100)
-    const offset = Math.max(parseInt(url.searchParams.get('offset') || '0'), 0)
+    // ISSUE-011: Cap offset at 1000 to prevent DoS via deep pagination
+    const offset = Math.min(Math.max(parseInt(url.searchParams.get('offset') || '0'), 0), 1000)
 
     const now = new Date()
     const currentMonth = now.getUTCMonth()

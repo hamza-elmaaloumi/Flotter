@@ -10,6 +10,7 @@ import { useLanguage } from '../../providers/LanguageProvider'
 import { useTheme } from '../../providers/ThemeProvider'
 import Link from 'next/link'
 import StreakCelebration from './components/StreakCelebration'
+import XpNotification from './components/XpNotification'
 
 export default function DeckPage() {
   const { user } = useUser()
@@ -33,6 +34,9 @@ export default function DeckPage() {
   const [sessionXp, setSessionXp] = useState(0)
   const [xpToast, setXpToast] = useState<number | null>(null)
 
+  // Ref to pass XP intent from handleSwipeXp → handleReview (called sequentially per swipe)
+  const pendingXpRef = useRef<{ earned: boolean; audio: boolean }>({ earned: false, audio: false })
+
   // Swipe counter & upsell
   const [swipeCount, setSwipeCount] = useState(0)
   const [showUpsell, setShowUpsell] = useState(false)
@@ -48,7 +52,7 @@ export default function DeckPage() {
     if (!user?.id) return
     setLoading(true)
     try {
-      const res = await axios.get('/api/cards', { params: { dueOnly: true, rotate: true } })
+      const res = await axios.get('/api/cards', { params: { dueOnly: true } })
       setCards(res.data.cards || [])
     } catch (err) {
       console.error('Load cards error', err)
@@ -171,15 +175,16 @@ export default function DeckPage() {
   }
 
   const handleSwipeXp = async (cardId: string, earnedReviewXp: boolean) => {
+    const audio = !!audioCompleted[cardId]
     let totalXpThisSwipe = 0
     if (earnedReviewXp) {
       totalXpThisSwipe += 10
-      // XP is now awarded server-side in the card review PATCH endpoint
     }
-    if (audioCompleted[cardId]) {
+    if (audio) {
       totalXpThisSwipe += 5
-      // XP is now awarded server-side in the TTS endpoint
     }
+    // Store XP intent so handleReview (called immediately after) can send it to the server
+    pendingXpRef.current = { earned: earnedReviewXp, audio }
     if (totalXpThisSwipe > 0) showXpToast(totalXpThisSwipe)
     setFlipTimestamps(prev => { const n = { ...prev }; delete n[cardId]; return n })
     setAudioCompleted(prev => { const n = { ...prev }; delete n[cardId]; return n })
@@ -227,7 +232,25 @@ export default function DeckPage() {
       return [...newCards, { ...card, currentSentenceIndex: (card.currentSentenceIndex + 1) % card.sentences.length }]
     })
     setFlipped(s => { const n = { ...s }; delete n[cardId]; return n; })
-    axios.patch('/api/cards', { cardId, action: 'review', result })
+
+    // Read XP intent set by handleSwipeXp (called synchronously just before this)
+    const { earned, audio } = pendingXpRef.current
+    pendingXpRef.current = { earned: false, audio: false }
+
+    // Use fetch with keepalive so the request survives page navigation / tab close.
+    // XP is persisted immediately per-swipe — not deferred to session end.
+    fetch('/api/cards', {
+      method: 'PATCH',
+      keepalive: true,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        cardId,
+        action: 'review',
+        result,
+        earnedReviewXp: earned,
+        audioPlayed: audio,
+      }),
+    }).catch(() => { /* best-effort: XP & review already queued */ })
   }
 
   return (
@@ -315,14 +338,8 @@ export default function DeckPage() {
           </footer>
         )}
 
-        {xpToast !== null && (
-          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[200] animate-bounce">
-            <div className="bg-[#FACC15] text-[#000000] px-6 py-2.5 rounded-[12px] font-black text-[14px] flex items-center gap-2 shadow-[0_10px_30px_rgba(250,204,21,0.3)]">
-              <Zap size={16} fill="currentColor" />
-              +{xpToast} XP
-            </div>
-          </div>
-        )}
+        {/* XP toast notification */}
+        <XpNotification amount={xpToast} />
 
         {/* 10-CARD UPSELL — INLINE PRO PROMPT */}
         {showUpsell && !isPro && (
@@ -407,9 +424,6 @@ export default function DeckPage() {
           swipeCount={swipeCount}
           sessionXp={sessionXp}
           isPro={isPro}
-          language={language}
-          lastActiveDate={dashData?.lastActiveDate || null}
-          t={t}
         />
       </div>
     </main>

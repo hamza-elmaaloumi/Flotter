@@ -27,6 +27,8 @@ export async function POST(req: Request) {
         }
 
         // Check subscription & daily limit for free users
+        // ISSUE-007: Use atomic increment-and-check to prevent race conditions.
+        // First, reset the day counter if needed, then atomically claim a slot.
         const user = await prisma.user.findUnique({
             where: { id: userId },
             select: { isPro: true, aiGenerationsToday: true, aiGenerationsResetAt: true },
@@ -41,15 +43,34 @@ export async function POST(req: Request) {
         const lastReset = new Date(user.aiGenerationsResetAt);
         const isNewDay = now.toISOString().slice(0, 10) !== lastReset.toISOString().slice(0, 10);
 
-        let currentGenerations = isNewDay ? 0 : user.aiGenerationsToday;
+        // If it's a new day, reset the counter first
+        if (isNewDay) {
+            await prisma.user.update({
+                where: { id: userId },
+                data: { aiGenerationsToday: 0, aiGenerationsResetAt: now },
+            });
+        }
 
-        if (!user.isPro && currentGenerations >= FREE_DAILY_LIMIT) {
-            return NextResponse.json({
-                error: 'daily_limit_reached',
-                message: `You've used all ${FREE_DAILY_LIMIT} free AI generations for today. Subscribe to Pro for unlimited generations!`,
-                limit: FREE_DAILY_LIMIT,
-                used: currentGenerations,
-            }, { status: 429 });
+        // For free users, atomically claim a generation slot before calling the AI API
+        if (!user.isPro) {
+            const claimResult = await prisma.user.updateMany({
+                where: {
+                    id: userId,
+                    aiGenerationsToday: { lt: FREE_DAILY_LIMIT },
+                },
+                data: {
+                    aiGenerationsToday: { increment: 1 },
+                },
+            });
+
+            if (claimResult.count === 0) {
+                return NextResponse.json({
+                    error: 'daily_limit_reached',
+                    message: `You've used all ${FREE_DAILY_LIMIT} free AI generations for today. Subscribe to Pro for unlimited generations!`,
+                    limit: FREE_DAILY_LIMIT,
+                    used: FREE_DAILY_LIMIT,
+                }, { status: 429 });
+            }
         }
 
         const { word } = await req.json();
@@ -115,14 +136,16 @@ export async function POST(req: Request) {
                     imageQuery = parsed.imageQuery;
                 }
 
-                // Increment generation counter
-                await prisma.user.update({
-                    where: { id: userId },
-                    data: {
-                        aiGenerationsToday: isNewDay ? 1 : { increment: 1 },
-                        aiGenerationsResetAt: isNewDay ? now : undefined,
-                    },
-                });
+                // Generation slot already claimed atomically above for free users.
+                // For Pro users, track usage for analytics.
+                if (user.isPro) {
+                    await prisma.user.update({
+                        where: { id: userId },
+                        data: {
+                            aiGenerationsToday: { increment: 1 },
+                        },
+                    });
+                }
 
                 return NextResponse.json({
                     sentences: sentences.slice(0, 3),
@@ -146,14 +169,15 @@ export async function POST(req: Request) {
             });
 
             if (examples.length > 0) {
-                // Increment generation counter
-                await prisma.user.update({
-                    where: { id: userId },
-                    data: {
-                        aiGenerationsToday: isNewDay ? 1 : { increment: 1 },
-                        aiGenerationsResetAt: isNewDay ? now : undefined,
-                    },
-                });
+                // Generation slot already claimed atomically above for free users.
+                if (user.isPro) {
+                    await prisma.user.update({
+                        where: { id: userId },
+                        data: {
+                            aiGenerationsToday: { increment: 1 },
+                        },
+                    });
+                }
 
                 return NextResponse.json({
                     sentences: examples.slice(0, 3),
@@ -163,14 +187,15 @@ export async function POST(req: Request) {
             }
         }
 
-        // Increment generation counter
-        await prisma.user.update({
-            where: { id: userId },
-            data: {
-                aiGenerationsToday: isNewDay ? 1 : { increment: 1 },
-                aiGenerationsResetAt: isNewDay ? now : undefined,
-            },
-        });
+        // Generation slot already claimed atomically above for free users.
+        if (user.isPro) {
+            await prisma.user.update({
+                where: { id: userId },
+                data: {
+                    aiGenerationsToday: { increment: 1 },
+                },
+            });
+        }
 
         return NextResponse.json({
             sentences: [`You find yourself focusing deeply on the concept of ${sanitizedWord} until the meaning is etched into your mind.`],

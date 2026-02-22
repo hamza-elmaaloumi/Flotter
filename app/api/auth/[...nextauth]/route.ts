@@ -4,7 +4,10 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 import bcrypt from 'bcryptjs'
-import { checkRateLimit } from '@/lib/rate-limit'
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
+
+// Store last request for IP extraction in credentials authorize
+let lastRequest: Request | null = null
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -19,7 +22,7 @@ export const authOptions: AuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Email and password required')
         }
@@ -30,6 +33,15 @@ export const authOptions: AuthOptions = {
         const rateLimitResult = checkRateLimit(`login:${normalizedEmail}`, { maxRequests: 10, windowMs: 15 * 60 * 1000 })
         if (!rateLimitResult.success) {
           throw new Error('Too many login attempts. Please try again later.')
+        }
+
+        // ISSUE-018: Also rate limit by IP to prevent credential stuffing across many accounts
+        if (lastRequest) {
+          const ip = getClientIp(lastRequest)
+          const ipRateLimitResult = checkRateLimit(`login-ip:${ip}`, { maxRequests: 30, windowMs: 15 * 60 * 1000 })
+          if (!ipRateLimitResult.success) {
+            throw new Error('Too many login attempts from this IP. Please try again later.')
+          }
         }
         
         const user = await prisma.user.findUnique({
@@ -88,4 +100,10 @@ export const authOptions: AuthOptions = {
 
 const handler = NextAuth(authOptions)
 
-export { handler as GET, handler as POST }
+// Wrap handler to capture the request for IP-based rate limiting (ISSUE-018)
+async function wrappedHandler(req: Request, ctx: any) {
+  lastRequest = req
+  return handler(req, ctx)
+}
+
+export { wrappedHandler as GET, wrappedHandler as POST }

@@ -37,15 +37,18 @@ describe('VUL-002: TTS Authentication', () => {
   })
 })
 
-describe('VUL-003: Webhook Signature Enforcement', () => {
-  it('should enforce signature verification in production', () => {
+describe('VUL-003: Webhook Signature Enforcement (ISSUE-008)', () => {
+  it('should always require POLAR_WEBHOOK_SECRET', () => {
     const src = readSource('app/api/webhook/route.ts')
-    expect(src).toContain("process.env.NODE_ENV === 'production'")
+    expect(src).toContain('POLAR_WEBHOOK_SECRET')
     expect(src).toContain('Webhook secret not configured')
   })
 
-  it('should not blindly skip verification', () => {
+  it('should not skip verification in any environment', () => {
     const src = readSource('app/api/webhook/route.ts')
+    // Should not have dev mode bypass
+    expect(src).not.toContain('dev mode')
+    expect(src).not.toContain('verification skipped')
     // Should not have unconditional JSON parse fallback
     expect(src).not.toMatch(/else\s*\{\s*\n\s*\/\/\s*No secret configured yet/)
   })
@@ -87,10 +90,12 @@ describe('VUL-006: Rate Limiting', () => {
   })
 })
 
-describe('VUL-007: Card Rotation Optimization', () => {
-  it('should limit batch rotation to prevent DB timeouts', () => {
+describe('VUL-007: Card Rotation removed from GET (ISSUE-002)', () => {
+  it('should not have rotation logic in GET handler', () => {
     const src = readSource('app/api/cards/route.ts')
-    expect(src).toContain('slice(0, 50)')
+    // Rotation was removed from GET — it now only happens via PATCH
+    expect(src).not.toContain('doRotate')
+    expect(src).toContain('Rotation removed from GET')
   })
 })
 
@@ -128,12 +133,14 @@ describe('VUL-010: XP Action Verification', () => {
 
   it('card review should award XP server-side', () => {
     const src = readSource('app/api/cards/route.ts')
-    expect(src).toContain('awardXp(userId, 10)')
+    expect(src).toContain('awardXp(userId, xpAmount)')
   })
 
-  it('TTS route should award XP server-side', () => {
+  it('TTS route should NOT award XP (ISSUE-001: XP farming fix)', () => {
     const src = readSource('app/api/tts/route.ts')
-    expect(src).toContain('awardXp(userId, 5)')
+    // XP awarding was removed from TTS to prevent XP farming via pre-fetching
+    expect(src).not.toContain('awardXp')
+    expect(src).toContain('XP is no longer awarded here')
   })
 
   it('frontend should not call /api/xp/add', () => {

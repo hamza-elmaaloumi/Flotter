@@ -59,11 +59,18 @@ export function checkRateLimit(key: string, options: RateLimitOptions): RateLimi
 
 /**
  * Extract client IP from request headers.
+ * ISSUE-006: Prefer x-real-ip (set by trusted proxies like Vercel/Nginx)
+ * over x-forwarded-for (which can be spoofed by clients).
  */
 export function getClientIp(req: Request): string {
+  // x-real-ip is typically set by the trusted reverse proxy and is harder to spoof
+  const realIp = req.headers.get('x-real-ip')
+  if (realIp) {
+    return realIp.trim()
+  }
   const forwarded = req.headers.get('x-forwarded-for')
   if (forwarded) {
     return forwarded.split(',')[0].trim()
   }
-  return req.headers.get('x-real-ip') || 'unknown'
+  return 'unknown'
 }

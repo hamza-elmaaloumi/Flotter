@@ -1,0 +1,162 @@
+[
+  {
+    "id": "ISSUE-001",
+    "title": "XP Farming and False Activity via TTS Pre-fetching",
+    "severity": "High",
+    "component": "app/cards/deck/page.tsx & app/api/tts/route.ts",
+    "description": "The Deck page automatically pre-fetches the audio for the first 5 cards using the `/api/tts` endpoint. However, the `/api/tts` endpoint awards 5 XP and updates the user's `lastActiveDate` and streak upon every request. This means a user can simply open or refresh the deck page to gain 25 XP and maintain their daily streak without ever reviewing a single card. Furthermore, because `lastActiveDate` is updated immediately on page load, the `StreakCelebration` modal logic in `handleReview` will see the user as already active today, preventing the celebration from ever appearing.",
+    "recommendation": "Remove XP awarding from the `/api/tts` endpoint. Instead, award the +5 audio XP only when the user actually plays the audio or completes the card review (e.g., pass a flag in the `/api/cards` PATCH request indicating audio was played)."
+  },
+  {
+    "id": "ISSUE-002",
+    "title": "Unintended Card Rotation on GET Request",
+    "severity": "Medium",
+    "component": "app/api/cards/route.ts",
+    "description": "In the GET `/api/cards` endpoint, if the `rotate=true` query parameter is provided (which it is by default in `DeckPage`), the server automatically increments the `currentSentenceIndex` for the first 50 cards in the database. This violates REST principles (GET requests should not mutate state) and causes the user's flashcard sentences to rotate every time they refresh the page, potentially skipping sentences they haven't reviewed yet.",
+    "recommendation": "Remove the rotation logic from the GET request. Card rotation should only happen explicitly via a PATCH/POST request when the user actually reviews or skips a card."
+  },
+  {
+    "id": "ISSUE-003",
+    "title": "Infinite Streak Freeze Exploit for Pro Users",
+    "severity": "Medium",
+    "component": "lib/xp.ts",
+    "description": "In the `awardXp` function, the streak logic for Pro users (`user.isPro`) simply increments their previous streak count regardless of how many days they missed (`newStreak = user.streakCount + 1`). This means a Pro user could log in once, wait 6 months, log in again, and their streak would continue from where it left off. This turns the 'streak' into a 'total days active' counter rather than a consecutive streak.",
+    "recommendation": "Implement a proper streak freeze mechanism. For example, give Pro users a limited number of 'streak freezes' per month, or only protect the streak if the gap is exactly 2 days instead of an infinite gap."
+  },
+  {
+    "id": "ISSUE-004",
+    "title": "Race Condition in Monthly XP Calculation",
+    "severity": "High",
+    "component": "lib/xp.ts",
+    "description": "The `awardXp` function calculates `newMonthlyXp` in memory (`isNewMonth ? amount : user.monthlyXp + amount`) and then updates the database. Because the Deck page fires 5 concurrent requests to `/api/tts` (which calls `awardXp`), all 5 requests read the same `user.monthlyXp` from the database simultaneously. They all calculate the same new value and overwrite each other, resulting in the user receiving only 5 monthly XP instead of the expected 25. (Note: `totalXp` is safe because it uses Prisma's atomic `increment`).",
+    "recommendation": "Use Prisma's atomic `increment` for `monthlyXp` as well. For the monthly reset logic, you can either run a separate cron job to reset monthly XP for all users on the 1st of the month, or use a more complex atomic update query."
+  },
+  {
+    "id": "ISSUE-005",
+    "title": "Streak Celebration Logic Relies on Client-Side Time and LocalStorage",
+    "severity": "Low",
+    "component": "app/cards/deck/page.tsx",
+    "description": "The `StreakCelebration` modal relies on `localStorage` and the client's local time (`new Date().toISOString().slice(0, 10)`) to determine if the user has already been celebrated today. This can cause discrepancies if the user's local timezone differs significantly from the server's UTC time (used in `lib/xp.ts`). A user might trigger a new streak on the server but not see the celebration on the client, or vice versa. Additionally, clearing local storage or switching devices will cause the celebration to show again if the `lastActiveDate` condition is met.",
+    "recommendation": "Move the 'has celebrated today' state to the database (e.g., a `lastCelebratedDate` field on the User model) and rely entirely on server-provided data to trigger the celebration modal."
+  },
+  {
+    "id": "ISSUE-006",
+    "title": "Rate Limit Bypass via Spoofed X-Forwarded-For Header",
+    "severity": "High",
+    "component": "lib/rate-limit.ts & app/api/auth/register/route.ts",
+    "description": "The custom rate limiter in `lib/rate-limit.ts` relies on the `x-forwarded-for` header to identify the client's IP address (`req.headers.get('x-forwarded-for')`). This header can be easily spoofed by a malicious client sending requests directly to the application. An attacker can simply rotate the `x-forwarded-for` header value in each request to completely bypass the rate limits on critical endpoints like `/api/auth/register`, enabling brute-force attacks or mass account creation.",
+    "recommendation": "Do not trust the `x-forwarded-for` header directly unless the application is behind a trusted reverse proxy (like Vercel's edge network) and you are certain the proxy strips or securely sets this header. In Next.js App Router on Vercel, it's safer to use `req.ip` (if available in Edge runtime) or rely on a robust rate-limiting solution like Upstash Redis that integrates securely with the platform."
+  },
+  {
+    "id": "ISSUE-007",
+    "title": "Race Condition in AI Generation Daily Limit",
+    "severity": "High",
+    "component": "app/api/ai/generate-sentences/route.ts",
+    "description": "The AI sentence generation endpoint checks the user's `aiGenerationsToday` against `FREE_DAILY_LIMIT` by reading the user record from the database. If the limit is not reached, it proceeds to call the Groq API (which takes time) and then updates the database to increment the counter. Because the read and update are not atomic and are separated by a slow network call, a user can send multiple concurrent requests. All requests will read the same initial `aiGenerationsToday` value, pass the limit check, and execute the AI generation, allowing a free user to easily bypass the daily limit of 3 generations.",
+    "recommendation": "Implement an atomic increment and check in the database before calling the AI API. For example, use a Prisma `update` query with a `where` clause that ensures `aiGenerationsToday < FREE_DAILY_LIMIT`. If the update succeeds, proceed with the API call; if it fails (record not found due to the condition), return a rate limit error. Alternatively, use Redis for atomic rate limiting of AI generations."
+  },
+  {
+    "id": "ISSUE-008",
+    "title": "Unauthenticated Webhook Endpoint Allows Subscription Spoofing",
+    "severity": "Critical",
+    "component": "app/api/webhook/route.ts",
+    "description": "The Polar.sh webhook endpoint (`/api/webhook/route.ts`) skips signature verification entirely if `process.env.POLAR_WEBHOOK_SECRET` is not set, and only logs an error in production without actually blocking the request if the environment variable is missing. Furthermore, in development mode, it explicitly skips verification. If the secret is accidentally omitted in production, or if an attacker targets a staging/dev environment, they can send a forged `subscription.created` payload with any user's email or ID to instantly grant them Pro status (`isPro: true`) without paying.",
+    "recommendation": "Enforce strict webhook signature verification regardless of the environment. If `POLAR_WEBHOOK_SECRET` is missing, the endpoint must immediately return a 500 or 403 error and reject the payload. Never parse or process unverified webhook payloads that mutate database state."
+  },
+  {
+    "id": "ISSUE-009",
+    "title": "Insecure Direct Object Reference (IDOR) in Card Update",
+    "severity": "High",
+    "component": "app/api/cards/route.ts",
+    "description": "In the `PATCH` endpoint for `/api/cards`, the code verifies ownership (`if (card.userId !== userId) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })`) before updating the card. However, in the `action === 'rotate'` block, it performs the update using `where: { id: cardId }` without including the `userId` in the `where` clause. While the initial check prevents unauthorized access, a race condition or a slight modification to the code could bypass this. More importantly, the `GET` endpoint with `rotate=true` updates up to 50 cards at once using `prisma.$transaction(updates)` where the updates are `prisma.card.update({ where: { id: c.id }, data: { currentSentenceIndex: nextIndex } })`. If a user somehow manages to include another user's card ID in the `cardsToRotate` array (e.g., if the `where: { userId }` filter in the `GET` request is bypassed or modified in the future), they could rotate other users' cards.",
+    "recommendation": "Always include the `userId` in the `where` clause of any update or delete operation to ensure the database enforces ownership at the query level (e.g., `where: { id: cardId, userId }`). This provides defense-in-depth against IDOR vulnerabilities."
+  },
+  {
+    "id": "ISSUE-010",
+    "title": "Broken Checkout Endpoint Logic",
+    "severity": "High",
+    "component": "app/api/checkout/route.ts",
+    "description": "The `/api/checkout` endpoint is fundamentally broken. It attempts to call `polar.checkouts.create` but then immediately returns `NextResponse.json({ checkoutUrl: result.url })` without actually returning the result of the `polar.checkouts.create` call. The code block `const result = await polar.checkouts.create({...})` is followed by `return NextResponse.json({ checkoutUrl: result.url })`, but the `result` object is not defined in the scope of the `return` statement if an error occurs, and the `catch` block handles errors. However, looking closely at the code, the `result` is defined, but the `polar.checkouts.create` method might not return a `url` property directly depending on the Polar SDK version. More importantly, the endpoint is hardcoded to use `server: 'sandbox'` which means real payments will never work in production unless the code is manually changed and redeployed.",
+    "recommendation": "Update the Polar SDK initialization to dynamically use the correct environment based on `process.env.NODE_ENV` (e.g., `server: process.env.NODE_ENV === 'production' ? 'production' : 'sandbox'`). Verify the response structure of `polar.checkouts.create` to ensure `result.url` is the correct property to return."
+  },
+  {
+    "id": "ISSUE-011",
+    "title": "Unbounded Pagination in Ranking Endpoint",
+    "severity": "Medium",
+    "component": "app/api/ranking/route.ts",
+    "description": "The `/api/ranking` endpoint allows users to specify an `offset` query parameter to paginate through the leaderboard. However, there is no upper bound on the `offset` value. A malicious user or bot could request an extremely large offset (e.g., `?offset=1000000`), forcing the database to scan and skip a massive number of rows, which can lead to high CPU usage and potential Denial of Service (DoS) on the database.",
+    "recommendation": "Implement a maximum allowed `offset` (e.g., 1000) or switch to cursor-based pagination (using `cursor` instead of `skip`) for the ranking endpoint to ensure consistent performance regardless of the page depth."
+  },
+  {
+    "id": "ISSUE-012",
+    "title": "Insecure Direct Object Reference (IDOR) in Card Deletion and Update",
+    "severity": "High",
+    "component": "app/api/cards/[id]/route.ts",
+    "description": "In the `PATCH` and `DELETE` endpoints for `/api/cards/[id]`, the code verifies ownership (`if (card.userId !== userId) return NextResponse.json({ error: 'forbidden' }, { status: 403 })`) before updating or deleting the card. However, it performs the update or delete using `where: { id }` without including the `userId` in the `where` clause. While the initial check prevents unauthorized access, a race condition or a slight modification to the code could bypass this. If a user somehow manages to bypass the initial check, they could update or delete other users' cards.",
+    "recommendation": "Always include the `userId` in the `where` clause of any update or delete operation to ensure the database enforces ownership at the query level (e.g., `where: { id, userId }`). This provides defense-in-depth against IDOR vulnerabilities."
+  },
+  {
+    "id": "ISSUE-013",
+    "title": "Missing Password Complexity Validation",
+    "severity": "Medium",
+    "component": "app/api/auth/register/route.ts",
+    "description": "The registration endpoint (`/api/auth/register/route.ts`) only checks if the password is a string (`typeof password !== 'string'`). It does not enforce any password complexity rules (e.g., minimum length, uppercase, lowercase, numbers, special characters). This allows users to create accounts with extremely weak passwords like '1', 'password', or 'a', making them highly susceptible to brute-force or dictionary attacks.",
+    "recommendation": "Implement robust password validation before hashing and storing the password. Enforce a minimum length (e.g., 8 characters) and consider requiring a mix of character types. Use a library like `zod` or `yup` for schema validation."
+  },
+  {
+    "id": "ISSUE-014",
+    "title": "Inaccurate Rank Calculation Due to Stale Monthly XP",
+    "severity": "Low",
+    "component": "app/api/profile/route.ts",
+    "description": "In the `/api/profile` endpoint, the user's rank is calculated by counting how many users have a `monthlyXp` greater than the current user's `effectiveMonthlyXp`. However, the query `where: { monthlyXp: { gt: effectiveMonthlyXp }, monthlyXpResetAt: { gte: new Date(currentYear, currentMonth, 1) } }` only counts users whose `monthlyXpResetAt` is in the current month. If a user has a high `monthlyXp` from a previous month but hasn't logged in yet this month (so their `monthlyXpResetAt` is stale), they are correctly excluded from the count. But if the *current* user has a stale `monthlyXp` (so `effectiveMonthlyXp` is 0), the query will count *all* active users this month who have > 0 XP. This is mostly correct, but it doesn't account for users who have exactly the same XP. More importantly, the `monthlyXpResetAt` logic relies on the server's local time (`new Date()`), which might not align with the user's timezone, leading to inconsistent rank displays.",
+    "recommendation": "Consider using a cron job to reset all users' `monthlyXp` to 0 at the start of the month (UTC). This simplifies the ranking query and ensures consistency across the application. Alternatively, use a more robust ranking query that handles ties and stale data more accurately."
+  },
+  {
+    "id": "ISSUE-015",
+    "title": "Unused Variable `currentGenerations` in AI Route",
+    "severity": "Low",
+    "component": "app/api/ai/generate-sentences/route.ts",
+    "description": "In `app/api/ai/generate-sentences/route.ts`, the variable `currentGenerations` is declared using `let` but is never reassigned. This triggers an ESLint warning (`prefer-const`). While not a critical security flaw, it indicates a minor code quality issue.",
+    "recommendation": "Change `let currentGenerations` to `const currentGenerations`."
+  },
+  {
+    "id": "ISSUE-016",
+    "title": "Synchronous State Updates in Effects Causing Cascading Renders",
+    "severity": "Medium",
+    "component": "app/cards/deck/components/FlashCard.tsx, app/providers/LanguageProvider.tsx, app/providers/ThemeProvider.tsx",
+    "description": "Several components (`FlashCard`, `LanguageProvider`, `ThemeProvider`) call `setState` synchronously within a `useEffect` hook. For example, in `FlashCard.tsx`: `useEffect(() => { if (!isFlipped) setShowSwipeHint(false) }, [isFlipped])`. This pattern causes cascading renders, which can hurt performance and lead to a sluggish user experience, especially on lower-end devices. React recommends avoiding this pattern and instead calculating the state during render or updating it in the event handler that caused the change.",
+    "recommendation": "Refactor the components to avoid calling `setState` synchronously within `useEffect`. For example, in `FlashCard.tsx`, you can derive `showSwipeHint` directly from `isFlipped` during render, or update it in the same event handler that flips the card."
+  },
+  {
+    "id": "ISSUE-017",
+    "title": "Impure Function Calls During Render",
+    "severity": "Medium",
+    "component": "app/cards/deck/components/StreakCelebration.tsx, app/page.tsx",
+    "description": "The `StreakCelebration` and `page.tsx` components call `Math.random()` directly during render (e.g., when generating confetti particles or animating elements). `Math.random()` is an impure function, meaning it returns a different value every time it's called. Calling it during render violates React's rule that components must be pure and idempotent. This can cause unpredictable behavior, such as elements jumping around or re-animating unexpectedly when the component re-renders.",
+    "recommendation": "Move the `Math.random()` calls outside of the render phase. For example, generate the random values once in a `useEffect` hook and store them in state, or use `useMemo` to memoize the generated values so they remain stable across re-renders."
+  },
+  {
+    "id": "ISSUE-018",
+    "title": "Rate Limit Bypass via Email Enumeration",
+    "severity": "Medium",
+    "component": "app/api/auth/[...nextauth]/route.ts",
+    "description": "The login rate limiter in `app/api/auth/[...nextauth]/route.ts` uses the email address as the rate limit key (`login:${normalizedEmail}`). This means an attacker can bypass the rate limit by simply trying different email addresses. While this protects individual accounts from brute-force attacks, it does not protect the application from credential stuffing attacks or mass enumeration attempts across many different accounts.",
+    "recommendation": "Implement rate limiting based on the client's IP address in addition to the email address. This will prevent an attacker from making a large number of login attempts from a single IP, regardless of which email addresses they are targeting."
+  },
+  {
+    "id": "ISSUE-019",
+    "title": "Spaced Repetition Algorithm Flaw (Hardcoded Ease Factor)",
+    "severity": "Medium",
+    "component": "app/api/cards/route.ts",
+    "description": "In the `PATCH` endpoint for `/api/cards`, the spaced repetition algorithm calculates the next interval using `Math.round(prevInterval * Number(card.easeFactor || 2.5))`. However, the `easeFactor` is never updated based on the user's performance. It remains at its default value (or 2.5 if undefined). A proper spaced repetition algorithm (like SuperMemo-2) should adjust the ease factor dynamically: increasing it when the user easily remembers a card and decreasing it when they struggle. Because the ease factor is static, the intervals will grow exponentially at a fixed rate, which may not be optimal for learning.",
+    "recommendation": "Implement a dynamic ease factor adjustment. For example, if the user fails a card (`result !== 'success'`), decrease the ease factor slightly (e.g., by 0.15, with a minimum of 1.3). If they succeed, you could optionally increase it slightly or keep it the same depending on the specific algorithm you want to use."
+  },
+  {
+    "id": "ISSUE-020",
+    "title": "Missing Input Validation for Card Creation",
+    "severity": "Medium",
+    "component": "app/api/cards/route.ts",
+    "description": "The `POST` endpoint for `/api/cards` checks if `word`, `sentences`, and `imageUrl` are present, but it does not validate their types or contents. For example, it doesn't check if `sentences` is an array of strings, or if `imageUrl` is a valid URL. This could lead to database errors or unexpected behavior if a client sends malformed data.",
+    "recommendation": "Use a validation library like Zod to define a strict schema for the request body and validate the input before processing it."
+  }
+]

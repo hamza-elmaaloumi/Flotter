@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react'
 import { Check, X, Hand, Sparkles, ArrowLeft, ArrowRight, Pencil, Volume2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '../../../providers/LanguageProvider'
+import { useTheme } from '../../../providers/ThemeProvider'
 
 interface FlashcardProps {
   card: {
@@ -26,6 +27,7 @@ interface FlashcardProps {
 export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, flipTimestamp, onSwipeXp, onPlayAudio }: FlashcardProps) {
   const router = useRouter()
   const { t } = useLanguage()
+  const { isDark } = useTheme()
   const x = useMotionValue(0)
   const [isDragging, setIsDragging] = useState(false)
   const [showSwipeHint, setShowSwipeHint] = useState(false)
@@ -116,7 +118,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
           // Use -Capture events to stop propagation before framer-motion's deferred handlers fire
           onPointerDownCapture={(e) => e.stopPropagation()}
           onClick={(e) => { e.stopPropagation(); router.push(`${card.id}/edit`); }}
-          className="absolute top-4 right-4 z-[70] p-3 bg-zinc-800/80 backdrop-blur-md border border-white/10 rounded-full text-zinc-400 hover:text-white transition-all active:scale-90 shadow-xl"
+          className={`absolute top-4 right-4 z-[70] p-3 backdrop-blur-md border rounded-full transition-all active:scale-90 shadow-xl ${isDark ? 'bg-zinc-800/80 border-white/10 text-zinc-400 hover:text-white' : 'bg-white/80 border-black/10 text-[#6B7280] hover:text-[#111827]'}`}
         >
           <Pencil size={16} />
         </button>
@@ -130,7 +132,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
           {/* FRONT FACE */}
           <div
             onPointerUp={() => !isDragging && isTop && onFlip()}
-            className="absolute inset-0 rounded-[32px] overflow-hidden shadow-2xl bg-[#222222] border border-white/10"
+            className={`absolute inset-0 rounded-[32px] overflow-hidden shadow-2xl border ${isDark ? 'bg-[#222222] border-white/10' : 'bg-white border-black/10'}`}
             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
           >
             <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-6">
@@ -152,12 +154,12 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
                 <span className="text-emerald-500 text-[8px] md:text-[9px] tracking-[0.2em] uppercase font-bold flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> {t('flashcard.newWord')}
                 </span>
-                <h2 dir='ltr' className="text-2xl md:text-3xl font-black text-white">
+                <h2 dir='ltr' className={`text-2xl md:text-3xl font-black ${isDark ? 'text-white' : 'text-[#111827]'}`}>
                   {card.word.charAt(0)}<span className="tracking-widest opacity-50">_______</span>
                 </h2>
-                <p dir='ltr' className="text-zinc-400 text-xs md:text-base leading-relaxed">{maskedSentence}</p>
+                <p dir='ltr' className={`text-xs md:text-base leading-relaxed ${isDark ? 'text-zinc-400' : 'text-[#6B7280]'}`}>{maskedSentence}</p>
               </div>
-              <div dir='ltr' className="pt-4 opacity-50 flex items-center gap-2 text-[9px] uppercase font-bold tracking-widest text-white">
+              <div dir='ltr' className={`pt-4 opacity-50 flex items-center gap-2 text-[9px] uppercase font-bold tracking-widest ${isDark ? 'text-white' : 'text-[#111827]'}`}>
                 <Hand size={12} /> {t('flashcard.tapToReveal')}
               </div>
             </div>
@@ -166,7 +168,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
           {/* BACK FACE */}
           <div
             onPointerUp={handleBackClick}
-            className="absolute inset-0 bg-[#222222] rounded-[32px] overflow-hidden border border-white/10"
+            className={`absolute inset-0 rounded-[32px] overflow-hidden border ${isDark ? 'bg-[#222222] border-white/10' : 'bg-white border-black/10'}`}
             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
           >
             <motion.div style={{ opacity: successOpacity }} className="absolute inset-0 bg-emerald-500/20 z-20 pointer-events-none flex items-start justify-start p-6">
@@ -186,11 +188,11 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
             <div dir='ltr' className="h-[55%] p-6 flex flex-col items-center text-center relative">
               <div className="flex-1 flex flex-col items-center justify-center space-y-4">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter">{card.word}</h2>
+                  <h2 className={`text-3xl md:text-4xl font-black tracking-tighter ${isDark ? 'text-white' : 'text-[#111827]'}`}>{card.word}</h2>
                 </div>
                 
                 {/* Sentence Container with Audio Button inside */}
-                <div className="bg-white/5 p-4 rounded-xl border border-white/5 text-zinc-300 text-xs md:text-sm flex items-start gap-3 text-left">
+                <div className={`p-4 rounded-xl border text-xs md:text-sm flex items-start gap-3 text-left ${isDark ? 'bg-white/5 border-white/5 text-zinc-300' : 'bg-black/5 border-black/5 text-[#4B5563]'}`}>
                   <button
                     // CRITICAL FIX: Use -Capture events to stop propagation before framer-motion's deferred handlers fire
                     // This prevents the drag gesture from starting when clicking the audio button
@@ -204,7 +206,7 @@ export default function Flashcard({ card, isTop, isFlipped, onFlip, onReview, fl
                       e.stopPropagation(); 
                       onPlayAudio(); 
                     }}
-                    className="shrink-0 p-1.5 bg-white/10 rounded-full text-zinc-200 hover:bg-white/20 transition-colors active:scale-90 cursor-pointer"
+                    className={`shrink-0 p-1.5 rounded-full transition-colors active:scale-90 cursor-pointer ${isDark ? 'bg-white/10 text-zinc-200 hover:bg-white/20' : 'bg-black/10 text-[#4B5563] hover:bg-black/15'}`}
                   >
                     <Volume2 size={14} />
                   </button>

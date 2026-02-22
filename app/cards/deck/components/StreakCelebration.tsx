@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Crown, Shield } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useLanguage } from '../../../providers/LanguageProvider'
 
 // ────────────────────────────────────────────────────
 // Animated Celebration Flame (Learning-page style, enhanced)
@@ -13,7 +14,7 @@ const CelebrationFlame = () => (
   <motion.div
     initial={{ scale: 0, rotate: -15 }}
     animate={{ scale: 1, rotate: 0 }}
-    transition={{ type: 'spring', damping: 10, stiffness: 140, delay: 0.25 }}
+    transition={{ type: 'spring', damping: 10, stiffness: 140, delay: 0.1 }}
   >
     <svg width={76} height={76} viewBox="0 0 120 120" fill="none" className="overflow-visible">
       <defs>
@@ -88,30 +89,30 @@ function AnimatedDayCircle({
       transition={{ delay, duration: 0.3 }}
     >
       <div className="relative">
-        {/* Static circle base */}
+        {/* Static circle base - optimized for tight mobile views */}
         <div
-          className={`w-[34px] h-[34px] rounded-full flex items-center justify-center border-2 ${
+          className={`w-8 h-8 rounded-full flex items-center justify-center border-[1.5px] transition-colors duration-300 ${
             filled
-              ? 'bg-[#10B981] border-[#10B981] shadow-[0_0_10px_rgba(16,185,129,0.35)]'
+              ? 'bg-[#10B981] border-[#10B981] shadow-[0_2px_10px_rgba(16,185,129,0.3)]'
               : isFrozen
-              ? 'bg-[#3B82F6] border-[#3B82F6] shadow-[0_0_10px_rgba(59,130,246,0.25)]'
+              ? 'bg-[#3B82F6]/10 border-[#3B82F6]/50 shadow-[0_2px_10px_rgba(59,130,246,0.15)]'
               : isToday
-              ? 'bg-[#1C1C1E] border-[#10B981]'
+              ? 'bg-[#1C1C1E] border-[#10B981] shadow-[0_0_12px_rgba(16,185,129,0.15)]'
               : 'bg-[#1C1C1E] border-[#2D2D2F]'
           } ${isToday ? 'scale-[1.15]' : ''}`}
         >
           {/* Animated green fill for today */}
           {isToday && animateToFilled && (
             <motion.div
-              className="absolute inset-0 rounded-full bg-[#10B981] shadow-[0_0_16px_rgba(16,185,129,0.5)]"
+              className="absolute inset-0 rounded-full bg-[#10B981] shadow-[0_0_16px_rgba(16,185,129,0.4)]"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{
-                delay: delay + 0.4,
-                duration: 0.6,
+                delay: delay + 0.3,
+                duration: 0.5,
                 type: 'spring',
-                damping: 12,
-                stiffness: 180,
+                damping: 14,
+                stiffness: 160,
               }}
             />
           )}
@@ -123,17 +124,17 @@ function AnimatedDayCircle({
                 initial={isToday ? { scale: 0, rotate: -90 } : { scale: 1 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{
-                  delay: isToday ? delay + 0.7 : delay + 0.1,
+                  delay: isToday ? delay + 0.5 : delay + 0.1,
                   type: 'spring',
                   damping: 12,
                 }}
               >
-                <Check size={16} className="text-black" strokeWidth={3} />
+                <Check size={14} className="text-black" strokeWidth={3.5} />
               </motion.div>
             ) : isFrozen ? (
-              <Shield size={14} className="text-white" fill="currentColor" fillOpacity={0.2} />
+              <Shield size={12} className="text-[#3B82F6]" fill="currentColor" fillOpacity={0.2} />
             ) : (
-              <div className={`w-1.5 h-1.5 rounded-full ${isToday ? 'bg-[#10B981]' : 'bg-[#2D2D2F]'}`} />
+              <div className={`w-1 h-1 rounded-full ${isToday ? 'bg-[#10B981]' : 'bg-[#3A3A3C]'}`} />
             )}
           </div>
         </div>
@@ -142,13 +143,13 @@ function AnimatedDayCircle({
         {isToday && animateToFilled && (
           <>
             <motion.div
-              className="absolute inset-[-5px] rounded-full border-2 border-[#10B981]"
+              className="absolute inset-[-4px] rounded-full border-2 border-[#10B981]"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1.4, opacity: 0 }}
               transition={{ delay: delay + 0.6, duration: 1.2, repeat: Infinity, repeatDelay: 0.6 }}
             />
             <motion.div
-              className="absolute inset-[-5px] rounded-full border border-[#10B981]/30"
+              className="absolute inset-[-4px] rounded-full border border-[#10B981]/30"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1.7, opacity: 0 }}
               transition={{ delay: delay + 0.8, duration: 1.2, repeat: Infinity, repeatDelay: 0.6 }}
@@ -158,7 +159,7 @@ function AnimatedDayCircle({
       </div>
 
       <motion.span
-        className={`text-[10px] font-bold uppercase tracking-wider ${
+        className={`text-[9px] font-bold uppercase tracking-widest ${
           isToday || filled ? 'text-[#10B981]' : isFrozen ? 'text-[#3B82F6]' : 'text-[#6B7280]'
         }`}
         initial={{ opacity: 0 }}
@@ -216,9 +217,6 @@ interface StreakCelebrationProps {
   swipeCount: number
   sessionXp: number
   isPro: boolean
-  language: string
-  lastActiveDate: string | null
-  t: (key: string) => string
 }
 
 export default function StreakCelebration({
@@ -228,10 +226,10 @@ export default function StreakCelebration({
   swipeCount,
   sessionXp,
   isPro,
-  language,
-  t,
 }: StreakCelebrationProps) {
   const router = useRouter()
+  const { t, language } = useLanguage()
+  const isArabic = language === 'ar'
 
   // Stable random confetti (only generated once)
   const confetti = useMemo(
@@ -253,7 +251,7 @@ export default function StreakCelebration({
 
   // Week labels & today index (Mon–Sun)
   const weekLabels =
-    language === 'ar'
+    isArabic
       ? ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'أ']
       : ['M', 'T', 'W', 'T', 'F', 'S', 'S']
   const todayIndex = (new Date().getDay() + 6) % 7
@@ -267,35 +265,32 @@ export default function StreakCelebration({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.3 }}
         >
-          {/* Backdrop */}
+          {/* Backdrop with blur */}
           <motion.div
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onDismiss}
           />
 
-          {/* Card */}
+          {/* Card - Styled to match the modern upsell structure */}
           <motion.div
-            className="relative max-w-sm w-full bg-[#1C1C1E] rounded-[24px] p-8 text-center overflow-hidden"
-            style={{
-              border: '1.5px solid rgba(16,185,129,0.3)',
-              boxShadow: '0 0 60px rgba(16,185,129,0.08), 0 25px 50px rgba(0,0,0,0.5)',
-            }}
-            initial={{ scale: 0.65, y: 60, opacity: 0 }}
+            dir={isArabic ? 'rtl' : 'ltr'}
+            className="relative max-w-[340px] w-full bg-[#1C1C1E] border border-[#2D2D2F] rounded-[24px] overflow-hidden pt-8 pb-5 px-5 text-center"
+            initial={{ scale: 0.96, y: 30, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.9, y: 30, opacity: 0 }}
-            transition={{ type: 'spring', damping: 18, stiffness: 240, delay: 0.05 }}
+            exit={{ scale: 0.96, y: 20, opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* Animated shimmer sweep */}
             <motion.div
               className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  'linear-gradient(105deg, transparent 40%, rgba(16,185,129,0.07) 50%, transparent 60%)',
+                  'linear-gradient(105deg, transparent 40%, rgba(16,185,129,0.05) 50%, transparent 60%)',
                 backgroundSize: '200% 100%',
               }}
               animate={{ backgroundPositionX: ['200%', '-200%'] }}
@@ -303,48 +298,48 @@ export default function StreakCelebration({
             />
 
             {/* Glow orbs */}
-            <div className="absolute top-[-50px] right-[-50px] w-[140px] h-[140px] blur-[70px] rounded-full bg-[#10B981]/12 pointer-events-none" />
-            <div className="absolute bottom-[-40px] left-[-40px] w-[120px] h-[120px] blur-[60px] rounded-full bg-[#FACC15]/8 pointer-events-none" />
+            <div className="absolute top-[-50px] right-[-50px] w-[140px] h-[140px] blur-[70px] rounded-full bg-[#10B981]/15 pointer-events-none" />
+            <div className="absolute bottom-[-40px] left-[-40px] w-[120px] h-[120px] blur-[60px] rounded-full bg-[#FACC15]/10 pointer-events-none" />
 
             {/* Confetti */}
             {confetti.map((p) => (
               <ConfettiPiece key={p.id} {...p} />
             ))}
 
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col items-center">
               {/* Flame */}
-              <div className="flex justify-center mb-2">
+              <div className="flex justify-center mb-1">
                 <CelebrationFlame />
               </div>
 
               {/* Streak Number */}
               <motion.div
-                initial={{ scale: 0, opacity: 0 }}
+                initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: 'spring', damping: 11, stiffness: 180, delay: 0.4 }}
+                transition={{ type: 'spring', damping: 14, stiffness: 200, delay: 0.3 }}
                 className="mb-1"
               >
-                <span className="text-[44px] font-black text-[#10B981] tabular-nums leading-none drop-shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                <span className="text-[48px] font-black text-[#10B981] tabular-nums leading-none tracking-tight drop-shadow-md">
                   {newStreak}
                 </span>
               </motion.div>
 
               {/* Title */}
               <motion.h3
-                className="text-[20px] font-bold text-white mb-1"
+                className="text-[18px] font-bold text-white mb-1.5"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.4 }}
               >
                 {t('deck.streakAlive')}
               </motion.h3>
 
               {/* Subtitle */}
               <motion.p
-                className="text-[13px] text-[#9CA3AF] leading-relaxed mb-5"
+                className="text-[12px] leading-relaxed text-[#9CA3AF] mb-6 px-2"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 0.45 }}
               >
                 {t('deck.sessionSummary1')}
                 <span className="text-white font-bold">{swipeCount}</span>
@@ -353,12 +348,12 @@ export default function StreakCelebration({
                 {t('deck.sessionSummary3')}
               </motion.p>
 
-              {/* Week Progress Bar */}
+              {/* Week Progress Bar - Optimized for tight mobile spaces */}
               <motion.div
-                className="flex items-center justify-between px-2 mb-6 py-3 bg-[#151517] rounded-[14px] border border-[#2D2D2F]"
+                className="flex items-center justify-between w-full px-2 py-3.5 mb-6 bg-[#151517] rounded-[18px] border border-[#2D2D2F]"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.65 }}
+                transition={{ delay: 0.5 }}
               >
                 {weekLabels.map((label, i) => {
                   const isToday = i === todayIndex
@@ -383,7 +378,7 @@ export default function StreakCelebration({
                       isToday={isToday}
                       animateToFilled={isToday}
                       isFrozen={isFrozen}
-                      delay={0.7 + i * 0.08}
+                      delay={0.55 + i * 0.06}
                     />
                   )
                 })}
@@ -392,10 +387,10 @@ export default function StreakCelebration({
               {/* Pro hint for free users */}
               {!isPro && (
                 <motion.p
-                  className="text-[11px] text-[#FACC15] mb-4"
+                  className="text-[10px] font-bold uppercase tracking-widest text-[#FACC15] mb-4"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 1.3 }}
+                  transition={{ delay: 1.1 }}
                 >
                   {t('deck.proStreakHint')}
                 </motion.p>
@@ -403,23 +398,23 @@ export default function StreakCelebration({
 
               {/* Buttons */}
               <motion.div
-                className="flex flex-col gap-2"
+                className="flex flex-col gap-2 w-full"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.1 }}
+                transition={{ delay: 0.9 }}
               >
                 <button
                   onClick={() => {
                     onDismiss()
                     router.push('/cards/learning')
                   }}
-                  className="w-full bg-[#10B981] text-black py-3.5 rounded-[12px] font-bold text-[13px] transition-all active:scale-95 shadow-[0_8px_24px_rgba(16,185,129,0.25)]"
+                  className="w-full bg-[#10B981] text-black py-3.5 rounded-[14px] font-bold text-[13px] transition-all active:scale-[0.97]"
                 >
                   {t('deck.backToDashboard')}
                 </button>
                 <button
                   onClick={onDismiss}
-                  className="w-full py-3 text-[12px] font-bold text-[#6B7280] uppercase tracking-widest hover:text-white transition-colors"
+                  className="w-full py-3 text-[11px] font-bold text-[#6B7280] uppercase tracking-widest hover:text-white transition-colors"
                 >
                   {t('deck.continueLearning')}
                 </button>
@@ -427,9 +422,9 @@ export default function StreakCelebration({
                   <Link
                     href="/subscribe"
                     onClick={onDismiss}
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#FACC15]/10 border border-[#FACC15]/20 text-[#FACC15] py-3 rounded-[12px] font-bold text-[12px] transition-all active:scale-95"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#FACC15]/10 border border-[#FACC15]/20 text-[#FACC15] py-3.5 rounded-[14px] font-bold text-[13px] transition-all active:scale-[0.97]"
                   >
-                    <Crown size={12} fill="currentColor" />
+                    <Crown size={14} fill="currentColor" />
                     {t('deck.protectStreak')}
                   </Link>
                 )}

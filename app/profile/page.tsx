@@ -31,8 +31,8 @@ export default async function ProfilePage(props: { searchParams: Promise<{ edit?
 
   if (!user) {
     return (
-      <main className="min-h-screen bg-[#121212] flex items-center justify-center p-6">
-        <div className="bg-[#222222] border border-[#EF4444]/20 p-8 rounded-[14px] text-center">
+      <main className="min-h-screen bg-[#F8F9FA] dark:bg-[#121212] flex items-center justify-center p-6">
+        <div className="bg-white dark:bg-[#222222] border border-[#E2E4E9] dark:border-[#EF4444]/20 p-8 rounded-[14px] text-center">
           <p className="text-[#EF4444] text-[11px] font-bold uppercase tracking-widest">Profile not found</p>
         </div>
       </main>

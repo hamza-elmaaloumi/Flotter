@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { useUser } from '../providers/UserProvider'
 import { useLanguage } from '../providers/LanguageProvider'
 import { useTheme } from '../providers/ThemeProvider'
-import { User, Zap, Layers, LifeBuoy, Settings, Trophy } from 'lucide-react'
+import { User, Layers, LifeBuoy, Settings, Trophy } from 'lucide-react'
+import FlotterLogo from './FlotterLogo'
 
 export default function Header() {
   const { user, isLoading } = useUser()
@@ -17,19 +18,11 @@ export default function Header() {
     <header className={`fixed top-0 left-0 right-0 z-[100] h-[64px] border-b backdrop-blur-xl ${isDark ? 'border-[#262626] bg-[#1c1c1e]/90' : 'border-[#E2E4E9] bg-white/90'}`}>
       <nav className="max-w-5xl mx-auto px-[6px] h-full flex items-center justify-between">
 
-        {/* Left: Brand & Header Style (Clean/Left alignment) */}
-        <div className="flex items-center gap-4">
-          <Link href="" className="flex items-center group">
-            {/* item_radius: 12px | Brand Primary Blue: #3B82F6 */}
-            <div className="w-9 h-9 bg-[#3B82F6] rounded-[12px] flex items-center justify-center transition-all group-hover:bg-[#1D4ED8]">
-              <Zap size={20} fill="white" className="text-white" />
-            </div>
+        {/* Left: Brand Logo */}
+        <div className="flex items-center">
+          <Link href="" className="flex items-center">
+            <FlotterLogo isDark={isDark} height={34} />
           </Link>
-
-          {/* Header Title: h2 style (16px, Bold) */}
-          <span className={`hidden md:block text-[16px] font-bold tracking-normal ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>
-            Flotter
-          </span>
         </div>
 
         {/* Right: Action Buttons (Support, Settings) per JSON "elements" */}

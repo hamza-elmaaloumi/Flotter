@@ -14,6 +14,26 @@ function sanitizeCard(card: any) {
   }
 }
 
+/**
+ * Award XP immediately after a card review (success or struggle).
+ * Called per-swipe so XP is persisted even if the user exits mid-session.
+ *   +10 base XP when the user engaged (waited ≥ 1.5 s after flip)
+ *   +5  bonus  when the user listened to audio before swiping
+ */
+async function awardReviewXp(
+  userId: string,
+  earnedReviewXp: boolean | undefined,
+  audioPlayed: boolean | undefined,
+  updatedCard: any,
+) {
+  if (earnedReviewXp) {
+    const xpAmount = audioPlayed ? 15 : 10
+    await awardXp(userId, xpAmount)
+    return NextResponse.json({ card: sanitizeCard(updatedCard), xpAwarded: xpAmount })
+  }
+  return NextResponse.json({ card: sanitizeCard(updatedCard) })
+}
+
 // POST: Create a new card for the logged-in user
 export async function POST(req: Request) {
   try {
@@ -27,6 +47,18 @@ export async function POST(req: Request) {
 
     if (!word || !sentences || !imageUrl) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+
+    // ISSUE-020: Validate types and contents of input fields
+    if (typeof word !== 'string' || word.trim().length === 0 || word.length > 100) {
+      return NextResponse.json({ error: 'Invalid word: must be a non-empty string (max 100 chars)' }, { status: 400 })
+    }
+    if (!Array.isArray(sentences) || sentences.length === 0 || sentences.length > 20 ||
+        !sentences.every((s: unknown) => typeof s === 'string' && s.trim().length > 0)) {
+      return NextResponse.json({ error: 'Invalid sentences: must be a non-empty array of non-empty strings (max 20)' }, { status: 400 })
+    }
+    if (typeof imageUrl !== 'string' || imageUrl.trim().length === 0 || imageUrl.length > 2048) {
+      return NextResponse.json({ error: 'Invalid imageUrl: must be a non-empty string (max 2048 chars)' }, { status: 400 })
     }
 
     const card = await prisma.card.create({
@@ -54,7 +86,6 @@ export async function GET(req: Request) {
 
     const url = new URL(req.url)
     const dueOnly = url.searchParams.get('dueOnly') === 'true'
-    const doRotate = url.searchParams.get('rotate') === 'true'
 
     const where: any = { userId }
     if (dueOnly) where.nextReviewAt = { lte: new Date() }
@@ -64,21 +95,8 @@ export async function GET(req: Request) {
       orderBy: { nextReviewAt: 'asc' },
     })
 
-    if (doRotate && cards.length > 0) {
-      // Limit batch rotation to 50 cards max to avoid DB timeouts
-      const cardsToRotate = cards.slice(0, 50)
-      const updates = cardsToRotate.map((c: any) => {
-        const nextIndex = (c.currentSentenceIndex + 1) % c.sentences.length
-        return prisma.card.update({
-          where: { id: c.id },
-          data: { currentSentenceIndex: nextIndex },
-        })
-      })
-      const updatedCards = await prisma.$transaction(updates)
-      // Merge updated cards back, keeping the rest unchanged
-      const updatedMap = new Map(updatedCards.map((c: any) => [c.id, c]))
-      cards = cards.map((c: any) => updatedMap.get(c.id) || c)
-    }
+    // ISSUE-002: Rotation removed from GET — card rotation should only happen
+    // explicitly via a PATCH request when the user actually reviews or skips a card.
 
     return NextResponse.json({ cards: cards.map(sanitizeCard) })
   } catch (err) {
@@ -96,7 +114,7 @@ export async function PATCH(req: Request) {
     const userId = session.user.id
 
     const body = await req.json()
-    const { cardId, action, result } = body || {}
+    const { cardId, action, result, earnedReviewXp, audioPlayed } = body || {}
 
     // Verify ownership before updating
     const card = await prisma.card.findUnique({ where: { id: cardId } })
@@ -105,7 +123,8 @@ export async function PATCH(req: Request) {
 
     if (action === 'rotate') {
       const nextIndex = (card.currentSentenceIndex + 1) % card.sentences.length
-      const updated = await prisma.card.update({ where: { id: cardId }, data: { currentSentenceIndex: nextIndex } })
+      // ISSUE-009: Include userId in where clause for defense-in-depth
+      const updated = await prisma.card.update({ where: { id: cardId, userId }, data: { currentSentenceIndex: nextIndex } })
       return NextResponse.json({ card: sanitizeCard(updated) })
     }
 
@@ -113,31 +132,45 @@ export async function PATCH(req: Request) {
       const now = new Date()
       if (result === 'success') {
         const prevInterval = Number(card.currentIntervalMs || 0)
-        const intervalMs = prevInterval > 0 ? Math.round(prevInterval * Number(card.easeFactor || 2.5)) : INITIAL_REVIEW_MS
+        const currentEase = Number(card.easeFactor || 2.5)
+        const intervalMs = prevInterval > 0 ? Math.round(prevInterval * currentEase) : INITIAL_REVIEW_MS
+
+        // ISSUE-019: Dynamically adjust ease factor on success
+        // Increase slightly (capped at 3.0) to reward consistent recall
+        const newEaseFactor = Math.min(currentEase + 0.1, 3.0)
+
+        // ISSUE-009: Include userId in where clause for defense-in-depth
         const updated = await prisma.card.update({
-          where: { id: cardId },
+          where: { id: cardId, userId },
           data: {
             consecutiveCorrect: { increment: 1 },
             currentIntervalMs: BigInt(intervalMs),
+            easeFactor: newEaseFactor,
             lastReviewedAt: now,
             nextReviewAt: new Date(Date.now() + intervalMs),
           },
         })
-        // Award +10 XP for successful card review (server-side verified)
-        await awardXp(userId, 10)
-        return NextResponse.json({ card: sanitizeCard(updated) })
+        // XP awarded below (shared logic for success + struggle)
+        return await awardReviewXp(userId, earnedReviewXp, audioPlayed, updated)
       }
 
+      // ISSUE-019: Decrease ease factor on failure (min 1.3) per SM-2 algorithm
+      const currentEase = Number(card.easeFactor || 2.5)
+      const newEaseFactor = Math.max(currentEase - 0.2, 1.3)
+
+      // ISSUE-009: Include userId in where clause for defense-in-depth
       const updated = await prisma.card.update({
-        where: { id: cardId },
+        where: { id: cardId, userId },
         data: {
           consecutiveCorrect: 0,
           currentIntervalMs: BigInt(0),
+          easeFactor: newEaseFactor,
           lastReviewedAt: now,
           nextReviewAt: now,
         },
       })
-      return NextResponse.json({ card: sanitizeCard(updated) })
+      // XP awarded below (shared logic for success + struggle)
+      return await awardReviewXp(userId, earnedReviewXp, audioPlayed, updated)
     }
 
     return NextResponse.json({ error: 'unknown_action' }, { status: 400 })

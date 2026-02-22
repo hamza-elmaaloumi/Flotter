@@ -10,26 +10,22 @@ export async function POST(req: Request) {
     const body = await req.text()
     const headers = Object.fromEntries(req.headers.entries())
 
-    // Verify the webhook signature — required in production
-    let event: any
-    if (process.env.POLAR_WEBHOOK_SECRET) {
-      try {
-        event = validateEvent(body, headers, process.env.POLAR_WEBHOOK_SECRET)
-      } catch (err) {
-        if (err instanceof WebhookVerificationError) {
-          console.error('Webhook verification failed:', err.message)
-          return NextResponse.json({ error: 'Invalid signature' }, { status: 403 })
-        }
-        throw err
-      }
-    } else if (process.env.NODE_ENV === 'production') {
-      // In production, POLAR_WEBHOOK_SECRET must be configured
-      console.error('POLAR_WEBHOOK_SECRET is not configured in production!')
+    // ISSUE-008: Always require webhook signature verification.
+    // If secret is missing, reject the request immediately.
+    if (!process.env.POLAR_WEBHOOK_SECRET) {
+      console.error('POLAR_WEBHOOK_SECRET is not configured!')
       return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
-    } else {
-      // Development only — parse raw body without verification
-      console.warn('⚠️ Webhook signature verification skipped (dev mode)')
-      event = JSON.parse(body)
+    }
+
+    let event: any
+    try {
+      event = validateEvent(body, headers, process.env.POLAR_WEBHOOK_SECRET)
+    } catch (err) {
+      if (err instanceof WebhookVerificationError) {
+        console.error('Webhook verification failed:', err.message)
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 403 })
+      }
+      throw err
     }
 
     const eventType = event.type

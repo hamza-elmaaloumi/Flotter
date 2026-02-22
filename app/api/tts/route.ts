@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import * as googleTTS from 'google-tts-api';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]/route';
-import { awardXp } from '@/lib/xp';
 
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
@@ -59,10 +58,8 @@ export async function GET(request: Request) {
       arrayBuffer = await response.arrayBuffer();
     }
 
-    // Award +5 XP for audio listen (server-side verified)
-    // @ts-ignore
-    const userId = session.user.id
-    await awardXp(userId, 5).catch(() => {})
+    // XP is no longer awarded here — it was exploitable via pre-fetching.
+    // Audio XP should be awarded when the user completes a card review.
 
     return new NextResponse(arrayBuffer, {
       headers: {

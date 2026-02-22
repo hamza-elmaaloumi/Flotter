@@ -25,8 +25,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     // SECURITY: Ensure user owns this card
     if (card.userId !== userId) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
 
+    // ISSUE-012: Include userId in where clause for defense-in-depth
     const updated = await prisma.card.update({
-      where: { id },
+      where: { id, userId },
       data: {
         ...(word && { word }),
         ...(sentences && { sentences }),
@@ -57,8 +58,9 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     // SECURITY: Ensure user owns this card
     if (card.userId !== userId) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
 
+    // ISSUE-012: Include userId in where clause for defense-in-depth
     await prisma.card.delete({
-      where: { id }
+      where: { id, userId }
     })
 
     return NextResponse.json({ success: true })

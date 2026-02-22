@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 
 import { useLanguage } from './providers/LanguageProvider'
+import { useTheme } from './providers/ThemeProvider'
 
 // ==========================================
 // PREMIUM ANIMATED COMPONENTS
@@ -391,6 +392,7 @@ const AIGenerationSVG = () => {
 const AIGenerationVisualizer = () => {
   const [step, setStep] = useState(0)
   const { t } = useLanguage()
+  const { isDark } = useTheme()
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -407,7 +409,7 @@ const AIGenerationVisualizer = () => {
   ]
   
   return (
-    <div className="relative w-full h-40 bg-[#121212] rounded-[12px] border border-[#2D2D2F] overflow-hidden flex flex-col items-center justify-center">
+    <div className={`relative w-full h-40 ${isDark ? 'bg-[#121212]' : 'bg-[#F0F1F3]'} rounded-[12px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} overflow-hidden flex flex-col items-center justify-center`}>
       <AnimatePresence mode="wait">
         <motion.div
           key={step}
@@ -422,11 +424,11 @@ const AIGenerationVisualizer = () => {
             className: "mb-2",
             style: { color: steps[step].color }
           })}
-          <p className="text-[11px] font-bold text-[#9CA3AF] tracking-widest uppercase">{steps[step].label}</p>
+          <p className={`text-[11px] font-bold ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} tracking-widest uppercase`}>{steps[step].label}</p>
         </motion.div>
       </AnimatePresence>
       
-      <div className="absolute bottom-5 w-3/4 h-0.5 bg-[#1C1C1E] rounded-full overflow-hidden">
+      <div className={`absolute bottom-5 w-3/4 h-0.5 ${isDark ? 'bg-[#1C1C1E]' : 'bg-[#E2E4E9]'} rounded-full overflow-hidden`}>
         <motion.div 
           className="h-full"
           style={{ backgroundColor: steps[step].color }}
@@ -442,6 +444,7 @@ const AIGenerationVisualizer = () => {
 
 const AutoSwipeDemo = () => {
   const { t } = useLanguage()
+  const { isDark } = useTheme()
   const initialCards = [
     { id: 1, word: "Ephemeral", color: "#3B82F6" },
     { id: 2, word: "Resilient", color: "#10B981" },
@@ -476,7 +479,7 @@ const AutoSwipeDemo = () => {
             <motion.div
               key={card.id}
               layout
-              className="absolute w-full max-w-[200px] h-36 bg-[#121212] rounded-[12px] border-2 flex flex-col items-center justify-center shadow-lg"
+              className={`absolute w-full max-w-[200px] h-36 ${isDark ? 'bg-[#121212]' : 'bg-white'} rounded-[12px] border-2 flex flex-col items-center justify-center shadow-lg`}
               style={{ 
                 borderColor: card.color,
                 zIndex: initialCards.length - index,
@@ -496,7 +499,7 @@ const AutoSwipeDemo = () => {
               }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
-              <h3 className="text-[19px] font-bold text-white">{card.word}</h3>
+              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'}`}>{card.word}</h3>
               
               <AnimatePresence>
                 {isCurrent && (
@@ -539,6 +542,7 @@ const AutoSwipeDemo = () => {
 
 const RetentionGraph = () => {
   const { t } = useLanguage()
+  const { isDark } = useTheme()
   const data = [
     { day: 0, standard: 100, flotter: 100 },
     { day: 1, standard: 50, flotter: 95 },
@@ -570,7 +574,7 @@ const RetentionGraph = () => {
   const flotterPath = createSmoothPath('flotter')
 
   return (
-    <div className="w-full h-48 bg-[#121212] rounded-[12px] p-4 border border-[#2D2D2F] relative">
+    <div className={`w-full h-48 ${isDark ? 'bg-[#121212]' : 'bg-[#F0F1F3]'} rounded-[12px] p-4 border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} relative`}>
       <svg viewBox="0 0 400 200" className="w-full h-full overflow-visible">
         <defs>
           <linearGradient id="flotterGradient" x1="0" y1="0" x2="0" y2="1">
@@ -584,7 +588,7 @@ const RetentionGraph = () => {
         </defs>
 
         {[0, 100, 200].map(y => (
-          <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#2D2D2F" strokeWidth="1" strokeDasharray="4 4" />
+          <line key={y} x1="0" y1={y} x2="400" y2={y} stroke={isDark ? "#2D2D2F" : "#E2E4E9"} strokeWidth="1" strokeDasharray="4 4" />
         ))}
         
         <motion.path
@@ -635,7 +639,7 @@ const RetentionGraph = () => {
             viewport={{ once: true }}
           >
             <circle cx={i * (400 / 5)} cy={200 - (data[i].standard / 100) * 180} r="4" fill="#EF4444" />
-            <circle cx={i * (400 / 5)} cy={200 - (data[i].flotter / 100) * 180} r="4" fill="#3B82F6" stroke="#121212" strokeWidth="2" />
+            <circle cx={i * (400 / 5)} cy={200 - (data[i].flotter / 100) * 180} r="4" fill="#3B82F6" stroke={isDark ? "#121212" : "#F0F1F3"} strokeWidth="2" />
           </motion.g>
         ))}
       </svg>
@@ -647,7 +651,7 @@ const RetentionGraph = () => {
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-0.5 bg-[#3B82F6]" />
-          <span className="text-[#FFFFFF]">{t('landing.graph.flotter')}</span>
+          <span className={isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}>{t('landing.graph.flotter')}</span>
         </div>
       </div>
     </div>
@@ -685,6 +689,7 @@ const AudioWaveform = () => {
 
 export default function LandingPage() {
   const { t, language } = useLanguage()
+  const { isDark } = useTheme()
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -696,15 +701,15 @@ export default function LandingPage() {
   const isHeroInView = useInView(heroRef, { once: true })
   
   return (
-    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#121212] text-white antialiased overflow-x-hidden selection:bg-[#3B82F6]/30">
-      <NeuralBackground />
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen ${isDark ? 'bg-[#121212] text-white' : 'bg-[#F8F9FA] text-[#111827]'} antialiased overflow-x-hidden selection:bg-[#3B82F6]/30`}>
+      {isDark && <NeuralBackground />}
       
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3B82F6] via-[#FBBF24] to-[#EF4444] origin-left z-50"
         style={{ scaleX }}
       />
       
-      <nav className="fixed top-0 w-full z-40 border-b border-[#262626] bg-[#121212]/95 backdrop-blur-xl">
+      <nav className={`fixed top-0 w-full z-40 border-b ${isDark ? 'border-[#262626] bg-[#121212]/95' : 'border-[#EBEDF0] bg-white/95'} backdrop-blur-xl`}>
         <div className="max-w-5xl mx-auto px-4 h-[64px] flex items-center justify-between">
           <motion.div 
             className="flex items-center gap-3"
@@ -724,7 +729,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <Link href="/login" className="hidden sm:block text-[#6B7280] hover:text-white text-[11px] font-bold uppercase tracking-widest transition-colors">
+            <Link href="/login" className={`hidden sm:block ${isDark ? 'text-[#6B7280] hover:text-white' : 'text-[#4B5563] hover:text-[#111827]'} text-[11px] font-bold uppercase tracking-widest transition-colors`}>
               {t('landing.nav.signIn')}
             </Link>
             <Link href="/register" className="bg-[#3B82F6] text-white px-5 py-2.5 rounded-[12px] text-[13px] font-bold uppercase tracking-widest hover:bg-[#1D4ED8] transition-all">
@@ -735,7 +740,7 @@ export default function LandingPage() {
       </nav>
 
       {/* HERO SECTION */}
-      <section ref={heroRef} className="relative pt-[140px] pb-[80px] px-4 overflow-hidden flex items-center justify-center min-h-[90vh] bg-[#121212]">
+      <section ref={heroRef} className={`relative pt-[140px] pb-[80px] px-4 overflow-hidden flex items-center justify-center min-h-[90vh] ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'}`}>
         <div className="max-w-5xl mx-auto relative z-10 w-full">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -766,9 +771,9 @@ export default function LandingPage() {
                 </span>
               </h1>
               
-              <p className="text-[16px] md:text-[18px] text-[#9CA3AF] mb-10 max-w-sm mx-auto lg:mx-0 leading-relaxed">
+              <p className={`text-[16px] md:text-[18px] ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} mb-10 max-w-sm mx-auto lg:mx-0 leading-relaxed`}>
                 {t('landing.hero.desc1')}
-                <span className="text-white font-bold uppercase text-[15px]"> {t('landing.hero.desc2')}</span>
+                <span className={`${isDark ? 'text-white' : 'text-[#111827]'} font-bold uppercase text-[15px]`}> {t('landing.hero.desc2')}</span>
                 {t('landing.hero.desc3')}
               </p>
               
@@ -782,7 +787,7 @@ export default function LandingPage() {
                   </span>
                 </Link>
                 
-                <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-[12px] border border-[#262626] text-[#6B7280] hover:text-white hover:bg-[#1A1A1A] transition-all text-[13px] font-bold uppercase tracking-widest">
+                <button className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-[12px] border ${isDark ? 'border-[#262626] text-[#6B7280] hover:text-white hover:bg-[#1A1A1A]' : 'border-[#EBEDF0] text-[#4B5563] hover:text-[#111827] hover:bg-[#F0F1F3]'} transition-all text-[13px] font-bold uppercase tracking-widest`}>
                   <Play size={14} fill="#FACC15" className="text-[#FACC15]" />
                   {t('landing.hero.watchDemo')}
                 </button>
@@ -805,7 +810,7 @@ export default function LandingPage() {
       </section>
 
       {/* STATS */}
-      <section className="border-y border-[#262626] bg-[#121212]">
+      <section className={`border-y ${isDark ? 'border-[#262626] bg-[#121212]' : 'border-[#EBEDF0] bg-[#F8F9FA]'}`}>
         <div className="max-w-5xl mx-auto px-4 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
@@ -816,7 +821,7 @@ export default function LandingPage() {
             ].map((stat, i) => (
               <motion.div 
                 key={i}
-                className="bg-[#1C1C1E] p-4 rounded-[12px] border border-[#2D2D2F]"
+                className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} p-4 rounded-[12px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'}`}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
@@ -825,7 +830,7 @@ export default function LandingPage() {
                 <div className="text-[24px] font-bold mb-1" style={{ color: stat.color }}>
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 </div>
-                <div className="text-[#FFFFFF] text-[13px] font-bold mb-1">{stat.label}</div>
+                <div className={`${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'} text-[13px] font-bold mb-1`}>{stat.label}</div>
                 <div className="text-[#6B7280] text-[10px] uppercase tracking-wider font-bold">{stat.source}</div>
               </motion.div>
             ))}
@@ -834,12 +839,12 @@ export default function LandingPage() {
       </section>
 
       {/* PROBLEM SECTION */}
-      <section className="py-24 px-4 bg-[#121212]">
+      <section className={`py-24 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'}`}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-[11px] font-bold uppercase text-[#EF4444] tracking-widest mb-3">{t('landing.problem.challenge')}</h2>
-            <h3 className="text-[28px] font-bold text-[#FFFFFF]">{t('landing.problem.title')}</h3>
-            <p className="text-[#9CA3AF] text-[15px] mt-2">{t('landing.problem.subtitle')}</p>
+            <h3 className={`text-[28px] font-bold ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>{t('landing.problem.title')}</h3>
+            <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mt-2`}>{t('landing.problem.subtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -862,13 +867,13 @@ export default function LandingPage() {
                 { title: t('landing.problem.contextTitle'), desc: t('landing.problem.contextDesc') },
                 { title: t('landing.problem.frictionTitle'), desc: t('landing.problem.frictionDesc') }
               ].map((item, i) => (
-                <div key={i} className="bg-[#1C1C1E] rounded-[12px] p-5 border border-[#2D2D2F] flex gap-4">
+                <div key={i} className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[12px] p-5 border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} flex gap-4`}>
                   <div className="w-10 h-10 rounded-[12px] bg-[#EF4444]/10 flex items-center justify-center flex-shrink-0 border border-[#EF4444]/20">
                     <X className="text-[#EF4444]" size={18} />
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-bold text-white mb-1">{item.title}</h3>
-                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed">{item.desc}</p>
+                    <h3 className={`text-[15px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-1`}>{item.title}</h3>
+                    <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[13px] leading-relaxed`}>{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -878,43 +883,43 @@ export default function LandingPage() {
       </section>
 
       {/* FEATURES GRID */}
-      <section className="py-24 px-4 bg-[#121212] relative border-t border-[#262626]">
+      <section className={`py-24 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'} relative border-t ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-[11px] font-bold uppercase text-[#3B82F6] tracking-widest mb-3">{t('landing.methodology.title')}</h2>
-            <h3 className="text-[28px] font-bold text-[#FFFFFF]">{t('landing.methodology.heading1')}<span className="text-[#3B82F6]">Flotter</span>{t('landing.methodology.heading2')}</h3>
-            <p className="text-[#9CA3AF] text-[15px] mt-2">{t('landing.methodology.subtitle')}</p>
+            <h3 className={`text-[28px] font-bold ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>{t('landing.methodology.heading1')}<span className="text-[#3B82F6]">Flotter</span>{t('landing.methodology.heading2')}</h3>
+            <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mt-2`}>{t('landing.methodology.subtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-[12px]">
-            <HolographicCard className="bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-8 group">
+            <HolographicCard className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} p-8 group`}>
               <div className="flex items-start justify-between mb-6">
                 <div className="w-16 h-16 rounded-[12px] bg-[#3B82F6]/10 flex items-center justify-center border border-[#3B82F6]/20">
                   <Sparkles className="text-[#3B82F6]" size={28} />
                 </div>
                 <span className="text-[11px] font-bold uppercase tracking-widest text-[#3B82F6] bg-[#3B82F6]/10 px-3 py-1 rounded-full">{t('landing.methodology.step1')}</span>
               </div>
-              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.methodology.step1Title')}</h3>
-              <p className="text-[#9CA3AF] text-[15px] mb-8 leading-relaxed">{t('landing.methodology.step1Desc')}</p>
+              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.methodology.step1Title')}</h3>
+              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8 leading-relaxed`}>{t('landing.methodology.step1Desc')}</p>
               <AIGenerationVisualizer />
             </HolographicCard>
             
-            <HolographicCard className="bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-8 group">
+            <HolographicCard className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} p-8 group`}>
               <div className="flex items-start justify-between mb-6">
                 <div className="w-16 h-16 rounded-[12px] bg-[#FACC15]/10 flex items-center justify-center border border-[#FACC15]/20">
                   <Layers className="text-[#FACC15]" size={28} />
                 </div>
                 <span className="text-[11px] font-bold uppercase tracking-widest text-[#FACC15] bg-[#FACC15]/10 px-3 py-1 rounded-full">{t('landing.methodology.step2')}</span>
               </div>
-              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.methodology.step2Title')}</h3>
-              <p className="text-[#9CA3AF] text-[15px] mb-8 leading-relaxed">{t('landing.methodology.step2Desc')}</p>
+              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.methodology.step2Title')}</h3>
+              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8 leading-relaxed`}>{t('landing.methodology.step2Desc')}</p>
               <div className="grid grid-cols-3 gap-3">
                 {[
                   { label: t('landing.methodology.visual'), color: "#3B82F6", icon: Eye },
                   { label: t('landing.methodology.context'), color: "#FACC15", icon: BookOpen },
                   { label: t('landing.methodology.emotion'), color: "#EF4444", icon: Heart }
                 ].map((item, i) => (
-                  <div key={i} className="flex flex-col items-center justify-center text-center p-3 rounded-[12px] border border-[#2D2D2F] bg-[#121212]">
+                  <div key={i} className={`flex flex-col items-center justify-center text-center p-3 rounded-[12px] border ${isDark ? 'border-[#2D2D2F] bg-[#121212]' : 'border-[#E2E4E9] bg-[#F0F1F3]'}`}>
                     <item.icon size={20} className="mb-2" style={{ color: item.color }} />
                     <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: item.color }}>{item.label}</div>
                   </div>
@@ -922,28 +927,28 @@ export default function LandingPage() {
               </div>
             </HolographicCard>
             
-            <HolographicCard className="bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-8 group">
+            <HolographicCard className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} p-8 group`}>
               <div className="flex items-start justify-between mb-6">
                 <div className="w-16 h-16 rounded-[12px] bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/20">
                   <Zap className="text-[#10B981]" size={28} />
                 </div>
                 <span className="text-[11px] font-bold uppercase tracking-widest text-[#10B981] bg-[#10B981]/10 px-3 py-1 rounded-full">{t('landing.methodology.step3')}</span>
               </div>
-              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.methodology.step3Title')}</h3>
-              <p className="text-[#9CA3AF] text-[15px] mb-8 leading-relaxed">{t('landing.methodology.step3Desc')}</p>
+              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.methodology.step3Title')}</h3>
+              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8 leading-relaxed`}>{t('landing.methodology.step3Desc')}</p>
               <AutoSwipeDemo />
             </HolographicCard>
             
-            <HolographicCard className="bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-8 group">
+            <HolographicCard className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} p-8 group`}>
               <div className="flex items-start justify-between mb-6">
                 <div className="w-16 h-16 rounded-[12px] bg-[#EF4444]/10 flex items-center justify-center border border-[#EF4444]/20">
                   <Volume2 className="text-[#EF4444]" size={28} />
                 </div>
                 <span className="text-[11px] font-bold uppercase tracking-widest text-[#EF4444] bg-[#EF4444]/10 px-3 py-1 rounded-full">{t('landing.methodology.step4')}</span>
               </div>
-              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.methodology.step4Title')}</h3>
-              <p className="text-[#9CA3AF] text-[15px] mb-8 leading-relaxed">{t('landing.methodology.step4Desc')}</p>
-              <div className="bg-[#121212] p-4 rounded-[12px] border border-[#2D2D2F]">
+              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.methodology.step4Title')}</h3>
+              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8 leading-relaxed`}>{t('landing.methodology.step4Desc')}</p>
+              <div className={`${isDark ? 'bg-[#121212]' : 'bg-[#F0F1F3]'} p-4 rounded-[12px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'}`}>
                 <AudioWaveform />
                 <div className="mt-2 flex justify-between text-[10px] text-[#6B7280] font-bold uppercase tracking-widest">
                   <span>0:00</span>
@@ -956,8 +961,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* SRS ENGINE */}
-      <section className="py-24 px-4 bg-[#121212] border-t border-[#262626]">
+      <section className={`py-24 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'} border-t ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
         <div className="max-w-4xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -966,10 +970,10 @@ export default function LandingPage() {
             className="order-2 lg:order-1 relative"
           >
             <div className="absolute inset-0 bg-[#3B82F6]/10 blur-[80px] rounded-full" />
-            <div className="relative bg-[#1C1C1E] rounded-[16px] border border-[#2D2D2F] p-8">
+            <div className={`relative ${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} p-8`}>
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h4 className="text-[15px] font-bold text-white">{t('landing.srs.predictionEngine')}</h4>
+                  <h4 className={`text-[15px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'}`}>{t('landing.srs.predictionEngine')}</h4>
                   <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">{t('landing.srs.optimizingIntervals')}</p>
                 </div>
                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10B981]/10 border border-[#10B981]/30">
@@ -985,9 +989,9 @@ export default function LandingPage() {
                   { word: "Luminous", interval: "12.3d", strength: 78, color: "#FACC15" },
                   { word: "Cacophony", interval: "1.2d", strength: 45, color: "#EF4444" }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-4 p-3 rounded-[12px] bg-[#121212] border border-[#2D2D2F]">
-                    <div className="w-20 font-bold text-[13px] text-white">{item.word}</div>
-                    <div className="flex-1 h-1.5 bg-[#1C1C1E] rounded-full overflow-hidden">
+                  <div key={i} className={`flex items-center gap-4 p-3 rounded-[12px] ${isDark ? 'bg-[#121212]' : 'bg-[#F0F1F3]'} border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'}`}>
+                    <div className={`w-20 font-bold text-[13px] ${isDark ? 'text-white' : 'text-[#111827]'}`}>{item.word}</div>
+                    <div className={`flex-1 h-1.5 ${isDark ? 'bg-[#1C1C1E]' : 'bg-[#E2E4E9]'} rounded-full overflow-hidden`}>
                       <motion.div 
                         className="h-full rounded-full"
                         style={{ backgroundColor: item.color }}
@@ -1011,13 +1015,13 @@ export default function LandingPage() {
             className="order-1 lg:order-2"
           >
             <h2 className="text-[11px] font-bold uppercase text-[#3B82F6] tracking-widest mb-3">{t('landing.srs.recallOptimization')}</h2>
-            <h3 className="text-[28px] font-bold text-[#FFFFFF] mb-4">
+            <h3 className={`text-[28px] font-bold ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'} mb-4`}>
               {t('landing.srs.optimized')}<span className="text-[#3B82F6]">{t('landing.srs.srs')}</span>
             </h3>
-            <p className="text-[#9CA3AF] text-[15px] mb-8 leading-relaxed">
-              {t('landing.srs.desc1')}<span className="text-white font-bold">{t('landing.srs.desc2')}</span>
-              <span className="text-white font-bold">{t('landing.srs.desc3')}</span>
-              <span className="text-white font-bold">{t('landing.srs.desc4')}</span>
+            <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8 leading-relaxed`}>
+              {t('landing.srs.desc1')}<span className={`${isDark ? 'text-white' : 'text-[#111827]'} font-bold`}>{t('landing.srs.desc2')}</span>
+              <span className={`${isDark ? 'text-white' : 'text-[#111827]'} font-bold`}>{t('landing.srs.desc3')}</span>
+              <span className={`${isDark ? 'text-white' : 'text-[#111827]'} font-bold`}>{t('landing.srs.desc4')}</span>
               {t('landing.srs.desc5')}
             </p>
             
@@ -1031,7 +1035,7 @@ export default function LandingPage() {
                   <div className="w-6 h-6 rounded-full bg-[#3B82F6]/10 flex items-center justify-center flex-shrink-0 border border-[#3B82F6]/20">
                     <ChevronRight size={14} className={`text-[#3B82F6] ${language === 'ar' ? 'rotate-180' : ''}`} />
                   </div>
-                  <span className="text-[15px] font-medium text-[#D1D5DB]">{item}</span>
+                  <span className={`text-[15px] font-medium ${isDark ? 'text-[#D1D5DB]' : 'text-[#374151]'}`}>{item}</span>
                 </li>
               ))}
             </ul>
@@ -1040,7 +1044,7 @@ export default function LandingPage() {
       </section>
 
       {/* GAMIFICATION */}
-      <section className="py-24 px-4 bg-[#121212] border-t border-[#262626]">
+      <section className={`py-24 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'} border-t ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -1048,39 +1052,39 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-[11px] font-bold uppercase text-[#FACC15] tracking-widest mb-3">{t('landing.gamification.habits')}</h2>
-            <h3 className="text-[28px] font-bold text-white mb-4">{t('landing.gamification.momentum')}</h3>
-            <p className="text-[#9CA3AF] text-[15px] mb-12 max-w-sm mx-auto">
+            <h3 className={`text-[28px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-4`}>{t('landing.gamification.momentum')}</h3>
+            <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-12 max-w-sm mx-auto`}>
               {t('landing.gamification.consistency')}
             </p>
           </motion.div>
           
           <div className="grid md:grid-cols-2 gap-4">
-            <motion.div className="bg-[#1C1C1E] rounded-[16px] p-8 border border-[#2D2D2F] relative overflow-hidden text-left">
+            <motion.div className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] p-8 border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} relative overflow-hidden text-left`}>
               <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FACC15]/05 rounded-full blur-[80px]" />
               <div className="w-16 h-16 rounded-[12px] bg-[#FACC15]/10 flex items-center justify-center mb-6 border border-[#FACC15]/20">
                 <Clock className="text-[#FACC15]" size={28} />
               </div>
-              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.gamification.streakTitle')}</h3>
-              <p className="text-[#9CA3AF] text-[15px] mb-8">
+              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.gamification.streakTitle')}</h3>
+              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8`}>
                 {t('landing.gamification.streakDesc')}
               </p>
               <div className="flex justify-start gap-2">
                 {[...Array(7)].map((_, i) => (
-                  <div key={i} className={`w-8 h-10 rounded-[8px] ${i < 5 ? 'bg-[#FACC15]' : 'bg-[#121212] border border-[#2D2D2F]'} flex items-center justify-center`}>
-                    {i < 5 && <Zap size={16} className="text-[#121212]" fill="currentColor" />}
+                  <div key={i} className={`w-8 h-10 rounded-[8px] ${i < 5 ? 'bg-[#FACC15]' : `${isDark ? 'bg-[#121212] border border-[#2D2D2F]' : 'bg-[#F0F1F3] border border-[#E2E4E9]'}`} flex items-center justify-center`}>
+                    {i < 5 && <Zap size={16} className={isDark ? 'text-[#121212]' : 'text-[#111827]'} fill="currentColor" />}
                   </div>
                 ))}
               </div>
               <div className="mt-4 text-[11px] font-bold uppercase tracking-widest text-[#FACC15]">{t('landing.gamification.streakCount')}</div>
             </motion.div>
             
-            <motion.div className="bg-[#1C1C1E] rounded-[16px] p-8 border border-[#2D2D2F] relative overflow-hidden text-left">
+            <motion.div className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] p-8 border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} relative overflow-hidden text-left`}>
               <div className="absolute -top-10 -left-10 w-32 h-32 bg-[#3B82F6]/05 rounded-full blur-[80px]" />
               <div className="w-16 h-16 rounded-[12px] bg-[#3B82F6]/10 flex items-center justify-center mb-6 border border-[#3B82F6]/20">
                 <Trophy className="text-[#3B82F6]" size={28} />
               </div>
-              <h3 className="text-[19px] font-bold text-white mb-2">{t('landing.gamification.rankingTitle')}</h3>
-              <p className="text-[#9CA3AF] text-[15px] mb-8">
+              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.gamification.rankingTitle')}</h3>
+              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8`}>
                 {t('landing.gamification.rankingDesc')}
               </p>
               <div className="space-y-2">
@@ -1088,10 +1092,10 @@ export default function LandingPage() {
                   { rank: 1, name: "Alex M.", xp: "12k", color: "#FACC15" },
                   { rank: 2, name: t('landing.gamification.you'), xp: "11k", color: "#3B82F6", highlight: true }
                 ].map((user, i) => (
-                  <div key={i} className={`flex items-center justify-between p-3 rounded-[12px] ${user.highlight ? 'bg-[#3B82F6]/10 border border-[#3B82F6]/30' : 'bg-[#121212] border border-[#2D2D2F]'}`}>
+                  <div key={i} className={`flex items-center justify-between p-3 rounded-[12px] ${user.highlight ? 'bg-[#3B82F6]/10 border border-[#3B82F6]/30' : `${isDark ? 'bg-[#121212] border border-[#2D2D2F]' : 'bg-[#F0F1F3] border border-[#E2E4E9]'}`}`}>
                     <div className="flex items-center gap-3">
                       <span className="text-[13px] font-bold w-6" style={{ color: user.color }}>#{user.rank}</span>
-                      <span className={`text-[13px] font-bold ${user.highlight ? "text-white" : "text-[#6B7280]"}`}>{user.name}</span>
+                      <span className={`text-[13px] font-bold ${user.highlight ? (isDark ? 'text-white' : 'text-[#111827]') : 'text-[#6B7280]'}`}>{user.name}</span>
                     </div>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">{user.xp} XP</span>
                   </div>
@@ -1103,7 +1107,7 @@ export default function LandingPage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-24 px-4 bg-[#121212] relative overflow-hidden border-t border-[#262626]">
+      <section className={`py-24 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'} relative overflow-hidden border-t ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
         <div className="max-w-2xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -1137,7 +1141,7 @@ export default function LandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-[#262626] py-12 px-4 bg-[#121212]">
+      <footer className={`border-t ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'} py-12 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'}`}>
         <div className="max-w-5xl mx-auto flex flex-col items-center gap-6">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-[#3B82F6] rounded-[8px] flex items-center justify-center">
@@ -1146,10 +1150,10 @@ export default function LandingPage() {
             <span className="font-bold text-[18px] tracking-tight">Flotter</span>
           </div>
           
-          <div className="flex gap-8 text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">
-            <Link href="#" className="hover:text-white transition-colors">{t('landing.footer.science')}</Link>
-            <Link href="#" className="hover:text-white transition-colors">{t('landing.footer.privacy')}</Link>
-            <Link href="#" className="hover:text-white transition-colors">{t('landing.footer.terms')}</Link>
+          <div className={`flex gap-8 text-[11px] font-bold uppercase tracking-widest ${isDark ? 'text-[#6B7280]' : 'text-[#4B5563]'}`}>
+            <Link href="#" className={`${isDark ? 'hover:text-white' : 'hover:text-[#111827]'} transition-colors`}>{t('landing.footer.science')}</Link>
+            <Link href="#" className={`${isDark ? 'hover:text-white' : 'hover:text-[#111827]'} transition-colors`}>{t('landing.footer.privacy')}</Link>
+            <Link href="#" className={`${isDark ? 'hover:text-white' : 'hover:text-[#111827]'} transition-colors`}>{t('landing.footer.terms')}</Link>
           </div>
           
           <div className="flex flex-col items-center gap-2">
