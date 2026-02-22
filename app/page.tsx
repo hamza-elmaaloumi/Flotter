@@ -22,6 +22,7 @@ import {
 
 import { useLanguage } from './providers/LanguageProvider'
 import { useTheme } from './providers/ThemeProvider'
+import FlotterLogo from './components/FlotterLogo'
 
 // ==========================================
 // PREMIUM ANIMATED COMPONENTS
@@ -749,6 +750,10 @@ export default function LandingPage() {
               transition={{ duration: 0.6 }}
               className="text-center lg:text-left"
             >
+              <div className="mb-6 flex items-center justify-center lg:justify-start">
+                <FlotterLogo isDark={isDark} height={78} />
+              </div>
+
               <motion.div 
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/30 mb-6"
                 initial={{ opacity: 0, scale: 0.9 }}
