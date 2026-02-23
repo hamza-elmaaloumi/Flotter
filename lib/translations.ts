@@ -199,12 +199,41 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.guide.tip4': 'Swipe right to promote, swipe left to relearn.',
 
     // Settings: Support
-    'settings.support.text': 'For bugs or feature requests, reach out to our team.',
+    'settings.support.text': 'For bugs or feature requests, reach out us.',
     'settings.support.emailLabel': 'Email',
 
-    // Settings: Terms & Privacy
-    'settings.terms.text': 'The service is provided "as-is". By using Flotter you agree to respect intellectual property and provide accurate account info.',
-    'settings.privacy.text': 'Flotter collects minimum data: email, hashed password, and progress metadata. We do not sell personal data.',
+    // Settings: Legal, Terms & Privacy
+    'settings.legalTitle': 'Legal Notice',
+    'settings.legal.publisher': '1. Publisher Information',
+    'settings.legal.publisherDesc': 'Service Name: Flotter\nPublisher: Mezuma (Independent Developer: Hamza El Maaloumi)\nRegistered Address: Meknes, Morocco\nLegal Status: Individual Developer / Startup in stealth',
+    'settings.legal.tax': '2. Tax and Commercial Registration',
+    'settings.legal.taxDesc': 'ICE / RC / IF: Identification fiscale en cours (Mezuma).',
+    'settings.legal.hosting': '3. Web Hosting',
+    'settings.legal.hostingDesc': 'Host: Vercel Inc.\nAddress: 340 S Lemon Ave #1150, Walnut, CA 91789, USA',
+    'settings.legal.compliance': '4. Legal Compliance',
+    'settings.legal.complianceDesc': 'This legal notice complies with Moroccan Laws 53-05 relating to the electronic exchange of legal data and 31-08 relating to consumer protection.',
+    
+    'settings.privacy.entity': '1. Responsible Entity',
+    'settings.privacy.entityDesc': 'This policy covers the data collected by the service Flotter, managed by Mezuma.',
+    'settings.privacy.cndp': '2. CNDP Compliance',
+    'settings.privacy.cndpDesc': 'CNDP Number: En cours de déclaration par Mezuma.\nThis policy complies with Moroccan Law 09-08 relating to the protection of individuals with regard to the processing of personal data.',
+    'settings.privacy.collection': '3. Data Collection',
+    'settings.privacy.collectionDesc': 'We use Email/Password and Google OAuth. We collect user names and email addresses to provide the Flotter service.',
+    'settings.privacy.storage': '4. Data Processing and Storage',
+    'settings.privacy.storageDesc': 'All data is stored securely in our Neon database via Google Cloud/Vercel infrastructure.',
+    'settings.privacy.rights': '5. User Rights',
+    'settings.privacy.rightsDesc': 'In accordance with Law 09-08, you have the right to access, rectify, and delete your personal data. To exercise these rights, please contact us via email.',
+    
+    'settings.terms.contract': '1. Contract',
+    'settings.terms.contractDesc': 'This is an agreement between the user and Mezuma regarding the use of Flotter.',
+    'settings.terms.merchant': '2. Merchant of Record',
+    'settings.terms.merchantDesc': 'Payments for the "Pro" tier ($1/month) are processed by Polar. Polar handles all billing, taxes, and financial compliance on behalf of Mezuma.',
+    'settings.terms.refund': '3. Refund Policy',
+    'settings.terms.refundDesc': 'All sales for Flotter Pro are final. No refunds.',
+    'settings.terms.rules': '4. Usage Rules',
+    'settings.terms.rulesDesc': 'No scraping, no unauthorized API access, and no attempts to bypass security.',
+    'settings.terms.jurisdiction': '5. Jurisdiction',
+    'settings.terms.jurisdictionDesc': 'These terms comply with Moroccan Law 31-08 (Consumer Protection). Any disputes fall under the jurisdiction of the Commercial Court of Casablanca, Morocco.',
 
     // ─── Profile ───
     'profile.editProfile': 'Edit Profile',
@@ -417,7 +446,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'deck.streakAlive': 'Your streak is alive!',
     'deck.sessionSummary1': 'You reviewed ',
     'deck.sessionSummary2': ' cards and earned +',
-    'deck.sessionSummary3': ' XP this session. Keep coming back every day to build your streak!',
+    'deck.sessionSummary3': ' XP this session. Keep learning and go back everyday to maintain your streak.',
     'deck.proStreakHint': '💡 Pro users get streak freeze — never lose your progress!',
     'deck.backToDashboard': 'Back to Dashboard',
     'deck.protectStreak': 'Protect Your Streak — $1/mo',
@@ -458,6 +487,12 @@ export const translations: Record<Language, Record<string, string>> = {
     'deck.adDesc': 'Remove distractions and unlock your full potential with Flotter Pro.',
     'deck.adCta': 'Try Pro — $1/month',
     'deck.adDismiss': 'Maybe later',
+
+    // ─── Global Footer ───
+    'globalFooter.legalNotice': 'Legal Notice',
+    'globalFooter.privacyPolicy': 'Privacy Policy',
+    'globalFooter.termsOfService': 'Terms of Service',
+    'globalFooter.rightsReserved': 'All rights reserved.',
   },
 
   ar: {
@@ -661,12 +696,41 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.guide.tip4': 'اسحب يمينًا للترقية، اسحب يسارًا لإعادة التعلم.',
 
     // Settings: Support
-    'settings.support.text': 'للإبلاغ عن الأخطاء أو طلب ميزات، تواصل مع فريقنا.',
+    'settings.support.text': 'للإبلاغ عن الأخطاء أو طلب ميزات، تواصل معنا.',
     'settings.support.emailLabel': 'البريد الإلكتروني',
 
-    // Settings: Terms & Privacy
-    'settings.terms.text': 'الخدمة مقدمة "كما هي". باستخدامك فلوتر، توافق على احترام الملكية الفكرية وتقديم معلومات حساب دقيقة.',
-    'settings.privacy.text': 'فلوتر يجمع الحد الأدنى من البيانات: البريد الإلكتروني، كلمة المرور المشفرة، وبيانات التقدم. نحن لا نبيع البيانات الشخصية.',
+    // Settings: Legal, Terms & Privacy
+    'settings.legalTitle': 'إشعار قانوني',
+    'settings.legal.publisher': '1. معلومات الناشر',
+    'settings.legal.publisherDesc': 'اسم الخدمة: Flotter\nالناشر: Mezuma (Independent Developer: Hamza El Maaloumi)\nالعنوان المسجل: Meknes, Morocco\nالشكل القانوني: مطور مستقل / شركة ناشئة في مرحلة التخفي',
+    'settings.legal.tax': '2. التسجيل الضريبي والتجاري',
+    'settings.legal.taxDesc': 'ICE / RC / IF: قيد التسجيل الضريبي (Mezuma).',
+    'settings.legal.hosting': '3. استضافة الويب',
+    'settings.legal.hostingDesc': 'المضيف: Vercel Inc.\nالعنوان: 340 S Lemon Ave #1150, Walnut, CA 91789, USA',
+    'settings.legal.compliance': '4. الامتثال القانوني',
+    'settings.legal.complianceDesc': 'يتوافق هذا الإشعار القانوني مع القوانين المغربية 53-05 المتعلقة بالتبادل الإلكتروني للبيانات القانونية و 31-08 المتعلقة بحماية المستهلك.',
+    
+    'settings.privacy.entity': '1. الكيان المسؤول',
+    'settings.privacy.entityDesc': 'تغطي هذه السياسة البيانات التي يتم جمعها بواسطة خدمة Flotter، والتي تديرها Mezuma.',
+    'settings.privacy.cndp': '2. الامتثال لقانون CNDP',
+    'settings.privacy.cndpDesc': 'رقم CNDP: قيد التصريح من قبل Mezuma.\nتتوافق هذه السياسة مع القانون المغربي 09-08 المتعلق بحماية الأشخاص الذاتيين تجاه معالجة المعطيات ذات الطابع الشخصي.',
+    'settings.privacy.collection': '3. جمع البيانات',
+    'settings.privacy.collectionDesc': 'نحن نستخدم البريد الإلكتروني/كلمة المرور وتسجيل الدخول عبر Google OAuth. نقوم بجمع أسماء المستخدمين وعناوين البريد الإلكتروني لتقديم خدمة Flotter.',
+    'settings.privacy.storage': '4. معالجة البيانات وتخزينها',
+    'settings.privacy.storageDesc': 'يتم تخزين جميع البيانات بشكل آمن في قاعدة بيانات Neon الخاصة بنا عبر البنية التحتية لـ Google Cloud/Vercel.',
+    'settings.privacy.rights': '5. حقوق المستخدم',
+    'settings.privacy.rightsDesc': 'وفقًا للقانون 09-08، يحق لك الوصول إلى بياناتك الشخصية وتصحيحها وحذفها. لممارسة هذه الحقوق، يرجى الاتصال بنا عبر البريد الإلكتروني.',
+    
+    'settings.terms.contract': '1. العقد',
+    'settings.terms.contractDesc': 'هذه اتفاقية بين المستخدم و Mezuma فيما يتعلق باستخدام خدمة Flotter.',
+    'settings.terms.merchant': '2. التاجر المسجل',
+    'settings.terms.merchantDesc': 'تتم معالجة المدفوعات لفئة "Pro" ($1/شهريًا) بواسطة Polar. تتولى Polar جميع عمليات الفوترة والضرائب والامتثال المالي نيابة عن Mezuma.',
+    'settings.terms.refund': '3. سياسة الاسترداد',
+    'settings.terms.refundDesc': 'جميع المبيعات لـ Flotter Pro نهائية. لا توجد مبالغ مستردة.',
+    'settings.terms.rules': '4. قواعد الاستخدام',
+    'settings.terms.rulesDesc': 'يُمنع منعًا باتًا استخراج البيانات (Scraping)، والوصول غير المصرح به إلى واجهة برمجة التطبيقات (API)، وأي محاولات لتجاوز الأمان.',
+    'settings.terms.jurisdiction': '5. الاختصاص القضائي',
+    'settings.terms.jurisdictionDesc': 'تخضع هذه الشروط للقانون المغربي 31-08 (حماية المستهلك). تقع أي نزاعات تحت اختصاص المحكمة التجارية بالدار البيضاء، المغرب.',
 
     // ─── Profile ───
     'profile.editProfile': 'تعديل الملف الشخصي',
@@ -876,7 +940,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'deck.streakAlive': 'سلسلتك حية!',
     'deck.sessionSummary1': 'راجعت ',
     'deck.sessionSummary2': ' بطاقة وحصلت على +',
-    'deck.sessionSummary3': ' نقطة خبرة في هذه الجلسة. عُد كل يوم لبناء سلسلتك!',
+    'deck.sessionSummary3': ' نقطة خبرة في هذه الجلسة. واصل التعلّم وارجع كل يوم للحفاظ على سلسلة التقدّم الخاصة بك.',
     'deck.proStreakHint': '💡 مستخدمو برو يحصلون على تجميد السلسلة — لا تفقد تقدمك أبداً!',
     'deck.backToDashboard': 'العودة للوحة القيادة',
     'deck.protectStreak': 'احمِ سلسلتك — $1/شهرياً',
@@ -917,5 +981,11 @@ export const translations: Record<Language, Record<string, string>> = {
     'deck.adDesc': 'أزل المشتتات وأطلق العنان لإمكاناتك الكاملة مع فلوتر برو.',
     'deck.adCta': 'جرب برو — $1/شهرياً',
     'deck.adDismiss': 'ربما لاحقاً',
+
+    // ─── Global Footer ───
+    'globalFooter.legalNotice': 'إشعار قانوني',
+    'globalFooter.privacyPolicy': 'سياسة الخصوصية',
+    'globalFooter.termsOfService': 'شروط الخدمة',
+    'globalFooter.rightsReserved': 'جميع الحقوق محفوظة.',
   },
 }

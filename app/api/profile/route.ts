@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]/route'
+import { getEffectiveStreak } from '@/lib/xp'
 
 export async function GET(req: Request) {
   try {
@@ -45,10 +46,17 @@ export async function GET(req: Request) {
     })
     const rank = usersAbove + 1
 
+    const effectiveStreak = getEffectiveStreak(
+      user.streakCount,
+      user.lastActiveDate,
+      user.isPro
+    )
+
     return NextResponse.json({
       user: {
         ...user,
         monthlyXp: effectiveMonthlyXp,
+        streakCount: effectiveStreak,
       },
       rank,
     })

@@ -1,6 +1,45 @@
 import { prisma } from '@/lib/prisma'
 
 /**
+ * Computes the effective (real-time) streak for a user at read time.
+ * The stored `streakCount` in the DB is only updated when XP is awarded,
+ * so if a user skips a day the DB value goes stale.
+ *
+ * Rules:
+ *  - If lastActiveDate is today or yesterday → streak is still valid (stored value).
+ *  - Pro users get a 1-day freeze: lastActiveDate up to 2 days ago is still valid.
+ *  - Otherwise → streak is 0 (broken).
+ */
+export function getEffectiveStreak(
+  streakCount: number,
+  lastActiveDate: Date | null,
+  isPro: boolean
+): number {
+  if (!lastActiveDate || streakCount === 0) return 0
+
+  const now = new Date()
+  const todayStr = now.toISOString().slice(0, 10)
+  const lastStr = lastActiveDate.toISOString().slice(0, 10)
+
+  if (lastStr === todayStr) return streakCount // active today
+
+  const lastDate = new Date(lastStr)
+  const todayDate = new Date(todayStr)
+  const diffDays = Math.floor(
+    (todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24)
+  )
+
+  // Yesterday — streak still valid, user can extend it today
+  if (diffDays === 1) return streakCount
+
+  // Pro freeze: 1 missed day (gap of 2) keeps the streak alive
+  if (isPro && diffDays === 2) return streakCount
+
+  // Streak is broken
+  return 0
+}
+
+/**
  * Awards XP to a user and updates their streak.
  * - Adds XP to both totalXp and monthlyXp (atomically).
  * - Resets monthlyXp if the current month differs from monthlyXpResetAt.

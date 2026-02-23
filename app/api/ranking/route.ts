@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getEffectiveStreak } from '@/lib/xp'
 
 /**
  * GET /api/ranking
@@ -28,6 +29,7 @@ export async function GET(req: Request) {
         monthlyXp: true,
         monthlyXpResetAt: true,
         streakCount: true,
+        lastActiveDate: true,
         isPro: true,
       },
       orderBy: { monthlyXp: 'desc' },
@@ -48,7 +50,7 @@ export async function GET(req: Request) {
         image: u.image,
         totalXp: u.totalXp,
         monthlyXp: isStale ? 0 : u.monthlyXp,
-        streakCount: u.streakCount,
+        streakCount: getEffectiveStreak(u.streakCount, u.lastActiveDate, u.isPro),
         isPro: u.isPro,
       }
     })

@@ -80,18 +80,79 @@ export default function SettingsPage() {
       ),
     },
     {
-      title: t('settings.termsTitle'),
+      title: t('settings.legalTitle'),
       content: (
-        <div className={`text-[14px] font-normal ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
-          <p>{t('settings.terms.text')}</p>
+        <div className={`space-y-4 text-[14px] font-normal ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.legal.publisher')}</h3>
+            <p className="whitespace-pre-line">{t('settings.legal.publisherDesc')}</p>
+          </section>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.legal.tax')}</h3>
+            <p>{t('settings.legal.taxDesc')}</p>
+          </section>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.legal.hosting')}</h3>
+            <p className="whitespace-pre-line">{t('settings.legal.hostingDesc')}</p>
+          </section>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.legal.compliance')}</h3>
+            <p>{t('settings.legal.complianceDesc')}</p>
+          </section>
         </div>
       ),
     },
     {
       title: t('settings.privacyTitle'),
       content: (
-        <div className={`text-[14px] font-normal ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
-          <p>{t('settings.privacy.text')}</p>
+        <div className={`space-y-4 text-[14px] font-normal ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.privacy.entity')}</h3>
+            <p>{t('settings.privacy.entityDesc')}</p>
+          </section>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.privacy.cndp')}</h3>
+            <p className="whitespace-pre-line">{t('settings.privacy.cndpDesc')}</p>
+          </section>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.privacy.collection')}</h3>
+            <p>{t('settings.privacy.collectionDesc')}</p>
+          </section>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.privacy.storage')}</h3>
+            <p>{t('settings.privacy.storageDesc')}</p>
+          </section>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.privacy.rights')}</h3>
+            <p>{t('settings.privacy.rightsDesc')}</p>
+          </section>
+        </div>
+      ),
+    },
+    {
+      title: t('settings.termsTitle'),
+      content: (
+        <div className={`space-y-4 text-[14px] font-normal ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.terms.contract')}</h3>
+            <p>{t('settings.terms.contractDesc')}</p>
+          </section>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.terms.merchant')}</h3>
+            <p>{t('settings.terms.merchantDesc')}</p>
+          </section>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.terms.refund')}</h3>
+            <p>{t('settings.terms.refundDesc')}</p>
+          </section>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.terms.rules')}</h3>
+            <p>{t('settings.terms.rulesDesc')}</p>
+          </section>
+          <section>
+            <h3 className={`font-bold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{t('settings.terms.jurisdiction')}</h3>
+            <p>{t('settings.terms.jurisdictionDesc')}</p>
+          </section>
         </div>
       ),
     },
