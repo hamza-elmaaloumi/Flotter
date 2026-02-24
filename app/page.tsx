@@ -21,7 +21,6 @@ import {
 } from 'lucide-react'
 
 import { useLanguage } from './providers/LanguageProvider'
-import { useTheme } from './providers/ThemeProvider'
 import FlotterLogo from './components/FlotterLogo'
 
 // ==========================================
@@ -30,14 +29,14 @@ import FlotterLogo from './components/FlotterLogo'
 
 const NeuralBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  
+
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    
+
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    
+
     let animationFrameId: number
     let particles: Array<{
       x: number
@@ -46,12 +45,12 @@ const NeuralBackground = () => {
       vy: number
       radius: number
     }> = []
-    
+
     const resize = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
     }
-    
+
     const createParticles = () => {
       particles = []
       const count = Math.min(15, Math.floor(window.innerWidth / 80))
@@ -65,27 +64,27 @@ const NeuralBackground = () => {
         })
       }
     }
-    
+
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      
+
       particles.forEach((p, i) => {
         p.x += p.vx
         p.y += p.vy
-        
+
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1
-        
+
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
         ctx.fillStyle = '#3B82F6'
         ctx.fill()
-        
+
         particles.slice(i + 1).forEach(p2 => {
           const dx = p.x - p2.x
           const dy = p.y - p2.y
           const dist = Math.sqrt(dx * dx + dy * dy)
-          
+
           if (dist < 120) {
             ctx.beginPath()
             ctx.moveTo(p.x, p.y)
@@ -96,66 +95,35 @@ const NeuralBackground = () => {
           }
         })
       })
-      
+
       animationFrameId = requestAnimationFrame(draw)
     }
-    
+
     resize()
     createParticles()
     draw()
-    
+
     window.addEventListener('resize', resize)
     return () => {
       cancelAnimationFrame(animationFrameId)
       window.removeEventListener('resize', resize)
     }
   }, [])
-  
+
   return (
-    <canvas 
-      ref={canvasRef} 
+    <canvas
+      ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0 opacity-30"
     />
   )
 }
 
-const HolographicCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
-  const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 })
-  const cardRef = useRef<HTMLDivElement>(null)
-  
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return
-    const rect = cardRef.current.getBoundingClientRect()
-    setMousePosition({
-      x: (e.clientX - rect.left) / rect.width,
-      y: (e.clientY - rect.top) / rect.height
-    })
-  }
-  
-  return (
-    <div 
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className={`relative overflow-hidden ${className}`}
-      style={{
-        background: `radial-gradient(circle at ${mousePosition.x * 100}% ${mousePosition.y * 100}%, rgba(59, 130, 246, 0.08), transparent 60%)`,
-      }}
-    >
-      <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-        style={{
-          background: `linear-gradient(${mousePosition.x * 360}deg, transparent 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%)`
-        }}
-      />
-      {children}
-    </div>
-  )
-}
 
 const AnimatedCounter = ({ value, suffix = "" }: { value: number, suffix?: string }) => {
   const [count, setCount] = useState(0)
   const ref = useRef<HTMLSpanElement>(null)
   const isInView = useInView(ref, { once: true, margin: "-50px" })
-  
+
   useEffect(() => {
     if (isInView) {
       const duration = 1500
@@ -174,15 +142,15 @@ const AnimatedCounter = ({ value, suffix = "" }: { value: number, suffix?: strin
       return () => clearInterval(timer)
     }
   }, [isInView, value])
-  
+
   return <span ref={ref}>{count}{suffix}</span>
 }
 
 const AIGenerationSVG = () => {
   const { t } = useLanguage()
   return (
-  <svg viewBox="0 0 400 320" className="w-full h-full max-w-lg mx-auto drop-shadow-[0_0_20px_rgba(59,130,246,0.1)]">
-    <style>{`
+    <svg viewBox="0 0 400 320" className="w-full h-full max-w-lg mx-auto ">
+      <style>{`
       /* Core Variables & Utilities */
       .anim { animation-duration: 14s; animation-iteration-count: infinite; }
       
@@ -205,9 +173,9 @@ const AIGenerationSVG = () => {
         73%, 100% { opacity: 0; transform: scale(1.5); }
       }
       @keyframes corePulse {
-        0%, 55% { fill: #1E293B; }
-        58%, 70% { fill: #3B82F6; filter: url(#glow-strong); transform: scale(1.1); }
-        71%, 100% { fill: #1E293B; }
+        0%, 55% { fill: #2D2D2F; filter: none; }
+        58%, 70% { fill: #3B82F6; transform: scale(1.1); filter: drop-shadow(0 0 8px rgba(59,130,246,0.8)); }
+        71%, 100% { fill: #2D2D2F; filter: none; }
       }
       @keyframes ringSpin {
         0% { transform: rotate(0deg); }
@@ -225,11 +193,11 @@ const AIGenerationSVG = () => {
       @keyframes n-vibe { 0%, 38% { opacity: 0; transform: scale(0.5); } 40%, 70% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
       @keyframes n-sense { 0%, 48% { opacity: 0; transform: scale(0.5); } 50%, 70% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
 
-      /* Node Activation Colors */
-      @keyframes fill-context { 0%, 21% { fill: #1E293B; filter: none; } 23%, 70% { fill: #3B82F6; filter: url(#glow-strong); } 71%, 100% { fill: #1E293B; } }
-      @keyframes fill-image { 0%, 31% { fill: #1E293B; filter: none; } 33%, 70% { fill: #FBBF24; filter: url(#glow-strong); } 71%, 100% { fill: #1E293B; } }
-      @keyframes fill-vibe { 0%, 41% { fill: #1E293B; filter: none; } 43%, 70% { fill: #8B5CF6; filter: url(#glow-strong); } 71%, 100% { fill: #1E293B; } }
-      @keyframes fill-sense { 0%, 51% { fill: #1E293B; filter: none; } 53%, 70% { fill: #10B981; filter: url(#glow-strong); } 71%, 100% { fill: #1E293B; } }
+      /* Node Activation Colors – with glow on activation */
+      @keyframes fill-context { 0%, 21% { fill: #2D2D2F; filter: none; } 23%, 70% { fill: #3B82F6; filter: drop-shadow(0 0 5px rgba(59,130,246,0.75)); } 71%, 100% { fill: #2D2D2F; filter: none; } }
+      @keyframes fill-image  { 0%, 31% { fill: #2D2D2F; filter: none; } 33%, 70% { fill: #FBBF24; filter: drop-shadow(0 0 5px rgba(251,191,36,0.75));  } 71%, 100% { fill: #2D2D2F; filter: none; } }
+      @keyframes fill-vibe   { 0%, 41% { fill: #2D2D2F; filter: none; } 43%, 70% { fill: #3B82F6; filter: drop-shadow(0 0 5px rgba(59,130,246,0.75));  } 71%, 100% { fill: #2D2D2F; filter: none; } }
+      @keyframes fill-sense  { 0%, 51% { fill: #2D2D2F; filter: none; } 53%, 70% { fill: #10B981; filter: drop-shadow(0 0 5px rgba(16,185,129,0.75));  } 71%, 100% { fill: #2D2D2F; filter: none; } }
 
       /* Connecting Data Beams */
       @keyframes beamDash { to { stroke-dashoffset: -40; } }
@@ -240,9 +208,9 @@ const AIGenerationSVG = () => {
 
       /* Phase 4: Final Centered Card */
       @keyframes cardGen {
-        0%, 68% { opacity: 0; transform: scale(0.6) translateY(40px); }
-        73%, 94% { opacity: 1; transform: scale(1) translateY(0); }
-        97%, 100% { opacity: 0; transform: scale(0.9) translateY(-20px); }
+        0%, 68% { opacity: 0; transform: scale(0.6) translateY(40px); filter: none; }
+        73%, 94% { opacity: 1; transform: scale(1) translateY(0); filter: drop-shadow(0 8px 24px rgba(59,130,246,0.18)); }
+        97%, 100% { opacity: 0; transform: scale(0.9) translateY(-20px); filter: none; }
       }
       @keyframes cardImg { 0%, 73% { opacity: 0; transform: scale(0.95); } 76%, 100% { opacity: 1; transform: scale(1); } }
       @keyframes cardWord { 0%, 75% { opacity: 0; transform: translateY(10px); } 78%, 100% { opacity: 1; transform: translateY(0); } }
@@ -270,7 +238,7 @@ const AIGenerationSVG = () => {
 
       .beam-c { animation-name: b-context; stroke: #3B82F6; }
       .beam-i { animation-name: b-image; stroke: #FBBF24; }
-      .beam-v { animation-name: b-vibe; stroke: #8B5CF6; }
+      .beam-v { animation-name: b-vibe; stroke: #3B82F6; }
       .beam-s { animation-name: b-sense; stroke: #10B981; }
       .beam-flow { stroke-dasharray: 8 8; animation: beamDash 1s linear infinite; }
 
@@ -280,164 +248,375 @@ const AIGenerationSVG = () => {
       .card-sent { animation-name: cardSent; }
     `}</style>
 
-    <defs>
-      <filter id="glow-strong" x="-20%" y="-20%" width="140%" height="140%">
-        <feGaussianBlur stdDeviation="4" result="blur" />
-        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-      </filter>
-      <linearGradient id="cardImgGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
-        <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.05" />
-      </linearGradient>
-      <clipPath id="imgClip">
-        <rect x="106" y="36" width="188" height="110" rx="10" />
-      </clipPath>
-    </defs>
+      <defs>
+        <linearGradient id="cardImgGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.05" />
+        </linearGradient>
+        <clipPath id="imgClip">
+          <rect x="106" y="36" width="188" height="110" rx="10" />
+        </clipPath>
+      </defs>
 
-    {/* PHASE 1: INPUT */}
-    <g className="anim input-wrap">
-      <rect x="120" y="140" width="160" height="40" rx="8" fill="#14151A" stroke="#3B82F6" strokeWidth="1.5" filter="drop-shadow(0 4px 12px rgba(59,130,246,0.3))" />
-      <g className="anim input-text">
-        <text x="200" y="165" fill="#FFFFFF" fontFamily="monospace" fontSize="15" fontWeight="bold" textAnchor="middle" letterSpacing="1">
-          Ephemeral<tspan className="cursor" fill="#3B82F6">_</tspan>
-        </text>
-      </g>
-    </g>
-
-    {/* PHASE 2: ENGINE DISCS & DATA FLOW */}
-    <g className="anim core-wrap">
-      {/* Beams */}
-      <line x1="92" y1="160" x2="168" y2="160" strokeWidth="2" className="anim beam-c beam-flow" />
-      <line x1="200" y1="72" x2="200" y2="128" strokeWidth="2" className="anim beam-i beam-flow" />
-      <line x1="308" y1="160" x2="232" y2="160" strokeWidth="2" className="anim beam-v beam-flow" />
-      <line x1="200" y1="248" x2="200" y2="192" strokeWidth="2" className="anim beam-s beam-flow" />
-
-      {/* Integration Center (Core) */}
-      <circle cx="200" cy="160" r="24" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
-      <circle cx="200" cy="160" r="32" fill="none" stroke="#475569" strokeWidth="1" strokeDasharray="4 6" className="core-ring" />
-      <circle cx="200" cy="160" r="42" fill="none" strokeWidth="1.5" strokeDasharray="20 40 10 30" className="anim core-ring-fast" />
-      <circle cx="200" cy="160" r="10" className="anim core-inner" />
-
-      {/* Node 1: Context (Left) */}
-      <g className="anim node-c">
-        <circle cx="70" cy="160" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
-        <circle cx="70" cy="160" r="6" className="anim fill-c" />
-        <text x="70" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.contexts').toUpperCase()}</text>
+      {/* PHASE 1: INPUT */}
+      <g className="anim input-wrap">
+        <rect x="120" y="140" width="160" height="40" rx="8" fill="#1a1a1a" stroke="#3B82F6" strokeWidth="1.5"  />
+        <g className="anim input-text">
+          <text x="200" y="165" fill="#FFFFFF" fontFamily="monospace" fontSize="15" fontWeight="bold" textAnchor="middle" letterSpacing="1">
+            Ephemeral<tspan className="cursor" fill="#3B82F6">_</tspan>
+          </text>
+        </g>
       </g>
 
-      {/* Node 2: Image (Top) */}
-      <g className="anim node-i">
-        <circle cx="200" cy="50" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
-        <circle cx="200" cy="50" r="6" className="anim fill-i" />
-        <text x="200" y="16" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.semantics').toUpperCase()}</text>
+      {/* PHASE 2: ENGINE DISCS & DATA FLOW */}
+      <g className="anim core-wrap">
+        {/* Beams */}
+        <line x1="92" y1="160" x2="168" y2="160" strokeWidth="2" className="anim beam-c beam-flow" />
+        <line x1="200" y1="72" x2="200" y2="128" strokeWidth="2" className="anim beam-i beam-flow" />
+        <line x1="308" y1="160" x2="232" y2="160" strokeWidth="2" className="anim beam-v beam-flow" />
+        <line x1="200" y1="248" x2="200" y2="192" strokeWidth="2" className="anim beam-s beam-flow" />
+
+        {/* Integration Center (Core) */}
+        <circle cx="200" cy="160" r="24" fill="#1a1a1a" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.3" />
+        <circle cx="200" cy="160" r="32" fill="none" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.2" strokeDasharray="4 6" className="core-ring" />
+        <circle cx="200" cy="160" r="42" fill="none" strokeWidth="1.5" strokeDasharray="20 40 10 30" className="anim core-ring-fast" />
+        <circle cx="200" cy="160" r="10" className="anim core-inner" />
+
+        {/* Node 1: Context (Left) */}
+        <g className="anim node-c">
+          <circle cx="70" cy="160" r="22" fill="#1a1a1a" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.2" />
+          <circle cx="70" cy="160" r="6" className="anim fill-c" />
+          <text x="70" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.contexts').toUpperCase()}</text>
+        </g>
+
+        {/* Node 2: Image (Top) */}
+        <g className="anim node-i">
+          <circle cx="200" cy="50" r="22" fill="#1a1a1a" stroke="#FBBF24" strokeWidth="1" strokeOpacity="0.2" />
+          <circle cx="200" cy="50" r="6" className="anim fill-i" />
+          <text x="200" y="16" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.semantics').toUpperCase()}</text>
+        </g>
+
+        {/* Node 3: Vibe (Right) */}
+        <g className="anim node-v">
+          <circle cx="330" cy="160" r="22" fill="#1a1a1a" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.2" />
+          <circle cx="330" cy="160" r="6" className="anim fill-v" />
+          <text x="330" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.vibe').toUpperCase()}</text>
+        </g>
+
+        {/* Node 4: Sensory (Bottom) */}
+        <g className="anim node-s">
+          <circle cx="200" cy="270" r="22" fill="#1a1a1a" stroke="#10B981" strokeWidth="1" strokeOpacity="0.2" />
+          <circle cx="200" cy="270" r="6" className="anim fill-s" />
+          <text x="200" y="310" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.visuals').toUpperCase()}</text>
+        </g>
       </g>
 
-      {/* Node 3: Vibe (Right) */}
-      <g className="anim node-v">
-        <circle cx="330" cy="160" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
-        <circle cx="330" cy="160" r="6" className="anim fill-v" />
-        <text x="330" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.vibe').toUpperCase()}</text>
-      </g>
+      {/* PHASE 3: FINAL CENTERED GENERATED CARD */}
+      <g className="anim card-wrap">
+        {/* Card Base */}
+        <rect x="90" y="20" width="220" height="280" rx="16" fill="#1a1a1a" stroke="#2A2A2A" strokeWidth="1.5"  />
 
-      {/* Node 4: Sensory (Bottom) */}
-      <g className="anim node-s">
-        <circle cx="200" cy="270" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
-        <circle cx="200" cy="270" r="6" className="anim fill-s" />
-        <text x="200" y="310" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.visuals').toUpperCase()}</text>
-      </g>
-    </g>
+        {/* Card Image Block - Real Image of Yellow Flowers */}
+        <g className="anim card-img">
+          <rect x="106" y="36" width="188" height="110" rx="10" fill="#1A1A1A" />
+          <image
+            x="106"
+            y="36"
+            width="188"
+            height="110"
+            preserveAspectRatio="xMidYMid slice"
+            href="https://images.unsplash.com/photo-1621789098261-433128ee8d1e?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YmVhY2glMjBmbG93ZXJ8ZW58MHx8MHx8fDA%3D"
+            clipPath="url(#imgClip)"
+          />
+          <rect x="106" y="36" width="188" height="110" rx="10" fill="none" stroke="#2A2A2A" strokeWidth="1" pointerEvents="none" />
+        </g>
 
-    {/* PHASE 3: FINAL CENTERED GENERATED CARD */}
-    <g className="anim card-wrap">
-      {/* Card Base */}
-      <rect x="90" y="20" width="220" height="280" rx="16" fill="#1A1D24" stroke="#2D3748" strokeWidth="1.5" filter="drop-shadow(0 20px 40px rgba(0,0,0,0.8))" />
+        {/* Card Word & Type */}
+        <g className="anim card-word">
+          <text x="200" y="176" fill="#FFFFFF" fontSize="22" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">Ephemeral</text>
+          <rect x="165" y="188" width="70" height="18" rx="9" fill="#3B82F6" fillOpacity="0.15" stroke="#3B82F6" strokeOpacity="0.4" strokeWidth="1" />
+          <text x="200" y="201" fill="#60A5FA" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1">ADJECTIVE</text>
+        </g>
 
-      {/* Card Image Block - Real Image of Yellow Flowers */}
-      <g className="anim card-img">
-        <rect x="106" y="36" width="188" height="110" rx="10" fill="#101216" />
-        <image 
-          x="106" 
-          y="36" 
-          width="188" 
-          height="110" 
-          preserveAspectRatio="xMidYMid slice" 
-          href="https://images.unsplash.com/photo-1621789098261-433128ee8d1e?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YmVhY2glMjBmbG93ZXJ8ZW58MHx8MHx8fDA%3D" 
-          clipPath="url(#imgClip)" 
-        />
-        <rect x="106" y="36" width="188" height="110" rx="10" fill="none" stroke="#262626" strokeWidth="2" pointerEvents="none" />
-      </g>
+        {/* Card Centered Sentence */}
+        <g className="anim card-sent">
+          <text x="200" y="232" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">You attempt to capture the</text>
+          <text x="200" y="248" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">ephemeral snowflake, but it melts</text>
+          <text x="200" y="264" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">away, leaving only a memory.</text>
 
-      {/* Card Word & Type */}
-      <g className="anim card-word">
-        <text x="200" y="176" fill="#FFFFFF" fontSize="22" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">Ephemeral</text>
-        <rect x="165" y="188" width="70" height="18" rx="9" fill="#3B82F6" fillOpacity="0.15" stroke="#3B82F6" strokeOpacity="0.4" strokeWidth="1" />
-        <text x="200" y="201" fill="#60A5FA" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1">ADJECTIVE</text>
+          {/* Aesthetic Centered Dots */}
+          <circle cx="200" cy="282" r="2" fill="#4B5563" />
+          <circle cx="190" cy="282" r="2" fill="#4B5563" opacity="0.5" />
+          <circle cx="210" cy="282" r="2" fill="#4B5563" opacity="0.5" />
+        </g>
       </g>
-
-      {/* Card Centered Sentence */}
-      <g className="anim card-sent">
-        <text x="200" y="232" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">You attempt to capture the</text>
-        <text x="200" y="248" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">ephemeral snowflake, but it melts</text>
-        <text x="200" y="264" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">away, leaving only a memory.</text>
-        
-        {/* Aesthetic Centered Dots */}
-        <circle cx="200" cy="282" r="2" fill="#4B5563" />
-        <circle cx="190" cy="282" r="2" fill="#4B5563" opacity="0.5" />
-        <circle cx="210" cy="282" r="2" fill="#4B5563" opacity="0.5" />
-      </g>
-    </g>
-  </svg>
+    </svg>
   )
 }
 
 const AIGenerationVisualizer = () => {
   const [step, setStep] = useState(0)
   const { t } = useLanguage()
-  const { isDark } = useTheme()
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setStep((prev) => (prev + 1) % 4)
-    }, 2000)
+    }, 2500)
     return () => clearInterval(interval)
   }, [])
-  
+
   const steps = [
-    { icon: Sparkles, label: t('landing.visualizer.semantics'), color: "#3B82F6" },
-    { icon: Brain, label: t('landing.visualizer.contexts'), color: "#FBBF24" },
-    { icon: Layers, label: t('landing.visualizer.visuals'), color: "#EF4444" },
-    { icon: Zap, label: t('landing.visualizer.locked'), color: "#10B981" }
+    { icon: Sparkles, label: t('landing.visualizer.semantics'), color: "#3B82F6", detail: "Vectorizing Lexical Meaning" },
+    { icon: Brain, label: t('landing.visualizer.contexts'), color: "#FBBF24", detail: "Synthesizing Sensory Anchors" },
+    { icon: Layers, label: t('landing.visualizer.visuals'), color: "#EF4444", detail: "Generating Mental Imagery" },
+    { icon: Zap, label: t('landing.visualizer.locked'), color: "#10B981", detail: "Encrypting For Long-Term Memory" }
   ]
-  
+
   return (
-    <div className={`relative w-full h-40 ${isDark ? 'bg-[#121212]' : 'bg-[#F0F1F3]'} rounded-[12px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} overflow-hidden flex flex-col items-center justify-center`}>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={step}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.3 }}
-          className="flex flex-col items-center"
-        >
-          {React.createElement(steps[step].icon, {
-            size: 28,
-            className: "mb-2",
-            style: { color: steps[step].color }
+    <div className={`relative w-full h-[220px] bg-[#1a1a1a] rounded-2xl overflow-hidden flex flex-col items-center justify-center p-6`}>
+      {/* Circuit background pattern */}
+      <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+        <pattern id="circuit" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M0 20h20v20M20 0v20h20" fill="none" stroke="currentColor" strokeWidth="1" />
+          <circle cx="20" cy="20" r="2" fill="currentColor" />
+        </pattern>
+        <rect width="100%" height="100%" fill="url(#circuit)" />
+      </svg>
+
+      <div className="relative z-10 flex flex-col items-center w-full">
+        {/* Central Core */}
+        <div className="relative mb-8">
+          <motion.div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center border-2 "
+            style={{
+              borderColor: `${steps[step].color}30`,
+              backgroundColor: `${steps[step].color}08`
+            }}
+            animate={{
+              rotate: [0, 90, 180, 270, 360],
+              scale: [1, 1.05, 1]
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          >
+            {React.createElement(steps[step].icon, {
+              size: 32,
+              style: { color: steps[step].color }
+            })}
+          </motion.div>
+
+          {/* Orbits */}
+          <div className="absolute inset-[-20px] pointer-events-none">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                className="absolute inset-0 border border-dashed rounded-full opacity-20"
+                style={{ borderColor: steps[step].color }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8 + i * 4, repeat: Infinity, ease: "linear" }}
+              />
+            ))}
+          </div>
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 10,  }}
+            animate={{ opacity: 1, y: 0,  }}
+            exit={{ opacity: 0, y: -10,  }}
+            transition={{ duration: 0.4 }}
+            className="flex flex-col items-center text-center"
+          >
+            <h4 className={`text-[12px] font-black tracking-[0.2em] uppercase mb-1 text-white`}>
+              {steps[step].label}
+            </h4>
+            <p className="text-[10px] font-mono text-blue-500 mb-4">{steps[step].detail}</p>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Binary Stream visualizer */}
+        <div className="w-full flex justify-center gap-1">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <motion.div
+              key={i}
+              className="w-1 h-3 rounded-full"
+              style={{ backgroundColor: steps[step].color }}
+              animate={{
+                height: [4, 12, 4],
+                opacity: [0.2, 1, 0.2]
+              }}
+              transition={{
+                duration: 0.8,
+                repeat: Infinity,
+                delay: i * 0.1,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+    </div>
+  )
+}
+
+const ACASRSVisualizer = () => {
+  const { t, language } = useLanguage()
+  const [activeStep, setActiveStep] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % 4)
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const steps = [
+    { label: t('landing.acasrs.phase1'), time: "15m", color: "#3B82F6", icon: Clock },
+    { label: t('landing.acasrs.phase2'), time: "24h", color: "#FBBF24", icon: Brain },
+    { label: t('landing.acasrs.phase3'), time: "72h", color: "#10B981", icon: Layers },
+    { label: language === 'ar' ? 'التخرج' : 'Gradual Mastery', time: "∞", color: "#EF4444", icon: Sparkles }
+  ]
+
+  return (
+    <div className={`relative w-full h-[320px] bg-[#1a1a1a] rounded-2xl overflow-hidden p-8 flex flex-col items-center justify-between`}>
+      {/* AI Orchestration Engine Label */}
+      <div className="absolute top-4 left-6 flex items-center gap-2">
+        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+        <span className={`text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500`}>AI Generation Engine</span>
+      </div>
+
+      {/* SVG Diagram Core */}
+      <div className="relative w-full flex-1 flex items-center justify-center">
+        <svg width="100%" height="160" viewBox="0 0 400 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="max-w-[500px]">
+          {/* Main Processing Line */}
+          <line x1="40" y1="80" x2="360" y2="80" stroke="#2D2D2F" strokeWidth="2" strokeDasharray="4 4" />
+
+          {/* Animated Flow Path */}
+          <motion.path
+            d="M 40 80 L 360 80"
+            stroke="url(#gradient-flow)"
+            strokeWidth="3"
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{
+              pathLength: [0, 1, 1],
+              opacity: [0, 1, 0],
+              pathOffset: [0, 0, 1]
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+
+          <defs>
+            <linearGradient id="gradient-flow" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0" />
+              <stop offset="50%" stopColor="#10B981" />
+              <stop offset="100%" stopColor="#EF4444" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+
+          {/* Nodes */}
+          {steps.map((step, i) => {
+            const x = 40 + (i * 106.6);
+            const isActive = activeStep === i;
+            const isCompleted = activeStep > i;
+
+            return (
+              <g key={i}>
+                {/* Connection Arcs (AI Context Branches) */}
+                {i < 3 && (
+                  <motion.path
+                    d={`M ${x} 80 Q ${x + 53} ${i % 2 === 0 ? 30 : 130} ${x + 106} 80`}
+                    stroke={step.color}
+                    strokeWidth="1.5"
+                    strokeOpacity="0.2"
+                    fill="none"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: isActive ? 1 : 0 }}
+                  />
+                )}
+
+                {/* Main Node */}
+                <motion.circle
+                  cx={x} cy="80" r="6"
+                  fill={isActive ? step.color : (isCompleted ? step.color : "#2D2D2F")}
+                  stroke={isActive ? "#fff" : "transparent"}
+                  strokeWidth="2"
+                  animate={{ scale: isActive ? 1.4 : 1 }}
+                />
+
+                {/* Label */}
+                <foreignObject x={x - 40} y="95" width="80" height="50">
+                  <div className="flex flex-col items-center text-center">
+                    <span className={`text-[9px] font-bold uppercase tracking-tighter ${isActive ? 'text-white' : 'text-gray-500'}`}>
+                      {step.label.split(':')[1]?.trim() || step.label}
+                    </span>
+                    <span className="text-[8px] font-mono opacity-60" style={{ color: step.color }}>{step.time}</span>
+                  </div>
+                </foreignObject>
+
+                {/* AI Context Points */}
+                {isActive && i < 3 && (
+                  <motion.circle
+                    cx={x + 53}
+                    cy={i % 2 === 0 ? 30 : 130}
+                    r="3"
+                    fill={step.color}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0, 1, 0], scale: [0.5, 1.5, 0.5] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  />
+                )}
+              </g>
+            )
           })}
-          <p className={`text-[11px] font-bold ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} tracking-widest uppercase`}>{steps[step].label}</p>
-        </motion.div>
-      </AnimatePresence>
-      
-      <div className={`absolute bottom-5 w-3/4 h-0.5 ${isDark ? 'bg-[#1C1C1E]' : 'bg-[#E2E4E9]'} rounded-full overflow-hidden`}>
-        <motion.div 
-          className="h-full"
-          style={{ backgroundColor: steps[step].color }}
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{ duration: 1.8, ease: "linear" }}
-          key={`progress-${step}`}
-        />
+        </svg>
+
+        {/* Floating Context Labels */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeStep}
+            className="absolute top-0 right-0 p-4 max-w-[140px]"
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+          >
+            <div className={`text-[10px] font-medium leading-tight text-gray-400`}>
+              {activeStep === 0 && "Synthesizing immediate semantic bridge..."}
+              {activeStep === 1 && "Mapping cross-domain neural connections..."}
+              {activeStep === 2 && "Validating multi-contextual retention..."}
+              {activeStep === 3 && "Graduating to exponential mastery cycle."}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Detail Card Overlay */}
+      <div className={`w-full mt-4 p-4 rounded-xl bg-[#1A1A1A] flex items-center gap-4`}>
+        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{
+          borderColor: `${steps[activeStep].color}30`,
+          backgroundColor: `${steps[activeStep].color}10`
+        }}>
+          {React.createElement(steps[activeStep].icon, {
+            size: 20,
+            style: { color: steps[activeStep].color }
+          })}
+        </div>
+        <div>
+          <h5 className={`text-[12px] font-bold text-white`}>
+            {steps[activeStep].label} <span className="text-blue-500 ml-1">[{steps[activeStep].time}]</span>
+          </h5>
+          <p className={`text-[11px] text-gray-500 line-clamp-1`}>
+            {(t as any)(`landing.acasrs.phase${activeStep + 1}Desc`) || "Advanced context rotation active."}
+          </p>
+        </div>
+        <div className="ml-auto">
+          <ChevronRight size={14} className="text-gray-400" />
+        </div>
       </div>
     </div>
   )
@@ -445,15 +624,14 @@ const AIGenerationVisualizer = () => {
 
 const AutoSwipeDemo = () => {
   const { t } = useLanguage()
-  const { isDark } = useTheme()
   const initialCards = [
     { id: 1, word: "Ephemeral", color: "#3B82F6" },
     { id: 2, word: "Resilient", color: "#10B981" },
     { id: 3, word: "Luminous", color: "#FBBF24" },
   ]
-  
+
   const [currentIndex, setCurrentIndex] = useState(0)
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex(prev => {
@@ -463,16 +641,16 @@ const AutoSwipeDemo = () => {
         return prev + 1
       })
     }, 2000)
-    
+
     return () => clearInterval(interval)
   }, [initialCards.length])
-  
+
   return (
     <div className="relative w-full h-48 flex items-center justify-center pointer-events-none">
       <AnimatePresence mode="popLayout">
         {initialCards.map((card, index) => {
           if (index < currentIndex) return null
-          
+
           const offset = index - currentIndex
           const isCurrent = offset === 0
 
@@ -480,33 +658,33 @@ const AutoSwipeDemo = () => {
             <motion.div
               key={card.id}
               layout
-              className={`absolute w-full max-w-[200px] h-36 ${isDark ? 'bg-[#121212]' : 'bg-white'} rounded-[12px] border-2 flex flex-col items-center justify-center shadow-lg`}
-              style={{ 
+              className={`absolute w-full max-w-[200px] h-36 bg-[#1a1a1a] rounded-xl border-2 flex flex-col items-center justify-center `}
+              style={{
                 borderColor: card.color,
                 zIndex: initialCards.length - index,
               }}
               initial={{ scale: 0.8, opacity: 0, y: 20 }}
-              animate={{ 
-                scale: 1 - offset * 0.05, 
+              animate={{
+                scale: 1 - offset * 0.05,
                 y: offset * 12,
                 opacity: 1,
                 x: 0,
                 rotate: 0
               }}
-              exit={{ 
-                x: index % 2 === 0 ? 250 : -250, 
+              exit={{
+                x: index % 2 === 0 ? 250 : -250,
                 rotate: index % 2 === 0 ? 15 : -15,
-                opacity: 0 
+                opacity: 0
               }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
-              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'}`}>{card.word}</h3>
-              
+              <h3 className={`text-[19px] font-bold text-white`}>{card.word}</h3>
+
               <AnimatePresence>
                 {isCurrent && (
-                  <motion.div 
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     className="flex gap-2 mt-3"
                   >
@@ -523,10 +701,10 @@ const AutoSwipeDemo = () => {
           )
         })}
       </AnimatePresence>
-      
+
       <AnimatePresence>
         {currentIndex >= initialCards.length && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
@@ -543,7 +721,6 @@ const AutoSwipeDemo = () => {
 
 const RetentionGraph = () => {
   const { t } = useLanguage()
-  const { isDark } = useTheme()
   const data = [
     { day: 0, standard: 100, flotter: 100 },
     { day: 1, standard: 50, flotter: 95 },
@@ -556,16 +733,16 @@ const RetentionGraph = () => {
   const createSmoothPath = (key: 'standard' | 'flotter') => {
     const widthStep = 400 / (data.length - 1)
     let d = `M 0 ${200 - (data[0][key] / 100) * 180}`
-    
+
     for (let i = 1; i < data.length; i++) {
       const prevX = (i - 1) * widthStep
       const prevY = 200 - (data[i - 1][key] / 100) * 180
       const currX = i * widthStep
       const currY = 200 - (data[i][key] / 100) * 180
-      
+
       const cp1X = prevX + widthStep * 0.4
       const cp2X = currX - widthStep * 0.4
-      
+
       d += ` C ${cp1X} ${prevY}, ${cp2X} ${currY}, ${currX} ${currY}`
     }
     return d
@@ -575,7 +752,7 @@ const RetentionGraph = () => {
   const flotterPath = createSmoothPath('flotter')
 
   return (
-    <div className={`w-full h-48 ${isDark ? 'bg-[#121212]' : 'bg-[#F0F1F3]'} rounded-[12px] p-4 border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} relative`}>
+    <div className={`w-full h-48 bg-[#1a1a1a] rounded-xl p-4 relative`}>
       <svg viewBox="0 0 400 200" className="w-full h-full overflow-visible">
         <defs>
           <linearGradient id="flotterGradient" x1="0" y1="0" x2="0" y2="1">
@@ -589,9 +766,9 @@ const RetentionGraph = () => {
         </defs>
 
         {[0, 100, 200].map(y => (
-          <line key={y} x1="0" y1={y} x2="400" y2={y} stroke={isDark ? "#2D2D2F" : "#E2E4E9"} strokeWidth="1" strokeDasharray="4 4" />
+          <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#2D2D2F" strokeWidth="1" strokeDasharray="4 4" />
         ))}
-        
+
         <motion.path
           d={`${standardPath} L 400 200 L 0 200 Z`}
           fill="url(#standardGradient)"
@@ -632,7 +809,7 @@ const RetentionGraph = () => {
         />
 
         {data.map((_, i) => (
-          <motion.g 
+          <motion.g
             key={i}
             initial={{ opacity: 0, scale: 0 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -640,11 +817,11 @@ const RetentionGraph = () => {
             viewport={{ once: true }}
           >
             <circle cx={i * (400 / 5)} cy={200 - (data[i].standard / 100) * 180} r="4" fill="#EF4444" />
-            <circle cx={i * (400 / 5)} cy={200 - (data[i].flotter / 100) * 180} r="4" fill="#3B82F6" stroke={isDark ? "#121212" : "#F0F1F3"} strokeWidth="2" />
+            <circle cx={i * (400 / 5)} cy={200 - (data[i].flotter / 100) * 180} r="4" fill="#3B82F6" stroke="#1a1a1a" strokeWidth="2" />
           </motion.g>
         ))}
       </svg>
-      
+
       <div className="absolute top-3 right-3 flex flex-col gap-1 text-[10px] font-bold uppercase tracking-wider">
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-0.5 bg-[#EF4444] border-dashed" />
@@ -652,7 +829,7 @@ const RetentionGraph = () => {
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-2.5 h-0.5 bg-[#3B82F6]" />
-          <span className={isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}>{t('landing.graph.flotter')}</span>
+          <span className={'text-[#FFFFFF]'}>{t('landing.graph.flotter')}</span>
         </div>
       </div>
     </div>
@@ -661,6 +838,9 @@ const RetentionGraph = () => {
 
 const AudioWaveform = () => {
   const { language } = useLanguage()
+  // Deterministic heights & durations — no Math.random() in render
+  const barHeights = [8, 16, 22, 14, 20, 26, 18, 10, 24, 16, 20, 12, 22, 18, 10, 24]
+  const barDurations = [0.70, 0.52, 0.84, 0.62, 0.90, 0.56, 0.76, 0.66, 0.82, 0.60, 0.72, 0.80, 0.50, 0.74, 0.64, 0.88]
   return (
     <div className="flex items-center justify-center gap-1 h-10">
       {[...Array(16)].map((_, i) => (
@@ -668,14 +848,15 @@ const AudioWaveform = () => {
           key={i}
           className="w-1 bg-[#3B82F6] rounded-full"
           animate={{
-            height: [6, 12 + Math.random() * 16, 6],
-            opacity: [0.6, 1, 0.6]
+            height: [5, barHeights[i], 5],
+            opacity: [0.45, 1, 0.45],
+            scaleY: [0.9, 1, 0.9]
           }}
           transition={{
-            duration: 0.6 + Math.random() * 0.4,
+            duration: barDurations[i],
             repeat: Infinity,
             ease: "easeInOut",
-            delay: i * 0.05
+            delay: i * 0.055
           }}
         />
       ))}
@@ -684,56 +865,748 @@ const AudioWaveform = () => {
   )
 }
 
+
+
+// ==========================================
+// ANIMATED SVG DECORATORS
+// ==========================================
+
+/**
+ * PulseLine — Spaced Repetition Schedule Visualizer.
+ * Shows the algorithm's exponentially widening review intervals:
+ * 15 min → 1 day → 3 days → 7 days → 21 days → ∞
+ * Sits between Part 01 (AI Engine) and Part 02 (ACASRS).
+ */
+const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
+  const intervals = [
+    { x: 44,  label: "15m", sublabel: "First\nReview",  color: "#3B82F6" },
+    { x: 128, label: "1d",  sublabel: "Short\nTerm",    color: "#60A5FA" },
+    { x: 212, label: "3d",  sublabel: "Mid\nTerm",      color: "#10B981" },
+    { x: 296, label: "7d",  sublabel: "Long\nTerm",     color: "#FBBF24" },
+    { x: 380, label: "21d", sublabel: "Deep\nMemory",   color: "#F97316" },
+    { x: 452, label: "∞",   sublabel: "Mastered",       color: "#A78BFA" },
+  ]
+
+  return (
+    <div className="w-full overflow-hidden py-4 flex flex-col items-center gap-1">
+      {/* Section label */}
+      <motion.p
+        className="text-[9px] font-bold uppercase tracking-[0.28em] text-[#4B5563] mb-1"
+        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        ACASRS · Adaptive Review Spacing
+      </motion.p>
+
+      <svg width="100%" height="96" viewBox="0 0 496 96" fill="none" className="max-w-lg overflow-visible">
+        <defs>
+          <filter id="srs-glow">
+            <feGaussianBlur stdDeviation="3" result="b" />
+            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+          <filter id="srs-soft">
+            <feGaussianBlur stdDeviation="1.5" result="b" />
+            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+          {/* Exponential curve gradient */}
+          <linearGradient id="srs-curve" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"  stopColor="#3B82F6" stopOpacity="0.6" />
+            <stop offset="50%" stopColor="#10B981" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.45" />
+          </linearGradient>
+        </defs>
+
+        {/* ── background grid lines ── */}
+        {[0, 1, 2].map(i => (
+          <line key={i} x1="20" y1={20 + i * 20} x2="476" y2={20 + i * 20}
+            stroke="#2A2A2A" strokeWidth="0.5" strokeDasharray="3 9" />
+        ))}
+
+        {/* ── exponential gap arcs (widening spans between nodes) ── */}
+        {intervals.slice(0, -1).map((a, i) => {
+          const b = intervals[i + 1]
+          const mid = (a.x + b.x) / 2
+          const arcY = 40 - 4 - i * 3
+          return (
+            <motion.path key={i}
+              d={`M${a.x} 40 Q${mid} ${arcY} ${b.x} 40`}
+              stroke={a.color} strokeWidth={0.8 + i * 0.15} strokeOpacity={0.22}
+              fill="none" strokeLinecap="round"
+              initial={{ pathLength: 0, opacity: 0 }}
+              whileInView={{ pathLength: 1, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 + i * 0.12, duration: 0.9, ease: "easeOut" }}
+            />
+          )
+        })}
+
+        {/* ── main timeline rail ── */}
+        <motion.line x1="20" y1="40" x2="476" y2="40"
+          stroke="url(#srs-curve)" strokeWidth="1.5" strokeLinecap="round"
+          initial={{ pathLength: 0, opacity: 0 }}
+          whileInView={{ pathLength: 1, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.1, ease: "easeOut" }}
+        />
+
+        {/* ── interval nodes ── */}
+        {intervals.map(({ x, label, color: nc }, i) => (
+          <React.Fragment key={i}>
+            {/* outer halo */}
+            <motion.circle cx={x} cy="40" r={11}
+              fill="none" stroke={nc} strokeWidth="0.5" strokeOpacity="0.18"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 + i * 0.1, type: "spring", stiffness: 200 }}
+              style={{ transformOrigin: `${x}px 40px` }}
+            />
+            {/* node ring */}
+            <motion.circle cx={x} cy="40" r={6}
+              fill="#121212" stroke={nc} strokeWidth="1.4"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.45 + i * 0.1, type: "spring", stiffness: 300 }}
+              style={{ transformOrigin: `${x}px 40px` }}
+            />
+            {/* center fill */}
+            <motion.circle cx={x} cy="40" r={2.5}
+              fill={nc}
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2 + i * 0.3, repeat: Infinity, delay: i * 0.25 }}
+            />
+            {/* interval label (top) */}
+            <motion.text x={x} y="26" textAnchor="middle"
+              fill={nc} fontSize="9" fontWeight="800" fontFamily="monospace" letterSpacing="0.5"
+              initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 26 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.65 + i * 0.1, duration: 0.5 }}
+            >
+              {label}
+            </motion.text>
+            {/* tick mark */}
+            <motion.line x1={x} y1="46" x2={x} y2="53"
+              stroke={nc} strokeWidth="1" strokeOpacity="0.3"
+              initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.7 + i * 0.1, duration: 0.3 }}
+              style={{ transformOrigin: `${x}px 46px` }}
+            />
+          </React.Fragment>
+        ))}
+
+        {/* ── widening gap annotations ── */}
+        {intervals.slice(0, -1).map((a, i) => {
+          const b = intervals[i + 1]
+          const mid = (a.x + b.x) / 2
+          const gap = b.x - a.x
+          if (i < 2) return null // skip first two, too narrow
+          return (
+            <motion.text key={i} x={mid} y="72" textAnchor="middle"
+              fill="#3B5568" fontSize="7.5" fontFamily="monospace"
+              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.9 + i * 0.08, duration: 0.5 }}
+            >
+              +{Math.round(gap * 0.22)}x
+            </motion.text>
+          )
+        })}
+
+        {/* ── traveling review packet (the card being scheduled) ── */}
+        <motion.circle cy="40" r="4"
+          fill={color} filter="url(#srs-glow)"
+          animate={{ cx: intervals.map(n => n.x) }}
+          transition={{
+            cx: { duration: 4.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.8,
+              times: [0, 0.12, 0.28, 0.48, 0.72, 1] }
+          }}
+        />
+
+        {/* ── arrival flash on each node ── */}
+        {intervals.map(({ x, color: nc }, i) => (
+          <motion.circle key={`flash-${i}`} cx={x} cy="40"
+            fill={nc}
+            initial={{ r: 0, fillOpacity: 0 }}
+            animate={{ r: [0, 16], fillOpacity: [0.3, 0] }}
+            transition={{ duration: 0.8, repeat: Infinity, ease: "easeOut",
+              delay: (i / intervals.length) * 4.5 + 1.0, repeatDelay: 4.5 }}
+          />
+        ))}
+      </svg>
+    </div>
+  )
+}
+
+/**
+ * _ (unused signature kept for compatibility)
+ */
+const _PulseLineLegacy = ({ color = "#3B82F6" }: { color?: string }) => (
+  <div className="w-full overflow-hidden py-10 flex justify-center">
+    <svg width="100%" height="72" viewBox="0 0 480 72" fill="none" className="max-w-lg">
+      <defs>
+        <linearGradient id="pl-track" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stopColor={color} stopOpacity="0" />
+          <stop offset="30%"  stopColor={color} stopOpacity="0.35" />
+          <stop offset="70%"  stopColor={color} stopOpacity="0.35" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="pl-fork" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stopColor={color} stopOpacity="0.2" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.05" />
+        </linearGradient>
+        <filter id="pl-glow">
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+
+      {/* ── background dashed guide rail ── */}
+      <line x1="0" y1="28" x2="480" y2="28"
+        stroke={color} strokeWidth="0.5" strokeOpacity="0.08" strokeDasharray="4 10" />
+
+      {/* ── fork branch (bottom arc) ── */}
+      <motion.path
+        d="M140 28 C160 28, 170 52, 200 52 L280 52 C310 52, 320 28, 340 28"
+        stroke="url(#pl-fork)" strokeWidth="1.2" fill="none"
+        initial={{ pathLength: 0, opacity: 0 }}
+        whileInView={{ pathLength: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.4, delay: 0.4, ease: "easeOut" }}
+      />
+
+      {/* ── main track ── */}
+      <motion.line x1="0" y1="28" x2="480" y2="28"
+        stroke="url(#pl-track)" strokeWidth="1.8"
+        initial={{ pathLength: 0, opacity: 0 }}
+        whileInView={{ pathLength: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.1, ease: "easeOut" }}
+      />
+
+      {/* ── junction nodes ── */}
+      {[80, 140, 240, 340, 400].map((x, i) => (
+        <React.Fragment key={i}>
+          {/* outer halo */}
+          <motion.circle cx={x} cy="28" r="9" fill="none"
+            stroke={color} strokeWidth="0.6" strokeOpacity="0.14"
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 + i * 0.1, duration: 0.5 }}
+            style={{ transformOrigin: `${x}px 28px` }}
+          />
+          {/* inner node */}
+          <motion.circle cx={x} cy="28" r="4"
+            fill="#121212" stroke={color} strokeWidth="1.5"
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 + i * 0.1, duration: 0.4, type: "spring", stiffness: 260 }}
+            style={{ transformOrigin: `${x}px 28px` }}
+          />
+          {/* center fill dot */}
+          <motion.circle cx={x} cy="28" r="2"
+            fill={color}
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 0.8 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.55 + i * 0.1, duration: 0.3 }}
+            style={{ transformOrigin: `${x}px 28px` }}
+          />
+        </React.Fragment>
+      ))}
+
+      {/* ── fork branch endpoint dot ── */}
+      <motion.circle cx="240" cy="52" r="3"
+        fill={color} fillOpacity="0.4"
+        initial={{ scale: 0, opacity: 0 }}
+        whileInView={{ scale: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.9, duration: 0.4 }}
+        style={{ transformOrigin: "240px 52px" }}
+      />
+
+      {/* ── traveling packet: main track ── */}
+      <motion.circle cy="28" r="3.5"
+        fill={color} filter="url(#pl-glow)"
+        animate={{ cx: [0, 80, 140, 240, 340, 400, 480] }}
+        transition={{ cx: { duration: 3.2, repeat: Infinity, ease: "linear", repeatDelay: 0.6 } }}
+      />
+
+      {/* ── traveling packet: fork branch ── */}
+      <motion.circle r="2.5"
+        fill={color} fillOpacity="0.55"
+        animate={{
+          cx: [140, 200, 240, 280, 340],
+          cy: [ 28,  48,  52,  48,  28],
+        }}
+        transition={{
+          duration: 2.2, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.8,
+          times: [0, 0.25, 0.5, 0.75, 1]
+        }}
+      />
+
+      {/* ── node blink on packet arrival ── */}
+      {[0, 1].map((i) => (
+        <motion.circle key={i} cx={i === 0 ? 240 : 400} cy="28" r="8"
+          fill={color} fillOpacity="0"
+          animate={{ r: [4, 14], fillOpacity: [0.25, 0] }}
+          transition={{ duration: 1, repeat: Infinity, ease: "easeOut", delay: i === 0 ? 1.5 : 2.8 }}
+          style={{ transformOrigin: `${i === 0 ? 240 : 400}px 28px` }}
+        />
+      ))}
+    </svg>
+  </div>
+)
+
+/**
+ * FloatingDots — degrading signal wave. Used between Stats and Problem sections.
+ * Represents memory beginning to erode — matching the problem section theme.
+ */
+const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?: string }) => (
+  <div className="relative w-full overflow-hidden py-8 flex justify-center">
+    <svg width="100%" height="56" viewBox="0 0 480 56" fill="none" className="max-w-lg">
+      <defs>
+        <linearGradient id="fd-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stopColor={color} stopOpacity="0" />
+          <stop offset="25%"  stopColor={color} stopOpacity="0.45" />
+          <stop offset="75%"  stopColor={color} stopOpacity="0.2" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+        <filter id="fd-glow">
+          <feGaussianBlur stdDeviation="2" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+
+      {/* ── background rail ── */}
+      <line x1="0" y1="28" x2="480" y2="28"
+        stroke={color} strokeWidth="0.4" strokeOpacity="0.07" strokeDasharray="3 11" />
+
+      {/* ── degrading wave (amplitude decreases left→right) ── */}
+      <motion.path
+        d="M0 28 C30 14,60 42, 90 28 C120 14,150 38,180 28 C210 18,240 36,270 28 C300 20,330 34,360 28 C390 23,420 31,450 28 L480 28"
+        stroke="url(#fd-grad)" strokeWidth="2" fill="none"
+        initial={{ pathLength: 0, opacity: 0 }}
+        whileInView={{ pathLength: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      />
+
+      {/* ── secondary ghost wave ── */}
+      <motion.path
+        d="M0 28 C30 20,60 36, 90 28 C120 20,150 33,180 28 C210 23,240 32,270 28 C300 24,330 31,360 28 C390 26,420 30,450 28 L480 28"
+        stroke={color} strokeWidth="0.8" strokeOpacity="0.1" fill="none"
+        initial={{ pathLength: 0, opacity: 0 }}
+        whileInView={{ pathLength: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.9, ease: "easeOut", delay: 0.15 }}
+      />
+
+      {/* ── amplitude peak markers ── */}
+      {[
+        { cx: 90,  cy: 28 },
+        { cx: 180, cy: 28 },
+        { cx: 270, cy: 28 },
+        { cx: 360, cy: 28 },
+      ].map(({ cx, cy }, i) => (
+        <React.Fragment key={i}>
+          <motion.circle cx={cx} cy={cy} r={3.5 - i * 0.5}
+            fill={color} fillOpacity={0.7 - i * 0.12}
+            filter="url(#fd-glow)"
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.7 + i * 0.12, duration: 0.4, type: "spring", stiffness: 280 }}
+            style={{ transformOrigin: `${cx}px ${cy}px` }}
+          />
+          {/* outer ring */}
+          <motion.circle cx={cx} cy={cy} r={8 - i}
+            fill="none" stroke={color} strokeWidth="0.6"
+            strokeOpacity={0.2 - i * 0.03}
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.85 + i * 0.12, duration: 0.4 }}
+            style={{ transformOrigin: `${cx}px ${cy}px` }}
+          />
+        </React.Fragment>
+      ))}
+
+      {/* ── traveling signal dot (fades out to right) ── */}
+      <motion.circle cy="28" r="3"
+        fill={color} filter="url(#fd-glow)"
+        animate={{
+          cx:           [0,   90,  180, 270, 360, 480],
+          fillOpacity:  [0.9, 0.8, 0.6, 0.4, 0.2, 0],
+        }}
+        transition={{ duration: 3.4, repeat: Infinity, ease: "easeIn", repeatDelay: 0.8,
+          times: [0, 0.19, 0.37, 0.56, 0.75, 1] }}
+      />
+
+      {/* ── terminal ticks ── */}
+      {[20, 460].map((x, i) => (
+        <motion.line key={i} x1={x} y1="21" x2={x} y2="35"
+          stroke={color} strokeWidth="1.5" strokeOpacity="0.25"
+          initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.9, duration: 0.35 }}
+          style={{ transformOrigin: `${x}px 28px` }}
+        />
+      ))}
+    </svg>
+  </div>
+)
+
+/**
+ * NeuralConnector — fully detailed 3-layer network with staggered draw-in,
+ * sequential node activation, and a traveling forward-pass pulse.
+ * Used between the Problem and Methodology sections.
+ */
+const NeuralConnector = () => {
+  // Layer node positions: input(3) → hidden(4) → output(3)
+  const inputNodes  = [{ cx: 28, cy: 20 }, { cx: 28, cy: 56 }, { cx: 28, cy: 92 }]
+  const hiddenNodes = [{ cx: 160, cy: 12 }, { cx: 160, cy: 40 }, { cx: 160, cy: 68 }, { cx: 160, cy: 96 }]
+  const outputNodes = [{ cx: 292, cy: 24 }, { cx: 292, cy: 56 }, { cx: 292, cy: 88 }]
+
+  // All connections as [from, to] index pairs
+  const ih: [number, number][] = []
+  inputNodes.forEach((_, a) => hiddenNodes.forEach((__, b) => ih.push([a, b])))
+  const ho: [number, number][] = []
+  hiddenNodes.forEach((_, a) => outputNodes.forEach((__, b) => ho.push([a, b])))
+
+  // Featured forward-pass path for the traveling pulse
+  const pulseWaypoints = [
+    { cx: 28,  cy: 56 },
+    { cx: 160, cy: 40 },
+    { cx: 292, cy: 56 },
+  ]
+
+  return (
+    <div className="w-full py-8 flex justify-center overflow-hidden">
+      <svg width="100%" height="112" viewBox="0 0 320 112" fill="none" className="max-w-md">
+        <defs>
+          <filter id="nc-glow">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+          <linearGradient id="nc-beam-ih" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.08" />
+          </linearGradient>
+          <linearGradient id="nc-beam-ho" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.25" />
+          </linearGradient>
+        </defs>
+
+        {/* ── layer labels ── */}
+        {[
+          { x: 28,  label: "IN",  delay: 0.1 },
+          { x: 160, label: "PROCESS", delay: 0.3 },
+          { x: 292, label: "OUT", delay: 0.5 },
+        ].map(({ x, label, delay }) => (
+          <motion.text key={label} x={x} y="110" textAnchor="middle"
+            fill="#4B5563" fontSize="7" fontWeight="700" letterSpacing="1.5"
+            fontFamily="monospace"
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+            viewport={{ once: true }} transition={{ delay, duration: 0.5 }}
+          >
+            {label}
+          </motion.text>
+        ))}
+
+        {/* ── input→hidden connections ── */}
+        {ih.map(([a, b], i) => (
+          <motion.line key={`ih-${i}`}
+            x1={inputNodes[a].cx}  y1={inputNodes[a].cy}
+            x2={hiddenNodes[b].cx} y2={hiddenNodes[b].cy}
+            stroke="url(#nc-beam-ih)" strokeWidth="0.8"
+            initial={{ pathLength: 0, opacity: 0 }}
+            whileInView={{ pathLength: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 + i * 0.04, duration: 0.7 }}
+          />
+        ))}
+
+        {/* ── hidden→output connections ── */}
+        {ho.map(([a, b], i) => (
+          <motion.line key={`ho-${i}`}
+            x1={hiddenNodes[a].cx} y1={hiddenNodes[a].cy}
+            x2={outputNodes[b].cx} y2={outputNodes[b].cy}
+            stroke="url(#nc-beam-ho)" strokeWidth="0.8"
+            initial={{ pathLength: 0, opacity: 0 }}
+            whileInView={{ pathLength: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 + i * 0.04, duration: 0.7 }}
+          />
+        ))}
+
+        {/* ── input nodes ── */}
+        {inputNodes.map(({ cx, cy }, i) => (
+          <React.Fragment key={`in-${i}`}>
+            <motion.circle cx={cx} cy={cy} r={12}
+              fill="none" stroke="#3B82F6" strokeWidth="0.6" strokeOpacity="0.12"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 + i * 0.1, type: "spring", stiffness: 220 }}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+            />
+            <motion.circle cx={cx} cy={cy} r={6}
+              fill="#1A1A1A" stroke="#3B82F6" strokeWidth="1.2"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.15 + i * 0.1, type: "spring", stiffness: 260 }}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+            />
+            <motion.circle cx={cx} cy={cy} r={2.5}
+              fill="#3B82F6"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.4 }}
+            />
+          </React.Fragment>
+        ))}
+
+        {/* ── hidden nodes ── */}
+        {hiddenNodes.map(({ cx, cy }, i) => (
+          <React.Fragment key={`hid-${i}`}>
+            <motion.circle cx={cx} cy={cy} r={13}
+              fill="none" stroke="#10B981" strokeWidth="0.6" strokeOpacity="0.1"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.35 + i * 0.08, type: "spring", stiffness: 200 }}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+            />
+            <motion.circle cx={cx} cy={cy} r={7}
+              fill="#1A1A1A" stroke="#10B981" strokeWidth="1.2"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.40 + i * 0.08, type: "spring", stiffness: 260 }}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+            />
+            <motion.circle cx={cx} cy={cy} r={3}
+              fill="#10B981"
+              animate={{ opacity: [0.4, 1, 0.4], scale: [0.9, 1.1, 0.9] }}
+              transition={{ duration: 1.8, repeat: Infinity, delay: 0.3 + i * 0.35 }}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+            />
+          </React.Fragment>
+        ))}
+
+        {/* ── output nodes ── */}
+        {outputNodes.map(({ cx, cy }, i) => (
+          <React.Fragment key={`out-${i}`}>
+            <motion.circle cx={cx} cy={cy} r={12}
+              fill="none" stroke="#FBBF24" strokeWidth="0.6" strokeOpacity="0.12"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.65 + i * 0.09, type: "spring", stiffness: 200 }}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+            />
+            <motion.circle cx={cx} cy={cy} r={6}
+              fill="#1A1A1A" stroke="#FBBF24" strokeWidth="1.2"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.70 + i * 0.09, type: "spring", stiffness: 260 }}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+            />
+            <motion.circle cx={cx} cy={cy} r={2.5}
+              fill="#FBBF24"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity, delay: 0.8 + i * 0.3 }}
+            />
+          </React.Fragment>
+        ))}
+
+        {/* ── forward-pass traveling pulse ── */}
+        <motion.circle r={4} fill="#3B82F6" filter="url(#nc-glow)"
+          animate={{
+            cx: pulseWaypoints.map(p => p.cx),
+            cy: pulseWaypoints.map(p => p.cy),
+          }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.5,
+            times: [0, 0.44, 1] }}
+        />
+        {/* secondary pulse with offset */}
+        <motion.circle r={3} fill="#10B981" fillOpacity="0.75" filter="url(#nc-glow)"
+          animate={{
+            cx: [28, 160, 292],
+            cy: [20,  68,  88],
+          }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.5,
+            delay: 0.9, times: [0, 0.44, 1] }}
+        />
+      </svg>
+    </div>
+  )
+}
+
+/**
+ * OrbitDecoration — convergence starburst with concentric orbits.
+ * Used between Methodology and CTA sections. Represents mastery achieved.
+ */
+const OrbitDecoration = () => {
+  // 8 ray endpoints from center (80,80) at r=66
+  const rays = Array.from({ length: 8 }, (_, i) => {
+    const angle = (i * Math.PI * 2) / 8
+    return {
+      x2: 80 + Math.round(66 * Math.cos(angle)),
+      y2: 80 + Math.round(66 * Math.sin(angle)),
+    }
+  })
+
+  return (
+    <div className="w-full py-6 flex justify-center overflow-hidden">
+      <svg width="160" height="160" viewBox="0 0 160 160" fill="none">
+        <defs>
+          <radialGradient id="od-core" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+          </radialGradient>
+          <filter id="od-glow">
+            <feGaussianBlur stdDeviation="3.5" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+          <filter id="od-soft">
+            <feGaussianBlur stdDeviation="1.5" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+
+        {/* ── radial glow background ── */}
+        <circle cx="80" cy="80" r="70" fill="url(#od-core)" />
+
+        {/* ── 8 converging rays ── */}
+        {rays.map(({ x2, y2 }, i) => (
+          <motion.line key={i}
+            x1="80" y1="80" x2={x2} y2={y2}
+            stroke="#3B82F6"
+            strokeWidth={i % 2 === 0 ? 1 : 0.6}
+            strokeOpacity={i % 2 === 0 ? 0.22 : 0.12}
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            whileInView={{ pathLength: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 + i * 0.07, duration: 0.7, ease: "easeOut" }}
+          />
+        ))}
+
+        {/* ── 3 orbit rings ── */}
+        {[
+          { r: 24, dur: 18, dash: "5 9",   color: "#3B82F6", op: 0.18 },
+          { r: 40, dur: 28, dash: "3 7",   color: "#10B981", op: 0.13 },
+          { r: 56, dur: 40, dash: "6 12",  color: "#FBBF24", op: 0.10 },
+        ].map(({ r, dur, dash, color, op }, i) => (
+          <motion.circle key={i} cx="80" cy="80" r={r}
+            fill="none" stroke={color} strokeWidth="0.8"
+            strokeOpacity={op} strokeDasharray={dash}
+            animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
+            transition={{ duration: dur, repeat: Infinity, ease: "linear" }}
+            style={{ transformOrigin: "80px 80px" }}
+          />
+        ))}
+
+        {/* ── 3 orbiting dots ── */}
+        {[
+          { r: 24, dur: 5,   color: "#3B82F6", size: 3,   startAngle: 0   },
+          { r: 40, dur: 8,   color: "#10B981", size: 2.5, startAngle: 120 },
+          { r: 56, dur: 12,  color: "#FBBF24", size: 2,   startAngle: 240 },
+        ].map(({ r, dur, color, size, startAngle }, i) => (
+          <motion.circle key={i}
+            cx={80 + r * Math.cos((startAngle * Math.PI) / 180)}
+            cy={80 + r * Math.sin((startAngle * Math.PI) / 180)}
+            r={size}
+            fill={color}
+            filter="url(#od-soft)"
+            animate={{ rotate: 360 }}
+            transition={{ duration: dur, repeat: Infinity, ease: "linear" }}
+            style={{ transformOrigin: "80px 80px" }}
+          />
+        ))}
+
+        {/* ── diamond outline at center ── */}
+        <motion.path d="M80 66 L94 80 L80 94 L66 80 Z"
+          fill="none" stroke="#3B82F6" strokeWidth="0.8" strokeOpacity="0.25"
+          initial={{ scale: 0, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6, duration: 0.6, type: "spring", stiffness: 180 }}
+          style={{ transformOrigin: "80px 80px" }}
+        />
+
+        {/* ── expanding emanation rings from center ── */}
+        {[0, 1, 2].map((i) => (
+          <motion.circle key={`em-${i}`} cx="80" cy="80" fill="none"
+            stroke="#3B82F6" strokeWidth="0.7"
+            initial={{ r: 5, opacity: 0.6 }}
+            animate={{ r: [5, 40], opacity: [0.6, 0] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: "easeOut", delay: i * 0.93 }}
+          />
+        ))}
+
+        {/* ── center dot ── */}
+        <motion.circle cx="80" cy="80" r="5"
+          fill="#3B82F6" filter="url(#od-glow)"
+          animate={{ opacity: [0.7, 1, 0.7], scale: [0.9, 1.1, 0.9] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          style={{ transformOrigin: "80px 80px" }}
+        />
+        <circle cx="80" cy="80" r="2.5" fill="#FFFFFF" opacity="0.9" />
+      </svg>
+    </div>
+  )
+}
+
+
 // ==========================================
 // MAIN LANDING PAGE
 // ==========================================
 
 export default function LandingPage() {
   const { t, language } = useLanguage()
-  const { isDark } = useTheme()
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
   })
-  
+
   const heroRef = useRef<HTMLDivElement>(null)
   const isHeroInView = useInView(heroRef, { once: true })
-  
+
   return (
-    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen ${isDark ? 'bg-[#121212] text-white' : 'bg-[#F8F9FA] text-[#111827]'} antialiased overflow-x-hidden selection:bg-[#3B82F6]/30`}>
-      {isDark && <NeuralBackground />}
-      
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen bg-[#121212] text-white antialiased overflow-x-hidden selection:bg-[#3B82F6]/30`}>
+      <NeuralBackground />
+
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3B82F6] via-[#FBBF24] to-[#EF4444] origin-left z-50"
         style={{ scaleX }}
       />
-      
-      <nav className={`fixed top-0 w-full z-40 border-b ${isDark ? 'border-[#262626] bg-[#121212]/95' : 'border-[#EBEDF0] bg-white/95'} backdrop-blur-xl`}>
-        <div className="max-w-5xl mx-auto px-4 h-[64px] flex items-center justify-between">
-          <motion.div 
-            className="flex items-center gap-3"
+
+      <nav className={`fixed top-0 w-full z-40 border-b border-[#2A2A2A] bg-[#121212]/95 backdrop-blur-sm`}>
+        <div className="max-w-5xl mx-auto px-4 h-[56px] flex items-center justify-between">
+          <motion.div
+            className="flex items-center gap-2.5"
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <div className="w-9 h-9 bg-[#3B82F6] rounded-[12px] flex items-center justify-center shadow-lg shadow-[#3B82F6]/20">
-              <Zap size={20} className="text-white" fill="white" />
+            <div className="w-8 h-8 bg-[#3B82F6] rounded-[10px] flex items-center justify-center  ">
+              <Zap size={17} className="text-white" fill="white" />
             </div>
-            <span className="text-[18px] font-bold tracking-tight">
+            <span className="text-[17px] font-bold tracking-tight">
               Flotter<span className="text-[#3B82F6]">.</span>
             </span>
           </motion.div>
-          
-          <motion.div 
-            className="flex items-center gap-3"
+
+          <motion.div
+            className="flex items-center gap-2"
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <Link href="/login" className={`hidden sm:block ${isDark ? 'text-[#6B7280] hover:text-white' : 'text-[#4B5563] hover:text-[#111827]'} text-[11px] font-bold uppercase tracking-widest transition-colors`}>
+            <Link href="/login" className={`hidden sm:block text-[#6B7280] text-[11px] font-bold uppercase tracking-widest px-3 py-2`}>
               {t('landing.nav.signIn')}
             </Link>
-            <Link href="/register" className="bg-[#3B82F6] text-white px-5 py-2.5 rounded-[12px] text-[13px] font-bold uppercase tracking-widest hover:bg-[#1D4ED8] transition-all">
+            <Link href="/register" className="bg-[#3B82F6] text-white px-4 py-2 rounded-[10px] text-[12px] font-bold uppercase tracking-widest">
               {t('landing.nav.getStarted')}
             </Link>
           </motion.div>
@@ -741,403 +1614,608 @@ export default function LandingPage() {
       </nav>
 
       {/* HERO SECTION */}
-      <section ref={heroRef} className={`relative pt-[140px] pb-[80px] px-4 overflow-hidden flex items-center justify-center min-h-[90vh] ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'}`}>
-        <div className="max-w-5xl mx-auto relative z-10 w-full">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
-              className="text-center lg:text-left"
-            >
-              <div className="mb-6 flex items-center justify-center lg:justify-start">
-                <FlotterLogo isDark={isDark} height={78} />
-              </div>
+      <section ref={heroRef} className={`relative pt-[72px] pb-0 px-4 overflow-hidden flex flex-col items-center justify-center min-h-screen bg-[#121212]`}>
+        <div className="max-w-lg mx-auto relative z-10 w-full text-center pt-10 pb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="mb-5 flex items-center justify-center">
+              <FlotterLogo isDark={true} height={64} />
+            </div>
 
-              <motion.div 
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/30 mb-6"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 }}
-              >
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3B82F6] opacity-75" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#3B82F6]" />
-                </span>
-                <span className="text-[11px] font-bold text-[#3B82F6] uppercase tracking-wider">
-                  {t('landing.hero.neuralSync')}
-                </span>
-              </motion.div>
-              
-              <h1 className="text-[36px] md:text-[52px] font-bold leading-[1.1] mb-6">
-                {t('landing.hero.title1')}
-                <span className="text-[#3B82F6]">
-                  {t('landing.hero.title2')}
-                </span>
-              </h1>
-              
-              <p className={`text-[16px] md:text-[18px] ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} mb-10 max-w-sm mx-auto lg:mx-0 leading-relaxed`}>
-                {t('landing.hero.desc1')}
-                <span className={`${isDark ? 'text-white' : 'text-[#111827]'} font-bold uppercase text-[15px]`}> {t('landing.hero.desc2')}</span>
-                {t('landing.hero.desc3')}
-              </p>
-              
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <Link 
-                  href="/register"
-                  className="w-full sm:w-auto group relative inline-flex items-center justify-center px-10 py-4 bg-[#3B82F6] rounded-[12px] font-bold text-white text-[15px] uppercase tracking-widest transition-all hover:bg-[#1D4ED8] shadow-xl shadow-[#3B82F6]/20 active:scale-95"
-                >
-                  <span className="relative z-10 flex items-center gap-3">
-                    {t('landing.hero.startTrial')} <ArrowRight size={19} className={`transition-transform ${language === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
-                  </span>
-                </Link>
-                
-                <button className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-[12px] border ${isDark ? 'border-[#262626] text-[#6B7280] hover:text-white hover:bg-[#1A1A1A]' : 'border-[#EBEDF0] text-[#4B5563] hover:text-[#111827] hover:bg-[#F0F1F3]'} transition-all text-[13px] font-bold uppercase tracking-widest`}>
-                  <Play size={14} fill="#FACC15" className="text-[#FACC15]" />
-                  {t('landing.hero.watchDemo')}
-                </button>
-              </div>
-            </motion.div>
-            
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={isHeroInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative mx-auto w-full max-w-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/30 mb-5"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.15 }}
             >
-              <div className="absolute inset-0 bg-[#3B82F6]/05 blur-[120px] rounded-full" />
-              <div className="relative z-10 p-2">
-                <AIGenerationSVG />
-              </div>
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3B82F6] opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#3B82F6]" />
+              </span>
+              <span className="text-[11px] font-bold text-[#3B82F6] uppercase tracking-wider">
+                {t('landing.hero.neuralSync')}
+              </span>
             </motion.div>
-          </div>
+
+            <h1 className={`text-[34px] font-bold leading-[1.1] mb-4 text-white`}>
+              {t('landing.hero.title1')}
+              <span className="text-[#3B82F6]">{t('landing.hero.title2')}</span>
+            </h1>
+
+            <p className={`text-[15px] text-[#9CA3AF] mb-8 leading-relaxed max-w-sm mx-auto`}>
+              {t('landing.hero.desc1')}
+              <span className={`text-white font-semibold`}> {t('landing.hero.desc2')}</span>
+              {t('landing.hero.desc3')}
+            </p>
+
+            <div className="flex flex-col items-center gap-3">
+              <Link
+                href="/register"
+                className="w-full group relative inline-flex items-center justify-center px-8 py-4 bg-[#3B82F6] rounded-[14px] font-bold text-white text-[15px] tracking-wide active:scale-95 overflow-hidden"
+              >
+                {/* Shimmer sweep */}
+                <motion.span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 rounded-[14px]"
+                  style={{
+                    background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.13) 50%, transparent 65%)'
+                  }}
+                  animate={{ x: ['-110%', '110%'] }}
+                  transition={{ duration: 2.8, repeat: Infinity, ease: 'linear', repeatDelay: 0.8 }}
+                />
+                <span className="relative z-10 flex items-center gap-2.5">
+                  {t('landing.hero.startTrial')} <ArrowRight size={18} className={`${language === 'ar' ? 'rotate-180' : ''}`} />
+                </span>
+              </Link>
+
+              <button className={`w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-[14px] border border-dashed border-[#383838] text-[#9CA3AF] text-[13px] font-semibold`}>
+                <Play size={13} fill="#FACC15" className="text-[#FACC15]" />
+                {t('landing.hero.watchDemo')}
+              </button>
+            </div>
+          </motion.div>
         </div>
+
+        {/* Hero visual */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.25 }}
+          className="relative w-full max-w-sm mx-auto px-4 pb-10"
+        >
+          <div className="relative z-10">
+            <AIGenerationSVG />
+          </div>
+        </motion.div>
       </section>
 
       {/* STATS */}
-      <section className={`border-y ${isDark ? 'border-[#262626] bg-[#121212]' : 'border-[#EBEDF0] bg-[#F8F9FA]'}`}>
-        <div className="max-w-5xl mx-auto px-4 py-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+      <section className={`border-y border-[#2A2A2A] bg-[#121212]`}>
+        <div className="max-w-lg mx-auto px-4 py-10">
+          <div className="grid grid-cols-2 gap-3 text-center">
             {[
-              { value: 94, suffix: "%", label: t('landing.stats.retentionRate'), color: "#3B82F6", source: t('landing.stats.neuralSync') },
-              { value: 3, suffix: "x", label: t('landing.stats.fasterLearning'), color: "#FACC15", source: t('landing.stats.cognitiveLoad') },
-              { value: 50, suffix: "ms", label: t('landing.stats.generation'), color: "#10B981", source: t('landing.stats.edgeEngine') },
-              { value: 2, suffix: "min", label: t('landing.stats.dailyAverage'), color: "#EF4444", source: t('landing.stats.sessionFlow') }
+              { value: 94, suffix: "%", label: t('landing.stats.retentionRate'), color: "#3B82F6" },
+              { value: 3, suffix: "x", label: t('landing.stats.fasterLearning'), color: "#FACC15" },
+              { value: 50, suffix: "ms", label: t('landing.stats.generation'), color: "#10B981" },
+              { value: 2, suffix: "min", label: t('landing.stats.dailyAverage'), color: "#EF4444" }
             ].map((stat, i) => (
-              <motion.div 
+              <motion.div
                 key={i}
-                className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} p-4 rounded-[12px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'}`}
+                className={`p-4 rounded-xl bg-[#1a1a1a] border border-dashed border-[#383838]`}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+                whileHover={{ scale: 1.03, borderColor: stat.color + '55' }}
+                transition={{ delay: i * 0.08 }}
                 viewport={{ once: true }}
               >
-                <div className="text-[24px] font-bold mb-1" style={{ color: stat.color }}>
+                <div className="text-[26px] font-bold mb-0.5" style={{ color: stat.color }}>
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 </div>
-                <div className={`${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'} text-[13px] font-bold mb-1`}>{stat.label}</div>
-                <div className="text-[#6B7280] text-[10px] uppercase tracking-wider font-bold">{stat.source}</div>
+                <div className={`text-[#9CA3AF] text-[12px] font-medium leading-tight`}>{stat.label}</div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Decorator: Stats → Problem */}
+      <div className="bg-[#121212]">
+        <div className="max-w-lg mx-auto">
+          <FloatingDots count={6} color="#EF4444" />
+        </div>
+      </div>
+
       {/* PROBLEM SECTION */}
-      <section className={`py-24 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'}`}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-[11px] font-bold uppercase text-[#EF4444] tracking-widest mb-3">{t('landing.problem.challenge')}</h2>
-            <h3 className={`text-[28px] font-bold ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>{t('landing.problem.title')}</h3>
-            <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mt-2`}>{t('landing.problem.subtitle')}</p>
+      <section className={`py-20 px-4 bg-[#121212]`}>
+        <div className="max-w-lg mx-auto">
+          <div className="text-center mb-10">
+            <p className="text-[11px] font-bold uppercase text-[#EF4444] tracking-widest mb-2">{t('landing.problem.challenge')}</p>
+            <h2 className={`text-[24px] font-bold text-white mb-2`}>{t('landing.problem.title')}</h2>
+            <p className={`text-[#9CA3AF] text-[14px]`}>{t('landing.problem.subtitle')}</p>
           </div>
-          
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <RetentionGraph />
-            </motion.div>
-            
-            <motion.div 
-              className="space-y-[12px]"
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              {[
-                { title: t('landing.problem.passiveTitle'), desc: t('landing.problem.passiveDesc') },
-                { title: t('landing.problem.contextTitle'), desc: t('landing.problem.contextDesc') },
-                { title: t('landing.problem.frictionTitle'), desc: t('landing.problem.frictionDesc') }
-              ].map((item, i) => (
-                <div key={i} className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[12px] p-5 border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} flex gap-4`}>
-                  <div className="w-10 h-10 rounded-[12px] bg-[#EF4444]/10 flex items-center justify-center flex-shrink-0 border border-[#EF4444]/20">
-                    <X className="text-[#EF4444]" size={18} />
-                  </div>
-                  <div>
-                    <h3 className={`text-[15px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-1`}>{item.title}</h3>
-                    <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[13px] leading-relaxed`}>{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-        </div>
-      </section>
 
-      {/* FEATURES GRID */}
-      <section className={`py-24 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'} relative border-t ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
-        <div className="max-w-5xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-[11px] font-bold uppercase text-[#3B82F6] tracking-widest mb-3">{t('landing.methodology.title')}</h2>
-            <h3 className={`text-[28px] font-bold ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>{t('landing.methodology.heading1')}<span className="text-[#3B82F6]">Flotter</span>{t('landing.methodology.heading2')}</h3>
-            <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mt-2`}>{t('landing.methodology.subtitle')}</p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-[12px]">
-            <HolographicCard className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} p-8 group`}>
-              <div className="flex items-start justify-between mb-6">
-                <div className="w-16 h-16 rounded-[12px] bg-[#3B82F6]/10 flex items-center justify-center border border-[#3B82F6]/20">
-                  <Sparkles className="text-[#3B82F6]" size={28} />
-                </div>
-                <span className="text-[11px] font-bold uppercase tracking-widest text-[#3B82F6] bg-[#3B82F6]/10 px-3 py-1 rounded-full">{t('landing.methodology.step1')}</span>
-              </div>
-              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.methodology.step1Title')}</h3>
-              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8 leading-relaxed`}>{t('landing.methodology.step1Desc')}</p>
-              <AIGenerationVisualizer />
-            </HolographicCard>
-            
-            <HolographicCard className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} p-8 group`}>
-              <div className="flex items-start justify-between mb-6">
-                <div className="w-16 h-16 rounded-[12px] bg-[#FACC15]/10 flex items-center justify-center border border-[#FACC15]/20">
-                  <Layers className="text-[#FACC15]" size={28} />
-                </div>
-                <span className="text-[11px] font-bold uppercase tracking-widest text-[#FACC15] bg-[#FACC15]/10 px-3 py-1 rounded-full">{t('landing.methodology.step2')}</span>
-              </div>
-              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.methodology.step2Title')}</h3>
-              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8 leading-relaxed`}>{t('landing.methodology.step2Desc')}</p>
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { label: t('landing.methodology.visual'), color: "#3B82F6", icon: Eye },
-                  { label: t('landing.methodology.context'), color: "#FACC15", icon: BookOpen },
-                  { label: t('landing.methodology.emotion'), color: "#EF4444", icon: Heart }
-                ].map((item, i) => (
-                  <div key={i} className={`flex flex-col items-center justify-center text-center p-3 rounded-[12px] border ${isDark ? 'border-[#2D2D2F] bg-[#121212]' : 'border-[#E2E4E9] bg-[#F0F1F3]'}`}>
-                    <item.icon size={20} className="mb-2" style={{ color: item.color }} />
-                    <div className="text-[10px] font-bold uppercase tracking-widest" style={{ color: item.color }}>{item.label}</div>
-                  </div>
-                ))}
-              </div>
-            </HolographicCard>
-            
-            <HolographicCard className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} p-8 group`}>
-              <div className="flex items-start justify-between mb-6">
-                <div className="w-16 h-16 rounded-[12px] bg-[#10B981]/10 flex items-center justify-center border border-[#10B981]/20">
-                  <Zap className="text-[#10B981]" size={28} />
-                </div>
-                <span className="text-[11px] font-bold uppercase tracking-widest text-[#10B981] bg-[#10B981]/10 px-3 py-1 rounded-full">{t('landing.methodology.step3')}</span>
-              </div>
-              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.methodology.step3Title')}</h3>
-              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8 leading-relaxed`}>{t('landing.methodology.step3Desc')}</p>
-              <AutoSwipeDemo />
-            </HolographicCard>
-            
-            <HolographicCard className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} p-8 group`}>
-              <div className="flex items-start justify-between mb-6">
-                <div className="w-16 h-16 rounded-[12px] bg-[#EF4444]/10 flex items-center justify-center border border-[#EF4444]/20">
-                  <Volume2 className="text-[#EF4444]" size={28} />
-                </div>
-                <span className="text-[11px] font-bold uppercase tracking-widest text-[#EF4444] bg-[#EF4444]/10 px-3 py-1 rounded-full">{t('landing.methodology.step4')}</span>
-              </div>
-              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.methodology.step4Title')}</h3>
-              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8 leading-relaxed`}>{t('landing.methodology.step4Desc')}</p>
-              <div className={`${isDark ? 'bg-[#121212]' : 'bg-[#F0F1F3]'} p-4 rounded-[12px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'}`}>
-                <AudioWaveform />
-                <div className="mt-2 flex justify-between text-[10px] text-[#6B7280] font-bold uppercase tracking-widest">
-                  <span>0:00</span>
-                  <span className="text-[#3B82F6]">{t('landing.audio.processing')}</span>
-                  <span>0:05</span>
-                </div>
-              </div>
-            </HolographicCard>
-          </div>
-        </div>
-      </section>
-
-      <section className={`py-24 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'} border-t ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
-        <div className="max-w-4xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="order-2 lg:order-1 relative"
+            className="mb-8"
           >
-            <div className="absolute inset-0 bg-[#3B82F6]/10 blur-[80px] rounded-full" />
-            <div className={`relative ${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} p-8`}>
-              <div className="flex items-center justify-between mb-8">
+            <RetentionGraph />
+          </motion.div>
+
+          <motion.div
+            className="space-y-3"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            {[
+              { title: t('landing.problem.passiveTitle'), desc: t('landing.problem.passiveDesc') },
+              { title: t('landing.problem.contextTitle'), desc: t('landing.problem.contextDesc') },
+              { title: t('landing.problem.frictionTitle'), desc: t('landing.problem.frictionDesc') }
+            ].map((item, i) => (
+              <div key={i} className={`rounded-xl p-4 bg-[#1a1a1a] border border-dashed border-[#383838] flex gap-3`}>
+                <div className="w-8 h-8 rounded-[10px] bg-[#EF4444]/10 flex items-center justify-center flex-shrink-0 border border-[#EF4444]/20">
+                  <X className="text-[#EF4444]" size={15} />
+                </div>
                 <div>
-                  <h4 className={`text-[15px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'}`}>{t('landing.srs.predictionEngine')}</h4>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">{t('landing.srs.optimizingIntervals')}</p>
-                </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10B981]/10 border border-[#10B981]/30">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
-                  <span className="text-[10px] text-[#10B981] font-bold uppercase tracking-widest">{t('landing.srs.active')}</span>
+                  <h3 className={`text-[14px] font-bold text-white mb-0.5`}>{item.title}</h3>
+                  <p className={`text-[#9CA3AF] text-[13px] leading-relaxed`}>{item.desc}</p>
                 </div>
               </div>
-              
-              <div className="space-y-4">
-                {[
-                  { word: "Ephemeral", interval: "2.4d", strength: 85, color: "#3B82F6" },
-                  { word: "Resilient", interval: "5.1d", strength: 92, color: "#10B981" },
-                  { word: "Luminous", interval: "12.3d", strength: 78, color: "#FACC15" },
-                  { word: "Cacophony", interval: "1.2d", strength: 45, color: "#EF4444" }
-                ].map((item, i) => (
-                  <div key={i} className={`flex items-center gap-4 p-3 rounded-[12px] ${isDark ? 'bg-[#121212]' : 'bg-[#F0F1F3]'} border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'}`}>
-                    <div className={`w-20 font-bold text-[13px] ${isDark ? 'text-white' : 'text-[#111827]'}`}>{item.word}</div>
-                    <div className={`flex-1 h-1.5 ${isDark ? 'bg-[#1C1C1E]' : 'bg-[#E2E4E9]'} rounded-full overflow-hidden`}>
-                      <motion.div 
-                        className="h-full rounded-full"
-                        style={{ backgroundColor: item.color }}
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${item.strength}%` }}
-                        transition={{ duration: 1, delay: i * 0.1 }}
-                        viewport={{ once: true }}
-                      />
-                    </div>
-                    <div className="text-[10px] text-[#6B7280] font-bold w-10 text-right uppercase">{item.interval}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="order-1 lg:order-2"
-          >
-            <h2 className="text-[11px] font-bold uppercase text-[#3B82F6] tracking-widest mb-3">{t('landing.srs.recallOptimization')}</h2>
-            <h3 className={`text-[28px] font-bold ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'} mb-4`}>
-              {t('landing.srs.optimized')}<span className="text-[#3B82F6]">{t('landing.srs.srs')}</span>
-            </h3>
-            <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8 leading-relaxed`}>
-              {t('landing.srs.desc1')}<span className={`${isDark ? 'text-white' : 'text-[#111827]'} font-bold`}>{t('landing.srs.desc2')}</span>
-              <span className={`${isDark ? 'text-white' : 'text-[#111827]'} font-bold`}>{t('landing.srs.desc3')}</span>
-              <span className={`${isDark ? 'text-white' : 'text-[#111827]'} font-bold`}>{t('landing.srs.desc4')}</span>
-              {t('landing.srs.desc5')}
-            </p>
-            
-            <ul className="space-y-4">
-              {[
-                t('landing.srs.feature1'),
-                t('landing.srs.feature2'),
-                t('landing.srs.feature3')
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-[#3B82F6]/10 flex items-center justify-center flex-shrink-0 border border-[#3B82F6]/20">
-                    <ChevronRight size={14} className={`text-[#3B82F6] ${language === 'ar' ? 'rotate-180' : ''}`} />
-                  </div>
-                  <span className={`text-[15px] font-medium ${isDark ? 'text-[#D1D5DB]' : 'text-[#374151]'}`}>{item}</span>
-                </li>
-              ))}
-            </ul>
+            ))}
           </motion.div>
         </div>
       </section>
 
-      {/* GAMIFICATION */}
-      <section className={`py-24 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'} border-t ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
-        <div className="max-w-4xl mx-auto text-center">
+      {/* Decorator: Problem → Methodology */}
+      <div className="bg-[#121212]">
+        <div className="max-w-lg mx-auto">
+          <NeuralConnector />
+        </div>
+      </div>
+
+      {/* METHODOLOGY SECTION */}
+      <section className={`py-20 px-4 relative bg-[#121212]`}>
+        <div className="max-w-lg mx-auto relative z-10">
+
+          {/* Section header */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            className="text-center mb-10"
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-[11px] font-bold uppercase text-[#FACC15] tracking-widest mb-3">{t('landing.gamification.habits')}</h2>
-            <h3 className={`text-[28px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-4`}>{t('landing.gamification.momentum')}</h3>
-            <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-12 max-w-sm mx-auto`}>
-              {t('landing.gamification.consistency')}
-            </p>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#3B82F6]/8 border border-[#3B82F6]/15 mb-4">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]" />
+              <p className="text-[10px] font-bold uppercase text-[#3B82F6] tracking-[0.3em]">
+                {t('landing.methodology.title')}
+              </p>
+            </div>
+            <h2 className={`text-[28px] font-bold leading-[1.15] mb-3 text-white`}>
+              {t('landing.methodology.heading1')}<span className="text-[#3B82F6]">Flotter</span>{t('landing.methodology.heading2')}
+            </h2>
           </motion.div>
-          
-          <div className="grid md:grid-cols-2 gap-4">
-            <motion.div className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] p-8 border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} relative overflow-hidden text-left`}>
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#FACC15]/05 rounded-full blur-[80px]" />
-              <div className="w-16 h-16 rounded-[12px] bg-[#FACC15]/10 flex items-center justify-center mb-6 border border-[#FACC15]/20">
-                <Clock className="text-[#FACC15]" size={28} />
+
+          {/* ══════════════════════════════════════════════════════
+              PART 01: AI FLASHCARD CREATION ENGINE
+              ══════════════════════════════════════════════════════ */}
+          <div className="mb-20">
+            {/* Section Header */}
+            <motion.div
+              className="flex items-center gap-3 mb-6"
+              initial={{ opacity: 0, x: language === 'ar' ? 10 : -10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#3B82F6] text-white text-[12px] font-bold flex-shrink-0">
+                01
               </div>
-              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.gamification.streakTitle')}</h3>
-              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8`}>
-                {t('landing.gamification.streakDesc')}
-              </p>
-              <div className="flex justify-start gap-2">
-                {[...Array(7)].map((_, i) => (
-                  <div key={i} className={`w-8 h-10 rounded-[8px] ${i < 5 ? 'bg-[#FACC15]' : `${isDark ? 'bg-[#121212] border border-[#2D2D2F]' : 'bg-[#F0F1F3] border border-[#E2E4E9]'}`} flex items-center justify-center`}>
-                    {i < 5 && <Zap size={16} className={isDark ? 'text-[#121212]' : 'text-[#111827]'} fill="currentColor" />}
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 text-[11px] font-bold uppercase tracking-widest text-[#FACC15]">{t('landing.gamification.streakCount')}</div>
+              <h3 className="text-[19px] font-bold text-white">{t('landing.engine.title')}</h3>
+              <div className="flex-1 h-px bg-[#2A2A2A]" />
             </motion.div>
-            
-            <motion.div className={`${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} rounded-[16px] p-8 border ${isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'} relative overflow-hidden text-left`}>
-              <div className="absolute -top-10 -left-10 w-32 h-32 bg-[#3B82F6]/05 rounded-full blur-[80px]" />
-              <div className="w-16 h-16 rounded-[12px] bg-[#3B82F6]/10 flex items-center justify-center mb-6 border border-[#3B82F6]/20">
-                <Trophy className="text-[#3B82F6]" size={28} />
+
+            <div className="flex flex-col gap-4">
+              {/* ─── Main Card: Overview + KPIs + Visualizer ─── */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] overflow-hidden">
+                  <div className="p-6">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#3B82F6] mb-4 inline-block">
+                      {t('landing.engine.badge')}
+                    </span>
+                    <h4 className="text-[20px] font-bold mb-2 text-white">{t('landing.engine.subtitle')}</h4>
+                    <p className="text-[14px] leading-relaxed text-[#9CA3AF]">{t('landing.engine.desc')}</p>
+                  </div>
+
+                  {/* KPI Stats */}
+                  <div className="grid grid-cols-3 border-t border-[#2A2A2A]">
+                    {[
+                      { val: t('landing.engine.kpi1'), label: t('landing.engine.kpi1Label'), sub: t('landing.engine.kpi1Sub'), color: '#3B82F6' },
+                      { val: t('landing.engine.kpi2'), label: t('landing.engine.kpi2Label'), sub: t('landing.engine.kpi2Sub'), color: '#FBBF24' },
+                      { val: t('landing.engine.kpi3'), label: t('landing.engine.kpi3Label'), sub: t('landing.engine.kpi3Sub'), color: '#10B981' },
+                    ].map((kpi, i) => (
+                      <div key={i} className={`p-4 text-center ${i < 2 ? 'border-r border-[#2A2A2A]' : ''}`}>
+                        <div className="text-[22px] font-bold" style={{ color: kpi.color }}>{kpi.val}</div>
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF] mt-1">{kpi.label}</div>
+                        <div className="text-[9px] text-[#6B7280] mt-0.5">{kpi.sub}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Generation Pipeline */}
+                  <div className="p-6 border-t border-[#2A2A2A]">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-[#4B5563]">{t('landing.engine.processTitle')}</p>
+                    <AIGenerationVisualizer />
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* ─── Memory Tetrad Card ─── */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.15 }}
+              >
+                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] p-6">
+                  <h4 className="text-[17px] font-bold mb-1 text-white">{t('landing.engine.tetradTitle')}</h4>
+                  <p className="text-[13px] text-[#6B7280] mb-5 leading-relaxed">{t('landing.engine.tetradDesc')}</p>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { icon: Eye, title: t('landing.engine.trace1'), desc: t('landing.engine.trace1Desc'), color: '#3B82F6' },
+                      { icon: Layers, title: t('landing.engine.trace2'), desc: t('landing.engine.trace2Desc'), color: '#10B981' },
+                      { icon: Heart, title: t('landing.engine.trace3'), desc: t('landing.engine.trace3Desc'), color: '#EF4444' },
+                      { icon: Brain, title: t('landing.engine.trace4'), desc: t('landing.engine.trace4Desc'), color: '#FBBF24' },
+                    ].map((trace, i) => (
+                      <motion.div
+                        key={i}
+                        className="rounded-xl p-4 border border-dashed"
+                        style={{
+                          borderColor: `${trace.color}35`,
+                          background: `linear-gradient(135deg, ${trace.color}08 0%, transparent 60%)`
+                        }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.1 + i * 0.06 }}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <trace.icon size={14} style={{ color: trace.color }} />
+                          <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: trace.color }}>
+                            {trace.title}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-[#9CA3AF] leading-relaxed">{trace.desc}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* ─── 6 Scientific Principles Card ─── */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] p-6">
+                  <h4 className="text-[17px] font-bold mb-5 text-white">{t('landing.engine.scienceTitle')}</h4>
+
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                    {[
+                      { icon: Layers, title: t('landing.engine.p1'), desc: t('landing.engine.p1d'), color: '#3B82F6' },
+                      { icon: Eye, title: t('landing.engine.p2'), desc: t('landing.engine.p2d'), color: '#FBBF24' },
+                      { icon: Zap, title: t('landing.engine.p3'), desc: t('landing.engine.p3d'), color: '#10B981' },
+                      { icon: BookOpen, title: t('landing.engine.p4'), desc: t('landing.engine.p4d'), color: '#3B82F6' },
+                      { icon: Brain, title: t('landing.engine.p5'), desc: t('landing.engine.p5d'), color: '#EF4444' },
+                      { icon: Volume2, title: t('landing.engine.p6'), desc: t('landing.engine.p6d'), color: '#F97316' },
+                    ].map((p, i) => (
+                      <motion.div
+                        key={i}
+                        className="flex items-start gap-2.5"
+                        initial={{ opacity: 0, y: 8 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.05 * i }}
+                      >
+                        <div
+                          className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                          style={{ backgroundColor: `${p.color}12` }}
+                        >
+                          <p.icon size={13} style={{ color: p.color }} />
+                        </div>
+                        <div>
+                          <span className="text-[11px] font-bold text-white block mb-0.5">{p.title}</span>
+                          <p className="text-[10px] text-[#6B7280] leading-relaxed">{p.desc}</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Bottom Line Quote */}
+                  <div className="mt-6 pt-5 border-t border-[#2A2A2A] text-center">
+                    <p className="text-[13px] font-medium text-[#9CA3AF] italic leading-relaxed">
+                      &ldquo;{t('landing.engine.bottomLine')}&rdquo;
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Decorator: Engine → ACASRS */}
+          <PulseLine color="#10B981" />
+
+          {/* ══════════════════════════════════════════════════════
+              PART 02: ACASRS PROTOCOL
+              ══════════════════════════════════════════════════════ */}
+          <div>
+            {/* Section Header */}
+            <motion.div
+              className="flex items-center gap-3 mb-6"
+              initial={{ opacity: 0, x: language === 'ar' ? 10 : -10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#10B981] text-white text-[12px] font-bold flex-shrink-0">
+                02
               </div>
-              <h3 className={`text-[19px] font-bold ${isDark ? 'text-white' : 'text-[#111827]'} mb-2`}>{t('landing.gamification.rankingTitle')}</h3>
-              <p className={`${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'} text-[15px] mb-8`}>
-                {t('landing.gamification.rankingDesc')}
-              </p>
-              <div className="space-y-2">
-                {[
-                  { rank: 1, name: "Alex M.", xp: "12k", color: "#FACC15" },
-                  { rank: 2, name: t('landing.gamification.you'), xp: "11k", color: "#3B82F6", highlight: true }
-                ].map((user, i) => (
-                  <div key={i} className={`flex items-center justify-between p-3 rounded-[12px] ${user.highlight ? 'bg-[#3B82F6]/10 border border-[#3B82F6]/30' : `${isDark ? 'bg-[#121212] border border-[#2D2D2F]' : 'bg-[#F0F1F3] border border-[#E2E4E9]'}`}`}>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[13px] font-bold w-6" style={{ color: user.color }}>#{user.rank}</span>
-                      <span className={`text-[13px] font-bold ${user.highlight ? (isDark ? 'text-white' : 'text-[#111827]') : 'text-[#6B7280]'}`}>{user.name}</span>
+              <h3 className="text-[19px] font-bold text-white">{t('landing.acasrs2.title')}</h3>
+              <div className="flex-1 h-px bg-[#2A2A2A]" />
+            </motion.div>
+
+            <div className="flex flex-col gap-4">
+              {/* ─── Main Card: Overview + Forgetting Curve ─── */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] overflow-hidden">
+                  <div className="p-6">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#10B981] mb-4 inline-block">
+                      {t('landing.acasrs2.badge')}
+                    </span>
+                    <h4 className="text-[20px] font-bold mb-2 text-white">{t('landing.acasrs2.subtitle')}</h4>
+                    <p className="text-[14px] mb-5 leading-relaxed text-[#9CA3AF]">{t('landing.acasrs2.desc')}</p>
+
+                    {/* Forgetting Curve Highlight */}
+                    <div className="rounded-xl p-4 border border-dashed border-[#EF4444]/25 bg-[#EF4444]/[0.03]">
+                      <h5 className="text-[13px] font-bold text-[#EF4444] mb-1.5">{t('landing.acasrs2.curveTitle')}</h5>
+                      <p className="text-[12px] text-[#9CA3AF] leading-relaxed">{t('landing.acasrs2.curveDesc')}</p>
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">{user.xp} XP</span>
                   </div>
-                ))}
-              </div>
-            </motion.div>
+                </div>
+              </motion.div>
+
+              {/* ─── Three-Phase Validation Card ─── */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.15 }}
+              >
+                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] p-6">
+                  <h4 className="text-[17px] font-bold mb-5 text-white">{t('landing.acasrs2.phasesTitle')}</h4>
+
+                  <div className="space-y-4">
+                    {[
+                      { phase: t('landing.acasrs2.phase1'), time: t('landing.acasrs2.phase1Time'), desc: t('landing.acasrs2.phase1Desc'), color: '#3B82F6', icon: Clock },
+                      { phase: t('landing.acasrs2.phase2'), time: t('landing.acasrs2.phase2Time'), desc: t('landing.acasrs2.phase2Desc'), color: '#FBBF24', icon: Brain },
+                      { phase: t('landing.acasrs2.phase3'), time: t('landing.acasrs2.phase3Time'), desc: t('landing.acasrs2.phase3Desc'), color: '#10B981', icon: Layers },
+                    ].map((p, i) => (
+                      <motion.div
+                        key={i}
+                        className="flex gap-4 items-start"
+                        initial={{ opacity: 0, x: language === 'ar' ? 12 : -12 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.1 + i * 0.08 }}
+                      >
+                        {/* Timeline connector */}
+                        <div className="flex flex-col items-center flex-shrink-0">
+                          <div
+                            className="w-10 h-10 rounded-xl flex items-center justify-center border"
+                            style={{ borderColor: `${p.color}30` }}
+                          >
+                            <p.icon size={18} style={{ color: p.color }} />
+                          </div>
+                          {i < 2 && <div className="w-px h-6 bg-[#2A2A2A] mt-1" />}
+                        </div>
+                        <div className="flex-1 pb-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[14px] font-bold text-white">{p.phase}</span>
+                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md" style={{ color: p.color, backgroundColor: `${p.color}10` }}>{p.time}</span>
+                          </div>
+                          <p className="text-[12px] text-[#6B7280] leading-relaxed">{p.desc}</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 pt-6 border-t border-[#2A2A2A]">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-[#4B5563]">
+                      {language === 'ar' ? 'معاينة مراحل الخوارزمية' : 'Algorithm Phase Preview'}
+                    </p>
+                    <ACASRSVisualizer />
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* ─── Comparison Card: Legacy vs ACASRS ─── */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] p-6">
+                  <h4 className="text-[17px] font-bold mb-5 text-white">{t('landing.acasrs2.vsTitle')}</h4>
+
+                  {/* Table Header */}
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    <div />
+                    <div className="flex items-center justify-center gap-1.5 py-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#EF4444]">{t('landing.acasrs2.legacy')}</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-1.5 py-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#10B981]">{t('landing.acasrs2.acasrsLabel')}</span>
+                    </div>
+                  </div>
+
+                  {/* Table Rows */}
+                  <div className="space-y-2">
+                    {[
+                      { dim: t('landing.acasrs2.row1'), legacy: t('landing.acasrs2.row1L'), acasrs: t('landing.acasrs2.row1A') },
+                      { dim: t('landing.acasrs2.row2'), legacy: t('landing.acasrs2.row2L'), acasrs: t('landing.acasrs2.row2A') },
+                      { dim: t('landing.acasrs2.row3'), legacy: t('landing.acasrs2.row3L'), acasrs: t('landing.acasrs2.row3A') },
+                      { dim: t('landing.acasrs2.row4'), legacy: t('landing.acasrs2.row4L'), acasrs: t('landing.acasrs2.row4A') },
+                    ].map((row, i) => (
+                      <motion.div
+                        key={i}
+                        className="grid grid-cols-3 gap-2"
+                        initial={{ opacity: 0, x: language === 'ar' ? 8 : -8 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.06 * i }}
+                      >
+                        <div className="rounded-lg p-3 flex items-center border border-dashed border-[#383838] bg-[#1A1A1A]">
+                          <span className="text-[10px] font-bold text-white">{row.dim}</span>
+                        </div>
+                        <div className="rounded-lg p-3 flex items-center border border-dashed border-[#383838] bg-[#1A1A1A]">
+                          <div className="flex items-start gap-1.5">
+                            <X size={10} className="text-[#EF4444] mt-0.5 flex-shrink-0" />
+                            <span className="text-[10px] text-[#9CA3AF] leading-snug">{row.legacy}</span>
+                          </div>
+                        </div>
+                        <div className="rounded-lg p-3 flex items-center border border-[#10B981]/20">
+                          <div className="flex items-start gap-1.5">
+                            <ChevronRight size={10} className="text-[#10B981] mt-0.5 flex-shrink-0" />
+                            <span className="text-[10px] text-[#10B981] font-medium leading-snug">{row.acasrs}</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* ─── Behavioral Intelligence Card ─── */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.25 }}
+              >
+                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] p-6">
+                  <h4 className="text-[17px] font-bold mb-1 text-white">{t('landing.acasrs2.signals')}</h4>
+                  <p className="text-[13px] text-[#6B7280] mb-5 leading-relaxed">{t('landing.acasrs2.signalsDesc')}</p>
+
+                  <div className="space-y-3">
+                    {[
+                      { icon: Clock, title: t('landing.acasrs2.signal1'), desc: t('landing.acasrs2.signal1Desc'), color: '#3B82F6' },
+                      { icon: Zap, title: t('landing.acasrs2.signal2'), desc: t('landing.acasrs2.signal2Desc'), color: '#FBBF24' },
+                      { icon: Brain, title: t('landing.acasrs2.signal3'), desc: t('landing.acasrs2.signal3Desc'), color: '#10B981' },
+                    ].map((signal, i) => (
+                      <motion.div
+                        key={i}
+                        className="flex items-start gap-3 rounded-xl p-4 bg-[#1A1A1A] border border-dashed border-[#383838]"
+                        initial={{ opacity: 0, y: 6 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.08 * i }}
+                      >
+                        <div
+                          className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 border"
+                          style={{ borderColor: `${signal.color}25` }}
+                        >
+                          <signal.icon size={16} style={{ color: signal.color }} />
+                        </div>
+                        <div>
+                          <span className="text-[13px] font-bold text-white block mb-0.5">{signal.title}</span>
+                          <span className="text-[12px] text-[#6B7280] leading-relaxed">{signal.desc}</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Decorator: Methodology → CTA */}
+      <div className="bg-[#121212]">
+        <div className="max-w-lg mx-auto">
+          <OrbitDecoration />
+        </div>
+      </div>
+
       {/* FINAL CTA */}
-      <section className={`py-24 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'} relative overflow-hidden border-t ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
-        <div className="max-w-2xl mx-auto text-center relative z-10">
+      <section className={`py-20 px-4 bg-[#121212] relative overflow-hidden`}>
+        <div className="max-w-lg mx-auto text-center relative z-10">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-[36px] md:text-[52px] font-bold mb-4 leading-tight">
+            <h2 className={`text-[28px] font-bold mb-3 leading-tight text-white`}>
               {t('landing.cta.upgrade')}
-              <span className="text-[#3B82F6]">
-                {t('landing.cta.pathways')}
-              </span>
+              <span className="text-[#3B82F6]"> {t('landing.cta.pathways')}</span>
             </h2>
-            <p className="text-[16px] md:text-[18px] text-[#9CA3AF] mb-10 max-w-sm mx-auto leading-relaxed">
+            <p className="text-[14px] text-[#6B7280] mb-8 max-w-sm mx-auto leading-relaxed">
               {t('landing.cta.join')}
             </p>
-            
-            <div className="flex flex-col items-center gap-4">
-              <Link 
-                href="/register"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-10 py-4 bg-white text-[#121212] rounded-[12px] font-bold text-[15px] uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-white/10 group"
-              >
-                {t('landing.cta.startProtocol')}
-                <ArrowRight size={19} className={`transition-transform ${language === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
-              </Link>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">
+
+            <div className="flex flex-col items-center gap-3">
+              <div className="relative w-full">
+                {/* Pulsing glow ring — draws eye to CTA */}
+                {[0, 1].map((i) => (
+                  <motion.span
+                    key={i}
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 rounded-[14px] border border-[#3B82F6]"
+                    initial={{ opacity: 0.5, scale: 1 }}
+                    animate={{ opacity: 0, scale: 1.08 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: i * 1 }}
+                  />
+                ))}
+                <Link
+                  href="/register"
+                  className="relative w-full inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-[#3B82F6] text-white rounded-[14px] font-bold text-[15px] tracking-wide active:scale-95 overflow-hidden"
+                >
+                  {/* Shimmer sweep */}
+                  <motion.span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 rounded-[14px]"
+                    style={{
+                      background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.13) 50%, transparent 65%)'
+                    }}
+                    animate={{ x: ['-110%', '110%'] }}
+                    transition={{ duration: 2.8, repeat: Infinity, ease: 'linear', repeatDelay: 0.8 }}
+                  />
+                  <span className="relative z-10 flex items-center gap-2.5">
+                    {t('landing.cta.startProtocol')}
+                    <ArrowRight size={18} className={`${language === 'ar' ? 'rotate-180' : ''}`} />
+                  </span>
+                </Link>
+              </div>
+              <p className="text-[11px] font-medium tracking-wider text-[#4B5563]">
                 {t('landing.cta.noCreditCard')}
               </p>
             </div>
@@ -1146,8 +2224,8 @@ export default function LandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className={`border-t ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'} py-12 px-4 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FA]'}`}>
-        <div className="max-w-5xl mx-auto flex flex-col items-center gap-6">
+      <footer className={`border-t border-[#2A2A2A] py-10 px-4 bg-[#121212]`}>
+        <div className="max-w-lg mx-auto flex flex-col items-center gap-5">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3">
               <div className="w-8 h-8 flex-shrink-0">
@@ -1168,20 +2246,20 @@ export default function LandingPage() {
               <span className="font-bold text-[18px] tracking-tight">Flotter</span>
             </Link>
           </div>
-          
-          <div className={`flex gap-6 ${language === 'ar' ? 'text-[11px] font-bold uppercase tracking-widest' : 'text-[13px] font-medium'} ${isDark ? 'text-[#6B7280]' : 'text-[#4B5563]'}`}>
-            <Link href="/legal/mentions" className={`${isDark ? 'hover:text-white' : 'hover:text-[#111827]'} transition-colors whitespace-nowrap`}>{t('globalFooter.legalNotice')}</Link>
-            <Link href="/legal/privacy" className={`${isDark ? 'hover:text-white' : 'hover:text-[#111827]'} transition-colors whitespace-nowrap`}>{t('globalFooter.privacyPolicy')}</Link>
-            <Link href="/legal/terms" className={`${isDark ? 'hover:text-white' : 'hover:text-[#111827]'} transition-colors whitespace-nowrap`}>{t('globalFooter.termsOfService')}</Link>
+
+          <div className={`flex gap-6 ${language === 'ar' ? 'text-[11px] font-bold uppercase tracking-widest' : 'text-[13px] font-medium'} text-[#6B7280]`}>
+            <Link href="/legal/mentions" className={`text-[#9CA3AF] whitespace-nowrap`}>{t('globalFooter.legalNotice')}</Link>
+            <Link href="/legal/privacy" className={`text-[#9CA3AF] whitespace-nowrap`}>{t('globalFooter.privacyPolicy')}</Link>
+            <Link href="/legal/terms" className={`text-[#9CA3AF] whitespace-nowrap`}>{t('globalFooter.termsOfService')}</Link>
           </div>
-          
+
           <div className="flex flex-col items-center gap-2">
             <div className="flex items-center gap-2 text-[#6B7280]">
               <svg width="14" height="14" viewBox="164 107 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                <path d="M188.866 120.889C188.866 118.834 188.149 116.128 186.501 113.968C184.897 111.866 182.386 110.239 178.611 110.239C175.978 110.239 174.103 110.847 172.813 111.876C171.542 112.89 170.65 114.462 170.254 116.797C170.168 117.299 169.859 117.73 169.42 117.961C168.145 118.631 167.12 119.185 166.341 119.628C166.596 119.847 166.853 120.114 167.063 120.437C167.531 121.157 167.72 122.097 167.337 123.1C167.137 123.626 166.848 124.232 166.597 124.773C166.331 125.347 166.082 125.9 165.89 126.431C165.695 126.971 165.592 127.402 165.573 127.729C165.555 128.041 165.617 128.145 165.637 128.174C165.672 128.224 165.755 128.318 166.054 128.42C166.383 128.532 166.804 128.598 167.421 128.682C168.497 128.828 170.263 129.004 171.662 130.152L171.738 130.215C173.342 131.563 174.454 133.512 175.164 135.905C175.418 136.76 174.953 137.666 174.125 137.928C173.298 138.191 172.421 137.71 172.168 136.855C171.582 134.881 170.75 133.559 169.76 132.728L169.713 132.688C169.121 132.203 168.309 132.069 167.013 131.893C166.443 131.816 165.729 131.719 165.074 131.496C164.389 131.263 163.639 130.853 163.089 130.061L163.089 130.061C162.525 129.247 162.397 128.332 162.444 127.532C162.491 126.747 162.71 125.973 162.953 125.299C163.199 124.617 163.504 123.948 163.771 123.373C164.003 122.871 164.195 122.465 164.338 122.12C164.259 122.053 164.156 121.978 164.024 121.893C163.885 121.803 163.737 121.717 163.57 121.621C163.421 121.536 163.223 121.423 163.054 121.313C162.923 121.229 162.612 121.025 162.374 120.707C162.242 120.53 162.046 120.207 162.007 119.755C161.964 119.253 162.133 118.821 162.366 118.514L162.366 118.514C162.611 118.19 162.981 117.931 163.201 117.78C163.49 117.583 163.861 117.353 164.301 117.096C165.053 116.654 166.064 116.098 167.324 115.43C167.896 112.869 169.058 110.779 170.897 109.312C172.907 107.709 175.537 107 178.611 107C183.396 107 186.796 109.123 188.963 111.963C191.086 114.745 192 118.174 192 120.889C192 126.067 188.126 131.373 182.568 133.134C182.872 133.665 183.395 134.38 184.195 135.292C184.777 135.955 184.729 136.979 184.088 137.58C183.446 138.181 182.455 138.131 181.874 137.468C180.865 136.318 180.083 135.261 179.625 134.319C179.216 133.48 178.792 132.153 179.566 130.989L179.588 130.956C179.822 130.622 180.171 130.392 180.565 130.315C185.51 129.341 188.866 124.821 188.866 120.889Z" fill={isDark ? '#D1D5DB' : '#1A1C20'} />
-                <path fillRule="evenodd" clipRule="evenodd" d="M174.245 115.802C173.821 117.538 173.947 118.757 174.624 119.459C175.301 120.161 176.455 120.62 178.086 120.836C177.716 123.076 178.168 124.126 179.44 123.988C180.712 123.85 181.477 123.292 181.733 122.316C183.722 122.905 184.799 122.412 184.966 120.836C185.217 118.473 184.008 116.588 183.513 116.588C183.017 116.588 181.733 116.524 181.733 115.802C181.733 115.079 180.234 114.671 178.88 114.671C177.527 114.671 178.341 113.709 176.483 114.089C175.244 114.342 174.498 114.913 174.245 115.802Z" fill={isDark ? '#FCD34D' : '#FFCC00'} />
-                <path d="M175.638 113.107C176.177 113.006 176.668 112.964 177.113 113.036C177.643 113.123 177.989 113.351 178.231 113.567C178.259 113.592 178.283 113.613 178.302 113.631C178.319 113.631 178.339 113.632 178.361 113.632C179.163 113.632 180.047 113.74 180.778 113.976C181.137 114.092 181.543 114.266 181.884 114.536C182.122 114.725 182.388 115.012 182.531 115.398C182.596 115.407 182.667 115.416 182.744 115.422C182.89 115.434 183.028 115.437 183.131 115.437C183.571 115.437 183.91 115.616 184.094 115.734C184.3 115.867 184.475 116.029 184.619 116.186C184.907 116.501 185.17 116.906 185.384 117.357C185.814 118.263 186.116 119.498 185.957 120.873C185.835 121.926 185.319 122.906 184.199 123.375C183.53 123.655 182.779 123.69 182.015 123.588C181.81 123.846 181.562 124.074 181.271 124.268C180.636 124.692 179.873 124.903 179.075 124.982C178.574 125.032 178.026 124.988 177.513 124.739C176.981 124.482 176.612 124.064 176.388 123.586C176.14 123.058 176.06 122.442 176.08 121.792C174.852 121.52 173.798 121.07 173.042 120.352L173.042 120.353C171.801 119.175 171.832 117.393 172.294 115.665C172.298 115.649 172.303 115.633 172.308 115.617C172.769 114.132 174.114 113.393 175.638 113.107ZM176.545 115.585C176.463 115.591 176.335 115.606 176.148 115.641H176.148C175.155 115.827 174.943 116.147 174.877 116.339C174.489 117.811 174.748 118.335 174.903 118.497L174.918 118.512L174.918 118.512C175.301 118.876 176.132 119.258 177.711 119.449C178.074 119.493 178.402 119.679 178.62 119.962C178.837 120.246 178.925 120.603 178.862 120.951C178.777 121.424 178.747 121.791 178.754 122.068C178.759 122.229 178.775 122.341 178.792 122.415C178.795 122.415 178.798 122.415 178.8 122.414C179.311 122.364 179.598 122.246 179.749 122.145C179.876 122.061 179.958 121.958 180.009 121.778C180.104 121.448 180.332 121.167 180.642 120.999C180.952 120.83 181.318 120.788 181.661 120.881C182.59 121.132 183.007 121.06 183.134 121.007C183.168 120.993 183.178 120.983 183.193 120.96C183.217 120.923 183.271 120.818 183.298 120.586V120.586C183.396 119.735 183.206 118.969 182.95 118.431C182.863 118.247 182.776 118.106 182.704 118.007C182.409 117.99 182.039 117.951 181.683 117.861C181.404 117.79 181.019 117.661 180.68 117.4C180.399 117.184 180.141 116.867 180.025 116.457C179.997 116.447 179.964 116.435 179.927 116.423C179.537 116.297 178.953 116.213 178.361 116.213C177.863 116.213 177.41 116.131 177.004 115.913C176.809 115.808 176.665 115.692 176.565 115.603C176.558 115.597 176.552 115.591 176.545 115.585Z" fill={isDark ? '#D1D5DB' : '#1A1C20'} />
-                <path d="M180.845 123.19C181.507 122.823 182.377 123.005 182.788 123.596C183.199 124.187 182.995 124.964 182.333 125.331C182.02 125.505 181.642 125.74 181.303 125.984C180.944 126.243 180.713 126.452 180.619 126.57L180.619 126.57C180.348 126.908 180.09 127.212 179.864 127.479C179.632 127.752 179.441 127.978 179.277 128.187C178.936 128.62 178.827 128.843 178.795 128.985C178.643 129.668 177.9 130.111 177.136 129.976C176.372 129.84 175.875 129.176 176.027 128.494C176.18 127.81 176.583 127.227 176.967 126.738C177.166 126.485 177.391 126.221 177.614 125.957C177.842 125.688 178.078 125.409 178.325 125.102L178.325 125.102C178.646 124.703 179.115 124.323 179.53 124.023C179.967 123.708 180.44 123.414 180.845 123.19Z" fill={isDark ? '#D1D5DB' : '#1A1C20'} />
+                <path d="M188.866 120.889C188.866 118.834 188.149 116.128 186.501 113.968C184.897 111.866 182.386 110.239 178.611 110.239C175.978 110.239 174.103 110.847 172.813 111.876C171.542 112.89 170.65 114.462 170.254 116.797C170.168 117.299 169.859 117.73 169.42 117.961C168.145 118.631 167.12 119.185 166.341 119.628C166.596 119.847 166.853 120.114 167.063 120.437C167.531 121.157 167.72 122.097 167.337 123.1C167.137 123.626 166.848 124.232 166.597 124.773C166.331 125.347 166.082 125.9 165.89 126.431C165.695 126.971 165.592 127.402 165.573 127.729C165.555 128.041 165.617 128.145 165.637 128.174C165.672 128.224 165.755 128.318 166.054 128.42C166.383 128.532 166.804 128.598 167.421 128.682C168.497 128.828 170.263 129.004 171.662 130.152L171.738 130.215C173.342 131.563 174.454 133.512 175.164 135.905C175.418 136.76 174.953 137.666 174.125 137.928C173.298 138.191 172.421 137.71 172.168 136.855C171.582 134.881 170.75 133.559 169.76 132.728L169.713 132.688C169.121 132.203 168.309 132.069 167.013 131.893C166.443 131.816 165.729 131.719 165.074 131.496C164.389 131.263 163.639 130.853 163.089 130.061L163.089 130.061C162.525 129.247 162.397 128.332 162.444 127.532C162.491 126.747 162.71 125.973 162.953 125.299C163.199 124.617 163.504 123.948 163.771 123.373C164.003 122.871 164.195 122.465 164.338 122.12C164.259 122.053 164.156 121.978 164.024 121.893C163.885 121.803 163.737 121.717 163.57 121.621C163.421 121.536 163.223 121.423 163.054 121.313C162.923 121.229 162.612 121.025 162.374 120.707C162.242 120.53 162.046 120.207 162.007 119.755C161.964 119.253 162.133 118.821 162.366 118.514L162.366 118.514C162.611 118.19 162.981 117.931 163.201 117.78C163.49 117.583 163.861 117.353 164.301 117.096C165.053 116.654 166.064 116.098 167.324 115.43C167.896 112.869 169.058 110.779 170.897 109.312C172.907 107.709 175.537 107 178.611 107C183.396 107 186.796 109.123 188.963 111.963C191.086 114.745 192 118.174 192 120.889C192 126.067 188.126 131.373 182.568 133.134C182.872 133.665 183.395 134.38 184.195 135.292C184.777 135.955 184.729 136.979 184.088 137.58C183.446 138.181 182.455 138.131 181.874 137.468C180.865 136.318 180.083 135.261 179.625 134.319C179.216 133.48 178.792 132.153 179.566 130.989L179.588 130.956C179.822 130.622 180.171 130.392 180.565 130.315C185.51 129.341 188.866 124.821 188.866 120.889Z" fill="#D1D5DB" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M174.245 115.802C173.821 117.538 173.947 118.757 174.624 119.459C175.301 120.161 176.455 120.62 178.086 120.836C177.716 123.076 178.168 124.126 179.44 123.988C180.712 123.85 181.477 123.292 181.733 122.316C183.722 122.905 184.799 122.412 184.966 120.836C185.217 118.473 184.008 116.588 183.513 116.588C183.017 116.588 181.733 116.524 181.733 115.802C181.733 115.079 180.234 114.671 178.88 114.671C177.527 114.671 178.341 113.709 176.483 114.089C175.244 114.342 174.498 114.913 174.245 115.802Z" fill="#FCD34D" />
+                <path d="M175.638 113.107C176.177 113.006 176.668 112.964 177.113 113.036C177.643 113.123 177.989 113.351 178.231 113.567C178.259 113.592 178.283 113.613 178.302 113.631C178.319 113.631 178.339 113.632 178.361 113.632C179.163 113.632 180.047 113.74 180.778 113.976C181.137 114.092 181.543 114.266 181.884 114.536C182.122 114.725 182.388 115.012 182.531 115.398C182.596 115.407 182.667 115.416 182.744 115.422C182.89 115.434 183.028 115.437 183.131 115.437C183.571 115.437 183.91 115.616 184.094 115.734C184.3 115.867 184.475 116.029 184.619 116.186C184.907 116.501 185.17 116.906 185.384 117.357C185.814 118.263 186.116 119.498 185.957 120.873C185.835 121.926 185.319 122.906 184.199 123.375C183.53 123.655 182.779 123.69 182.015 123.588C181.81 123.846 181.562 124.074 181.271 124.268C180.636 124.692 179.873 124.903 179.075 124.982C178.574 125.032 178.026 124.988 177.513 124.739C176.981 124.482 176.612 124.064 176.388 123.586C176.14 123.058 176.06 122.442 176.08 121.792C174.852 121.52 173.798 121.07 173.042 120.352L173.042 120.353C171.801 119.175 171.832 117.393 172.294 115.665C172.298 115.649 172.303 115.633 172.308 115.617C172.769 114.132 174.114 113.393 175.638 113.107ZM176.545 115.585C176.463 115.591 176.335 115.606 176.148 115.641H176.148C175.155 115.827 174.943 116.147 174.877 116.339C174.489 117.811 174.748 118.335 174.903 118.497L174.918 118.512L174.918 118.512C175.301 118.876 176.132 119.258 177.711 119.449C178.074 119.493 178.402 119.679 178.62 119.962C178.837 120.246 178.925 120.603 178.862 120.951C178.777 121.424 178.747 121.791 178.754 122.068C178.759 122.229 178.775 122.341 178.792 122.415C178.795 122.415 178.798 122.415 178.8 122.414C179.311 122.364 179.598 122.246 179.749 122.145C179.876 122.061 179.958 121.958 180.009 121.778C180.104 121.448 180.332 121.167 180.642 120.999C180.952 120.83 181.318 120.788 181.661 120.881C182.59 121.132 183.007 121.06 183.134 121.007C183.168 120.993 183.178 120.983 183.193 120.96C183.217 120.923 183.271 120.818 183.298 120.586V120.586C183.396 119.735 183.206 118.969 182.95 118.431C182.863 118.247 182.776 118.106 182.704 118.007C182.409 117.99 182.039 117.951 181.683 117.861C181.404 117.79 181.019 117.661 180.68 117.4C180.399 117.184 180.141 116.867 180.025 116.457C179.997 116.447 179.964 116.435 179.927 116.423C179.537 116.297 178.953 116.213 178.361 116.213C177.863 116.213 177.41 116.131 177.004 115.913C176.809 115.808 176.665 115.692 176.565 115.603C176.558 115.597 176.552 115.591 176.545 115.585Z" fill="#D1D5DB" />
+                <path d="M180.845 123.19C181.507 122.823 182.377 123.005 182.788 123.596C183.199 124.187 182.995 124.964 182.333 125.331C182.02 125.505 181.642 125.74 181.303 125.984C180.944 126.243 180.713 126.452 180.619 126.57L180.619 126.57C180.348 126.908 180.09 127.212 179.864 127.479C179.632 127.752 179.441 127.978 179.277 128.187C178.936 128.62 178.827 128.843 178.795 128.985C178.643 129.668 177.9 130.111 177.136 129.976C176.372 129.84 175.875 129.176 176.027 128.494C176.18 127.81 176.583 127.227 176.967 126.738C177.166 126.485 177.391 126.221 177.614 125.957C177.842 125.688 178.078 125.409 178.325 125.102L178.325 125.102C178.646 124.703 179.115 124.323 179.53 124.023C179.967 123.708 180.44 123.414 180.845 123.19Z" fill="#D1D5DB" />
               </svg>
               <span className="text-[11px] font-bold uppercase tracking-[0.2em]">{t('landing.footer.copyright')}</span>
             </div>

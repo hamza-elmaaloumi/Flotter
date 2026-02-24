@@ -410,13 +410,13 @@ export default function StreakCelebration({
                   }}
                   className="w-full bg-[#10B981] text-black py-3.5 rounded-[14px] font-bold text-[13px] transition-all active:scale-[0.97]"
                 >
-                  {t('deck.backToDashboard')}
+                  {t('deck.continueLearning')}
                 </button>
                 <button
                   onClick={onDismiss}
                   className="w-full py-3 text-[11px] font-bold text-[#6B7280] uppercase tracking-widest hover:text-white transition-colors"
                 >
-                  {t('deck.continueLearning')}
+                  {t('deck.backToDashboard')}
                 </button>
                 {!isPro && (
                   <Link

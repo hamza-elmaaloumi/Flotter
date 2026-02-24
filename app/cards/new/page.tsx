@@ -258,7 +258,7 @@ export default function NewCardPage() {
               type="button" 
               onClick={handleManualSearch} 
               disabled={loading}
-              className={`px-5 h-11 text-[12px] font-bold rounded-[12px] border transition-colors disabled:opacity-50 ${isDark ? 'bg-[#333333] border-[#2D2D2F] hover:bg-[#374151]' : 'bg-[#E2E4E9] border-[#E2E4E9] hover:bg-[#D1D5DB] text-[#111827]'}`}
+              className={`px-5 h-11 text-[12px] font-bold rounded-[12px] border transition-colors disabled:opacity-50 ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F] hover:bg-[#262626]' : 'bg-[#E2E4E9] border-[#E2E4E9] hover:bg-[#D1D5DB] text-[#111827]'}`}
             >
               {loading ? <Loader2 size={16} className="animate-spin" /> : t('newCard.search')}
             </button>
@@ -271,7 +271,7 @@ export default function NewCardPage() {
                 key={r.id}
                 type="button"
                 onClick={() => setSelected(r)}
-                className={`relative aspect-square rounded-[12px] overflow-hidden border-2 transition-all ${selected?.id === r.id ? 'border-[#3B82F6]' : 'border-transparent hover:border-[#333333]'}`}
+                className={`relative aspect-square rounded-[12px] overflow-hidden border-2 transition-all ${selected?.id === r.id ? 'border-[#3B82F6]' : 'border-transparent hover:border-[#1C1C1E]'}`}
               >
                 <img 
                   src={r.urls.small} 
@@ -319,7 +319,7 @@ export default function NewCardPage() {
           <button 
             onClick={() => handleSubmit()}
             disabled={saving}
-            className="w-60 bg-green-600 text-[#FFFFFF] h-[39px] rounded-[12px] text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg disabled:bg-[#374151] disabled:text-[#6B7280]"
+            className="w-60 bg-green-600 text-[#FFFFFF] h-[39px] rounded-[12px] text-[15px] font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg disabled:bg-[#262626] disabled:text-[#6B7280]"
           >
             {saving ? <Loader2 size={20} className="animate-spin" /> : <><Plus size={20} strokeWidth={3} /> {t('newCard.createBtn')}</>}
           </button>

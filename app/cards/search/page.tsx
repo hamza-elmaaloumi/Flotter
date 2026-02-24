@@ -117,7 +117,7 @@ export default function ListPage() {
                 >
                   <div className="flex items-center gap-3">
                     {/* Icon/Image Container: Rounded 8px per list_items spec */}
-                    <div className={`w-10 h-10 rounded-[8px] overflow-hidden flex-shrink-0 flex items-center justify-center border ${isDark ? 'bg-[#333333] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'}`}>
+                    <div className={`w-10 h-10 rounded-[8px] overflow-hidden flex-shrink-0 flex items-center justify-center border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'}`}>
                       {card.imageUrl ? (
                         <img 
                           src={card.imageUrl} 

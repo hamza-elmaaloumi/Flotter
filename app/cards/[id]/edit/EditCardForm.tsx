@@ -175,7 +175,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
                 </div>
               ) : (
                 <div className={`aspect-video w-full rounded-[14px] border-2 border-dashed flex flex-col items-center justify-center ${isDark ? 'border-[#2D2D2F] bg-[#121212] text-[#6B7280]' : 'border-[#E2E4E9] bg-[#F0F1F3] text-[#6B7280]'}`}>
-                  <ImageIcon size={32} className="mb-2 text-[#333333]" />
+                  <ImageIcon size={32} className="mb-2 text-[#262626]" />
                   <p className="text-[14px]">{t('editCard.noImage')}</p>
                   <p className="text-[12px] text-[#9CA3AF]">{t('editCard.selectFromLibrary')}</p>
                 </div>
@@ -238,7 +238,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
             <button 
               type="button" 
               onClick={searchImages} 
-              className={`px-6 text-[14px] font-bold rounded-[12px] border transition-colors ${isDark ? 'bg-[#333333] border-[#2D2D2F] hover:bg-[#374151]' : 'bg-[#E2E4E9] border-[#E2E4E9] hover:bg-[#D1D5DB] text-[#111827]'}`}
+              className={`px-6 text-[14px] font-bold rounded-[12px] border transition-colors ${isDark ? 'bg-[#262626] border-[#2D2D2F] hover:bg-[#374151]' : 'bg-[#E2E4E9] border-[#E2E4E9] hover:bg-[#D1D5DB] text-[#111827]'}`}
             >
               {t('editCard.searchBtn')}
             </button>
@@ -268,7 +268,7 @@ export default function EditCardForm({ initialCard }: { initialCard: CardShape }
             ))}
             {results.length === 0 && !imagesLoading && (
               <div className={`col-span-full py-12 flex flex-col items-center justify-center border border-dashed rounded-[16px] ${isDark ? 'border-[#2D2D2F] bg-[#1C1C1E]/50' : 'border-[#E2E4E9] bg-[#F0F1F3]/50'}`}>
-                <Search size={24} className="text-[#333333] mb-2" />
+                <Search size={24} className="text-[#262626] mb-2" />
                 <span className="text-[12px] text-[#6B7280] font-medium">{t('editCard.discoverImages')}</span>
               </div>
             )}
