@@ -131,26 +131,38 @@ export async function PATCH(req: Request) {
     if (action === 'review') {
       const now = new Date()
       if (result === 'success') {
-        const prevInterval = Number(card.currentIntervalMs || 0)
-        const currentEase = Number(card.easeFactor || 2.5)
-        const intervalMs = prevInterval > 0 ? Math.round(prevInterval * currentEase) : INITIAL_REVIEW_MS
+        const newConsecutiveCorrect = (card.consecutiveCorrect || 0) + 1;
+        let intervalMs: number;
+        let currentEase = Number(card.easeFactor || 2.5);
 
-        // ISSUE-019: Dynamically adjust ease factor on success
-        // Increase slightly (capped at 3.0) to reward consistent recall
-        const newEaseFactor = Math.min(currentEase + 0.1, 3.0)
+        if (newConsecutiveCorrect === 1) {
+          intervalMs = 15 * 60 * 1000; // 15 minutes
+        } else if (newConsecutiveCorrect === 2) {
+          intervalMs = 24 * 60 * 60 * 1000; // 1 day
+        } else if (newConsecutiveCorrect === 3) {
+          intervalMs = 3 * 24 * 60 * 60 * 1000; // 3 days
+        } else {
+          const prevInterval = Number(card.currentIntervalMs) > 0 
+            ? Number(card.currentIntervalMs) 
+            : 3 * 24 * 60 * 60 * 1000; // fallback to 3 days if 0
+          intervalMs = Math.round(prevInterval * currentEase);
+          currentEase = Math.min(currentEase + 0.1, 3.0);
+        }
 
-        // ISSUE-009: Include userId in where clause for defense-in-depth
+        const sentencesLength = card.sentences?.length || 1;
+        const nextIndex = (card.currentSentenceIndex + 1) % sentencesLength;
+
         const updated = await prisma.card.update({
           where: { id: cardId, userId },
           data: {
-            consecutiveCorrect: { increment: 1 },
+            consecutiveCorrect: newConsecutiveCorrect,
             currentIntervalMs: BigInt(intervalMs),
-            easeFactor: newEaseFactor,
+            easeFactor: currentEase,
             lastReviewedAt: now,
-            nextReviewAt: new Date(Date.now() + intervalMs),
+            nextReviewAt: new Date(now.getTime() + intervalMs),
+            currentSentenceIndex: nextIndex,
           },
         })
-        // XP awarded below (shared logic for success + struggle)
         return await awardReviewXp(userId, earnedReviewXp, audioPlayed, updated)
       }
 
@@ -158,7 +170,6 @@ export async function PATCH(req: Request) {
       const currentEase = Number(card.easeFactor || 2.5)
       const newEaseFactor = Math.max(currentEase - 0.2, 1.3)
 
-      // ISSUE-009: Include userId in where clause for defense-in-depth
       const updated = await prisma.card.update({
         where: { id: cardId, userId },
         data: {

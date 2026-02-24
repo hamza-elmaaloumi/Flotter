@@ -229,7 +229,9 @@ export default function DeckPage() {
 
         return newCards
       }
-      return [...newCards, { ...card, currentSentenceIndex: (card.currentSentenceIndex + 1) % card.sentences.length }]
+      // On struggle, keep the same sentence index so the user stays on
+      // the sentence they failed until they get it right.
+      return [...newCards, { ...card }]
     })
     setFlipped(s => { const n = { ...s }; delete n[cardId]; return n; })
 
