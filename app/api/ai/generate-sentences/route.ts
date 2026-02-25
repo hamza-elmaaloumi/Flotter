@@ -91,44 +91,39 @@ export async function POST(req: Request) {
                 messages: [
                     {
                         role: "system",
-                        content: `Role: Expert Mnemonist & Language Architect.
-            
-                        Output: Strict JSON { "sentences": [string, string, string], "imageQuery": "string" }
+                        content: `Role: Expert Mnemonist, Neuro-Linguistic Architect & Master of Visceral Storytelling.
 
-                        CRITICAL CONSTRAINT: The three sentences are INDEPENDENT. They appear to the user on DIFFERENT DAYS as part of spaced repetition. They NEVER appear together. Each sentence must create a complete, standalone memory.
+                        Output: Strict JSON matching this schema:
+                        { 
+                            "primaryDefinition": "string (the most common, single meaning of the word)",
+                            "sentences": ["string", "string", "string"], 
+                            "imageQuery": "string" 
+                        }
 
-                        TASK: Create 3 parallel "Memory Tetrad" contexts for the target word. Each sentence is a self-contained world.
+                        CRITICAL CONSTRAINTS:
+                        1. TARGET WORD: Every sentence MUST include the target word. All 3 sentences must use its one most common meaning.
+                        2. A1-A2 VOCABULARY: Use ONLY ultra-simple, beginner-level words.
+                        3. EXTREME EMOTION (CRITICAL): NEVER write weak, boring, or everyday sentences. Every sentence MUST be emotionally intense, shocking, or dramatic (e.g., sheer panic, heartbreak, fear, pain, extreme danger, hilarious embarrassment...). Make it feel like a high-stakes movie scene.
+                        4. NEVER use explicit emotional labels, Instead, you must SHOW the intensity by describing what happens physically, mentally, or in the environment—how the target word triggers a dramatic effect on the scene, the body, or the situation.
+                        5. LENGTH & DETAIL: Sentences MUST be fully detailed and exactly 15 to 20 words long. NEVER write short sentences. Use the simple words to paint a vivid, intense picture.
+                        6. 100% VARIETY: The 3 sentences must be completely unrelated scenarios, each with a different extreme emotion.
 
-                        METHODOLOGY PER SENTENCE (Atomic Unit):
-                        Each sentence MUST independently contain:
-                            1. Instant Visual Anchor: Concrete physical scene (user can picture it immediately)
-                            2. Sensory/Motor Grounding: Tactile sensation, physical effort, or body movement
-                            3. Target Word Climax: The word appears as the emotional or logical peak
-                            4. Second-Person Immersion: "You" experiencing it directly
-
-                        STRICT RULES:
-                            - INDEPENDENCE: Sentences share NO characters, objects, or scenes. Different contexts entirely.
-                            - LENGTH: Exactly 12-18 words per sentence.
-                            - VOCABULARY: Ultra-simple English (A1-A2) except target word.
-                            - TARGET WORD HANDLING:
-                                • If "to [verb]" → use natural conjugation (bow/bows/bowing/bowed)
-                                • Must appear grammatically in each sentence as the climax
-                            - VARIETY: Each sentence should explore a DIFFERENT facet/usage of the word (physical, emotional, metaphorical)
-                            - VIBE: Each standalone scene should be surprising, slightly absurd, or emotionally jarring.
-
-                        IMAGE QUERY RULES:
-                            - Describe the specific visual scene from Sentence 1 ONLY (the first review context).
-                            - 3-5 concrete words: [Subject] + [Action] + [Setting/Detail]
-                            - Must work as an Unsplash search term.`
+                        IMAGE QUERY RULES (For Unsplash API):
+                            - Unsplash requires broad, generic photography tags. It fails with specific actions.
+                            - Look at the physical setting of Sentence 1. 
+                            - Provide exactly 2 or 3 simple nouns/adjectives representing the setting or vibe.
+                            - NEVER use pronouns ("you", "I").
+                            - NEVER use verbs or actions.
+                            - STRICTEST RULE: NEVER include the target word itself in the imageQuery. Translate the target word into a visual object or background.`
                     },
                     {
                         role: "user",
                         content: `Target Word: "${sanitizedWord}"`
                     },
                 ],
-                model: "llama-3.3-70b-versatile",
+                model: "moonshotai/kimi-k2-instruct-0905",
                 temperature: 0.85,
-                max_tokens: 200, // Slight buffer for JSON formatting
+                max_tokens: 300,
                 response_format: { type: "json_object" },
             });
 

@@ -28,93 +28,28 @@ import FlotterLogo from './components/FlotterLogo'
 // ==========================================
 
 const NeuralBackground = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    let animationFrameId: number
-    let particles: Array<{
-      x: number
-      y: number
-      vx: number
-      vy: number
-      radius: number
-    }> = []
-
-    const resize = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-
-    const createParticles = () => {
-      particles = []
-      const count = Math.min(15, Math.floor(window.innerWidth / 80))
-      for (let i = 0; i < count; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.2,
-          vy: (Math.random() - 0.5) * 0.2,
-          radius: Math.random() * 1.5 + 0.5,
-        })
-      }
-    }
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      particles.forEach((p, i) => {
-        p.x += p.vx
-        p.y += p.vy
-
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1
-
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
-        ctx.fillStyle = '#3B82F6'
-        ctx.fill()
-
-        particles.slice(i + 1).forEach(p2 => {
-          const dx = p.x - p2.x
-          const dy = p.y - p2.y
-          const dist = Math.sqrt(dx * dx + dy * dy)
-
-          if (dist < 120) {
-            ctx.beginPath()
-            ctx.moveTo(p.x, p.y)
-            ctx.lineTo(p2.x, p2.y)
-            ctx.strokeStyle = `rgba(59, 130, 246, ${0.1 * (1 - dist / 120)})`
-            ctx.lineWidth = 1
-            ctx.stroke()
-          }
-        })
-      })
-
-      animationFrameId = requestAnimationFrame(draw)
-    }
-
-    resize()
-    createParticles()
-    draw()
-
-    window.addEventListener('resize', resize)
-    return () => {
-      cancelAnimationFrame(animationFrameId)
-      window.removeEventListener('resize', resize)
-    }
-  }, [])
-
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 opacity-30"
-    />
+    <div className="fixed inset-0 pointer-events-none z-0 select-none overflow-hidden">
+      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="smallGrid" width="28" height="28" patternUnits="userSpaceOnUse">
+            <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#3B82F6" strokeWidth="0.3" strokeOpacity="0.22"/>
+          </pattern>
+          <pattern id="mainGrid" width="140" height="140" patternUnits="userSpaceOnUse">
+            <rect width="140" height="140" fill="url(#smallGrid)"/>
+            <path d="M 140 0 L 0 0 0 140" fill="none" stroke="#3B82F6" strokeWidth="0.7" strokeOpacity="0.14"/>
+            <circle cx="0" cy="0" r="1.8" fill="#3B82F6" fillOpacity="0.20"/>
+            <circle cx="140" cy="0" r="1.8" fill="#3B82F6" fillOpacity="0.20"/>
+            <circle cx="0" cy="140" r="1.8" fill="#3B82F6" fillOpacity="0.20"/>
+            <circle cx="140" cy="140" r="1.8" fill="#3B82F6" fillOpacity="0.20"/>
+            <path d="M 42 0 L 42 70 L 70 70" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.08" fill="none" strokeLinecap="square"/>
+            <path d="M 98 140 L 98 70 L 70 70" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.08" fill="none" strokeLinecap="square"/>
+            <circle cx="70" cy="70" r="2.5" fill="none" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.15"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#mainGrid)" />
+      </svg>
+    </div>
   )
 }
 
@@ -153,7 +88,7 @@ const AIGenerationSVG = () => {
       <style>{`
       /* Core Variables & Utilities */
       .anim { animation-duration: 14s; animation-iteration-count: infinite; }
-      
+
       /* Phase 1: Input Box */
       @keyframes inputWrap {
         0%, 2% { opacity: 0; transform: scale(0.9) translateY(10px); }
@@ -173,9 +108,9 @@ const AIGenerationSVG = () => {
         73%, 100% { opacity: 0; transform: scale(1.5); }
       }
       @keyframes corePulse {
-        0%, 55% { fill: #2D2D2F; filter: none; }
-        58%, 70% { fill: #3B82F6; transform: scale(1.1); filter: drop-shadow(0 0 8px rgba(59,130,246,0.8)); }
-        71%, 100% { fill: #2D2D2F; filter: none; }
+        0%, 55% { fill: #2D2D2F; }
+        58%, 70% { fill: #3B82F6; transform: scale(1.1); }
+        71%, 100% { fill: #2D2D2F; }
       }
       @keyframes ringSpin {
         0% { transform: rotate(0deg); }
@@ -193,11 +128,11 @@ const AIGenerationSVG = () => {
       @keyframes n-vibe { 0%, 38% { opacity: 0; transform: scale(0.5); } 40%, 70% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
       @keyframes n-sense { 0%, 48% { opacity: 0; transform: scale(0.5); } 50%, 70% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
 
-      /* Node Activation Colors – with glow on activation */
-      @keyframes fill-context { 0%, 21% { fill: #2D2D2F; filter: none; } 23%, 70% { fill: #3B82F6; filter: drop-shadow(0 0 5px rgba(59,130,246,0.75)); } 71%, 100% { fill: #2D2D2F; filter: none; } }
-      @keyframes fill-image  { 0%, 31% { fill: #2D2D2F; filter: none; } 33%, 70% { fill: #FBBF24; filter: drop-shadow(0 0 5px rgba(251,191,36,0.75));  } 71%, 100% { fill: #2D2D2F; filter: none; } }
-      @keyframes fill-vibe   { 0%, 41% { fill: #2D2D2F; filter: none; } 43%, 70% { fill: #3B82F6; filter: drop-shadow(0 0 5px rgba(59,130,246,0.75));  } 71%, 100% { fill: #2D2D2F; filter: none; } }
-      @keyframes fill-sense  { 0%, 51% { fill: #2D2D2F; filter: none; } 53%, 70% { fill: #10B981; filter: drop-shadow(0 0 5px rgba(16,185,129,0.75));  } 71%, 100% { fill: #2D2D2F; filter: none; } }
+      /* Node Activation Colors */
+      @keyframes fill-context { 0%, 21% { fill: #2D2D2F; } 23%, 70% { fill: #3B82F6; } 71%, 100% { fill: #2D2D2F; } }
+      @keyframes fill-image  { 0%, 31% { fill: #2D2D2F; } 33%, 70% { fill: #FBBF24; } 71%, 100% { fill: #2D2D2F; } }
+      @keyframes fill-vibe   { 0%, 41% { fill: #2D2D2F; } 43%, 70% { fill: #3B82F6; } 71%, 100% { fill: #2D2D2F; } }
+      @keyframes fill-sense  { 0%, 51% { fill: #2D2D2F; } 53%, 70% { fill: #10B981; } 71%, 100% { fill: #2D2D2F; } }
 
       /* Connecting Data Beams */
       @keyframes beamDash { to { stroke-dashoffset: -40; } }
@@ -208,9 +143,9 @@ const AIGenerationSVG = () => {
 
       /* Phase 4: Final Centered Card */
       @keyframes cardGen {
-        0%, 68% { opacity: 0; transform: scale(0.6) translateY(40px); filter: none; }
-        73%, 94% { opacity: 1; transform: scale(1) translateY(0); filter: drop-shadow(0 8px 24px rgba(59,130,246,0.18)); }
-        97%, 100% { opacity: 0; transform: scale(0.9) translateY(-20px); filter: none; }
+        0%, 68% { opacity: 0; transform: scale(0.6) translateY(40px); }
+        73%, 94% { opacity: 1; transform: scale(1) translateY(0); }
+        97%, 100% { opacity: 0; transform: scale(0.9) translateY(-20px); }
       }
       @keyframes cardImg { 0%, 73% { opacity: 0; transform: scale(0.95); } 76%, 100% { opacity: 1; transform: scale(1); } }
       @keyframes cardWord { 0%, 75% { opacity: 0; transform: translateY(10px); } 78%, 100% { opacity: 1; transform: translateY(0); } }
@@ -220,7 +155,7 @@ const AIGenerationSVG = () => {
       .input-wrap { animation-name: inputWrap; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transform-origin: 200px 160px; }
       .input-text { animation-name: typeText; animation-timing-function: steps(12, end); }
       .cursor { animation: cursorBlink 0.8s infinite; }
-      
+
       .core-wrap { animation-name: corePhase; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transform-origin: 200px 160px; }
       .core-inner { animation-name: corePulse; transform-origin: 200px 160px; }
       .core-ring { animation: ringSpin 10s linear infinite; transform-origin: 200px 160px; }
@@ -256,13 +191,40 @@ const AIGenerationSVG = () => {
         <clipPath id="imgClip">
           <rect x="106" y="36" width="188" height="110" rx="10" />
         </clipPath>
+        {/* circuit grid pattern */}
+        <pattern id="circuit-bg" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+          <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#3B82F6" strokeWidth="0.3" strokeOpacity="0.12"/>
+          <circle cx="0" cy="0" r="1" fill="#3B82F6" fillOpacity="0.1"/>
+        </pattern>
       </defs>
+
+      {/* SVG background circuit grid */}
+      <rect width="400" height="320" fill="#111111" rx="14"/>
+      <rect width="400" height="320" fill="url(#circuit-bg)" rx="14"/>
+
+      {/* horizontal/vertical circuit traces decorating the background */}
+      <g opacity="0.07" stroke="#3B82F6" strokeWidth="0.8" fill="none">
+        <path d="M10 80 L60 80 L60 50 L130 50"/>
+        <path d="M390 200 L330 200 L330 240 L260 240"/>
+        <path d="M10 240 L50 240 L50 200 L80 200"/>
+        <path d="M370 60 L310 60 L310 90 L260 90"/>
+        <circle cx="60" cy="80" r="2.5" fill="#3B82F6" fillOpacity="0.5"/>
+        <circle cx="60" cy="50" r="2" fill="#3B82F6" fillOpacity="0.5"/>
+        <circle cx="330" cy="200" r="2.5" fill="#3B82F6" fillOpacity="0.5"/>
+        <circle cx="50" cy="240" r="2" fill="#3B82F6" fillOpacity="0.5"/>
+        <circle cx="310" cy="60" r="2.5" fill="#3B82F6" fillOpacity="0.5"/>
+      </g>
 
       {/* PHASE 1: INPUT */}
       <g className="anim input-wrap">
-        <rect x="120" y="140" width="160" height="40" rx="8" fill="#1a1a1a" stroke="#3B82F6" strokeWidth="1.5"  />
+        <rect x="120" y="140" width="160" height="40" rx="6" fill="#161616" stroke="#3B82F6" strokeWidth="1.5"  />
+        {/* corner accents */}
+        <path d="M120 150 L120 140 L130 140" stroke="#3B82F6" strokeWidth="1" fill="none" strokeOpacity="0.6"/>
+        <path d="M270 140 L280 140 L280 150" stroke="#3B82F6" strokeWidth="1" fill="none" strokeOpacity="0.6"/>
+        <path d="M120 170 L120 180 L130 180" stroke="#3B82F6" strokeWidth="1" fill="none" strokeOpacity="0.6"/>
+        <path d="M270 180 L280 180 L280 170" stroke="#3B82F6" strokeWidth="1" fill="none" strokeOpacity="0.6"/>
         <g className="anim input-text">
-          <text x="200" y="165" fill="#FFFFFF" fontFamily="monospace" fontSize="15" fontWeight="bold" textAnchor="middle" letterSpacing="1">
+          <text x="200" y="165" fill="#FFFFFF" fontFamily="monospace" fontSize="14" fontWeight="bold" textAnchor="middle" letterSpacing="1.2">
             Ephemeral<tspan className="cursor" fill="#3B82F6">_</tspan>
           </text>
         </g>
@@ -277,48 +239,68 @@ const AIGenerationSVG = () => {
         <line x1="200" y1="248" x2="200" y2="192" strokeWidth="2" className="anim beam-s beam-flow" />
 
         {/* Integration Center (Core) */}
-        <circle cx="200" cy="160" r="24" fill="#1a1a1a" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.3" />
-        <circle cx="200" cy="160" r="32" fill="none" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.2" strokeDasharray="4 6" className="core-ring" />
-        <circle cx="200" cy="160" r="42" fill="none" strokeWidth="1.5" strokeDasharray="20 40 10 30" className="anim core-ring-fast" />
+        <circle cx="200" cy="160" r="28" fill="#141414" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.25" />
+        {/* hexagonal inner outline */}
+        <polygon points="200,138 218,149 218,171 200,182 182,171 182,149" fill="none" stroke="#3B82F6" strokeWidth="0.6" strokeOpacity="0.15"/>
+        <circle cx="200" cy="160" r="36" fill="none" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.18" strokeDasharray="4 6" className="core-ring" />
+        <circle cx="200" cy="160" r="46" fill="none" strokeWidth="1.5" strokeDasharray="20 40 10 30" className="anim core-ring-fast" />
         <circle cx="200" cy="160" r="10" className="anim core-inner" />
+        {/* crosshair center */}
+        <line x1="196" y1="160" x2="204" y2="160" stroke="#3B82F6" strokeWidth="0.6" strokeOpacity="0.4"/>
+        <line x1="200" y1="156" x2="200" y2="164" stroke="#3B82F6" strokeWidth="0.6" strokeOpacity="0.4"/>
 
         {/* Node 1: Context (Left) */}
         <g className="anim node-c">
-          <circle cx="70" cy="160" r="22" fill="#1a1a1a" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.2" />
+          <circle cx="70" cy="160" r="24" fill="#141414" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.18" />
+          <circle cx="70" cy="160" r="14" fill="none" stroke="#3B82F6" strokeWidth="0.4" strokeOpacity="0.1" strokeDasharray="3 5" />
           <circle cx="70" cy="160" r="6" className="anim fill-c" />
-          <text x="70" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.contexts').toUpperCase()}</text>
+          <text x="70" y="202" fill="#9CA3AF" fontSize="8.5" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.contexts').toUpperCase()}</text>
         </g>
 
         {/* Node 2: Image (Top) */}
         <g className="anim node-i">
-          <circle cx="200" cy="50" r="22" fill="#1a1a1a" stroke="#FBBF24" strokeWidth="1" strokeOpacity="0.2" />
+          <circle cx="200" cy="50" r="24" fill="#141414" stroke="#FBBF24" strokeWidth="1" strokeOpacity="0.18" />
+          <circle cx="200" cy="50" r="14" fill="none" stroke="#FBBF24" strokeWidth="0.4" strokeOpacity="0.1" strokeDasharray="3 5" />
           <circle cx="200" cy="50" r="6" className="anim fill-i" />
-          <text x="200" y="16" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.semantics').toUpperCase()}</text>
+          <text x="200" y="13" fill="#9CA3AF" fontSize="8.5" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.semantics').toUpperCase()}</text>
         </g>
 
         {/* Node 3: Vibe (Right) */}
         <g className="anim node-v">
-          <circle cx="330" cy="160" r="22" fill="#1a1a1a" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.2" />
+          <circle cx="330" cy="160" r="24" fill="#141414" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.18" />
+          <circle cx="330" cy="160" r="14" fill="none" stroke="#3B82F6" strokeWidth="0.4" strokeOpacity="0.1" strokeDasharray="3 5" />
           <circle cx="330" cy="160" r="6" className="anim fill-v" />
-          <text x="330" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.vibe').toUpperCase()}</text>
+          <text x="330" y="202" fill="#9CA3AF" fontSize="8.5" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.vibe').toUpperCase()}</text>
         </g>
 
         {/* Node 4: Sensory (Bottom) */}
         <g className="anim node-s">
-          <circle cx="200" cy="270" r="22" fill="#1a1a1a" stroke="#10B981" strokeWidth="1" strokeOpacity="0.2" />
+          <circle cx="200" cy="270" r="24" fill="#141414" stroke="#10B981" strokeWidth="1" strokeOpacity="0.18" />
+          <circle cx="200" cy="270" r="14" fill="none" stroke="#10B981" strokeWidth="0.4" strokeOpacity="0.1" strokeDasharray="3 5" />
           <circle cx="200" cy="270" r="6" className="anim fill-s" />
-          <text x="200" y="310" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.visuals').toUpperCase()}</text>
+          <text x="200" y="312" fill="#9CA3AF" fontSize="8.5" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.visuals').toUpperCase()}</text>
         </g>
       </g>
 
       {/* PHASE 3: FINAL CENTERED GENERATED CARD */}
       <g className="anim card-wrap">
         {/* Card Base */}
-        <rect x="90" y="20" width="220" height="280" rx="16" fill="#1a1a1a" stroke="#2A2A2A" strokeWidth="1.5"  />
+        <rect x="90" y="20" width="220" height="280" rx="12" fill="#161616" stroke="#252525" strokeWidth="1.5"  />
+        {/* card corner accents */}
+        <path d="M90 35 L90 20 L105 20" stroke="#3B82F6" strokeWidth="1.2" fill="none" strokeOpacity="0.5"/>
+        <path d="M295 20 L310 20 L310 35" stroke="#3B82F6" strokeWidth="1.2" fill="none" strokeOpacity="0.5"/>
+        <path d="M90 285 L90 300 L105 300" stroke="#3B82F6" strokeWidth="1.2" fill="none" strokeOpacity="0.5"/>
+        <path d="M295 300 L310 300 L310 285" stroke="#3B82F6" strokeWidth="1.2" fill="none" strokeOpacity="0.5"/>
+        {/* status bar */}
+        <rect x="90" y="20" width="220" height="12" rx="12" fill="#1e1e1e"/>
+        <circle cx="104" cy="26" r="3" fill="#EF4444" fillOpacity="0.7"/>
+        <circle cx="114" cy="26" r="3" fill="#FBBF24" fillOpacity="0.7"/>
+        <circle cx="124" cy="26" r="3" fill="#10B981" fillOpacity="0.7"/>
+        <text x="200" y="30" fill="#4B5563" fontSize="6" textAnchor="middle" fontFamily="monospace" letterSpacing="1">FLOTTER · AI CARD</text>
 
         {/* Card Image Block - Real Image of Yellow Flowers */}
         <g className="anim card-img">
-          <rect x="106" y="36" width="188" height="110" rx="10" fill="#1A1A1A" />
+          <rect x="106" y="36" width="188" height="110" rx="8" fill="#1A1A1A" />
           <image
             x="106"
             y="36"
@@ -328,26 +310,30 @@ const AIGenerationSVG = () => {
             href="https://images.unsplash.com/photo-1621789098261-433128ee8d1e?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YmVhY2glMjBmbG93ZXJ8ZW58MHx8MHx8fDA%3D"
             clipPath="url(#imgClip)"
           />
-          <rect x="106" y="36" width="188" height="110" rx="10" fill="none" stroke="#2A2A2A" strokeWidth="1" pointerEvents="none" />
+          <rect x="106" y="36" width="188" height="110" rx="8" fill="none" stroke="#252525" strokeWidth="1" pointerEvents="none" />
+          {/* image overlay label */}
+          <rect x="106" y="126" width="188" height="20" rx="0" fill="#161616" fillOpacity="0.85"/>
+          <text x="118" y="139" fill="#4B5563" fontSize="7" fontFamily="monospace" letterSpacing="1">VISUAL · SEMANTIC ANCHOR</text>
         </g>
 
         {/* Card Word & Type */}
         <g className="anim card-word">
-          <text x="200" y="176" fill="#FFFFFF" fontSize="22" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">Ephemeral</text>
-          <rect x="165" y="188" width="70" height="18" rx="9" fill="#3B82F6" fillOpacity="0.15" stroke="#3B82F6" strokeOpacity="0.4" strokeWidth="1" />
-          <text x="200" y="201" fill="#60A5FA" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1">ADJECTIVE</text>
+          <text x="200" y="178" fill="#FFFFFF" fontSize="21" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">Ephemeral</text>
+          <rect x="163" y="186" width="74" height="17" rx="3" fill="#3B82F6" fillOpacity="0.12" stroke="#3B82F6" strokeOpacity="0.35" strokeWidth="1" />
+          <text x="200" y="198" fill="#60A5FA" fontSize="8" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">ADJECTIVE</text>
         </g>
 
         {/* Card Centered Sentence */}
         <g className="anim card-sent">
-          <text x="200" y="232" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">You attempt to capture the</text>
-          <text x="200" y="248" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">ephemeral snowflake, but it melts</text>
-          <text x="200" y="264" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">away, leaving only a memory.</text>
+          <line x1="130" y1="212" x2="270" y2="212" stroke="#252525" strokeWidth="0.8"/>
+          <text x="200" y="228" fill="#D1D5DB" fontSize="11.5" textAnchor="middle" letterSpacing="0.2">You attempt to capture the</text>
+          <text x="200" y="243" fill="#D1D5DB" fontSize="11.5" textAnchor="middle" letterSpacing="0.2">ephemeral snowflake, but it melts</text>
+          <text x="200" y="258" fill="#D1D5DB" fontSize="11.5" textAnchor="middle" letterSpacing="0.2">away, leaving only a memory.</text>
 
-          {/* Aesthetic Centered Dots */}
-          <circle cx="200" cy="282" r="2" fill="#4B5563" />
-          <circle cx="190" cy="282" r="2" fill="#4B5563" opacity="0.5" />
-          <circle cx="210" cy="282" r="2" fill="#4B5563" opacity="0.5" />
+          {/* progress dots */}
+          <circle cx="200" cy="277" r="2.2" fill="#3B82F6" />
+          <circle cx="190" cy="277" r="2.2" fill="#4B5563" opacity="0.5" />
+          <circle cx="210" cy="277" r="2.2" fill="#4B5563" opacity="0.5" />
         </g>
       </g>
     </svg>
@@ -879,17 +865,19 @@ const AudioWaveform = () => {
  */
 const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
   const intervals = [
-    { x: 44,  label: "15m", sublabel: "First\nReview",  color: "#3B82F6" },
-    { x: 128, label: "1d",  sublabel: "Short\nTerm",    color: "#60A5FA" },
-    { x: 212, label: "3d",  sublabel: "Mid\nTerm",      color: "#10B981" },
-    { x: 296, label: "7d",  sublabel: "Long\nTerm",     color: "#FBBF24" },
-    { x: 380, label: "21d", sublabel: "Deep\nMemory",   color: "#F97316" },
-    { x: 452, label: "∞",   sublabel: "Mastered",       color: "#A78BFA" },
+    { x: 44,  label: "15m", sublabel: "First\nReview",  color: "#3B82F6", pct: 100 },
+    { x: 128, label: "1d",  sublabel: "Short\nTerm",    color: "#60A5FA", pct: 88  },
+    { x: 212, label: "3d",  sublabel: "Mid\nTerm",      color: "#10B981", pct: 74  },
+    { x: 296, label: "7d",  sublabel: "Long\nTerm",     color: "#FBBF24", pct: 62  },
+    { x: 380, label: "21d", sublabel: "Deep\nMemory",   color: "#F97316", pct: 84  },
+    { x: 452, label: "∞",   sublabel: "Mastered",       color: "#A78BFA", pct: 96  },
   ]
+
+  const BAR_MAX_H = 32
+  const BAR_Y_BASE = 38
 
   return (
     <div className="w-full overflow-hidden py-4 flex flex-col items-center gap-1">
-      {/* Section label */}
       <motion.p
         className="text-[9px] font-bold uppercase tracking-[0.28em] text-[#4B5563] mb-1"
         initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
@@ -898,98 +886,124 @@ const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
         ACASRS · Adaptive Review Spacing
       </motion.p>
 
-      <svg width="100%" height="96" viewBox="0 0 496 96" fill="none" className="max-w-lg overflow-visible">
+      <svg width="100%" height="130" viewBox="0 0 496 130" fill="none" className="max-w-lg overflow-visible">
         <defs>
-          <filter id="srs-glow">
-            <feGaussianBlur stdDeviation="3" result="b" />
-            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          <filter id="srs-soft">
-            <feGaussianBlur stdDeviation="1.5" result="b" />
-            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          {/* Exponential curve gradient */}
           <linearGradient id="srs-curve" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%"  stopColor="#3B82F6" stopOpacity="0.6" />
             <stop offset="50%" stopColor="#10B981" stopOpacity="0.5" />
             <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.45" />
           </linearGradient>
+          <linearGradient id="bar-grad-0" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#3B82F6"/><stop offset="100%" stopColor="#3B82F6" stopOpacity="0.25"/></linearGradient>
+          <linearGradient id="bar-grad-1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#60A5FA"/><stop offset="100%" stopColor="#60A5FA" stopOpacity="0.25"/></linearGradient>
+          <linearGradient id="bar-grad-2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#10B981"/><stop offset="100%" stopColor="#10B981" stopOpacity="0.25"/></linearGradient>
+          <linearGradient id="bar-grad-3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#FBBF24"/><stop offset="100%" stopColor="#FBBF24" stopOpacity="0.25"/></linearGradient>
+          <linearGradient id="bar-grad-4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#F97316"/><stop offset="100%" stopColor="#F97316" stopOpacity="0.25"/></linearGradient>
+          <linearGradient id="bar-grad-5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#A78BFA"/><stop offset="100%" stopColor="#A78BFA" stopOpacity="0.25"/></linearGradient>
         </defs>
 
         {/* ── background grid lines ── */}
-        {[0, 1, 2].map(i => (
-          <line key={i} x1="20" y1={20 + i * 20} x2="476" y2={20 + i * 20}
+        {[0, 1, 2, 3].map(i => (
+          <line key={i} x1="20" y1={BAR_Y_BASE - (i * BAR_MAX_H / 3)} x2="476" y2={BAR_Y_BASE - (i * BAR_MAX_H / 3)}
             stroke="#2A2A2A" strokeWidth="0.5" strokeDasharray="3 9" />
         ))}
 
-        {/* ── exponential gap arcs (widening spans between nodes) ── */}
+        {/* ── retention % axis label ── */}
+        <text x="14" y={BAR_Y_BASE - BAR_MAX_H + 4} fill="#4B5563" fontSize="6.5" fontFamily="monospace" textAnchor="end">100%</text>
+        <text x="14" y={BAR_Y_BASE + 3} fill="#4B5563" fontSize="6.5" fontFamily="monospace" textAnchor="end">0%</text>
+
+        {/* ── retention bars ── */}
+        {intervals.map(({ x, pct, color: nc }, i) => {
+          const barH = (pct / 100) * BAR_MAX_H
+          return (
+            <React.Fragment key={`bar-${i}`}>
+              {/* bar background track */}
+              <rect x={x - 5} y={BAR_Y_BASE - BAR_MAX_H} width={10} height={BAR_MAX_H}
+                fill="#1e1e1e" rx="2" />
+              {/* animated fill bar */}
+              <motion.rect
+                x={x - 5} width={10} rx="2"
+                fill={`url(#bar-grad-${i})`}
+                initial={{ height: 0, y: BAR_Y_BASE }}
+                whileInView={{ height: barH, y: BAR_Y_BASE - barH }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 + i * 0.1, duration: 0.7, ease: "easeOut" }}
+              />
+              {/* pct label */}
+              <motion.text x={x} y={BAR_Y_BASE - BAR_MAX_H - 5} textAnchor="middle"
+                fill={nc} fontSize="7.5" fontWeight="800" fontFamily="monospace"
+                initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+                transition={{ delay: 0.7 + i * 0.1, duration: 0.4 }}
+              >{pct}%</motion.text>
+            </React.Fragment>
+          )
+        })}
+
+        {/* ── exponential gap arcs ── */}
         {intervals.slice(0, -1).map((a, i) => {
           const b = intervals[i + 1]
           const mid = (a.x + b.x) / 2
-          const arcY = 40 - 4 - i * 3
+          const arcY = BAR_Y_BASE + 20 - i * 2
           return (
             <motion.path key={i}
-              d={`M${a.x} 40 Q${mid} ${arcY} ${b.x} 40`}
-              stroke={a.color} strokeWidth={0.8 + i * 0.15} strokeOpacity={0.22}
+              d={`M${a.x} ${BAR_Y_BASE + 10} Q${mid} ${arcY} ${b.x} ${BAR_Y_BASE + 10}`}
+              stroke={a.color} strokeWidth={0.8 + i * 0.12} strokeOpacity={0.18 + i * 0.02}
               fill="none" strokeLinecap="round"
               initial={{ pathLength: 0, opacity: 0 }}
               whileInView={{ pathLength: 1, opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.3 + i * 0.12, duration: 0.9, ease: "easeOut" }}
+              transition={{ delay: 0.3 + i * 0.1, duration: 0.9, ease: "easeOut" }}
             />
           )
         })}
 
         {/* ── main timeline rail ── */}
-        <motion.line x1="20" y1="40" x2="476" y2="40"
+        <motion.line x1="20" y1={BAR_Y_BASE + 10} x2="476" y2={BAR_Y_BASE + 10}
           stroke="url(#srs-curve)" strokeWidth="1.5" strokeLinecap="round"
           initial={{ pathLength: 0, opacity: 0 }}
           whileInView={{ pathLength: 1, opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 1.1, ease: "easeOut" }}
+          transition={{ duration: 1.0, ease: "easeOut" }}
         />
 
         {/* ── interval nodes ── */}
         {intervals.map(({ x, label, color: nc }, i) => (
           <React.Fragment key={i}>
             {/* outer halo */}
-            <motion.circle cx={x} cy="40" r={11}
+            <motion.circle cx={x} cy={BAR_Y_BASE + 10} r={10}
               fill="none" stroke={nc} strokeWidth="0.5" strokeOpacity="0.18"
               initial={{ scale: 0 }} whileInView={{ scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.5 + i * 0.1, type: "spring", stiffness: 200 }}
-              style={{ transformOrigin: `${x}px 40px` }}
+              transition={{ delay: 0.45 + i * 0.1, type: "spring", stiffness: 200 }}
+              style={{ transformOrigin: `${x}px ${BAR_Y_BASE + 10}px` }}
             />
             {/* node ring */}
-            <motion.circle cx={x} cy="40" r={6}
+            <motion.circle cx={x} cy={BAR_Y_BASE + 10} r={5.5}
               fill="#121212" stroke={nc} strokeWidth="1.4"
               initial={{ scale: 0 }} whileInView={{ scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.45 + i * 0.1, type: "spring", stiffness: 300 }}
-              style={{ transformOrigin: `${x}px 40px` }}
+              transition={{ delay: 0.4 + i * 0.1, type: "spring", stiffness: 300 }}
+              style={{ transformOrigin: `${x}px ${BAR_Y_BASE + 10}px` }}
             />
             {/* center fill */}
-            <motion.circle cx={x} cy="40" r={2.5}
+            <motion.circle cx={x} cy={BAR_Y_BASE + 10} r={2}
               fill={nc}
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 2 + i * 0.3, repeat: Infinity, delay: i * 0.25 }}
             />
-            {/* interval label (top) */}
-            <motion.text x={x} y="26" textAnchor="middle"
+            {/* interval label bottom */}
+            <motion.text x={x} y={BAR_Y_BASE + 28} textAnchor="middle"
               fill={nc} fontSize="9" fontWeight="800" fontFamily="monospace" letterSpacing="0.5"
-              initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 26 }}
+              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.65 + i * 0.1, duration: 0.5 }}
-            >
-              {label}
-            </motion.text>
+              transition={{ delay: 0.6 + i * 0.1, duration: 0.5 }}
+            >{label}</motion.text>
             {/* tick mark */}
-            <motion.line x1={x} y1="46" x2={x} y2="53"
+            <motion.line x1={x} y1={BAR_Y_BASE + 15} x2={x} y2={BAR_Y_BASE + 21}
               stroke={nc} strokeWidth="1" strokeOpacity="0.3"
               initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.7 + i * 0.1, duration: 0.3 }}
-              style={{ transformOrigin: `${x}px 46px` }}
+              transition={{ delay: 0.65 + i * 0.1, duration: 0.3 }}
+              style={{ transformOrigin: `${x}px ${BAR_Y_BASE + 15}px` }}
             />
           </React.Fragment>
         ))}
@@ -998,23 +1012,20 @@ const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
         {intervals.slice(0, -1).map((a, i) => {
           const b = intervals[i + 1]
           const mid = (a.x + b.x) / 2
-          const gap = b.x - a.x
-          if (i < 2) return null // skip first two, too narrow
+          if (i < 2) return null
           return (
-            <motion.text key={i} x={mid} y="72" textAnchor="middle"
-              fill="#3B5568" fontSize="7.5" fontFamily="monospace"
+            <motion.text key={i} x={mid} y={BAR_Y_BASE + 46} textAnchor="middle"
+              fill="#3B5568" fontSize="7" fontFamily="monospace"
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.9 + i * 0.08, duration: 0.5 }}
-            >
-              +{Math.round(gap * 0.22)}x
-            </motion.text>
+            >+{Math.round((b.x - a.x) * 0.22)}x</motion.text>
           )
         })}
 
-        {/* ── traveling review packet (the card being scheduled) ── */}
-        <motion.circle cy="40" r="4"
-          fill={color} filter="url(#srs-glow)"
+        {/* ── traveling review packet ── */}
+        <motion.circle cy={BAR_Y_BASE + 10} r="4.5"
+          fill={color}
           animate={{ cx: intervals.map(n => n.x) }}
           transition={{
             cx: { duration: 4.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.8,
@@ -1024,11 +1035,11 @@ const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
 
         {/* ── arrival flash on each node ── */}
         {intervals.map(({ x, color: nc }, i) => (
-          <motion.circle key={`flash-${i}`} cx={x} cy="40"
+          <motion.circle key={`flash-${i}`} cx={x} cy={BAR_Y_BASE + 10}
             fill={nc}
             initial={{ r: 0, fillOpacity: 0 }}
             animate={{ r: [0, 16], fillOpacity: [0.3, 0] }}
-            transition={{ duration: 0.8, repeat: Infinity, ease: "easeOut",
+            transition={{ duration: 0.7, repeat: Infinity, ease: "easeOut",
               delay: (i / intervals.length) * 4.5 + 1.0, repeatDelay: 4.5 }}
           />
         ))}
@@ -1165,93 +1176,106 @@ const _PulseLineLegacy = ({ color = "#3B82F6" }: { color?: string }) => (
  */
 const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?: string }) => (
   <div className="relative w-full overflow-hidden py-8 flex justify-center">
-    <svg width="100%" height="56" viewBox="0 0 480 56" fill="none" className="max-w-lg">
+    <svg width="100%" height="72" viewBox="0 0 480 72" fill="none" className="max-w-lg">
       <defs>
         <linearGradient id="fd-grad" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%"   stopColor={color} stopOpacity="0" />
-          <stop offset="25%"  stopColor={color} stopOpacity="0.45" />
-          <stop offset="75%"  stopColor={color} stopOpacity="0.2" />
+          <stop offset="25%"  stopColor={color} stopOpacity="0.55" />
+          <stop offset="75%"  stopColor={color} stopOpacity="0.25" />
           <stop offset="100%" stopColor={color} stopOpacity="0" />
         </linearGradient>
-        <filter id="fd-glow">
-          <feGaussianBlur stdDeviation="2" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
+        <linearGradient id="fd-grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stopColor="#EF4444" stopOpacity="0" />
+          <stop offset="30%"  stopColor="#EF4444" stopOpacity="0.22" />
+          <stop offset="70%"  stopColor="#EF4444" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#EF4444" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
-      {/* ── background rail ── */}
-      <line x1="0" y1="28" x2="480" y2="28"
-        stroke={color} strokeWidth="0.4" strokeOpacity="0.07" strokeDasharray="3 11" />
+      {/* background rail */}
+      <line x1="0" y1="36" x2="480" y2="36" stroke={color} strokeWidth="0.4" strokeOpacity="0.06" strokeDasharray="3 11" />
 
-      {/* ── degrading wave (amplitude decreases left→right) ── */}
+      {/* secondary ghost track (high-amplitude, forgetting curve) */}
       <motion.path
-        d="M0 28 C30 14,60 42, 90 28 C120 14,150 38,180 28 C210 18,240 36,270 28 C300 20,330 34,360 28 C390 23,420 31,450 28 L480 28"
-        stroke="url(#fd-grad)" strokeWidth="2" fill="none"
+        d="M0 36 C24 14,48 58, 72 36 C96 14,120 50,144 36 C168 22,192 44,216 36 C240 28,264 44,288 36 C312 28,336 42,360 36 C384 30,408 40,432 36 L480 36"
+        stroke="url(#fd-grad2)" strokeWidth="1.2" fill="none"
+        initial={{ pathLength: 0, opacity: 0 }}
+        whileInView={{ pathLength: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 2.0, ease: "easeOut", delay: 0.1 }}
+      />
+
+      {/* primary degrading wave — amplitude decays L→R (memory erosion) */}
+      <motion.path
+        d="M0 36 C30 10,60 62, 90 36 C120 10,150 54,180 36 C210 18,240 50,270 36 C300 22,330 46,360 36 C390 27,420 41,450 36 L480 36"
+        stroke="url(#fd-grad)" strokeWidth="2.2" fill="none"
         initial={{ pathLength: 0, opacity: 0 }}
         whileInView={{ pathLength: 1, opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 1.5, ease: "easeOut" }}
       />
 
-      {/* ── secondary ghost wave ── */}
-      <motion.path
-        d="M0 28 C30 20,60 36, 90 28 C120 20,150 33,180 28 C210 23,240 32,270 28 C300 24,330 31,360 28 C390 26,420 30,450 28 L480 28"
-        stroke={color} strokeWidth="0.8" strokeOpacity="0.1" fill="none"
-        initial={{ pathLength: 0, opacity: 0 }}
-        whileInView={{ pathLength: 1, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.9, ease: "easeOut", delay: 0.15 }}
-      />
-
-      {/* ── amplitude peak markers ── */}
+      {/* peak amplitude dots (shrinking right) */}
       {[
-        { cx: 90,  cy: 28 },
-        { cx: 180, cy: 28 },
-        { cx: 270, cy: 28 },
-        { cx: 360, cy: 28 },
-      ].map(({ cx, cy }, i) => (
+        { cx: 90,  cy: 36, r: 3.8, op: 0.85 },
+        { cx: 180, cy: 36, r: 3.2, op: 0.65 },
+        { cx: 270, cy: 36, r: 2.5, op: 0.45 },
+        { cx: 360, cy: 36, r: 1.8, op: 0.28 },
+      ].map(({ cx, cy, r, op }, i) => (
         <React.Fragment key={i}>
-          <motion.circle cx={cx} cy={cy} r={3.5 - i * 0.5}
-            fill={color} fillOpacity={0.7 - i * 0.12}
-            filter="url(#fd-glow)"
+          <motion.circle cx={cx} cy={cy} r={r}
+            fill={color} fillOpacity={op}
             initial={{ scale: 0, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.7 + i * 0.12, duration: 0.4, type: "spring", stiffness: 280 }}
             style={{ transformOrigin: `${cx}px ${cy}px` }}
           />
-          {/* outer ring */}
-          <motion.circle cx={cx} cy={cy} r={8 - i}
+          <motion.circle cx={cx} cy={cy} r={r + 5}
             fill="none" stroke={color} strokeWidth="0.6"
-            strokeOpacity={0.2 - i * 0.03}
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
+            strokeOpacity={op * 0.3}
+            initial={{ scale: 0 }} whileInView={{ scale: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.85 + i * 0.12, duration: 0.4 }}
+            transition={{ delay: 0.85 + i * 0.12 }}
             style={{ transformOrigin: `${cx}px ${cy}px` }}
           />
         </React.Fragment>
       ))}
 
-      {/* ── traveling signal dot (fades out to right) ── */}
-      <motion.circle cy="28" r="3"
-        fill={color} filter="url(#fd-glow)"
+      {/* phase labels */}
+      {[
+        { cx: 90,  label: "ENCODE",  dy: -18 },
+        { cx: 270, label: "RECALL",  dy: -14 },
+        { cx: 450, label: "FADE",    dy: -10 },
+      ].map(({ cx, label, dy }, i) => (
+        <motion.text key={i} x={cx} y={36 + dy} textAnchor="middle"
+          fill={color} fontSize="6.5" fontWeight="700" fontFamily="monospace" letterSpacing="1.5"
+          fillOpacity="0.55"
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 1.0 + i * 0.2, duration: 0.5 }}
+        >{label}</motion.text>
+      ))}
+
+      {/* traveling signal (fades right) */}
+      <motion.circle cy="36" r="3"
+        fill={color}
         animate={{
-          cx:           [0,   90,  180, 270, 360, 480],
-          fillOpacity:  [0.9, 0.8, 0.6, 0.4, 0.2, 0],
+          cx:          [0,   90,  180, 270, 360, 480],
+          fillOpacity: [0.9, 0.8, 0.6, 0.4, 0.2, 0],
         }}
         transition={{ duration: 3.4, repeat: Infinity, ease: "easeIn", repeatDelay: 0.8,
           times: [0, 0.19, 0.37, 0.56, 0.75, 1] }}
       />
 
-      {/* ── terminal ticks ── */}
+      {/* terminal ticks */}
       {[20, 460].map((x, i) => (
-        <motion.line key={i} x1={x} y1="21" x2={x} y2="35"
+        <motion.line key={i} x1={x} y1="28" x2={x} y2="44"
           stroke={color} strokeWidth="1.5" strokeOpacity="0.25"
           initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.9, duration: 0.35 }}
-          style={{ transformOrigin: `${x}px 28px` }}
+          style={{ transformOrigin: `${x}px 36px` }}
         />
       ))}
     </svg>
@@ -1264,102 +1288,120 @@ const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?
  * Used between the Problem and Methodology sections.
  */
 const NeuralConnector = () => {
-  // Layer node positions: input(3) → hidden(4) → output(3)
-  const inputNodes  = [{ cx: 28, cy: 20 }, { cx: 28, cy: 56 }, { cx: 28, cy: 92 }]
-  const hiddenNodes = [{ cx: 160, cy: 12 }, { cx: 160, cy: 40 }, { cx: 160, cy: 68 }, { cx: 160, cy: 96 }]
-  const outputNodes = [{ cx: 292, cy: 24 }, { cx: 292, cy: 56 }, { cx: 292, cy: 88 }]
+  // 4-layer network: input(2) → hidden-A(4) → hidden-B(3) → output(2)
+  const inputNodes    = [{ cx: 20,  cy: 28 }, { cx: 20,  cy: 70 }]
+  const hiddenANodes  = [{ cx: 110, cy: 14 }, { cx: 110, cy: 38 }, { cx: 110, cy: 62 }, { cx: 110, cy: 86 }]
+  const hiddenBNodes  = [{ cx: 210, cy: 24 }, { cx: 210, cy: 54 }, { cx: 210, cy: 84 }]
+  const outputNodes   = [{ cx: 300, cy: 34 }, { cx: 300, cy: 70 }]
 
-  // All connections as [from, to] index pairs
-  const ih: [number, number][] = []
-  inputNodes.forEach((_, a) => hiddenNodes.forEach((__, b) => ih.push([a, b])))
-  const ho: [number, number][] = []
-  hiddenNodes.forEach((_, a) => outputNodes.forEach((__, b) => ho.push([a, b])))
+  const ia: [number,number][] = []
+  inputNodes.forEach((_,a)  => hiddenANodes.forEach((__,b) => ia.push([a,b])))
+  const ab: [number,number][] = []
+  hiddenANodes.forEach((_,a) => hiddenBNodes.forEach((__,b) => ab.push([a,b])))
+  const bo: [number,number][] = []
+  hiddenBNodes.forEach((_,a) => outputNodes.forEach((__,b)  => bo.push([a,b])))
 
-  // Featured forward-pass path for the traveling pulse
   const pulseWaypoints = [
-    { cx: 28,  cy: 56 },
-    { cx: 160, cy: 40 },
-    { cx: 292, cy: 56 },
+    { cx: 20,  cy: 28 },
+    { cx: 110, cy: 38 },
+    { cx: 210, cy: 24 },
+    { cx: 300, cy: 34 },
+  ]
+  const pulseWaypoints2 = [
+    { cx: 20,  cy: 70 },
+    { cx: 110, cy: 62 },
+    { cx: 210, cy: 84 },
+    { cx: 300, cy: 70 },
   ]
 
   return (
     <div className="w-full py-8 flex justify-center overflow-hidden">
       <svg width="100%" height="112" viewBox="0 0 320 112" fill="none" className="max-w-md">
         <defs>
-          <filter id="nc-glow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          <linearGradient id="nc-beam-ih" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.25" />
+          <linearGradient id="nc-ia" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.3" />
             <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.08" />
           </linearGradient>
-          <linearGradient id="nc-beam-ho" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.25" />
+          <linearGradient id="nc-ab" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stopColor="#10B981" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="#10B981" stopOpacity="0.08" />
+          </linearGradient>
+          <linearGradient id="nc-bo" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stopColor="#FBBF24" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#FBBF24" stopOpacity="0.3" />
           </linearGradient>
         </defs>
 
-        {/* ── layer labels ── */}
+        {/* layer labels */}
         {[
-          { x: 28,  label: "IN",  delay: 0.1 },
-          { x: 160, label: "PROCESS", delay: 0.3 },
-          { x: 292, label: "OUT", delay: 0.5 },
-        ].map(({ x, label, delay }) => (
-          <motion.text key={label} x={x} y="110" textAnchor="middle"
-            fill="#4B5563" fontSize="7" fontWeight="700" letterSpacing="1.5"
+          { x: 20,  label: "INPUT",    color: "#3B82F6", delay: 0.1 },
+          { x: 110, label: "ENCODE",   color: "#10B981", delay: 0.25 },
+          { x: 210, label: "PROCESS",  color: "#10B981", delay: 0.4  },
+          { x: 300, label: "OUTPUT",   color: "#FBBF24", delay: 0.55 },
+        ].map(({ x, label, color, delay }) => (
+          <motion.text key={label} x={x} y="108" textAnchor="middle"
+            fill={color} fillOpacity="0.45" fontSize="6" fontWeight="700" letterSpacing="1.2"
             fontFamily="monospace"
             initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
             viewport={{ once: true }} transition={{ delay, duration: 0.5 }}
-          >
-            {label}
-          </motion.text>
+          >{label}</motion.text>
         ))}
 
-        {/* ── input→hidden connections ── */}
-        {ih.map(([a, b], i) => (
-          <motion.line key={`ih-${i}`}
-            x1={inputNodes[a].cx}  y1={inputNodes[a].cy}
-            x2={hiddenNodes[b].cx} y2={hiddenNodes[b].cy}
-            stroke="url(#nc-beam-ih)" strokeWidth="0.8"
+        {/* input→hiddenA connections */}
+        {ia.map(([a,b],i) => (
+          <motion.line key={`ia-${i}`}
+            x1={inputNodes[a].cx}   y1={inputNodes[a].cy}
+            x2={hiddenANodes[b].cx} y2={hiddenANodes[b].cy}
+            stroke="url(#nc-ia)" strokeWidth="0.75"
             initial={{ pathLength: 0, opacity: 0 }}
             whileInView={{ pathLength: 1, opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 + i * 0.04, duration: 0.7 }}
+            transition={{ delay: 0.15 + i * 0.035, duration: 0.65 }}
           />
         ))}
 
-        {/* ── hidden→output connections ── */}
-        {ho.map(([a, b], i) => (
-          <motion.line key={`ho-${i}`}
-            x1={hiddenNodes[a].cx} y1={hiddenNodes[a].cy}
-            x2={outputNodes[b].cx} y2={outputNodes[b].cy}
-            stroke="url(#nc-beam-ho)" strokeWidth="0.8"
+        {/* hiddenA→hiddenB connections */}
+        {ab.map(([a,b],i) => (
+          <motion.line key={`ab-${i}`}
+            x1={hiddenANodes[a].cx} y1={hiddenANodes[a].cy}
+            x2={hiddenBNodes[b].cx} y2={hiddenBNodes[b].cy}
+            stroke="url(#nc-ab)" strokeWidth="0.75"
             initial={{ pathLength: 0, opacity: 0 }}
             whileInView={{ pathLength: 1, opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.5 + i * 0.04, duration: 0.7 }}
+            transition={{ delay: 0.4 + i * 0.03, duration: 0.65 }}
           />
         ))}
 
-        {/* ── input nodes ── */}
+        {/* hiddenB→output connections */}
+        {bo.map(([a,b],i) => (
+          <motion.line key={`bo-${i}`}
+            x1={hiddenBNodes[a].cx} y1={hiddenBNodes[a].cy}
+            x2={outputNodes[b].cx}  y2={outputNodes[b].cy}
+            stroke="url(#nc-bo)" strokeWidth="0.75"
+            initial={{ pathLength: 0, opacity: 0 }}
+            whileInView={{ pathLength: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.65 + i * 0.04, duration: 0.65 }}
+          />
+        ))}
+
+        {/* input nodes */}
         {inputNodes.map(({ cx, cy }, i) => (
           <React.Fragment key={`in-${i}`}>
-            <motion.circle cx={cx} cy={cy} r={12}
-              fill="none" stroke="#3B82F6" strokeWidth="0.6" strokeOpacity="0.12"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
+            <motion.circle cx={cx} cy={cy} r={11}
+              fill="none" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.13"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
               transition={{ delay: 0.1 + i * 0.1, type: "spring", stiffness: 220 }}
               style={{ transformOrigin: `${cx}px ${cy}px` }}
             />
             <motion.circle cx={cx} cy={cy} r={6}
-              fill="#1A1A1A" stroke="#3B82F6" strokeWidth="1.2"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
+              fill="#1A1A1A" stroke="#3B82F6" strokeWidth="1.3"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
               transition={{ delay: 0.15 + i * 0.1, type: "spring", stiffness: 260 }}
               style={{ transformOrigin: `${cx}px ${cy}px` }}
             />
-            <motion.circle cx={cx} cy={cy} r={2.5}
+            <motion.circle cx={cx} cy={cy} r={2}
               fill="#3B82F6"
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.4 }}
@@ -1367,74 +1409,91 @@ const NeuralConnector = () => {
           </React.Fragment>
         ))}
 
-        {/* ── hidden nodes ── */}
-        {hiddenNodes.map(({ cx, cy }, i) => (
-          <React.Fragment key={`hid-${i}`}>
-            <motion.circle cx={cx} cy={cy} r={13}
-              fill="none" stroke="#10B981" strokeWidth="0.6" strokeOpacity="0.1"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.35 + i * 0.08, type: "spring", stiffness: 200 }}
+        {/* hiddenA nodes */}
+        {hiddenANodes.map(({ cx, cy }, i) => (
+          <React.Fragment key={`ha-${i}`}>
+            <motion.circle cx={cx} cy={cy} r={12}
+              fill="none" stroke="#10B981" strokeWidth="0.5" strokeOpacity="0.12"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+              transition={{ delay: 0.3 + i * 0.07, type: "spring", stiffness: 200 }}
               style={{ transformOrigin: `${cx}px ${cy}px` }}
             />
-            <motion.circle cx={cx} cy={cy} r={7}
+            <motion.circle cx={cx} cy={cy} r={6.5}
               fill="#1A1A1A" stroke="#10B981" strokeWidth="1.2"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.40 + i * 0.08, type: "spring", stiffness: 260 }}
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+              transition={{ delay: 0.35 + i * 0.07, type: "spring", stiffness: 260 }}
               style={{ transformOrigin: `${cx}px ${cy}px` }}
             />
-            <motion.circle cx={cx} cy={cy} r={3}
+            <motion.circle cx={cx} cy={cy} r={2.5}
               fill="#10B981"
               animate={{ opacity: [0.4, 1, 0.4], scale: [0.9, 1.1, 0.9] }}
-              transition={{ duration: 1.8, repeat: Infinity, delay: 0.3 + i * 0.35 }}
+              transition={{ duration: 1.8, repeat: Infinity, delay: 0.3 + i * 0.3 }}
               style={{ transformOrigin: `${cx}px ${cy}px` }}
             />
           </React.Fragment>
         ))}
 
-        {/* ── output nodes ── */}
-        {outputNodes.map(({ cx, cy }, i) => (
-          <React.Fragment key={`out-${i}`}>
-            <motion.circle cx={cx} cy={cy} r={12}
-              fill="none" stroke="#FBBF24" strokeWidth="0.6" strokeOpacity="0.12"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.65 + i * 0.09, type: "spring", stiffness: 200 }}
+        {/* hiddenB nodes */}
+        {hiddenBNodes.map(({ cx, cy }, i) => (
+          <React.Fragment key={`hb-${i}`}>
+            <motion.circle cx={cx} cy={cy} r={11}
+              fill="none" stroke="#10B981" strokeWidth="0.5" strokeOpacity="0.1"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+              transition={{ delay: 0.52 + i * 0.07, type: "spring", stiffness: 200 }}
               style={{ transformOrigin: `${cx}px ${cy}px` }}
             />
             <motion.circle cx={cx} cy={cy} r={6}
-              fill="#1A1A1A" stroke="#FBBF24" strokeWidth="1.2"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.70 + i * 0.09, type: "spring", stiffness: 260 }}
+              fill="#1A1A1A" stroke="#3B82F6" strokeWidth="1.1"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+              transition={{ delay: 0.57 + i * 0.07, type: "spring", stiffness: 260 }}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+            />
+            <motion.circle cx={cx} cy={cy} r={2.2}
+              fill="#3B82F6"
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 2, repeat: Infinity, delay: 0.5 + i * 0.35 }}
+            />
+          </React.Fragment>
+        ))}
+
+        {/* output nodes */}
+        {outputNodes.map(({ cx, cy }, i) => (
+          <React.Fragment key={`out-${i}`}>
+            <motion.circle cx={cx} cy={cy} r={11}
+              fill="none" stroke="#FBBF24" strokeWidth="0.5" strokeOpacity="0.14"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+              transition={{ delay: 0.72 + i * 0.08, type: "spring", stiffness: 200 }}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+            />
+            <motion.circle cx={cx} cy={cy} r={6}
+              fill="#1A1A1A" stroke="#FBBF24" strokeWidth="1.3"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+              transition={{ delay: 0.77 + i * 0.08, type: "spring", stiffness: 260 }}
               style={{ transformOrigin: `${cx}px ${cy}px` }}
             />
             <motion.circle cx={cx} cy={cy} r={2.5}
               fill="#FBBF24"
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 0.8 + i * 0.3 }}
+              animate={{ opacity: [0.55, 1, 0.55] }}
+              transition={{ duration: 2, repeat: Infinity, delay: 0.9 + i * 0.3 }}
             />
           </React.Fragment>
         ))}
 
-        {/* ── forward-pass traveling pulse ── */}
-        <motion.circle r={4} fill="#3B82F6" filter="url(#nc-glow)"
+        {/* forward-pass pulse 1 */}
+        <motion.circle r={4} fill="#3B82F6"
           animate={{
             cx: pulseWaypoints.map(p => p.cx),
             cy: pulseWaypoints.map(p => p.cy),
           }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.5,
-            times: [0, 0.44, 1] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.4, times: [0, 0.32, 0.65, 1] }}
         />
-        {/* secondary pulse with offset */}
-        <motion.circle r={3} fill="#10B981" fillOpacity="0.75" filter="url(#nc-glow)"
+        {/* forward-pass pulse 2 — offset path */}
+        <motion.circle r={3} fill="#10B981" fillOpacity="0.8"
           animate={{
-            cx: [28, 160, 292],
-            cy: [20,  68,  88],
+            cx: pulseWaypoints2.map(p => p.cx),
+            cy: pulseWaypoints2.map(p => p.cy),
           }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.5,
-            delay: 0.9, times: [0, 0.44, 1] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.4, delay: 0.8, times: [0, 0.32, 0.65, 1] }}
         />
       </svg>
     </div>
@@ -1446,112 +1505,155 @@ const NeuralConnector = () => {
  * Used between Methodology and CTA sections. Represents mastery achieved.
  */
 const OrbitDecoration = () => {
-  // 8 ray endpoints from center (80,80) at r=66
-  const rays = Array.from({ length: 8 }, (_, i) => {
-    const angle = (i * Math.PI * 2) / 8
-    return {
-      x2: 80 + Math.round(66 * Math.cos(angle)),
-      y2: 80 + Math.round(66 * Math.sin(angle)),
-    }
+  const CX = 80, CY = 80
+
+  // 12 ray endpoints at r=68
+  const rays12 = Array.from({ length: 12 }, (_, i) => {
+    const angle = (i * Math.PI * 2) / 12
+    return { x2: CX + Math.round(68 * Math.cos(angle)), y2: CY + Math.round(68 * Math.sin(angle)) }
   })
+
+  // hexagon at r=28
+  const hexPts = Array.from({ length: 6 }, (_, i) => {
+    const a = (i * Math.PI * 2) / 6 - Math.PI / 6
+    return [CX + 28 * Math.cos(a), CY + 28 * Math.sin(a)]
+  })
+  const hexPath = hexPts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ') + ' Z'
+
+  // inner hex r=14
+  const hexPts2 = Array.from({ length: 6 }, (_, i) => {
+    const a = (i * Math.PI * 2) / 6
+    return [CX + 14 * Math.cos(a), CY + 14 * Math.sin(a)]
+  })
+  const hexPath2 = hexPts2.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ') + ' Z'
 
   return (
     <div className="w-full py-6 flex justify-center overflow-hidden">
       <svg width="160" height="160" viewBox="0 0 160 160" fill="none">
         <defs>
           <radialGradient id="od-core" cx="50%" cy="50%" r="50%">
-            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.25" />
+            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.18" />
             <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
           </radialGradient>
-          <filter id="od-glow">
-            <feGaussianBlur stdDeviation="3.5" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          <filter id="od-soft">
-            <feGaussianBlur stdDeviation="1.5" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
         </defs>
 
-        {/* ── radial glow background ── */}
-        <circle cx="80" cy="80" r="70" fill="url(#od-core)" />
+        {/* radial background glow */}
+        <circle cx={CX} cy={CY} r="68" fill="url(#od-core)" />
 
-        {/* ── 8 converging rays ── */}
-        {rays.map(({ x2, y2 }, i) => (
+        {/* 12 converging rays — alternating weight */}
+        {rays12.map(({ x2, y2 }, i) => (
           <motion.line key={i}
-            x1="80" y1="80" x2={x2} y2={y2}
+            x1={CX} y1={CY} x2={x2} y2={y2}
             stroke="#3B82F6"
-            strokeWidth={i % 2 === 0 ? 1 : 0.6}
-            strokeOpacity={i % 2 === 0 ? 0.22 : 0.12}
+            strokeWidth={i % 3 === 0 ? 0.9 : 0.45}
+            strokeOpacity={i % 3 === 0 ? 0.2 : 0.1}
             strokeLinecap="round"
             initial={{ pathLength: 0, opacity: 0 }}
             whileInView={{ pathLength: 1, opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 + i * 0.07, duration: 0.7, ease: "easeOut" }}
+            transition={{ delay: 0.05 + i * 0.055, duration: 0.6, ease: "easeOut" }}
           />
         ))}
 
-        {/* ── 3 orbit rings ── */}
+        {/* outer hex boundary (r≈68) */}
         {[
-          { r: 24, dur: 18, dash: "5 9",   color: "#3B82F6", op: 0.18 },
-          { r: 40, dur: 28, dash: "3 7",   color: "#10B981", op: 0.13 },
-          { r: 56, dur: 40, dash: "6 12",  color: "#FBBF24", op: 0.10 },
+          { r: 68, color: "#3B82F6", op: 0.08, sw: 0.6 },
+          { r: 52, color: "#3B82F6", op: 0.1,  sw: 0.5 },
+          { r: 36, color: "#10B981", op: 0.1,  sw: 0.5 },
+        ].map(({ r, color, op, sw }, i) => {
+          const pts = Array.from({ length: 6 }, (_, j) => {
+            const a = (j * Math.PI * 2) / 6 - Math.PI / 6
+            return [CX + r * Math.cos(a), CY + r * Math.sin(a)]
+          })
+          const p = pts.map(([x,y],j) => `${j===0?'M':'L'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ') + ' Z'
+          return (
+            <motion.path key={i} d={p}
+              fill="none" stroke={color} strokeWidth={sw} strokeOpacity={op}
+              animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
+              transition={{ duration: 30 + i * 12, repeat: Infinity, ease: "linear" }}
+              style={{ transformOrigin: `${CX}px ${CY}px` }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            />
+          )
+        })}
+
+        {/* 3 circular orbit rings */}
+        {[
+          { r: 44, dur: 22, dash: "4 8",  color: "#3B82F6", op: 0.16 },
+          { r: 56, dur: 35, dash: "2 6",  color: "#10B981", op: 0.12 },
+          { r: 64, dur: 50, dash: "5 11", color: "#FBBF24", op: 0.09 },
         ].map(({ r, dur, dash, color, op }, i) => (
-          <motion.circle key={i} cx="80" cy="80" r={r}
-            fill="none" stroke={color} strokeWidth="0.8"
+          <motion.circle key={`orbit-${i}`} cx={CX} cy={CY} r={r}
+            fill="none" stroke={color} strokeWidth="0.7"
             strokeOpacity={op} strokeDasharray={dash}
             animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
             transition={{ duration: dur, repeat: Infinity, ease: "linear" }}
-            style={{ transformOrigin: "80px 80px" }}
+            style={{ transformOrigin: `${CX}px ${CY}px` }}
           />
         ))}
 
-        {/* ── 3 orbiting dots ── */}
+        {/* inner hexagons */}
+        <motion.path d={hexPath}
+          fill="none" stroke="#3B82F6" strokeWidth="0.7" strokeOpacity="0.22"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          style={{ transformOrigin: `${CX}px ${CY}px` }}
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+        />
+        <motion.path d={hexPath2}
+          fill="none" stroke="#10B981" strokeWidth="0.8" strokeOpacity="0.28"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+          style={{ transformOrigin: `${CX}px ${CY}px` }}
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+        />
+
+        {/* 3 orbiting dots */}
         {[
-          { r: 24, dur: 5,   color: "#3B82F6", size: 3,   startAngle: 0   },
-          { r: 40, dur: 8,   color: "#10B981", size: 2.5, startAngle: 120 },
-          { r: 56, dur: 12,  color: "#FBBF24", size: 2,   startAngle: 240 },
+          { r: 44, dur: 5.5, color: "#3B82F6", size: 3,   startAngle: 0   },
+          { r: 56, dur: 9,   color: "#10B981", size: 2.5, startAngle: 120 },
+          { r: 64, dur: 14,  color: "#FBBF24", size: 2,   startAngle: 240 },
         ].map(({ r, dur, color, size, startAngle }, i) => (
-          <motion.circle key={i}
-            cx={80 + r * Math.cos((startAngle * Math.PI) / 180)}
-            cy={80 + r * Math.sin((startAngle * Math.PI) / 180)}
-            r={size}
-            fill={color}
-            filter="url(#od-soft)"
+          <motion.circle key={`dot-${i}`}
+            cx={CX + r * Math.cos((startAngle * Math.PI) / 180)}
+            cy={CY + r * Math.sin((startAngle * Math.PI) / 180)}
+            r={size} fill={color}
             animate={{ rotate: 360 }}
             transition={{ duration: dur, repeat: Infinity, ease: "linear" }}
-            style={{ transformOrigin: "80px 80px" }}
+            style={{ transformOrigin: `${CX}px ${CY}px` }}
           />
         ))}
 
-        {/* ── diamond outline at center ── */}
-        <motion.path d="M80 66 L94 80 L80 94 L66 80 Z"
-          fill="none" stroke="#3B82F6" strokeWidth="0.8" strokeOpacity="0.25"
-          initial={{ scale: 0, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
+        {/* diamond outline at center */}
+        <motion.path d={`M${CX} ${CY-14} L${CX+14} ${CY} L${CX} ${CY+14} L${CX-14} ${CY} Z`}
+          fill="none" stroke="#3B82F6" strokeWidth="0.8" strokeOpacity="0.3"
+          animate={{ rotate: [0, 45, 90, 135, 180] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          style={{ transformOrigin: `${CX}px ${CY}px` }}
+          initial={{ scale: 0, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.6, duration: 0.6, type: "spring", stiffness: 180 }}
-          style={{ transformOrigin: "80px 80px" }}
         />
 
-        {/* ── expanding emanation rings from center ── */}
-        {[0, 1, 2].map((i) => (
-          <motion.circle key={`em-${i}`} cx="80" cy="80" fill="none"
-            stroke="#3B82F6" strokeWidth="0.7"
-            initial={{ r: 5, opacity: 0.6 }}
-            animate={{ r: [5, 40], opacity: [0.6, 0] }}
-            transition={{ duration: 2.8, repeat: Infinity, ease: "easeOut", delay: i * 0.93 }}
+        {/* emanation rings */}
+        {[0, 1, 2].map(i => (
+          <motion.circle key={`em-${i}`} cx={CX} cy={CY} fill="none"
+            stroke="#3B82F6" strokeWidth="0.6"
+            initial={{ r: 5, opacity: 0.5 }}
+            animate={{ r: [5, 42], opacity: [0.5, 0] }}
+            transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut", delay: i * 0.88 }}
           />
         ))}
 
-        {/* ── center dot ── */}
-        <motion.circle cx="80" cy="80" r="5"
-          fill="#3B82F6" filter="url(#od-glow)"
+        {/* center dot */}
+        <motion.circle cx={CX} cy={CY} r="5"
+          fill="#3B82F6"
           animate={{ opacity: [0.7, 1, 0.7], scale: [0.9, 1.1, 0.9] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          style={{ transformOrigin: "80px 80px" }}
+          style={{ transformOrigin: `${CX}px ${CY}px` }}
         />
-        <circle cx="80" cy="80" r="2.5" fill="#FFFFFF" opacity="0.9" />
+        <circle cx={CX} cy={CY} r="2.5" fill="#FFFFFF" opacity="0.9" />
       </svg>
     </div>
   )
@@ -1614,88 +1716,120 @@ export default function LandingPage() {
       </nav>
 
       {/* HERO SECTION */}
-      <section ref={heroRef} className={`relative pt-[72px] pb-0 px-4 overflow-hidden flex flex-col items-center justify-center min-h-screen bg-[#121212]`}>
-        <div className="max-w-lg mx-auto relative z-10 w-full text-center pt-10 pb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="mb-5 flex items-center justify-center">
-              <FlotterLogo isDark={true} height={64} />
-            </div>
-
-            <motion.div
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/30 mb-5"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.15 }}
-            >
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3B82F6] opacity-75" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#3B82F6]" />
-              </span>
-              <span className="text-[11px] font-bold text-[#3B82F6] uppercase tracking-wider">
-                {t('landing.hero.neuralSync')}
-              </span>
-            </motion.div>
-
-            <h1 className={`text-[34px] font-bold leading-[1.1] mb-4 text-white`}>
-              {t('landing.hero.title1')}
-              <span className="text-[#3B82F6]">{t('landing.hero.title2')}</span>
-            </h1>
-
-            <p className={`text-[15px] text-[#9CA3AF] mb-8 leading-relaxed max-w-sm mx-auto`}>
-              {t('landing.hero.desc1')}
-              <span className={`text-white font-semibold`}> {t('landing.hero.desc2')}</span>
-              {t('landing.hero.desc3')}
-            </p>
-
-            <div className="flex flex-col items-center gap-3">
-              <Link
-                href="/register"
-                className="w-full group relative inline-flex items-center justify-center px-8 py-4 bg-[#3B82F6] rounded-[14px] font-bold text-white text-[15px] tracking-wide active:scale-95 overflow-hidden"
-              >
-                {/* Shimmer sweep */}
-                <motion.span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 rounded-[14px]"
-                  style={{
-                    background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.13) 50%, transparent 65%)'
-                  }}
-                  animate={{ x: ['-110%', '110%'] }}
-                  transition={{ duration: 2.8, repeat: Infinity, ease: 'linear', repeatDelay: 0.8 }}
-                />
-                <span className="relative z-10 flex items-center gap-2.5">
-                  {t('landing.hero.startTrial')} <ArrowRight size={18} className={`${language === 'ar' ? 'rotate-180' : ''}`} />
-                </span>
-              </Link>
-
-              <button className={`w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-[14px] border border-dashed border-[#383838] text-[#9CA3AF] text-[13px] font-semibold`}>
-                <Play size={13} fill="#FACC15" className="text-[#FACC15]" />
-                {t('landing.hero.watchDemo')}
-              </button>
-            </div>
-          </motion.div>
+      <section ref={heroRef} className="relative pt-[72px] overflow-hidden min-h-screen bg-[#121212] flex items-center">
+        {/* Decorative diagonal accent lines */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          <div className="absolute top-0 right-0 w-[60vw] h-px bg-gradient-to-l from-transparent via-[#3B82F6]/20 to-transparent" style={{ top: '38%' }} />
+          <div className="absolute top-0 right-0 w-[40vw] h-px bg-gradient-to-l from-transparent via-[#3B82F6]/12 to-transparent" style={{ top: '55%' }} />
         </div>
 
-        {/* Hero visual */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.25 }}
-          className="relative w-full max-w-sm mx-auto px-4 pb-10"
-        >
-          <div className="relative z-10">
-            <AIGenerationSVG />
+        <div className="max-w-5xl mx-auto px-6 relative z-10 w-full py-16 md:py-0">
+          <div className={`flex flex-col ${language === 'ar' ? 'md:flex-row-reverse' : 'md:flex-row'} md:items-center md:gap-16`}>
+
+            {/* Left: Text */}
+            <motion.div
+              className={`flex-1 text-center ${language === 'ar' ? 'md:text-right' : 'md:text-left'}`}
+              initial={{ opacity: 0, x: language === 'ar' ? 24 : -24 }}
+              animate={isHeroInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.65 }}
+            >
+              <div className={`mb-5 flex items-center ${language === 'ar' ? 'justify-center md:justify-end' : 'justify-center md:justify-start'}`}>
+                <FlotterLogo isDark={true} height={56} />
+              </div>
+
+              {/* Eyebrow badge */}
+              <motion.div
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#3B82F6]/10 border border-[#3B82F6]/25 mb-5"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.15 }}
+              >
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3B82F6] opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#3B82F6]" />
+                </span>
+                <span className="text-[10px] font-black text-[#3B82F6] uppercase tracking-[0.22em]">
+                  {t('landing.hero.neuralSync')}
+                </span>
+              </motion.div>
+
+              <h1 className="text-[40px] md:text-[54px] font-black leading-[1.04] mb-5 text-white tracking-tight">
+                {t('landing.hero.title1')}
+                <span className="text-[#3B82F6] block">{t('landing.hero.title2')}</span>
+              </h1>
+
+              {/* Accent rule */}
+              <motion.div
+                className={`flex items-center gap-2 mb-6 ${language === 'ar' ? 'justify-center md:justify-end flex-row-reverse' : 'justify-center md:justify-start'}`}
+                initial={{ opacity: 0, scaleX: 0 }}
+                animate={isHeroInView ? { opacity: 1, scaleX: 1 } : {}}
+                transition={{ delay: 0.35, duration: 0.5 }}
+                style={{ transformOrigin: language === 'ar' ? 'right' : 'left' }}
+              >
+                <div className="h-[2px] w-12 bg-[#3B82F6]" />
+                <div className="h-[2px] w-5 bg-[#3B82F6]/40" />
+                <div className="h-[2px] w-2 bg-[#3B82F6]/18" />
+              </motion.div>
+
+              <p className={`text-[14px] md:text-[15px] text-[#9CA3AF] mb-8 leading-relaxed max-w-sm mx-auto ${language === 'ar' ? 'md:mr-0' : 'md:ml-0'}`}>
+                {t('landing.hero.desc1')}
+                <span className="text-white font-semibold"> {t('landing.hero.desc2')}</span>
+                {t('landing.hero.desc3')}
+              </p>
+
+              <div className={`flex flex-col items-center ${language === 'ar' ? 'md:items-end' : 'md:items-start'} gap-3 max-w-xs mx-auto md:mx-0`}>
+                <Link
+                  href="/register"
+                  className="w-full group relative inline-flex items-center justify-center px-8 py-4 bg-[#3B82F6] rounded-[10px] font-bold text-white text-[13px] tracking-widest uppercase active:scale-95 overflow-hidden"
+                >
+                  <motion.span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 rounded-[10px]"
+                    style={{ background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.13) 50%, transparent 65%)' }}
+                    animate={{ x: ['-110%', '110%'] }}
+                    transition={{ duration: 2.8, repeat: Infinity, ease: 'linear', repeatDelay: 0.8 }}
+                  />
+                  <span className="relative z-10 flex items-center gap-2.5">
+                    {t('landing.hero.startTrial')} <ArrowRight size={16} className={`${language === 'ar' ? 'rotate-180' : ''}`} />
+                  </span>
+                </Link>
+
+                <button className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-[10px] border border-[#2d2d2d] text-[#9CA3AF] text-[13px] font-semibold">
+                  <Play size={13} fill="#FACC15" className="text-[#FACC15]" />
+                  {t('landing.hero.watchDemo')}
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Right: Demo Visual */}
+            <motion.div
+              className="flex-shrink-0 w-full md:w-[400px] mt-12 md:mt-0"
+              initial={{ opacity: 0, x: language === 'ar' ? -24 : 24 }}
+              animate={isHeroInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.7, delay: 0.2 }}
+            >
+              {/* Engineering corner-bracket frame */}
+              <div className="relative p-3">
+                <span className="absolute top-0 left-0 w-7 h-7 border-t-[2px] border-l-[2px] border-[#3B82F6]/50" />
+                <span className="absolute top-0 right-0 w-7 h-7 border-t-[2px] border-r-[2px] border-[#3B82F6]/50" />
+                <span className="absolute bottom-0 left-0 w-7 h-7 border-b-[2px] border-l-[2px] border-[#3B82F6]/50" />
+                <span className="absolute bottom-0 right-0 w-7 h-7 border-b-[2px] border-r-[2px] border-[#3B82F6]/50" />
+                {/* Label strip */}
+                <div className="absolute -top-3 left-10 bg-[#121212] px-2 flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#3B82F6] animate-pulse" />
+                  <span className="text-[8px] font-black tracking-[0.25em] uppercase text-[#3B82F6]">AI · LIVE DEMO</span>
+                </div>
+                <AIGenerationSVG />
+              </div>
+            </motion.div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* STATS */}
-      <section className={`border-y border-[#2A2A2A] bg-[#121212]`}>
-        <div className="max-w-lg mx-auto px-4 py-10">
-          <div className="grid grid-cols-2 gap-3 text-center">
+      <section className="border-y border-[#1e1e1e] bg-[#222222]">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-[#2A2A2A]">
             {[
               { value: 94, suffix: "%", label: t('landing.stats.retentionRate'), color: "#3B82F6" },
               { value: 3, suffix: "x", label: t('landing.stats.fasterLearning'), color: "#FACC15" },
@@ -1704,17 +1838,24 @@ export default function LandingPage() {
             ].map((stat, i) => (
               <motion.div
                 key={i}
-                className={`p-4 rounded-xl bg-[#1a1a1a] border border-dashed border-[#383838]`}
+                className="py-9 px-6 flex flex-col items-center gap-2 text-center"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.03, borderColor: stat.color + '55' }}
-                transition={{ delay: i * 0.08 }}
+                transition={{ delay: i * 0.07 }}
                 viewport={{ once: true }}
               >
-                <div className="text-[26px] font-bold mb-0.5" style={{ color: stat.color }}>
+                <div className="text-[36px] font-black leading-none tabular-nums" style={{ color: stat.color }}>
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 </div>
-                <div className={`text-[#9CA3AF] text-[12px] font-medium leading-tight`}>{stat.label}</div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#6B7280]">{stat.label}</div>
+                <motion.div
+                  className="h-px w-8"
+                  style={{ backgroundColor: stat.color }}
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.35 + i * 0.07, duration: 0.4 }}
+                />
               </motion.div>
             ))}
           </div>
@@ -1723,31 +1864,34 @@ export default function LandingPage() {
 
       {/* Decorator: Stats → Problem */}
       <div className="bg-[#121212]">
-        <div className="max-w-lg mx-auto">
+        <div className="max-w-3xl mx-auto">
           <FloatingDots count={6} color="#EF4444" />
         </div>
       </div>
 
       {/* PROBLEM SECTION */}
-      <section className={`py-20 px-4 bg-[#121212]`}>
-        <div className="max-w-lg mx-auto">
-          <div className="text-center mb-10">
-            <p className="text-[11px] font-bold uppercase text-[#EF4444] tracking-widest mb-2">{t('landing.problem.challenge')}</p>
-            <h2 className={`text-[24px] font-bold text-white mb-2`}>{t('landing.problem.title')}</h2>
-            <p className={`text-[#9CA3AF] text-[14px]`}>{t('landing.problem.subtitle')}</p>
+      <section className="py-20 px-4 bg-[#121212]">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EF4444]/8 border border-[#EF4444]/20 rounded-sm mb-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
+              <p className="text-[10px] font-bold uppercase text-[#EF4444] tracking-[0.28em]">{t('landing.problem.challenge')}</p>
+            </div>
+            <h2 className="text-[26px] md:text-[30px] font-bold text-white mb-3 leading-tight">{t('landing.problem.title')}</h2>
+            <p className="text-[#9CA3AF] text-[14px] max-w-md mx-auto">{t('landing.problem.subtitle')}</p>
           </div>
 
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-8"
+            className="mb-10"
           >
             <RetentionGraph />
           </motion.div>
 
           <motion.div
-            className="space-y-3"
+            className="grid grid-cols-1 md:grid-cols-3 gap-3"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -1758,15 +1902,22 @@ export default function LandingPage() {
               { title: t('landing.problem.contextTitle'), desc: t('landing.problem.contextDesc') },
               { title: t('landing.problem.frictionTitle'), desc: t('landing.problem.frictionDesc') }
             ].map((item, i) => (
-              <div key={i} className={`rounded-xl p-4 bg-[#1a1a1a] border border-dashed border-[#383838] flex gap-3`}>
-                <div className="w-8 h-8 rounded-[10px] bg-[#EF4444]/10 flex items-center justify-center flex-shrink-0 border border-[#EF4444]/20">
-                  <X className="text-[#EF4444]" size={15} />
+              <motion.div
+                key={i}
+                className="rounded-xl p-5 bg-[#1a1a1a] border border-[#2A2A2A] flex flex-col gap-3"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.06 * i }}
+              >
+                <div className="w-8 h-8 rounded-[8px] bg-[#EF4444]/8 flex items-center justify-center flex-shrink-0 border border-[#EF4444]/18">
+                  <X className="text-[#EF4444]" size={14} />
                 </div>
                 <div>
-                  <h3 className={`text-[14px] font-bold text-white mb-0.5`}>{item.title}</h3>
-                  <p className={`text-[#9CA3AF] text-[13px] leading-relaxed`}>{item.desc}</p>
+                  <h3 className="text-[13px] font-bold text-white mb-1">{item.title}</h3>
+                  <p className="text-[#9CA3AF] text-[12px] leading-relaxed">{item.desc}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </div>
@@ -1774,29 +1925,29 @@ export default function LandingPage() {
 
       {/* Decorator: Problem → Methodology */}
       <div className="bg-[#121212]">
-        <div className="max-w-lg mx-auto">
+        <div className="max-w-3xl mx-auto">
           <NeuralConnector />
         </div>
       </div>
 
       {/* METHODOLOGY SECTION */}
-      <section className={`py-20 px-4 relative bg-[#121212]`}>
-        <div className="max-w-lg mx-auto relative z-10">
+      <section className="py-20 px-4 relative bg-[#121212]">
+        <div className="max-w-3xl mx-auto relative z-10">
 
           {/* Section header */}
           <motion.div
-            className="text-center mb-10"
+            className="text-center mb-12"
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#3B82F6]/8 border border-[#3B82F6]/15 mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#3B82F6]/8 border border-[#3B82F6]/18 mb-4">
               <div className="w-1.5 h-1.5 rounded-full bg-[#3B82F6]" />
               <p className="text-[10px] font-bold uppercase text-[#3B82F6] tracking-[0.3em]">
                 {t('landing.methodology.title')}
               </p>
             </div>
-            <h2 className={`text-[28px] font-bold leading-[1.15] mb-3 text-white`}>
+            <h2 className="text-[28px] md:text-[34px] font-black leading-[1.1] mb-3 text-white tracking-tight">
               {t('landing.methodology.heading1')}<span className="text-[#3B82F6]">Flotter</span>{t('landing.methodology.heading2')}
             </h2>
           </motion.div>
@@ -2161,7 +2312,7 @@ export default function LandingPage() {
 
       {/* Decorator: Methodology → CTA */}
       <div className="bg-[#121212]">
-        <div className="max-w-lg mx-auto">
+        <div className="max-w-3xl mx-auto">
           <OrbitDecoration />
         </div>
       </div>
