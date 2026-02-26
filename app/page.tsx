@@ -29,22 +29,26 @@ import FlotterLogo from './components/FlotterLogo'
 
 const NeuralBackground = () => {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 select-none overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-0 select-none overflow-hidden bg-[#121212]">
+      {/* Ambient Glows */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#3B82F6] blur-[120px] opacity-10 rounded-full" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#8B5CF6] blur-[120px] opacity-10 rounded-full" />
+      
       <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="smallGrid" width="28" height="28" patternUnits="userSpaceOnUse">
-            <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#3B82F6" strokeWidth="0.3" strokeOpacity="0.22"/>
+            <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#3B82F6" strokeWidth="0.3" strokeOpacity="0.15"/>
           </pattern>
           <pattern id="mainGrid" width="140" height="140" patternUnits="userSpaceOnUse">
             <rect width="140" height="140" fill="url(#smallGrid)"/>
-            <path d="M 140 0 L 0 0 0 140" fill="none" stroke="#3B82F6" strokeWidth="0.7" strokeOpacity="0.14"/>
-            <circle cx="0" cy="0" r="1.8" fill="#3B82F6" fillOpacity="0.20"/>
-            <circle cx="140" cy="0" r="1.8" fill="#3B82F6" fillOpacity="0.20"/>
-            <circle cx="0" cy="140" r="1.8" fill="#3B82F6" fillOpacity="0.20"/>
-            <circle cx="140" cy="140" r="1.8" fill="#3B82F6" fillOpacity="0.20"/>
-            <path d="M 42 0 L 42 70 L 70 70" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.08" fill="none" strokeLinecap="square"/>
-            <path d="M 98 140 L 98 70 L 70 70" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.08" fill="none" strokeLinecap="square"/>
-            <circle cx="70" cy="70" r="2.5" fill="none" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.15"/>
+            <path d="M 140 0 L 0 0 0 140" fill="none" stroke="#3B82F6" strokeWidth="0.7" strokeOpacity="0.25"/>
+            <circle cx="0" cy="0" r="1.8" fill="#3B82F6" fillOpacity="0.40"/>
+            <circle cx="140" cy="0" r="1.8" fill="#3B82F6" fillOpacity="0.40"/>
+            <circle cx="0" cy="140" r="1.8" fill="#3B82F6" fillOpacity="0.40"/>
+            <circle cx="140" cy="140" r="1.8" fill="#3B82F6" fillOpacity="0.40"/>
+            <path d="M 42 0 L 42 70 L 70 70" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.15" fill="none" strokeLinecap="square"/>
+            <path d="M 98 140 L 98 70 L 70 70" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.15" fill="none" strokeLinecap="square"/>
+            <circle cx="70" cy="70" r="2.5" fill="none" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.3"/>
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#mainGrid)" />
@@ -81,261 +85,249 @@ const AnimatedCounter = ({ value, suffix = "" }: { value: number, suffix?: strin
   return <span ref={ref}>{count}{suffix}</span>
 }
 
+const HolographicCard = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => {
+  const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 })
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    setMousePosition({
+      x: (e.clientX - rect.left) / rect.width,
+      y: (e.clientY - rect.top) / rect.height
+    })
+  }
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      className={`relative overflow-hidden ${className}`}
+      style={{
+        background: `radial-gradient(circle at ${mousePosition.x * 100}% ${mousePosition.y * 100}%, rgba(59, 130, 246, 0.08), transparent 60%)`,
+      }}
+    >
+      <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+        style={{
+          background: `linear-gradient(${mousePosition.x * 360}deg, transparent 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%)`
+        }}
+      />
+      {children}
+    </div>
+  )
+}
+
 const AIGenerationSVG = () => {
   const { t } = useLanguage()
   return (
-    <svg viewBox="0 0 400 320" className="w-full h-full max-w-lg mx-auto ">
-      <style>{`
+  <svg viewBox="0 0 400 320" className="w-full h-full max-w-lg mx-auto drop-shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+    <style>{`
       /* Core Variables & Utilities */
       .anim { animation-duration: 14s; animation-iteration-count: infinite; }
-
+      
       /* Phase 1: Input Box */
       @keyframes inputWrap {
-        0%, 2% { opacity: 0; transform: scale(0.9) translateY(10px); }
-        5%, 12% { opacity: 1; transform: scale(1) translateY(0); }
-        15%, 100% { opacity: 0; transform: scale(0.8) translateY(-10px); }
+        0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+        4%, 11% { opacity: 1; transform: scale(1) translateY(0); }
+        15%, 100% { opacity: 0; transform: scale(0.95) translateY(-15px); }
       }
       @keyframes typeText {
         0%, 4% { clip-path: inset(0 100% 0 0); }
-        8%, 100% { clip-path: inset(0 0 0 0); }
+        9%, 100% { clip-path: inset(0 0 0 0); }
       }
-      @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+      @keyframes cursorBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 
       /* Phase 2: Integration Core Base */
       @keyframes corePhase {
-        0%, 13% { opacity: 0; transform: scale(0.5); }
-        15%, 70% { opacity: 1; transform: scale(1); }
-        73%, 100% { opacity: 0; transform: scale(1.5); }
+        0%, 13% { opacity: 0; transform: scale(0.85); }
+        17%, 68% { opacity: 1; transform: scale(1); }
+        72%, 100% { opacity: 0; transform: scale(1.1); }
       }
       @keyframes corePulse {
-        0%, 55% { fill: #2D2D2F; }
-        58%, 70% { fill: #3B82F6; transform: scale(1.1); }
-        71%, 100% { fill: #2D2D2F; }
+        0%, 53% { fill: #1E293B; transform: scale(1); }
+        58%, 68% { fill: #3B82F6; filter: url(#glow-strong); transform: scale(1.15); }
+        72%, 100% { fill: #1E293B; transform: scale(1); }
       }
       @keyframes ringSpin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
       @keyframes ringFastSpin {
-        0%, 55% { transform: rotate(0deg); animation-timing-function: ease-in; opacity: 0.2; }
-        58%, 70% { transform: rotate(180deg); opacity: 1; stroke: #3B82F6; }
-        71%, 100% { transform: rotate(360deg); opacity: 0.2; }
+        0%, 53% { transform: rotate(0deg); opacity: 0.2; stroke: #475569; }
+        58%, 68% { transform: rotate(180deg); opacity: 1; stroke: #3B82F6; }
+        72%, 100% { transform: rotate(360deg); opacity: 0.2; stroke: #475569; }
       }
 
       /* Phase 3: Sequential Step Nodes */
-      @keyframes n-context { 0%, 18% { opacity: 0; transform: scale(0.5); } 20%, 70% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
-      @keyframes n-image { 0%, 28% { opacity: 0; transform: scale(0.5); } 30%, 70% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
-      @keyframes n-vibe { 0%, 38% { opacity: 0; transform: scale(0.5); } 40%, 70% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
-      @keyframes n-sense { 0%, 48% { opacity: 0; transform: scale(0.5); } 50%, 70% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
+      @keyframes n-context { 0%, 16% { opacity: 0; transform: scale(0.8); } 20%, 68% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
+      @keyframes n-image   { 0%, 26% { opacity: 0; transform: scale(0.8); } 30%, 68% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
+      @keyframes n-vibe    { 0%, 36% { opacity: 0; transform: scale(0.8); } 40%, 68% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
+      @keyframes n-sense   { 0%, 46% { opacity: 0; transform: scale(0.8); } 50%, 68% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
 
       /* Node Activation Colors */
-      @keyframes fill-context { 0%, 21% { fill: #2D2D2F; } 23%, 70% { fill: #3B82F6; } 71%, 100% { fill: #2D2D2F; } }
-      @keyframes fill-image  { 0%, 31% { fill: #2D2D2F; } 33%, 70% { fill: #FBBF24; } 71%, 100% { fill: #2D2D2F; } }
-      @keyframes fill-vibe   { 0%, 41% { fill: #2D2D2F; } 43%, 70% { fill: #3B82F6; } 71%, 100% { fill: #2D2D2F; } }
-      @keyframes fill-sense  { 0%, 51% { fill: #2D2D2F; } 53%, 70% { fill: #10B981; } 71%, 100% { fill: #2D2D2F; } }
+      @keyframes fill-context { 0%, 19% { fill: #1E293B; filter: none; } 22%, 68% { fill: #3B82F6; filter: url(#glow-strong); } 72%, 100% { fill: #1E293B; filter: none; } }
+      @keyframes fill-image   { 0%, 29% { fill: #1E293B; filter: none; } 32%, 68% { fill: #FBBF24; filter: url(#glow-strong); } 72%, 100% { fill: #1E293B; filter: none; } }
+      @keyframes fill-vibe    { 0%, 39% { fill: #1E293B; filter: none; } 42%, 68% { fill: #8B5CF6; filter: url(#glow-strong); } 72%, 100% { fill: #1E293B; filter: none; } }
+      @keyframes fill-sense   { 0%, 49% { fill: #1E293B; filter: none; } 52%, 68% { fill: #10B981; filter: url(#glow-strong); } 72%, 100% { fill: #1E293B; filter: none; } }
 
       /* Connecting Data Beams */
       @keyframes beamDash { to { stroke-dashoffset: -40; } }
-      @keyframes b-context { 0%, 21% { opacity: 0; } 22%, 70% { opacity: 0.8; } 71%, 100% { opacity: 0; } }
-      @keyframes b-image { 0%, 31% { opacity: 0; } 32%, 70% { opacity: 0.8; } 71%, 100% { opacity: 0; } }
-      @keyframes b-vibe { 0%, 41% { opacity: 0; } 42%, 70% { opacity: 0.8; } 71%, 100% { opacity: 0; } }
-      @keyframes b-sense { 0%, 51% { opacity: 0; } 52%, 70% { opacity: 0.8; } 71%, 100% { opacity: 0; } }
+      @keyframes b-context { 0%, 19% { opacity: 0; } 22%, 68% { opacity: 0.8; } 72%, 100% { opacity: 0; } }
+      @keyframes b-image   { 0%, 29% { opacity: 0; } 32%, 68% { opacity: 0.8; } 72%, 100% { opacity: 0; } }
+      @keyframes b-vibe    { 0%, 39% { opacity: 0; } 42%, 68% { opacity: 0.8; } 72%, 100% { opacity: 0; } }
+      @keyframes b-sense   { 0%, 49% { opacity: 0; } 52%, 68% { opacity: 0.8; } 72%, 100% { opacity: 0; } }
 
       /* Phase 4: Final Centered Card */
       @keyframes cardGen {
-        0%, 68% { opacity: 0; transform: scale(0.6) translateY(40px); }
-        73%, 94% { opacity: 1; transform: scale(1) translateY(0); }
-        97%, 100% { opacity: 0; transform: scale(0.9) translateY(-20px); }
+        0%, 68% { opacity: 0; transform: scale(0.85) translateY(30px); }
+        74%, 93% { opacity: 1; transform: scale(1) translateY(0); }
+        97%, 100% { opacity: 0; transform: scale(0.95) translateY(-15px); }
       }
-      @keyframes cardImg { 0%, 73% { opacity: 0; transform: scale(0.95); } 76%, 100% { opacity: 1; transform: scale(1); } }
-      @keyframes cardWord { 0%, 75% { opacity: 0; transform: translateY(10px); } 78%, 100% { opacity: 1; transform: translateY(0); } }
-      @keyframes cardSent { 0%, 77% { opacity: 0; transform: translateY(10px); } 80%, 100% { opacity: 1; transform: translateY(0); } }
+      @keyframes cardImg  { 0%, 71% { opacity: 0; transform: scale(0.95) translateY(10px); } 75%, 100% { opacity: 1; transform: scale(1) translateY(0); } }
+      @keyframes cardWord { 0%, 73% { opacity: 0; transform: translateY(10px); } 77%, 100% { opacity: 1; transform: translateY(0); } }
+      @keyframes cardSent { 0%, 75% { opacity: 0; transform: translateY(10px); } 79%, 100% { opacity: 1; transform: translateY(0); } }
 
-      /* Timeline Class Assignments */
-      .input-wrap { animation-name: inputWrap; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transform-origin: 200px 160px; }
-      .input-text { animation-name: typeText; animation-timing-function: steps(12, end); }
-      .cursor { animation: cursorBlink 0.8s infinite; }
-
-      .core-wrap { animation-name: corePhase; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transform-origin: 200px 160px; }
-      .core-inner { animation-name: corePulse; transform-origin: 200px 160px; }
-      .core-ring { animation: ringSpin 10s linear infinite; transform-origin: 200px 160px; }
+      /* Timeline Class Assignments & Easing */
+      .input-wrap { animation-name: inputWrap; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); transform-origin: 200px 160px; }
+      .input-text { animation-name: typeText; animation-timing-function: steps(10, end); }
+      .cursor { animation: cursorBlink 0.8s step-end infinite; }
+      
+      .core-wrap { animation-name: corePhase; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); transform-origin: 200px 160px; }
+      .core-inner { animation-name: corePulse; animation-timing-function: ease-in-out; transform-origin: 200px 160px; }
+      .core-ring { animation: ringSpin 12s linear infinite; transform-origin: 200px 160px; }
       .core-ring-fast { animation: ringFastSpin 14s ease-in-out infinite; transform-origin: 200px 160px; }
 
-      .node-c { animation-name: n-context; transform-origin: 70px 160px; }
-      .node-i { animation-name: n-image; transform-origin: 200px 50px; }
-      .node-v { animation-name: n-vibe; transform-origin: 330px 160px; }
-      .node-s { animation-name: n-sense; transform-origin: 200px 270px; }
+      .node-c { animation-name: n-context; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); transform-origin: 70px 160px; }
+      .node-i { animation-name: n-image; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); transform-origin: 200px 50px; }
+      .node-v { animation-name: n-vibe; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); transform-origin: 330px 160px; }
+      .node-s { animation-name: n-sense; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); transform-origin: 200px 270px; }
 
-      .fill-c { animation-name: fill-context; }
-      .fill-i { animation-name: fill-image; }
-      .fill-v { animation-name: fill-vibe; }
-      .fill-s { animation-name: fill-sense; }
+      .fill-c { animation-name: fill-context; animation-timing-function: ease-in-out; }
+      .fill-i { animation-name: fill-image; animation-timing-function: ease-in-out; }
+      .fill-v { animation-name: fill-vibe; animation-timing-function: ease-in-out; }
+      .fill-s { animation-name: fill-sense; animation-timing-function: ease-in-out; }
 
-      .beam-c { animation-name: b-context; stroke: #3B82F6; }
-      .beam-i { animation-name: b-image; stroke: #FBBF24; }
-      .beam-v { animation-name: b-vibe; stroke: #3B82F6; }
-      .beam-s { animation-name: b-sense; stroke: #10B981; }
-      .beam-flow { stroke-dasharray: 8 8; animation: beamDash 1s linear infinite; }
+      /* Beams - Combining structural flow and precise fade timings cleanly */
+      .beam-c { animation-name: b-context, beamDash; animation-duration: 14s, 1s; animation-timing-function: ease-in-out, linear; animation-iteration-count: infinite, infinite; stroke: #3B82F6; }
+      .beam-i { animation-name: b-image, beamDash; animation-duration: 14s, 1s; animation-timing-function: ease-in-out, linear; animation-iteration-count: infinite, infinite; stroke: #FBBF24; }
+      .beam-v { animation-name: b-vibe, beamDash; animation-duration: 14s, 1s; animation-timing-function: ease-in-out, linear; animation-iteration-count: infinite, infinite; stroke: #8B5CF6; }
+      .beam-s { animation-name: b-sense, beamDash; animation-duration: 14s, 1s; animation-timing-function: ease-in-out, linear; animation-iteration-count: infinite, infinite; stroke: #10B981; }
+      .beam-flow { stroke-dasharray: 8 8; }
 
-      .card-wrap { animation-name: cardGen; animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: 200px 160px; }
-      .card-img { animation-name: cardImg; transform-origin: 200px 91px; }
-      .card-word { animation-name: cardWord; }
-      .card-sent { animation-name: cardSent; }
+      /* Card Staggered Entrances */
+      .card-wrap { animation-name: cardGen; animation-timing-function: cubic-bezier(0.34, 1.2, 0.64, 1); transform-origin: 200px 160px; }
+      .card-img { animation-name: cardImg; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); transform-origin: 200px 91px; }
+      .card-word { animation-name: cardWord; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+      .card-sent { animation-name: cardSent; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
     `}</style>
 
-      <defs>
-        <linearGradient id="cardImgGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.05" />
-        </linearGradient>
-        <clipPath id="imgClip">
-          <rect x="106" y="36" width="188" height="110" rx="10" />
-        </clipPath>
-        {/* circuit grid pattern */}
-        <pattern id="circuit-bg" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
-          <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#3B82F6" strokeWidth="0.3" strokeOpacity="0.12"/>
-          <circle cx="0" cy="0" r="1" fill="#3B82F6" fillOpacity="0.1"/>
-        </pattern>
-      </defs>
+    <defs>
+      <filter id="glow-strong" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="4" result="blur" />
+        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+      </filter>
+      <linearGradient id="cardImgGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
+        <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.05" />
+      </linearGradient>
+      <clipPath id="imgClip">
+        <rect x="106" y="36" width="188" height="110" rx="10" />
+      </clipPath>
+    </defs>
 
-      {/* SVG background circuit grid */}
-      <rect width="400" height="320" fill="#111111" rx="14"/>
-      <rect width="400" height="320" fill="url(#circuit-bg)" rx="14"/>
+    {/* PHASE 1: INPUT */}
+    <g className="anim input-wrap">
+      <rect x="120" y="140" width="160" height="40" rx="8" fill="#14151A" stroke="#3B82F6" strokeWidth="1.5" filter="drop-shadow(0 4px 12px rgba(59,130,246,0.3))" />
+      <g className="anim input-text">
+        <text x="200" y="165" fill="#FFFFFF" fontFamily="monospace" fontSize="15" fontWeight="bold" textAnchor="middle" letterSpacing="1">
+          Ephemeral<tspan className="cursor" fill="#3B82F6">_</tspan>
+        </text>
+      </g>
+    </g>
 
-      {/* horizontal/vertical circuit traces decorating the background */}
-      <g opacity="0.07" stroke="#3B82F6" strokeWidth="0.8" fill="none">
-        <path d="M10 80 L60 80 L60 50 L130 50"/>
-        <path d="M390 200 L330 200 L330 240 L260 240"/>
-        <path d="M10 240 L50 240 L50 200 L80 200"/>
-        <path d="M370 60 L310 60 L310 90 L260 90"/>
-        <circle cx="60" cy="80" r="2.5" fill="#3B82F6" fillOpacity="0.5"/>
-        <circle cx="60" cy="50" r="2" fill="#3B82F6" fillOpacity="0.5"/>
-        <circle cx="330" cy="200" r="2.5" fill="#3B82F6" fillOpacity="0.5"/>
-        <circle cx="50" cy="240" r="2" fill="#3B82F6" fillOpacity="0.5"/>
-        <circle cx="310" cy="60" r="2.5" fill="#3B82F6" fillOpacity="0.5"/>
+    {/* PHASE 2: ENGINE DISCS & DATA FLOW */}
+    <g className="anim core-wrap">
+      {/* Beams */}
+      <line x1="92" y1="160" x2="168" y2="160" strokeWidth="2" className="beam-c beam-flow" />
+      <line x1="200" y1="72" x2="200" y2="128" strokeWidth="2" className="beam-i beam-flow" />
+      <line x1="308" y1="160" x2="232" y2="160" strokeWidth="2" className="beam-v beam-flow" />
+      <line x1="200" y1="248" x2="200" y2="192" strokeWidth="2" className="beam-s beam-flow" />
+
+      {/* Integration Center (Core) */}
+      <circle cx="200" cy="160" r="24" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
+      <circle cx="200" cy="160" r="32" fill="none" stroke="#475569" strokeWidth="1" strokeDasharray="4 6" className="core-ring" />
+      <circle cx="200" cy="160" r="42" fill="none" strokeWidth="1.5" strokeDasharray="20 40 10 30" className="anim core-ring-fast" />
+      <circle cx="200" cy="160" r="10" className="anim core-inner" />
+
+      {/* Node 1: Context (Left) */}
+      <g className="anim node-c">
+        <circle cx="70" cy="160" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
+        <circle cx="70" cy="160" r="6" className="anim fill-c" />
+        <text x="70" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.contexts').toUpperCase()}</text>
       </g>
 
-      {/* PHASE 1: INPUT */}
-      <g className="anim input-wrap">
-        <rect x="120" y="140" width="160" height="40" rx="6" fill="#161616" stroke="#3B82F6" strokeWidth="1.5"  />
-        {/* corner accents */}
-        <path d="M120 150 L120 140 L130 140" stroke="#3B82F6" strokeWidth="1" fill="none" strokeOpacity="0.6"/>
-        <path d="M270 140 L280 140 L280 150" stroke="#3B82F6" strokeWidth="1" fill="none" strokeOpacity="0.6"/>
-        <path d="M120 170 L120 180 L130 180" stroke="#3B82F6" strokeWidth="1" fill="none" strokeOpacity="0.6"/>
-        <path d="M270 180 L280 180 L280 170" stroke="#3B82F6" strokeWidth="1" fill="none" strokeOpacity="0.6"/>
-        <g className="anim input-text">
-          <text x="200" y="165" fill="#FFFFFF" fontFamily="monospace" fontSize="14" fontWeight="bold" textAnchor="middle" letterSpacing="1.2">
-            Ephemeral<tspan className="cursor" fill="#3B82F6">_</tspan>
-          </text>
-        </g>
+      {/* Node 2: Image (Top) */}
+      <g className="anim node-i">
+        <circle cx="200" cy="50" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
+        <circle cx="200" cy="50" r="6" className="anim fill-i" />
+        <text x="200" y="16" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.semantics').toUpperCase()}</text>
       </g>
 
-      {/* PHASE 2: ENGINE DISCS & DATA FLOW */}
-      <g className="anim core-wrap">
-        {/* Beams */}
-        <line x1="92" y1="160" x2="168" y2="160" strokeWidth="2" className="anim beam-c beam-flow" />
-        <line x1="200" y1="72" x2="200" y2="128" strokeWidth="2" className="anim beam-i beam-flow" />
-        <line x1="308" y1="160" x2="232" y2="160" strokeWidth="2" className="anim beam-v beam-flow" />
-        <line x1="200" y1="248" x2="200" y2="192" strokeWidth="2" className="anim beam-s beam-flow" />
-
-        {/* Integration Center (Core) */}
-        <circle cx="200" cy="160" r="28" fill="#141414" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.25" />
-        {/* hexagonal inner outline */}
-        <polygon points="200,138 218,149 218,171 200,182 182,171 182,149" fill="none" stroke="#3B82F6" strokeWidth="0.6" strokeOpacity="0.15"/>
-        <circle cx="200" cy="160" r="36" fill="none" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.18" strokeDasharray="4 6" className="core-ring" />
-        <circle cx="200" cy="160" r="46" fill="none" strokeWidth="1.5" strokeDasharray="20 40 10 30" className="anim core-ring-fast" />
-        <circle cx="200" cy="160" r="10" className="anim core-inner" />
-        {/* crosshair center */}
-        <line x1="196" y1="160" x2="204" y2="160" stroke="#3B82F6" strokeWidth="0.6" strokeOpacity="0.4"/>
-        <line x1="200" y1="156" x2="200" y2="164" stroke="#3B82F6" strokeWidth="0.6" strokeOpacity="0.4"/>
-
-        {/* Node 1: Context (Left) */}
-        <g className="anim node-c">
-          <circle cx="70" cy="160" r="24" fill="#141414" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.18" />
-          <circle cx="70" cy="160" r="14" fill="none" stroke="#3B82F6" strokeWidth="0.4" strokeOpacity="0.1" strokeDasharray="3 5" />
-          <circle cx="70" cy="160" r="6" className="anim fill-c" />
-          <text x="70" y="202" fill="#9CA3AF" fontSize="8.5" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.contexts').toUpperCase()}</text>
-        </g>
-
-        {/* Node 2: Image (Top) */}
-        <g className="anim node-i">
-          <circle cx="200" cy="50" r="24" fill="#141414" stroke="#FBBF24" strokeWidth="1" strokeOpacity="0.18" />
-          <circle cx="200" cy="50" r="14" fill="none" stroke="#FBBF24" strokeWidth="0.4" strokeOpacity="0.1" strokeDasharray="3 5" />
-          <circle cx="200" cy="50" r="6" className="anim fill-i" />
-          <text x="200" y="13" fill="#9CA3AF" fontSize="8.5" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.semantics').toUpperCase()}</text>
-        </g>
-
-        {/* Node 3: Vibe (Right) */}
-        <g className="anim node-v">
-          <circle cx="330" cy="160" r="24" fill="#141414" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.18" />
-          <circle cx="330" cy="160" r="14" fill="none" stroke="#3B82F6" strokeWidth="0.4" strokeOpacity="0.1" strokeDasharray="3 5" />
-          <circle cx="330" cy="160" r="6" className="anim fill-v" />
-          <text x="330" y="202" fill="#9CA3AF" fontSize="8.5" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.vibe').toUpperCase()}</text>
-        </g>
-
-        {/* Node 4: Sensory (Bottom) */}
-        <g className="anim node-s">
-          <circle cx="200" cy="270" r="24" fill="#141414" stroke="#10B981" strokeWidth="1" strokeOpacity="0.18" />
-          <circle cx="200" cy="270" r="14" fill="none" stroke="#10B981" strokeWidth="0.4" strokeOpacity="0.1" strokeDasharray="3 5" />
-          <circle cx="200" cy="270" r="6" className="anim fill-s" />
-          <text x="200" y="312" fill="#9CA3AF" fontSize="8.5" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.visuals').toUpperCase()}</text>
-        </g>
+      {/* Node 3: Vibe (Right) */}
+      <g className="anim node-v">
+        <circle cx="330" cy="160" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
+        <circle cx="330" cy="160" r="6" className="anim fill-v" />
+        <text x="330" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.vibe').toUpperCase()}</text>
       </g>
 
-      {/* PHASE 3: FINAL CENTERED GENERATED CARD */}
-      <g className="anim card-wrap">
-        {/* Card Base */}
-        <rect x="90" y="20" width="220" height="280" rx="12" fill="#161616" stroke="#252525" strokeWidth="1.5"  />
-        {/* card corner accents */}
-        <path d="M90 35 L90 20 L105 20" stroke="#3B82F6" strokeWidth="1.2" fill="none" strokeOpacity="0.5"/>
-        <path d="M295 20 L310 20 L310 35" stroke="#3B82F6" strokeWidth="1.2" fill="none" strokeOpacity="0.5"/>
-        <path d="M90 285 L90 300 L105 300" stroke="#3B82F6" strokeWidth="1.2" fill="none" strokeOpacity="0.5"/>
-        <path d="M295 300 L310 300 L310 285" stroke="#3B82F6" strokeWidth="1.2" fill="none" strokeOpacity="0.5"/>
-        {/* status bar */}
-        <rect x="90" y="20" width="220" height="12" rx="12" fill="#1e1e1e"/>
-        <circle cx="104" cy="26" r="3" fill="#EF4444" fillOpacity="0.7"/>
-        <circle cx="114" cy="26" r="3" fill="#FBBF24" fillOpacity="0.7"/>
-        <circle cx="124" cy="26" r="3" fill="#10B981" fillOpacity="0.7"/>
-        <text x="200" y="30" fill="#4B5563" fontSize="6" textAnchor="middle" fontFamily="monospace" letterSpacing="1">FLOTTER · AI CARD</text>
-
-        {/* Card Image Block - Real Image of Yellow Flowers */}
-        <g className="anim card-img">
-          <rect x="106" y="36" width="188" height="110" rx="8" fill="#1A1A1A" />
-          <image
-            x="106"
-            y="36"
-            width="188"
-            height="110"
-            preserveAspectRatio="xMidYMid slice"
-            href="https://images.unsplash.com/photo-1621789098261-433128ee8d1e?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YmVhY2glMjBmbG93ZXJ8ZW58MHx8MHx8fDA%3D"
-            clipPath="url(#imgClip)"
-          />
-          <rect x="106" y="36" width="188" height="110" rx="8" fill="none" stroke="#252525" strokeWidth="1" pointerEvents="none" />
-          {/* image overlay label */}
-          <rect x="106" y="152" width="188" height="16" rx="3" fill="#161616" fillOpacity="1"/>
-        </g>
-
-        {/* Card Word & Type */}
-        <g className="anim card-word">
-          <text x="200" y="178" fill="#FFFFFF" fontSize="21" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">Ephemeral</text>
-          <rect x="163" y="186" width="74" height="17" rx="3" fill="#3B82F6" fillOpacity="0.12" stroke="#3B82F6" strokeOpacity="0.35" strokeWidth="1" />
-          <text x="200" y="198" fill="#60A5FA" fontSize="8" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">ADJECTIVE</text>
-        </g>
-
-        {/* Card Centered Sentence */}
-        <g className="anim card-sent">
-          <line x1="130" y1="212" x2="270" y2="212" stroke="#252525" strokeWidth="0.8"/>
-          <text x="200" y="228" fill="#D1D5DB" fontSize="11.5" textAnchor="middle" letterSpacing="0.2">You attempt to capture the</text>
-          <text x="200" y="243" fill="#D1D5DB" fontSize="11.5" textAnchor="middle" letterSpacing="0.2">ephemeral snowflake, but it melts</text>
-          <text x="200" y="258" fill="#D1D5DB" fontSize="11.5" textAnchor="middle" letterSpacing="0.2">away, leaving only a memory.</text>
-
-          {/* progress dots */}
-          <circle cx="200" cy="277" r="2.2" fill="#3B82F6" />
-          <circle cx="190" cy="277" r="2.2" fill="#4B5563" opacity="0.5" />
-          <circle cx="210" cy="277" r="2.2" fill="#4B5563" opacity="0.5" />
-        </g>
+      {/* Node 4: Sensory (Bottom) */}
+      <g className="anim node-s">
+        <circle cx="200" cy="270" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
+        <circle cx="200" cy="270" r="6" className="anim fill-s" />
+        <text x="200" y="310" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.visuals').toUpperCase()}</text>
       </g>
-    </svg>
+    </g>
+
+    {/* PHASE 3: FINAL CENTERED GENERATED CARD */}
+    <g className="anim card-wrap">
+      {/* Card Base */}
+      <rect x="90" y="20" width="220" height="280" rx="16" fill="#1A1D24" stroke="#2D3748" strokeWidth="1.5" filter="drop-shadow(0 20px 40px rgba(0,0,0,0.8))" />
+
+      {/* Card Image Block - Real Image of Yellow Flowers */}
+      <g className="anim card-img">
+        <rect x="106" y="36" width="188" height="110" rx="10" fill="#101216" />
+        <image 
+          x="106" 
+          y="36" 
+          width="188" 
+          height="110" 
+          preserveAspectRatio="xMidYMid slice" 
+          href="https://images.unsplash.com/photo-1621789098261-433128ee8d1e?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YmVhY2glMjBmbG93ZXJ8ZW58MHx8MHx8fDA%3D" 
+          clipPath="url(#imgClip)" 
+        />
+        <rect x="106" y="36" width="188" height="110" rx="10" fill="none" stroke="#262626" strokeWidth="2" pointerEvents="none" />
+      </g>
+
+      {/* Card Word & Type */}
+      <g className="anim card-word">
+        <text x="200" y="176" fill="#FFFFFF" fontSize="22" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">Ephemeral</text>
+        <rect x="165" y="188" width="70" height="18" rx="9" fill="#3B82F6" fillOpacity="0.15" stroke="#3B82F6" strokeOpacity="0.4" strokeWidth="1" />
+        <text x="200" y="201" fill="#60A5FA" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1">ADJECTIVE</text>
+      </g>
+
+      {/* Card Centered Sentence */}
+      <g className="anim card-sent">
+        <text x="200" y="232" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">You attempt to capture the</text>
+        <text x="200" y="248" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">ephemeral snowflake, but it melts</text>
+        <text x="200" y="264" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">away, leaving only a memory.</text>
+        
+        {/* Aesthetic Centered Dots */}
+        <circle cx="200" cy="282" r="2" fill="#4B5563" />
+        <circle cx="190" cy="282" r="2" fill="#4B5563" opacity="0.5" />
+        <circle cx="210" cy="282" r="2" fill="#4B5563" opacity="0.5" />
+      </g>
+    </g>
+  </svg>
   )
 }
 
@@ -344,89 +336,60 @@ const AIGenerationVisualizer = () => {
   const { t } = useLanguage()
 
   useEffect(() => {
-    const iv = setInterval(() => setStep(p => (p + 1) % 4), 2500)
-    return () => clearInterval(iv)
+    const interval = setInterval(() => {
+      setStep((prev) => (prev + 1) % 4)
+    }, 2000)
+    return () => clearInterval(interval)
   }, [])
 
   const steps = [
-    { icon: Sparkles, label: t('landing.visualizer.semantics'), color: "#3B82F6",  detail: "Vectorizing Lexical Meaning",        short: "SEMANTICS" },
-    { icon: Brain,    label: t('landing.visualizer.contexts'), color: "#FBBF24",  detail: "Synthesizing Sensory Anchors",       short: "CONTEXT"  },
-    { icon: Layers,   label: t('landing.visualizer.visuals'),  color: "#EF4444",  detail: "Generating Mental Imagery",          short: "IMAGERY"  },
-    { icon: Zap,      label: t('landing.visualizer.locked'),   color: "#10B981", detail: "Encrypting For Long-Term Memory",   short: "LOCKED"   }
-  ]
-
-  /* encoding bar heights per step — 4 groups × 8 bars */
-  const barSets = [
-    [5,9,4,12,7,11,6,10],
-    [8,5,13,3,11,6,9,4],
-    [11,7,5,14,4,9,6,12],
-    [14,10,8,6,12,5,10,8],
+    { icon: Sparkles, label: t('landing.visualizer.semantics'), color: "#3B82F6" },
+    { icon: Brain, label: t('landing.visualizer.contexts'), color: "#FBBF24" },
+    { icon: Layers, label: t('landing.visualizer.visuals'), color: "#EF4444" },
+    { icon: Zap, label: t('landing.visualizer.locked'), color: "#10B981" }
   ]
 
   return (
-    <div className="relative w-full bg-[#1a1a1a] rounded-2xl overflow-hidden p-5">
-      {/* step progress bar */}
-      <div className="w-full h-[2px] bg-[#2A2A2A] mb-5 rounded-full overflow-hidden">
-        <motion.div className="h-full rounded-full"
-          style={{ backgroundColor: steps[step].color }}
-          animate={{ width: `${(step + 1) * 25}%` }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
-        />
-      </div>
+    <div className="relative w-full h-40 bg-[#121212] rounded-[12px] border border-[#2D2D2F] overflow-hidden flex flex-col items-center justify-center">
+      {/* Background Grid & Glow */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0)',
+        backgroundSize: '20px 20px'
+      }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 blur-[80px] opacity-20 pointer-events-none transition-colors duration-500" style={{ backgroundColor: steps[step].color }} />
 
-      <div className="flex items-start gap-4">
-        {/* left: icon + step indicator */}
-        <div className="flex-shrink-0 flex flex-col items-center gap-2">
-          <motion.div
-            className="w-14 h-14 rounded-xl flex items-center justify-center border"
-            style={{ borderColor: `${steps[step].color}35`, backgroundColor: `${steps[step].color}10` }}
-            animate={{ rotate: [0,90,180,270,360] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          >
-            {React.createElement(steps[step].icon, { size:28, style:{ color: steps[step].color } })}
-          </motion.div>
-          {/* hex ring — solid, no dashed */}
-          <svg width="56" height="20" viewBox="0 0 56 20">
-            {steps.map((s, i) => (
-              <motion.rect key={i} x={i*13+1} y="4" width="11" height="11" rx="2"
-                fill={i <= step ? s.color : "#2A2A2A"}
-                animate={{ opacity: i === step ? [0.6,1,0.6] : 1 }}
-                transition={{ duration: 1.2, repeat: Infinity }}
-              />
-            ))}
-          </svg>
-        </div>
-
-        {/* right: label + waveform bars */}
-        <div className="flex-1 min-w-0">
-          <AnimatePresence mode="wait">
-            <motion.div key={step}
-              initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-8 }}
-              transition={{ duration: 0.35 }}
-            >
-              <p className="text-[9px] font-mono tracking-[0.22em] mb-0.5" style={{ color: steps[step].color }}>
-                {steps[step].short}
-              </p>
-              <h4 className="text-[13px] font-black text-white tracking-tight leading-snug">
-                {steps[step].label}
-              </h4>
-              <p className="text-[10px] text-[#6B7280] mt-1 font-mono">{steps[step].detail}</p>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* encoding waveform — tight bars, solid color */}
-          <div className="mt-3 flex items-end gap-[3px] h-[18px]">
-            {barSets[step].map((h,i) => (
-              <motion.div key={`${step}-${i}`}
-                className="flex-1 rounded-[2px]"
-                style={{ backgroundColor: steps[step].color }}
-                initial={{ height: 3 }}
-                animate={{ height: h, opacity: [0.5,1,0.5] }}
-                transition={{ duration:0.8, delay: i*0.07, repeat: Infinity, ease:"easeInOut" }}
-              />
-            ))}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, y: 10, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -10, scale: 0.9 }}
+          transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
+          className="flex flex-col items-center relative z-10"
+        >
+          <div className="relative mb-3">
+            <div className="absolute inset-0 blur-md opacity-50" style={{ backgroundColor: steps[step].color }} />
+            {React.createElement(steps[step].icon, {
+              size: 32,
+              className: "relative z-10",
+              style: { color: steps[step].color, filter: `drop-shadow(0 0 8px ${steps[step].color}80)` }
+            })}
           </div>
-        </div>
+          <p className="text-xs font-bold text-white tracking-widest uppercase" style={{ textShadow: `0 0 10px ${steps[step].color}40` }}>{steps[step].label}</p>
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="absolute bottom-5 w-3/4 h-1 bg-[#1C1C1E] rounded-full overflow-hidden border border-[#2D2D2F]">
+        <motion.div
+          className="h-full relative"
+          style={{ backgroundColor: steps[step].color, boxShadow: `0 0 10px ${steps[step].color}` }}
+          initial={{ width: "0%" }}
+          animate={{ width: "100%" }}
+          transition={{ duration: 1.8, ease: "linear" }}
+          key={`progress-${step}`}
+        >
+          <div className="absolute top-0 right-0 bottom-0 w-4 bg-white opacity-50 blur-[2px]" />
+        </motion.div>
       </div>
     </div>
   )
@@ -456,30 +419,41 @@ const ACASRSVisualizer = () => {
   const retStrength = [40, 65, 82, 100]
 
   return (
-    <div className="relative w-full bg-[#1a1a1a] rounded-2xl overflow-hidden p-5">
+    <div className="relative w-full bg-[#121212] rounded-2xl overflow-hidden p-5 border border-[#2D2D2F]">
+      {/* Background Grid & Glow */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0)',
+        backgroundSize: '20px 20px'
+      }} />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-[#3B82F6] blur-[100px] opacity-10 pointer-events-none" />
+
       {/* header */}
-      <div className="flex items-center gap-2 mb-4">
+      <div className="relative flex items-center gap-2 mb-4 bg-[#1C1C1E] w-fit px-3 py-1.5 rounded-full border border-[#2D2D2F]">
         <motion.div className="w-2 h-2 rounded-full bg-[#3B82F6]"
-          animate={{ opacity: [0.5,1,0.5] }} transition={{ duration:1.4, repeat: Infinity }}
+          animate={{ opacity: [0.5,1,0.5], boxShadow: ["0 0 0px #3B82F6", "0 0 8px #3B82F6", "0 0 0px #3B82F6"] }} transition={{ duration:1.4, repeat: Infinity }}
         />
-        <span className="text-[9px] font-bold uppercase tracking-[0.22em] text-[#4B5563]">ACASRS Engine</span>
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9CA3AF]">ACASRS Engine</span>
       </div>
 
       {/* SVG phase timeline */}
-      <svg width="100%" height="72" viewBox="0 0 320 72" fill="none">
+      <svg width="100%" height="72" viewBox="0 0 320 72" fill="none" className="relative z-10">
         <defs>
           <linearGradient id="aca-flow" x1="0%" y1="0%" x2="100%" y2="0%">
             {steps.map((s,i)=>(
-              <stop key={i} offset={`${i*33.3}%`} stopColor={s.color} stopOpacity="0.7"/>
+              <stop key={i} offset={`${i*33.3}%`} stopColor={s.color} stopOpacity="0.9"/>
             ))}
           </linearGradient>
+          <filter id="aca-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
         </defs>
         {/* baseline rail */}
-        <line x1="20" y1="36" x2="300" y2="36" stroke="#2A2A2A" strokeWidth="2"/>
+        <line x1="20" y1="36" x2="300" y2="36" stroke="#2D2D2F" strokeWidth="2"/>
 
         {/* completed flow */}
         <motion.line x1="20" y1="36" x2={20 + activeStep * 93.3} y2="36"
-          stroke="url(#aca-flow)" strokeWidth="2"
+          stroke="url(#aca-flow)" strokeWidth="2" filter="url(#aca-glow)"
           transition={{ duration: 0.6, ease: "easeOut" }}
         />
 
@@ -491,14 +465,16 @@ const ACASRSVisualizer = () => {
             <g key={i}>
               <motion.rect x={x-4} y={36-barH} width="8" rx="2" height={barH}
                 fill={s.color}
+                filter={i <= activeStep ? "url(#aca-glow)" : "none"}
                 animate={{ opacity: i <= activeStep ? [0.6,1,0.6] : 0.15 }}
                 transition={{ duration:1.4, repeat: Infinity, delay: i*0.2 }}
               />
               <circle cx={x} cy="36" r={i === activeStep ? 6 : 4.5}
-                fill={i <= activeStep ? s.color : "#2A2A2A"}
-                stroke={i === activeStep ? "#fff" : "none"} strokeWidth="1.5"
+                fill={i <= activeStep ? s.color : "#1C1C1E"}
+                stroke={i === activeStep ? "#fff" : (i <= activeStep ? "none" : "#2D2D2F")} strokeWidth="1.5"
+                filter={i === activeStep ? "url(#aca-glow)" : "none"}
               />
-              <text x={x} y="56" textAnchor="middle" fill={i === activeStep ? s.color : "#4B5563"}
+              <text x={x} y="56" textAnchor="middle" fill={i === activeStep ? s.color : "#6B7280"}
                 fontSize="7" fontWeight="700" fontFamily="monospace" letterSpacing="0.5">
                 {s.time}
               </text>
@@ -508,34 +484,34 @@ const ACASRSVisualizer = () => {
       </svg>
 
       {/* phase detail rows */}
-      <div className="mt-4 space-y-[6px]">
+      <div className="relative mt-4 space-y-[6px] z-10">
         {steps.map((s, i) => (
           <motion.div key={i}
             className="flex items-center gap-3 p-3 rounded-xl border"
             style={{
-              borderColor: i === activeStep ? `${s.color}35` : "#2A2A2A",
-              backgroundColor: i === activeStep ? `${s.color}08` : "#161616"
+              borderColor: i === activeStep ? `${s.color}50` : "#2D2D2F",
+              backgroundColor: i === activeStep ? `${s.color}10` : "#1C1C1E"
             }}
-            animate={{ opacity: i === activeStep ? 1 : 0.45 }}
+            animate={{ opacity: i === activeStep ? 1 : 0.5 }}
             transition={{ duration: 0.3 }}
           >
             <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 border"
-              style={{ borderColor: `${s.color}30`, backgroundColor: `${s.color}12` }}
+              style={{ borderColor: `${s.color}40`, backgroundColor: `${s.color}15`, boxShadow: i === activeStep ? `0 0 10px ${s.color}30` : 'none' }}
             >
               {React.createElement(s.icon, { size: 16, style: { color: s.color } })}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold text-white truncate">{s.label}</span>
-                <span className="text-[9px] font-mono shrink-0" style={{ color: s.color }}>{s.time}</span>
+                <span className="text-xs font-bold text-white truncate">{s.label}</span>
+                <span className="text-[10px] font-mono shrink-0" style={{ color: s.color }}>{s.time}</span>
               </div>
-              <p className="text-[9px] text-[#6B7280] mt-0.5 truncate">{s.desc}</p>
+              <p className="text-[10px] text-[#9CA3AF] mt-0.5 truncate">{s.desc}</p>
             </div>
             {/* retention strength bar */}
             <div className="flex-shrink-0 flex flex-col items-end gap-1">
-              <span className="text-[9px] font-mono text-[#4B5563]">{retStrength[i]}%</span>
-              <div className="w-14 h-[3px] bg-[#2A2A2A] rounded-full overflow-hidden">
-                <motion.div className="h-full rounded-full" style={{ backgroundColor: s.color }}
+              <span className="text-[10px] font-mono text-[#9CA3AF]">{retStrength[i]}%</span>
+              <div className="w-14 h-[3px] bg-[#2D2D2F] rounded-full overflow-hidden">
+                <motion.div className="h-full rounded-full" style={{ backgroundColor: s.color, boxShadow: `0 0 5px ${s.color}` }}
                   animate={{ width: i <= activeStep ? `${retStrength[i]}%` : "0%" }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
                 />
@@ -584,40 +560,42 @@ const AutoSwipeDemo = () => {
             <motion.div
               key={card.id}
               layout
-              className={`absolute w-full max-w-[200px] h-36 bg-[#1a1a1a] rounded-xl border-2 flex flex-col items-center justify-center `}
+              className={`absolute w-full max-w-[200px] h-36 bg-[#1C1C1E] rounded-xl border flex flex-col items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.5)]`}
               style={{
-                borderColor: card.color,
+                borderColor: isCurrent ? card.color : '#2D2D2F',
+                boxShadow: isCurrent ? `0 0 20px ${card.color}20, inset 0 0 20px ${card.color}10` : undefined,
                 zIndex: initialCards.length - index,
               }}
               initial={{ scale: 0.8, opacity: 0, y: 20 }}
               animate={{
                 scale: 1 - offset * 0.05,
                 y: offset * 12,
-                opacity: 1,
+                opacity: 1 - offset * 0.2,
                 x: 0,
                 rotate: 0
               }}
               exit={{
                 x: index % 2 === 0 ? 250 : -250,
                 rotate: index % 2 === 0 ? 15 : -15,
-                opacity: 0
+                opacity: 0,
+                scale: 0.9
               }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
-              <h3 className={`text-[19px] font-bold text-white`}>{card.word}</h3>
+              <h3 className={`text-2xl font-bold text-white tracking-wide`}>{card.word}</h3>
 
               <AnimatePresence>
                 {isCurrent && (
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="flex gap-2 mt-3"
+                    className="flex gap-3 mt-4"
                   >
-                    <div className="px-2 py-0.5 rounded-full bg-[#EF4444]/10 text-[#EF4444] text-[10px] font-bold uppercase tracking-wider border border-[#EF4444]/20">
+                    <div className="px-3 py-1 rounded-full bg-[#EF4444]/10 text-[#EF4444] text-[10px] font-bold uppercase tracking-wider border border-[#EF4444]/30 shadow-[0_0_10px_rgba(239,68,68,0.2)]">
                       {t('landing.demo.review')}
                     </div>
-                    <div className="px-2 py-0.5 rounded-full bg-[#10B981]/10 text-[#10B981] text-[10px] font-bold uppercase tracking-wider border border-[#10B981]/20">
+                    <div className="px-3 py-1 rounded-full bg-[#10B981]/10 text-[#10B981] text-[10px] font-bold uppercase tracking-wider border border-[#10B981]/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
                       {t('landing.demo.master')}
                     </div>
                   </motion.div>
@@ -636,8 +614,10 @@ const AutoSwipeDemo = () => {
             exit={{ opacity: 0 }}
             className="absolute inset-0 flex flex-col items-center justify-center text-[#10B981]"
           >
-            <Trophy size={28} className="mb-2" />
-            <p className="text-[11px] font-bold uppercase tracking-widest">{t('landing.demo.sessionComplete')}</p>
+            <div className="w-16 h-16 rounded-full bg-[#10B981]/10 flex items-center justify-center mb-3 border border-[#10B981]/30 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+              <Trophy size={32} className="text-[#10B981]" />
+            </div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#10B981]">{t('landing.demo.sessionComplete')}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -678,21 +658,31 @@ const RetentionGraph = () => {
   const flotterPath = createSmoothPath('flotter')
 
   return (
-    <div className={`w-full h-48 bg-[#1a1a1a] rounded-xl p-4 relative`}>
-      <svg viewBox="0 0 400 200" className="w-full h-full overflow-visible">
+    <div className={`w-full h-48 bg-[#121212] rounded-xl p-4 relative border border-[#2D2D2F] shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden`}>
+      {/* Background Grid */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+      
+      <svg viewBox="0 0 400 200" className="w-full h-full overflow-visible relative z-10">
         <defs>
           <linearGradient id="flotterGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.3" />
+            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
             <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="standardGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#EF4444" stopOpacity="0.15" />
+            <stop offset="0%" stopColor="#EF4444" stopOpacity="0.2" />
             <stop offset="100%" stopColor="#EF4444" stopOpacity="0" />
           </linearGradient>
+          <filter id="graph-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
 
-        {[0, 100, 200].map(y => (
-          <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#2D2D2F" strokeWidth="1" strokeDasharray="4 4" />
+        {[0, 50, 100, 150, 200].map(y => (
+          <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#2D2D2F" strokeWidth="1" strokeDasharray={y === 200 ? "none" : "4 4"} />
         ))}
 
         <motion.path
@@ -727,7 +717,8 @@ const RetentionGraph = () => {
           d={flotterPath}
           fill="none"
           stroke="#3B82F6"
-          strokeWidth="3"
+          strokeWidth="4"
+          filter="url(#graph-glow)"
           initial={{ pathLength: 0 }}
           whileInView={{ pathLength: 1 }}
           transition={{ duration: 1.5, ease: "easeInOut", delay: 0.2 }}
@@ -742,19 +733,20 @@ const RetentionGraph = () => {
             transition={{ delay: 0.5 + (i * 0.1) }}
             viewport={{ once: true }}
           >
-            <circle cx={i * (400 / 5)} cy={200 - (data[i].standard / 100) * 180} r="4" fill="#EF4444" />
-            <circle cx={i * (400 / 5)} cy={200 - (data[i].flotter / 100) * 180} r="4" fill="#3B82F6" stroke="#1a1a1a" strokeWidth="2" />
+            <circle cx={i * (400 / 5)} cy={200 - (data[i].standard / 100) * 180} r="4" fill="#1C1C1E" stroke="#EF4444" strokeWidth="2" />
+            <circle cx={i * (400 / 5)} cy={200 - (data[i].flotter / 100) * 180} r="5" fill="#1C1C1E" stroke="#3B82F6" strokeWidth="2.5" filter="url(#graph-glow)" />
+            <circle cx={i * (400 / 5)} cy={200 - (data[i].flotter / 100) * 180} r="2" fill="#3B82F6" />
           </motion.g>
         ))}
       </svg>
 
-      <div className="absolute top-3 right-3 flex flex-col gap-1 text-[10px] font-bold uppercase tracking-wider">
-        <div className="flex items-center gap-1.5">
-          <div className="w-2.5 h-0.5 bg-[#EF4444] border-dashed" />
-          <span className="text-[#6B7280]">{t('landing.graph.standard')}</span>
+      <div className="absolute top-4 right-4 flex flex-col gap-2 text-[10px] font-bold uppercase tracking-wider bg-[#1C1C1E]/80 backdrop-blur-sm p-3 rounded-lg border border-[#2D2D2F]">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-0.5 bg-[#EF4444] border-dashed" />
+          <span className="text-[#8B949E]">{t('landing.graph.standard')}</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-2.5 h-0.5 bg-[#3B82F6]" />
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-1 bg-[#3B82F6] rounded-full shadow-[0_0_5px_#3B82F6]" />
           <span className={'text-[#FFFFFF]'}>{t('landing.graph.flotter')}</span>
         </div>
       </div>
@@ -818,174 +810,193 @@ const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
   const BAR_MAX  = 70
 
   return (
-    <div className="w-full overflow-hidden py-2 flex flex-col items-center">
+    <div className="w-full overflow-hidden py-8 flex flex-col items-center relative">
       <motion.div
-        className="w-full flex items-center justify-between px-4 mb-3"
-        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+        className="w-full flex items-center justify-between px-4 mb-6 z-10"
+        initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
         transition={{ duration: 0.5 }}
       >
-        <span className="text-[8px] font-black uppercase tracking-[0.3em] text-[#4B5563]">ACASRS</span>
-        <span className="text-[8px] font-bold text-[#3B82F6] font-mono tracking-widest">Adaptive Spaced Repetition</span>
+        <div className="px-3 py-1 rounded-full bg-[#1C1C1E] border border-[#2D2D2F] flex items-center gap-2 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8B949E]">ACASRS</span>
+          <div className="w-[1px] h-3 bg-[#2D2D2F]" />
+          <span className="text-[10px] font-bold text-[#3B82F6] font-mono tracking-widest">Adaptive Spaced Repetition</span>
+        </div>
       </motion.div>
 
-      <svg width="100%" height="160" viewBox="0 0 512 160" fill="none" className="overflow-visible">
-        <defs>
-          <linearGradient id="pl2-rail" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.8"/>
-            <stop offset="40%"  stopColor="#10B981" stopOpacity="0.6"/>
-            <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.8"/>
-          </linearGradient>
-          {intervals.map(({ color: c }, i) => (
-            <linearGradient key={i} id={`pl2-bar-${i}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={c} stopOpacity="0.9"/>
-              <stop offset="100%" stopColor={c} stopOpacity="0.15"/>
+      <div className="relative w-full max-w-3xl mx-auto bg-[#121212] rounded-2xl border border-[#2D2D2F] p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden">
+        {/* Background Grid */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+        
+        {/* Ambient Glows */}
+        <div className="absolute top-1/2 left-0 w-48 h-48 bg-[#3B82F6] rounded-full blur-[100px] opacity-10 -translate-y-1/2" />
+        <div className="absolute top-1/2 right-0 w-48 h-48 bg-[#A78BFA] rounded-full blur-[100px] opacity-10 -translate-y-1/2" />
+
+        <svg width="100%" height="160" viewBox="0 0 512 160" fill="none" className="overflow-visible relative z-10">
+          <defs>
+            <linearGradient id="pl2-rail" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.8"/>
+              <stop offset="40%"  stopColor="#10B981" stopOpacity="0.6"/>
+              <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.8"/>
             </linearGradient>
-          ))}
-        </defs>
+            {intervals.map(({ color: c }, i) => (
+              <linearGradient key={i} id={`pl2-bar-${i}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={c} stopOpacity="0.9"/>
+                <stop offset="100%" stopColor={c} stopOpacity="0.15"/>
+              </linearGradient>
+            ))}
+            <filter id="pl-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
-        {/* ── horizontal guide lines ── */}
-        {[0, 25, 50, 75, 100].map((pct, i) => {
-          const y = BAR_BASE - (pct / 100) * BAR_MAX
-          return (
-            <React.Fragment key={i}>
-              <line x1="18" y1={y} x2="494" y2={y}
-                stroke="#1e1e1e" strokeWidth="0.6"
-                strokeDasharray={i === 0 || i === 4 ? "none" : "2 8"}/>
-              <text x="14" y={y + 3} fill="#3A3A3A" fontSize="5.5" fontFamily="monospace" textAnchor="end">{pct}%</text>
-            </React.Fragment>
-          )
-        })}
+          {/* ── horizontal guide lines ── */}
+          {[0, 25, 50, 75, 100].map((pct, i) => {
+            const y = BAR_BASE - (pct / 100) * BAR_MAX
+            return (
+              <React.Fragment key={i}>
+                <line x1="18" y1={y} x2="494" y2={y}
+                  stroke="#2D2D2F" strokeWidth="1"
+                  strokeDasharray={i === 0 || i === 4 ? "none" : "4 4"}/>
+                <text x="14" y={y + 3} fill="#8B949E" fontSize="7" fontFamily="monospace" fontWeight="600" textAnchor="end">{pct}%</text>
+              </React.Fragment>
+            )
+          })}
 
-        {/* ── exponential gap spans — drawn UNDER bars ── */}
-        {intervals.slice(0, -1).map((a, i) => {
-          const b = intervals[i + 1]
-          const spanW = b.x - a.x
-          const arcH  = 6 + i * 3
-          return (
-            <motion.path key={`span-${i}`}
-              d={`M${a.x} ${RAIL_Y} C${a.x + spanW * 0.35} ${RAIL_Y + arcH}, ${b.x - spanW * 0.35} ${RAIL_Y + arcH}, ${b.x} ${RAIL_Y}`}
-              stroke={a.color} strokeWidth="0.7" strokeOpacity="0.22" fill="none" strokeLinecap="round"
-              initial={{ pathLength: 0, opacity: 0 }}
-              whileInView={{ pathLength: 1, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5 + i * 0.1, duration: 1.1, ease: "easeOut" }}
-            />
-          )
-        })}
+          {/* ── exponential gap spans — drawn UNDER bars ── */}
+          {intervals.slice(0, -1).map((a, i) => {
+            const b = intervals[i + 1]
+            const spanW = b.x - a.x
+            const arcH  = 6 + i * 3
+            return (
+              <motion.path key={`span-${i}`}
+                d={`M${a.x} ${RAIL_Y} C${a.x + spanW * 0.35} ${RAIL_Y + arcH}, ${b.x - spanW * 0.35} ${RAIL_Y + arcH}, ${b.x} ${RAIL_Y}`}
+                stroke={a.color} strokeWidth="1.5" strokeOpacity="0.3" fill="none" strokeLinecap="round" strokeDasharray="2 4"
+                initial={{ pathLength: 0, opacity: 0 }}
+                whileInView={{ pathLength: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 + i * 0.1, duration: 1.1, ease: "easeOut" }}
+              />
+            )
+          })}
 
-        {/* ── retention bars ── */}
-        {intervals.map(({ x, pct, barW, color: nc }, i) => {
-          const barH = (pct / 100) * BAR_MAX
-          return (
-            <React.Fragment key={`b-${i}`}>
-              {/* track background */}
-              <rect x={x - barW / 2} y={BAR_BASE - BAR_MAX} width={barW} height={BAR_MAX} fill="#1c1c1c" rx="2"/>
-              {/* animated fill */}
+          {/* ── retention bars ── */}
+          {intervals.map(({ x, pct, barW, color: nc }, i) => {
+            const barH = (pct / 100) * BAR_MAX
+            return (
+              <React.Fragment key={`b-${i}`}>
+                {/* track background */}
+                <rect x={x - barW / 2} y={BAR_BASE - BAR_MAX} width={barW} height={BAR_MAX} fill="#1C1C1E" rx="3" stroke="#2D2D2F" strokeWidth="1"/>
+                {/* animated fill */}
+                <motion.rect
+                  x={x - barW / 2} width={barW} rx="3"
+                  fill={`url(#pl2-bar-${i})`}
+                  initial={{ height: 0, y: BAR_BASE }}
+                  whileInView={{ height: barH, y: BAR_BASE - barH }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.35 + i * 0.09, duration: 0.75, ease: [0.34, 1.26, 0.64, 1] }}
+                />
+                {/* pct label above bar */}
+                <motion.text x={x} y={BAR_BASE - BAR_MAX - 6} textAnchor="middle"
+                  fill={nc} fontSize="8" fontWeight="900" fontFamily="monospace" filter="url(#pl-glow)"
+                  initial={{ opacity: 0, y: BAR_BASE - BAR_MAX }} whileInView={{ opacity: 1, y: BAR_BASE - BAR_MAX - 6 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.75 + i * 0.09 }}
+                >{pct}%</motion.text>
+                {/* connector tick to rail */}
+                <motion.line x1={x} y1={BAR_BASE} x2={x} y2={RAIL_Y}
+                  stroke={nc} strokeWidth="1" strokeOpacity="0.4" strokeDasharray="2 2"
+                  initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }}
+                  viewport={{ once: true }}
+                  style={{ transformOrigin: `${x}px ${BAR_BASE}px` }}
+                  transition={{ delay: 0.35 + i * 0.09 }}
+                />
+              </React.Fragment>
+            )
+          })}
+
+          {/* ── main rail ── */}
+          <motion.line x1="18" y1={RAIL_Y} x2="494" y2={RAIL_Y}
+            stroke="url(#pl2-rail)" strokeWidth="3" strokeLinecap="round" filter="url(#pl-glow)"
+            initial={{ pathLength: 0, opacity: 0 }}
+            whileInView={{ pathLength: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, ease: "easeOut" }}
+          />
+
+          {/* ── nodes on rail ── */}
+          {intervals.map(({ x, label, phaseName, color: nc }, i) => (
+            <React.Fragment key={`n-${i}`}>
+              {/* outer halo ring */}
+              <motion.circle cx={x} cy={RAIL_Y} r={12}
+                fill="none" stroke={nc} strokeWidth="1" strokeOpacity="0.3"
+                initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+                transition={{ delay: 0.5 + i * 0.09, type: "spring", stiffness: 180 }}
+                style={{ transformOrigin: `${x}px ${RAIL_Y}px` }}
+              />
+              {/* diamond shape at node */}
               <motion.rect
-                x={x - barW / 2} width={barW} rx="2"
-                fill={`url(#pl2-bar-${i})`}
-                initial={{ height: 0, y: BAR_BASE }}
-                whileInView={{ height: barH, y: BAR_BASE - barH }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.35 + i * 0.09, duration: 0.75, ease: [0.34, 1.26, 0.64, 1] }}
+                x={x - 6} y={RAIL_Y - 6} width={12} height={12}
+                rx="2"
+                fill="#1C1C1E" stroke={nc} strokeWidth="2"
+                transform={`rotate(45 ${x} ${RAIL_Y})`}
+                initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+                transition={{ delay: 0.48 + i * 0.09, type: "spring", stiffness: 260 }}
+                style={{ transformOrigin: `${x}px ${RAIL_Y}px` }}
               />
-              {/* pct label above bar */}
-              <motion.text x={x} y={BAR_BASE - BAR_MAX - 4} textAnchor="middle"
-                fill={nc} fontSize="7" fontWeight="900" fontFamily="monospace"
-                initial={{ opacity: 0, y: BAR_BASE - BAR_MAX }} whileInView={{ opacity: 1, y: BAR_BASE - BAR_MAX - 4 }}
-                viewport={{ once: true }}
+              {/* center dot */}
+              <motion.circle cx={x} cy={RAIL_Y} r={3}
+                fill={nc} filter="url(#pl-glow)"
+                animate={{ opacity: [0.6, 1, 0.6], scale: [0.8, 1.2, 0.8] }}
+                transition={{ duration: 2.2 + i * 0.2, repeat: Infinity, delay: i * 0.3 }}
+                style={{ transformOrigin: `${x}px ${RAIL_Y}px` }}
+              />
+              {/* interval label below */}
+              <motion.text x={x} y={RAIL_Y + 20} textAnchor="middle"
+                fill={nc} fontSize="10" fontWeight="900" fontFamily="monospace" filter="url(#pl-glow)"
+                initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+                transition={{ delay: 0.65 + i * 0.09 }}
+              >{label}</motion.text>
+              {/* phase label below interval */}
+              <motion.text x={x} y={RAIL_Y + 32} textAnchor="middle"
+                fill="#8B949E" fontSize="7" fontWeight="700" fontFamily="monospace" letterSpacing="0.15em"
+                initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
                 transition={{ delay: 0.75 + i * 0.09 }}
-              >{pct}%</motion.text>
-              {/* connector tick to rail */}
-              <motion.line x1={x} y1={BAR_BASE} x2={x} y2={RAIL_Y}
-                stroke={nc} strokeWidth="0.5" strokeOpacity="0.25"
-                initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }}
-                viewport={{ once: true }}
-                style={{ transformOrigin: `${x}px ${BAR_BASE}px` }}
-                transition={{ delay: 0.35 + i * 0.09 }}
-              />
+              >{phaseName}</motion.text>
             </React.Fragment>
-          )
-        })}
+          ))}
 
-        {/* ── main rail ── */}
-        <motion.line x1="18" y1={RAIL_Y} x2="494" y2={RAIL_Y}
-          stroke="url(#pl2-rail)" strokeWidth="1.8" strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          whileInView={{ pathLength: 1, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9, ease: "easeOut" }}
-        />
+          {/* ── traveling review packet with trail ── */}
+          {[0, 1, 2].map(trail => (
+            <motion.circle key={`trail-${trail}`}
+              cy={RAIL_Y} r={4.5 - trail}
+              fill={color} filter="url(#pl-glow)"
+              style={{ opacity: 1 - trail * 0.3 }}
+              animate={{ cx: intervals.map(n => n.x) }}
+              transition={{
+                cx: { duration: 5.0, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.6,
+                  times: [0, 0.1, 0.26, 0.46, 0.7, 1],
+                  delay: trail * 0.12
+                }
+              }}
+            />
+          ))}
 
-        {/* ── nodes on rail ── */}
-        {intervals.map(({ x, label, phaseName, color: nc }, i) => (
-          <React.Fragment key={`n-${i}`}>
-            {/* outer halo ring */}
-            <motion.circle cx={x} cy={RAIL_Y} r={10}
-              fill="none" stroke={nc} strokeWidth="0.6" strokeOpacity="0.2"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.5 + i * 0.09, type: "spring", stiffness: 180 }}
-              style={{ transformOrigin: `${x}px ${RAIL_Y}px` }}
-            />
-            {/* diamond shape at node */}
-            <motion.rect
-              x={x - 5.5} y={RAIL_Y - 5.5} width={11} height={11}
-              rx="1"
-              fill="#121212" stroke={nc} strokeWidth="1.4"
-              transform={`rotate(45 ${x} ${RAIL_Y})`}
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.48 + i * 0.09, type: "spring", stiffness: 260 }}
-              style={{ transformOrigin: `${x}px ${RAIL_Y}px` }}
-            />
-            {/* center dot */}
-            <motion.circle cx={x} cy={RAIL_Y} r={2}
+          {/* ── node arrival flash ── */}
+          {intervals.map(({ x, color: nc }, i) => (
+            <motion.circle key={`flash-${i}`} cx={x} cy={RAIL_Y}
               fill={nc}
-              animate={{ opacity: [0.5, 1, 0.5], scale: [0.8, 1.2, 0.8] }}
-              transition={{ duration: 2.2 + i * 0.2, repeat: Infinity, delay: i * 0.3 }}
-              style={{ transformOrigin: `${x}px ${RAIL_Y}px` }}
+              initial={{ r: 0, fillOpacity: 0 }}
+              animate={{ r: [0, 24], fillOpacity: [0.4, 0] }}
+              transition={{ duration: 0.65, repeat: Infinity, ease: "easeOut",
+                delay: (i / intervals.length) * 5.0 + 0.9, repeatDelay: 5.0 }}
             />
-            {/* interval label below */}
-            <motion.text x={x} y={RAIL_Y + 16} textAnchor="middle"
-              fill={nc} fontSize="9.5" fontWeight="900" fontFamily="monospace"
-              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.65 + i * 0.09 }}
-            >{label}</motion.text>
-            {/* phase label below interval */}
-            <motion.text x={x} y={RAIL_Y + 27} textAnchor="middle"
-              fill="#3A4A5A" fontSize="5.5" fontWeight="700" fontFamily="monospace" letterSpacing="0.8"
-              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.75 + i * 0.09 }}
-            >{phaseName}</motion.text>
-          </React.Fragment>
-        ))}
-
-        {/* ── traveling review packet with trail ── */}
-        {[0, 1, 2].map(trail => (
-          <motion.circle key={`trail-${trail}`}
-            cy={RAIL_Y} r={3.5 - trail}
-            fill={color}
-            style={{ opacity: 1 - trail * 0.3 }}
-            animate={{ cx: intervals.map(n => n.x) }}
-            transition={{
-              cx: { duration: 5.0, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.6,
-                times: [0, 0.1, 0.26, 0.46, 0.7, 1],
-                delay: trail * 0.12
-              }
-            }}
-          />
-        ))}
-
-        {/* ── node arrival flash ── */}
-        {intervals.map(({ x, color: nc }, i) => (
-          <motion.circle key={`flash-${i}`} cx={x} cy={RAIL_Y}
-            fill={nc}
-            initial={{ r: 0, fillOpacity: 0 }}
-            animate={{ r: [0, 18], fillOpacity: [0.35, 0] }}
-            transition={{ duration: 0.65, repeat: Infinity, ease: "easeOut",
-              delay: (i / intervals.length) * 5.0 + 0.9, repeatDelay: 5.0 }}
-          />
-        ))}
-      </svg>
+          ))}
+        </svg>
+      </div>
     </div>
   )
 }
@@ -1142,65 +1153,91 @@ const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?
   const curvePath = buildCurve(forgettingPts)
 
   return (
-    <div className="relative w-full overflow-hidden py-4 flex flex-col gap-1 items-center">
-      <motion.div className="flex items-center gap-4 mb-1"
-        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-        <span className="flex items-center gap-1.5 text-[8px] font-black tracking-[0.25em] uppercase text-[#EF4444]">
-          <span className="w-5 h-[2px] bg-[#EF4444] inline-block"/>Without Flotter
-        </span>
-        <span className="flex items-center gap-1.5 text-[8px] font-black tracking-[0.25em] uppercase text-[#3B82F6]">
-          <span className="w-5 h-[2px] bg-[#3B82F6] inline-block"/>With Flotter
-        </span>
+    <div className="relative w-full overflow-hidden py-8 flex flex-col gap-4 items-center">
+      <motion.div className="flex items-center gap-6 mb-2 z-10"
+        initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+        <div className="px-4 py-1.5 rounded-full bg-[#1C1C1E] border border-[#2D2D2F] flex items-center gap-4 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+          <span className="flex items-center gap-2 text-[10px] font-black tracking-[0.2em] uppercase text-[#EF4444]">
+            <span className="w-3 h-3 rounded-full bg-[#EF4444]/20 flex items-center justify-center">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444] shadow-[0_0_5px_#EF4444]" />
+            </span>
+            Without Flotter
+          </span>
+          <div className="w-[1px] h-4 bg-[#2D2D2F]" />
+          <span className="flex items-center gap-2 text-[10px] font-black tracking-[0.2em] uppercase text-[#3B82F6]">
+            <span className="w-3 h-3 rounded-full bg-[#3B82F6]/20 flex items-center justify-center">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3B82F6] shadow-[0_0_5px_#3B82F6]" />
+            </span>
+            With Flotter
+          </span>
+        </div>
       </motion.div>
-      <svg width="100%" height="138" viewBox="0 0 480 138" fill="none">
-        <defs>
-          <linearGradient id="fd-forget-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#EF4444" stopOpacity="0.18"/>
-            <stop offset="100%" stopColor="#EF4444" stopOpacity="0.03"/>
-          </linearGradient>
-          <linearGradient id="fd-retain-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.15"/>
-            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.02"/>
-          </linearGradient>
-        </defs>
 
-        {/* Y-axis guide lines */}
-        {[0, 25, 50, 75, 100].map((pct) => {
-          const y = toY(pct)
-          return (
-            <React.Fragment key={pct}>
-              <line x1="20" y1={y} x2="460" y2={y} stroke="#1e1e1e" strokeWidth="0.5" strokeDasharray={pct === 0 || pct === 100 ? undefined : "2 8"}/>
-              <text x="16" y={y + 3.5} textAnchor="end" fill="#303030" fontSize="5.5" fontFamily="monospace">{pct}%</text>
-            </React.Fragment>
-          )
-        })}
+      <div className="relative w-full max-w-3xl mx-auto bg-[#121212] rounded-2xl border border-[#2D2D2F] p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden">
+        {/* Background Grid */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+        
+        {/* Ambient Glows */}
+        <div className="absolute bottom-0 left-1/4 w-48 h-48 bg-[#EF4444] rounded-full blur-[100px] opacity-10" />
+        <div className="absolute top-0 right-1/4 w-48 h-48 bg-[#3B82F6] rounded-full blur-[100px] opacity-10" />
 
-        {/* Flotter retention line (stays high) */}
-        <motion.path
-          d={`M 20 ${toY(100)} C 120 ${toY(98)}, 240 ${toY(95)}, 460 ${toY(88)}`}
-          fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round"
-          initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
-          transition={{ duration: 1.4, delay: 0.2, ease: "easeOut" }}
-        />
-        {/* Flotter area fill */}
-        <motion.path
-          d={`M 20 ${toY(100)} C 120 ${toY(98)}, 240 ${toY(95)}, 460 ${toY(88)} L 460 ${BOTTOM} L 20 ${BOTTOM} Z`}
-          fill="url(#fd-retain-fill)"
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          transition={{ duration: 1.2, delay: 0.4 }}
-        />
+        <svg width="100%" height="138" viewBox="0 0 480 138" fill="none" className="relative z-10">
+          <defs>
+            <linearGradient id="fd-forget-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#EF4444" stopOpacity="0.3"/>
+              <stop offset="100%" stopColor="#EF4444" stopOpacity="0.05"/>
+            </linearGradient>
+            <linearGradient id="fd-retain-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.25"/>
+              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.05"/>
+            </linearGradient>
+            <filter id="fd-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
-        {/* Forgetting curve fill area */}
-        <motion.path
-          d={`${curvePath} L ${forgettingPts[forgettingPts.length - 1].x} ${BOTTOM} L ${forgettingPts[0].x} ${BOTTOM} Z`}
-          fill="url(#fd-forget-fill)"
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          transition={{ duration: 1.2, delay: 0.1 }}
-        />
+          {/* Y-axis guide lines */}
+          {[0, 25, 50, 75, 100].map((pct) => {
+            const y = toY(pct)
+            return (
+              <React.Fragment key={pct}>
+                <line x1="20" y1={y} x2="460" y2={y} stroke="#2D2D2F" strokeWidth="1" strokeDasharray={pct === 0 || pct === 100 ? undefined : "4 4"}/>
+                <text x="16" y={y + 3.5} textAnchor="end" fill="#8B949E" fontSize="7" fontFamily="monospace" fontWeight="600">{pct}%</text>
+              </React.Fragment>
+            )
+          })}
 
-        {/* Forgetting curve */}
-        <motion.path
-          d={curvePath} fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round"
+          {/* Flotter retention line (stays high) */}
+          <motion.path
+            d={`M 20 ${toY(100)} C 120 ${toY(98)}, 240 ${toY(95)}, 460 ${toY(88)}`}
+            fill="none" stroke="#3B82F6" strokeWidth="3" strokeLinecap="round" filter="url(#fd-glow)"
+            initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
+            transition={{ duration: 1.4, delay: 0.2, ease: "easeOut" }}
+          />
+          {/* Flotter area fill */}
+          <motion.path
+            d={`M 20 ${toY(100)} C 120 ${toY(98)}, 240 ${toY(95)}, 460 ${toY(88)} L 460 ${BOTTOM} L 20 ${BOTTOM} Z`}
+            fill="url(#fd-retain-fill)"
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+            transition={{ duration: 1.2, delay: 0.4 }}
+          />
+
+          {/* Forgetting curve fill area */}
+          <motion.path
+            d={`${curvePath} L ${forgettingPts[forgettingPts.length - 1].x} ${BOTTOM} L ${forgettingPts[0].x} ${BOTTOM} Z`}
+            fill="url(#fd-forget-fill)"
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+            transition={{ duration: 1.2, delay: 0.1 }}
+          />
+
+          {/* Forgetting curve */}
+          <motion.path
+            d={curvePath} fill="none" stroke="#EF4444" strokeWidth="3" strokeLinecap="round"
+
           strokeDasharray="5 4"
           initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
           transition={{ duration: 1.6, ease: "easeOut" }}
@@ -1245,6 +1282,7 @@ const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?
         <line x1="20" y1={TOP} x2="20" y2={BOTTOM + 2} stroke="#2A2A2A" strokeWidth="0.8"/>
         <line x1="20" y1={BOTTOM} x2="462" y2={BOTTOM} stroke="#2A2A2A" strokeWidth="0.8"/>
       </svg>
+      </div>
     </div>
   )
 }
@@ -1291,278 +1329,294 @@ const NeuralConnector = () => {
   const pulse2 = [L0[1], L1[2], L2[3], L3[2], L4[1]]
 
   return (
-    <div className="w-full py-6 flex flex-col items-center overflow-hidden">
-      <motion.div className="flex gap-4 items-center mb-3"
-        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-        <span className="text-[8px] font-black tracking-[0.3em] uppercase text-[#4B5563]">Memory Architecture</span>
-        <span className="flex gap-1">
-          {layerColors.map((c, i) => (
-            <motion.span key={i} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: c }}
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 1.6, repeat: Infinity, delay: i * 0.22 }}
+    <div className="w-full py-10 flex flex-col items-center overflow-hidden relative">
+      <motion.div className="flex gap-4 items-center mb-6 z-10"
+        initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+        <div className="px-3 py-1 rounded-full bg-[#1C1C1E] border border-[#2D2D2F] flex items-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+          <span className="text-[10px] font-black tracking-[0.2em] uppercase text-[#8B949E]">Memory Architecture</span>
+          <div className="w-[1px] h-3 bg-[#2D2D2F]" />
+          <span className="flex gap-1.5">
+            {layerColors.map((c, i) => (
+              <motion.span key={i} className="w-1.5 h-1.5 rounded-full shadow-[0_0_5px_currentColor]" style={{ backgroundColor: c, color: c }}
+                animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+                transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+              />
+            ))}
+          </span>
+        </div>
+      </motion.div>
+
+      <div className="relative w-full max-w-3xl mx-auto bg-[#121212] rounded-2xl border border-[#2D2D2F] p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden">
+        {/* Background Grid */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+        
+        {/* Ambient Glows */}
+        <div className="absolute top-1/2 left-0 w-32 h-32 bg-[#3B82F6] rounded-full blur-[80px] opacity-10 -translate-y-1/2" />
+        <div className="absolute top-1/2 right-0 w-32 h-32 bg-[#A78BFA] rounded-full blur-[80px] opacity-10 -translate-y-1/2" />
+
+        <svg width="100%" height="140" viewBox="0 0 382 140" fill="none" className="overflow-visible relative z-10">
+          <defs>
+            {gradPairs.map(([c1, c2], i) => (
+              <linearGradient key={gradIds[i]} id={gradIds[i]} x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stopColor={c1} stopOpacity="0.6"/>
+                <stop offset="100%" stopColor={c2} stopOpacity="0.1"/>
+              </linearGradient>
+            ))}
+            <filter id="nc-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          {/* connections */}
+          {allConns.map(({ x1, y1, x2, y2, ci }, i) => (
+            <motion.line key={`nc-e-${i}`}
+              x1={x1} y1={y1} x2={x2} y2={y2}
+              stroke={`url(#${gradIds[ci]})`} strokeWidth="1"
+              initial={{ pathLength: 0, opacity: 0 }}
+              whileInView={{ pathLength: 1, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 + ci * 0.15 + (i % 4) * 0.05, duration: 0.8, ease: "easeOut" }}
             />
           ))}
-        </span>
-      </motion.div>
-      <svg width="100%" height="120" viewBox="0 0 382 120" fill="none" className="overflow-visible">
-        <defs>
-          {gradPairs.map(([c1, c2], i) => (
-            <linearGradient key={gradIds[i]} id={gradIds[i]} x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%"   stopColor={c1} stopOpacity="0.35"/>
-              <stop offset="100%" stopColor={c2} stopOpacity="0.12"/>
-            </linearGradient>
+
+          {/* nodes — per layer */}
+          {layers.map((layer, li) => (
+            layer.map(({ cx, cy }, ni) => (
+              <React.Fragment key={`nc-nd-${li}-${ni}`}>
+                {/* outer pulse */}
+                <motion.circle cx={cx} cy={cy} r={li === 2 ? 16 : 14}
+                  fill="none" stroke={layerColors[li]} strokeWidth="1" strokeOpacity="0.1"
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.3, 0.1] }}
+                  transition={{ duration: 3, repeat: Infinity, delay: li * 0.2 + ni * 0.1 }}
+                />
+                {/* halo */}
+                <motion.circle cx={cx} cy={cy} r={li === 2 ? 12 : 10}
+                  fill="none" stroke={layerColors[li]} strokeWidth="1" strokeOpacity="0.3"
+                  initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+                  transition={{ delay: 0.3 + li * 0.15 + ni * 0.08, type: "spring", stiffness: 200 }}
+                />
+                {/* ring */}
+                <motion.circle cx={cx} cy={cy} r={li === 2 ? 7 : 6}
+                  fill="#1C1C1E" stroke={layerColors[li]} strokeWidth={1.5}
+                  initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+                  transition={{ delay: 0.4 + li * 0.15 + ni * 0.08, type: "spring", stiffness: 280 }}
+                />
+                {/* center dot */}
+                <motion.circle cx={cx} cy={cy} r={li === 2 ? 3 : 2.5}
+                  fill={layerColors[li]} filter="url(#nc-glow)"
+                  animate={{ opacity: [0.6, 1, 0.6], scale: [0.9, 1.1, 0.9] }}
+                  transition={{ duration: 2 + ni * 0.2, repeat: Infinity, delay: li * 0.3 + ni * 0.2 }}
+                />
+              </React.Fragment>
+            ))
           ))}
-        </defs>
 
-        {/* connections */}
-        {allConns.map(({ x1, y1, x2, y2, ci }, i) => (
-          <motion.line key={`nc-e-${i}`}
-            x1={x1} y1={y1} x2={x2} y2={y2}
-            stroke={`url(#${gradIds[ci]})`} strokeWidth="0.7"
-            initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 + ci * 0.14 + (i % 4) * 0.03, duration: 0.7 }}
+          {/* layer labels */}
+          {layerLabels.map(({ x, label, color }, i) => (
+            <motion.g key={`nc-lbl-${i}`}
+              initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ delay: 0.6 + i * 0.15, duration: 0.6 }}
+            >
+              <rect x={x - 24} y="118" width="48" height="16" rx="4" fill="#1C1C1E" stroke="#2D2D2F" strokeWidth="1" />
+              <text x={x} y="129" textAnchor="middle"
+                fill={color} fontSize="7" fontWeight="800" letterSpacing="0.1em"
+                fontFamily="monospace"
+              >{label}</text>
+            </motion.g>
+          ))}
+
+          {/* forward-pass pulse 1 */}
+          <motion.circle r={4.5} fill="#3B82F6" filter="url(#nc-glow)"
+            animate={{ cx: pulse1.map(p => p.cx), cy: pulse1.map(p => p.cy) }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 1,
+              times: [0, 0.25, 0.5, 0.75, 1] }}
           />
-        ))}
-
-        {/* nodes — per layer */}
-        {layers.map((layer, li) => (
-          layer.map(({ cx, cy }, ni) => (
-            <React.Fragment key={`nc-nd-${li}-${ni}`}>
-              {/* halo */}
-              <motion.circle cx={cx} cy={cy} r={li === 2 ? 12 : 10}
-                fill="none" stroke={layerColors[li]} strokeWidth="0.5" strokeOpacity="0.2"
-                initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-                transition={{ delay: 0.15 + li * 0.15 + ni * 0.06, type: "spring", stiffness: 200 }}
-                style={{ transformOrigin: `${cx}px ${cy}px` }}
-              />
-              {/* ring */}
-              <motion.circle cx={cx} cy={cy} r={li === 2 ? 6.5 : 5.5}
-                fill="#121212" stroke={layerColors[li]} strokeWidth={li === 2 ? 1.5 : 1.2}
-                initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-                transition={{ delay: 0.2 + li * 0.15 + ni * 0.06, type: "spring", stiffness: 280 }}
-                style={{ transformOrigin: `${cx}px ${cy}px` }}
-              />
-              {/* center dot */}
-              <motion.circle cx={cx} cy={cy} r={li === 2 ? 2.5 : 2}
-                fill={layerColors[li]}
-                animate={{ opacity: [0.45, 1, 0.45], scale: [0.9, 1.15, 0.9] }}
-                transition={{ duration: 1.8 + ni * 0.2, repeat: Infinity, delay: li * 0.25 + ni * 0.18 }}
-                style={{ transformOrigin: `${cx}px ${cy}px` }}
-              />
-            </React.Fragment>
-          ))
-        ))}
-
-        {/* layer labels */}
-        {layerLabels.map(({ x, label, color }, i) => (
-          <motion.text key={`nc-lbl-${i}`} x={x} y="114" textAnchor="middle"
-            fill={color} fillOpacity="0.5" fontSize="5.5" fontWeight="800" letterSpacing="0.8"
-            fontFamily="monospace"
-            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-            transition={{ delay: 0.3 + i * 0.12, duration: 0.5 }}
-          >{label}</motion.text>
-        ))}
-
-        {/* forward-pass pulse 1 */}
-        <motion.circle r={4} fill="#3B82F6"
-          animate={{ cx: pulse1.map(p => p.cx), cy: pulse1.map(p => p.cy) }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.5,
-            times: [0, 0.22, 0.46, 0.72, 1] }}
-        />
-        {/* forward-pass pulse 2 */}
-        <motion.circle r={3} fill="#10B981"
-          animate={{ cx: pulse2.map(p => p.cx), cy: pulse2.map(p => p.cy) }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.5,
-            delay: 0.9, times: [0, 0.22, 0.46, 0.72, 1] }}
-        />
-        {/* backward error signal */}
-        <motion.circle r={2} fill="#EF4444"
-          animate={{ cx: [...pulse1].reverse().map(p => p.cx), cy: [...pulse1].reverse().map(p => p.cy) }}
-          transition={{ duration: 2.0, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.2,
-            delay: 2.6, times: [0, 0.22, 0.52, 0.76, 1] }}
-        />
-      </svg>
+          {/* forward-pass pulse 2 */}
+          <motion.circle r={3.5} fill="#10B981" filter="url(#nc-glow)"
+            animate={{ cx: pulse2.map(p => p.cx), cy: pulse2.map(p => p.cy) }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 1,
+              delay: 1.2, times: [0, 0.25, 0.5, 0.75, 1] }}
+          />
+          {/* backward error signal */}
+          <motion.circle r={2.5} fill="#EF4444" filter="url(#nc-glow)"
+            animate={{ cx: [...pulse1].reverse().map(p => p.cx), cy: [...pulse1].reverse().map(p => p.cy) }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.5,
+              delay: 3, times: [0, 0.25, 0.5, 0.75, 1] }}
+          />
+        </svg>
+      </div>
     </div>
   )
 }
 
 /**
- * OrbitDecoration — full-width mastery system visual with concentric geometry.
- * Used between Methodology and CTA sections. Represents mastery achieved.
+ * OrbitDecoration — Radar chart (pentagon) visualizer.
+ * Used between Methodology and CTA sections. Represents mastery achieved across 5 dimensions.
  */
 const OrbitDecoration = () => {
   const CX = 240, CY = 120
+  const MAX_R = 90
 
-  // 16 ray endpoints at r=98
-  const rays = Array.from({ length: 16 }, (_, i) => {
-    const angle = (i * Math.PI * 2) / 16
-    return {
-      x2: CX + Math.round(98 * Math.cos(angle)),
-      y2: CY + Math.round(98 * Math.sin(angle)),
-      heavy: i % 4 === 0
-    }
-  })
-
-  // Hexagon builder
-  const hexPath = (r: number, offset = 0) => {
-    const pts = Array.from({ length: 6 }, (_, i) => {
-      const a = (i * Math.PI * 2) / 6 + offset
-      return [CX + r * Math.cos(a), CY + r * Math.sin(a)]
-    })
-    return pts.map(([x,y],i) => `${i===0?'M':'L'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ') + ' Z'
-  }
-
-  const achieveMetrics = [
-    { label: "RETENTION", value: "94%", color: "#3B82F6",  angle: -90 },
-    { label: "SPEED",     value: "3×",  color: "#10B981",  angle: 30  },
-    { label: "RECALL",    value: "∞",   color: "#A78BFA",  angle: 150 },
+  // 5 dimensions for the radar chart
+  const dimensions = [
+    { label: "RETENTION", value: 94, color: "#3B82F6" },
+    { label: "SPEED",     value: 88, color: "#10B981" },
+    { label: "RECALL",    value: 98, color: "#A78BFA" },
+    { label: "FOCUS",     value: 85, color: "#FBBF24" },
+    { label: "CLARITY",   value: 92, color: "#EF4444" },
   ]
 
+  // Helper to get coordinates for a given radius and angle index (0-4)
+  const getPoint = (r: number, i: number) => {
+    const angle = (i * Math.PI * 2) / 5 - Math.PI / 2 // Start at top (-90 deg)
+    return {
+      x: CX + r * Math.cos(angle),
+      y: CY + r * Math.sin(angle)
+    }
+  }
+
+  // Build pentagon path for a given radius
+  const buildPentagon = (r: number) => {
+    const pts = Array.from({ length: 5 }, (_, i) => getPoint(r, i))
+    return pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ') + ' Z'
+  }
+
+  // Build the actual data polygon path
+  const dataPath = dimensions.map((d, i) => {
+    const p = getPoint((d.value / 100) * MAX_R, i)
+    return `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`
+  }).join(' ') + ' Z'
+
   return (
-    <div className="w-full py-4 flex flex-col items-center overflow-hidden">
-      <svg width="100%" height="240" viewBox="0 0 480 240" fill="none" className="overflow-visible">
-        <defs>
-          <radialGradient id="od2-core" cx="50%" cy="50%" r="50%">
-            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.12"/>
-            <stop offset="60%"  stopColor="#3B82F6" stopOpacity="0.04"/>
-            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0"/>
-          </radialGradient>
-        </defs>
+    <div className="w-full py-10 flex flex-col items-center overflow-hidden relative">
+      <div className="relative w-full max-w-3xl mx-auto bg-[#1C1C1E] rounded-2xl border border-[#2D2D2F] p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden">
+        {/* Background Grid */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+        
+        {/* Ambient Glows */}
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-[#3B82F6] rounded-full blur-[100px] opacity-10 -translate-x-1/2 -translate-y-1/2" />
 
-        {/* radial background circle */}
-        <circle cx={CX} cy={CY} r="108" fill="url(#od2-core)"/>
+        <svg width="100%" height="280" viewBox="0 0 480 280" fill="none" className="overflow-visible relative z-10">
+          <defs>
+            <linearGradient id="radar-fill" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.1" />
+            </linearGradient>
+            <filter id="radar-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
-        {/* 16 rays */}
-        {rays.map(({ x2, y2, heavy }, i) => (
-          <motion.line key={`r-${i}`}
-            x1={CX} y1={CY} x2={x2} y2={y2}
-            stroke="#3B82F6"
-            strokeWidth={heavy ? 0.8 : 0.35}
-            strokeOpacity={heavy ? 0.22 : 0.1}
-            strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.04 + i * 0.035, duration: 0.5, ease: "easeOut" }}
-          />
-        ))}
+          {/* Background concentric pentagons (grid) */}
+          {[0.2, 0.4, 0.6, 0.8, 1.0].map((scale, i) => (
+            <motion.path
+              key={`grid-${i}`}
+              d={buildPentagon(MAX_R * scale)}
+              fill="none"
+              stroke="#2D2D2F"
+              strokeWidth="1"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              style={{ transformOrigin: `${CX}px ${CY}px` }}
+            />
+          ))}
 
-        {/* hexagonal rings at radii 32, 54, 78, 98 */}
-        {[
-          { r: 32,  color: "#10B981", sw: 0.9, op: 0.25, dir: 1,  dur: 14 },
-          { r: 54,  color: "#3B82F6", sw: 0.7, op: 0.18, dir: -1, dur: 22 },
-          { r: 78,  color: "#FBBF24", sw: 0.6, op: 0.14, dir: 1,  dur: 34 },
-          { r: 98,  color: "#3B82F6", sw: 0.5, op: 0.1,  dir: -1, dur: 50 },
-        ].map(({ r, color, sw, op, dir, dur }, i) => (
-          <motion.path key={`h-${i}`}
-            d={hexPath(r, i % 2 === 0 ? Math.PI / 6 : 0)}
-            fill="none" stroke={color} strokeWidth={sw} strokeOpacity={op}
-            animate={{ rotate: dir * 360 }}
-            transition={{ duration: dur, repeat: Infinity, ease: "linear" }}
-            style={{ transformOrigin: `${CX}px ${CY}px` }}
-            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          />
-        ))}
-
-        {/* circular orbit rings */}
-        {[
-          { r: 44, dur: 18, dash: "3 7",   color: "#3B82F6", op: 0.2 },
-          { r: 68, dur: 28, dash: "2 5",   color: "#10B981", op: 0.15},
-          { r: 88, dur: 42, dash: "6 10",  color: "#FBBF24", op: 0.12},
-          { r: 104,dur: 60, dash: "4 12",  color: "#A78BFA", op: 0.1 },
-        ].map(({ r, dur, dash, color, op }, i) => (
-          <motion.circle key={`o-${i}`} cx={CX} cy={CY} r={r}
-            fill="none" stroke={color} strokeWidth="0.6"
-            strokeOpacity={op} strokeDasharray={dash}
-            animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
-            transition={{ duration: dur, repeat: Infinity, ease: "linear" }}
-            style={{ transformOrigin: `${CX}px ${CY}px` }}
-          />
-        ))}
-
-        {/* 4 orbiting dots */}
-        {[
-          { r: 44,  dur: 4.5,  color: "#3B82F6", sz: 3.5, start: 0   },
-          { r: 68,  dur: 7.5,  color: "#10B981", sz: 3,   start: 90  },
-          { r: 88,  dur: 12,   color: "#FBBF24", sz: 2.5, start: 180 },
-          { r: 104, dur: 18,   color: "#A78BFA", sz: 2,   start: 270 },
-        ].map(({ r, dur, color, sz, start }, i) => (
-          <motion.circle key={`od-${i}`}
-            cx={CX + r * Math.cos((start * Math.PI) / 180)}
-            cy={CY + r * Math.sin((start * Math.PI) / 180)}
-            r={sz} fill={color}
-            animate={{ rotate: 360 }}
-            transition={{ duration: dur, repeat: Infinity, ease: "linear" }}
-            style={{ transformOrigin: `${CX}px ${CY}px` }}
-          />
-        ))}
-
-        {/* metric labels at 3 positions around the ring */}
-        {achieveMetrics.map(({ label, value, color, angle }, i) => {
-          const rad = (angle * Math.PI) / 180
-          const lx = CX + 130 * Math.cos(rad)
-          const ly = CY + 130 * Math.sin(rad)
-          return (
-            <React.Fragment key={`m-${i}`}>
-              <motion.text x={lx} y={ly - 5} textAnchor="middle"
-                fill={color} fontSize="14" fontWeight="900" fontFamily="monospace"
-                initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.7 + i * 0.15, type: "spring", stiffness: 200 }}
-                style={{ transformOrigin: `${lx}px ${ly}px` }}
-              >{value}</motion.text>
-              <motion.text x={lx} y={ly + 8} textAnchor="middle"
-                fill="#4B5563" fontSize="6" fontWeight="700" letterSpacing="1.2" fontFamily="monospace"
-                initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-                transition={{ delay: 0.85 + i * 0.15 }}
-              >{label}</motion.text>
-              {/* connector line from metric to orbit */}
+          {/* Axis lines from center to corners */}
+          {dimensions.map((_, i) => {
+            const p = getPoint(MAX_R, i)
+            return (
               <motion.line
-                x1={CX + 108 * Math.cos(rad)} y1={CY + 108 * Math.sin(rad)}
-                x2={CX + 120 * Math.cos(rad)} y2={CY + 120 * Math.sin(rad)}
-                stroke={color} strokeWidth="1" strokeOpacity="0.4"
-                initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
-                transition={{ delay: 0.75 + i * 0.15 }}
+                key={`axis-${i}`}
+                x1={CX} y1={CY} x2={p.x} y2={p.y}
+                stroke="#2D2D2F" strokeWidth="1" strokeDasharray="4 4"
+                initial={{ pathLength: 0 }}
+                whileInView={{ pathLength: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
               />
-            </React.Fragment>
-          )
-        })}
+            )
+          })}
 
-        {/* emanation pulse rings */}
-        {[0, 1, 2, 3].map(i => (
-          <motion.circle key={`em-${i}`} cx={CX} cy={CY} fill="none"
-            stroke="#3B82F6" strokeWidth="0.7"
-            initial={{ r: 6, opacity: 0.6 }}
-            animate={{ r: [6, 52], opacity: [0.5, 0] }}
-            transition={{ duration: 3.2, repeat: Infinity, ease: "easeOut", delay: i * 0.8 }}
+          {/* The Data Polygon (Radar Area) */}
+          <motion.path
+            d={dataPath}
+            fill="url(#radar-fill)"
+            stroke="#3B82F6"
+            strokeWidth="2"
+            strokeLinejoin="round"
+            filter="url(#radar-glow)"
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", stiffness: 60, damping: 15, delay: 0.5 }}
+            style={{ transformOrigin: `${CX}px ${CY}px` }}
           />
-        ))}
 
-        {/* center complex — diamond + inner dot */}
-        <motion.path d={`M${CX} ${CY-18} L${CX+18} ${CY} L${CX} ${CY+18} L${CX-18} ${CY} Z`}
-          fill="none" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.35"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: `${CX}px ${CY}px` }}
-          initial={{ scale: 0, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }} viewport={{ once: true }}
-        />
-        <motion.path d={`M${CX} ${CY-12} L${CX+12} ${CY} L${CX} ${CY+12} L${CX-12} ${CY} Z`}
-          fill="none" stroke="#10B981" strokeWidth="0.7" strokeOpacity="0.3"
-          animate={{ rotate: -360 }}
-          transition={{ duration: 7, repeat: Infinity, ease: "linear", delay: 0.3 }}
-          style={{ transformOrigin: `${CX}px ${CY}px` }}
-          initial={{ scale: 0, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }} viewport={{ once: true }}
-        />
-        <motion.circle cx={CX} cy={CY} r="7"
-          fill="#3B82F6"
-          animate={{ opacity: [0.8, 1, 0.8], scale: [0.9, 1.12, 0.9] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-          style={{ transformOrigin: `${CX}px ${CY}px` }}
-        />
-        <circle cx={CX} cy={CY} r="3" fill="#FFFFFF"/>
-      </svg>
+          {/* Data Points on the Polygon */}
+          {dimensions.map((d, i) => {
+            const p = getPoint((d.value / 100) * MAX_R, i)
+            return (
+              <motion.circle
+                key={`pt-${i}`}
+                cx={p.x} cy={p.y} r="4"
+                fill="#121212" stroke={d.color} strokeWidth="2"
+                filter="url(#radar-glow)"
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ type: "spring", stiffness: 200, delay: 0.8 + i * 0.1 }}
+                style={{ transformOrigin: `${p.x}px ${p.y}px` }}
+              />
+            )
+          })}
+
+          {/* Labels and Values around the radar */}
+          {dimensions.map((d, i) => {
+            // Push labels out a bit further than the max radius
+            const p = getPoint(MAX_R + 35, i)
+            
+            // Adjust text anchor based on position to prevent overlap
+            let anchor = "middle"
+            if (p.x < CX - 20) anchor = "end"
+            if (p.x > CX + 20) anchor = "start"
+
+            return (
+              <motion.g
+                key={`lbl-${i}`}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1.0 + i * 0.1 }}
+              >
+                <text x={p.x} y={p.y - 6} textAnchor={anchor as "start" | "middle" | "end"} fill={d.color} fontSize="14" fontWeight="900" fontFamily="monospace" filter="url(#radar-glow)">
+                  {d.value}%
+                </text>
+                <text x={p.x} y={p.y + 8} textAnchor={anchor as "start" | "middle" | "end"} fill="#8B949E" fontSize="9" fontWeight="700" letterSpacing="0.15em" fontFamily="monospace">
+                  {d.label}
+                </text>
+              </motion.g>
+            )
+          })}
+
+          {/* Center pulsing dot */}
+          <motion.circle
+            cx={CX} cy={CY} r="3"
+            fill="#3B82F6"
+            animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </svg>
+      </div>
     </div>
   )
 }
@@ -1592,30 +1646,30 @@ export default function LandingPage() {
         style={{ scaleX }}
       />
 
-      <nav className={`fixed top-0 w-full z-40 border-b border-[#2A2A2A] bg-[#121212]/95 backdrop-blur-sm`}>
-        <div className="max-w-5xl mx-auto px-4 h-[56px] flex items-center justify-between">
+      <nav className="fixed top-0 w-full z-40 border-b border-[#262626] bg-[#121212]/95 backdrop-blur-xl">
+        <div className="max-w-5xl mx-auto px-4 h-[64px] flex items-center justify-between">
           <motion.div
-            className="flex items-center gap-2.5"
+            className="flex items-center gap-3"
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <div className="w-8 h-8 bg-[#3B82F6] rounded-[10px] flex items-center justify-center  ">
-              <Zap size={17} className="text-white" fill="white" />
+            <div className="w-9 h-9 bg-[#3B82F6] rounded-[12px] flex items-center justify-center shadow-lg shadow-[#3B82F6]/20">
+              <Zap size={20} className="text-white" fill="white" />
             </div>
-            <span className="text-[17px] font-bold tracking-tight">
+            <span className="text-lg font-bold tracking-tight">
               Flotter<span className="text-[#3B82F6]">.</span>
             </span>
           </motion.div>
 
           <motion.div
-            className="flex items-center gap-2"
+            className="flex items-center gap-3"
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <Link href="/login" className={`hidden sm:block text-[#6B7280] text-[11px] font-bold uppercase tracking-widest px-3 py-2`}>
+            <Link href="/login" className="hidden sm:block text-[#6B7280] hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
               {t('landing.nav.signIn')}
             </Link>
-            <Link href="/register" className="bg-[#3B82F6] text-white px-4 py-2 rounded-[10px] text-[12px] font-bold uppercase tracking-widest">
+            <Link href="/register" className="bg-[#3B82F6] text-white px-5 py-2.5 rounded-[12px] text-sm font-bold uppercase tracking-widest hover:bg-[#1D4ED8] transition-all">
               {t('landing.nav.getStarted')}
             </Link>
           </motion.div>
@@ -1623,103 +1677,69 @@ export default function LandingPage() {
       </nav>
 
       {/* HERO SECTION */}
-      <section ref={heroRef} className="relative pt-[72px] overflow-hidden min-h-[100svh] bg-[#121212] flex items-start">
-        <div className="w-full px-5 relative z-10 py-8">
-          <div className={`flex flex-col ${language === 'ar' ? 'md:flex-row-reverse' : 'md:flex-row'} md:items-center md:gap-16`}>
-
-            {/* Left: Text */}
+      <section ref={heroRef} className="relative pt-[140px] pb-[80px] px-4 overflow-hidden flex items-center justify-center min-h-[90vh] bg-[#121212]">
+        <div className="max-w-5xl mx-auto relative z-10 w-full">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
-              className={`flex-1 text-center ${language === 'ar' ? 'md:text-right' : 'md:text-left'} order-2 md:order-none`}
-              initial={{ opacity: 0, y: 18 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.25 }}
+              transition={{ duration: 0.6 }}
+              className={`text-center ${language === 'ar' ? 'lg:text-right' : 'lg:text-left'}`}
             >
-              <div className={`mb-5 flex items-center ${language === 'ar' ? 'justify-center md:justify-end' : 'justify-center md:justify-start'}`}>
-                <FlotterLogo isDark={true} height={56} />
+              <div className={`mb-6 flex items-center justify-center ${language === 'ar' ? 'lg:justify-end' : 'lg:justify-start'}`}>
+                <FlotterLogo isDark={true} height={78} />
               </div>
 
-              {/* Eyebrow badge */}
               <motion.div
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#3B82F6]/10 border border-[#3B82F6]/25 mb-5"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/30 mb-6"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.15 }}
+                transition={{ delay: 0.1 }}
               >
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3B82F6] opacity-75" />
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#3B82F6]" />
                 </span>
-                <span className="text-[10px] font-black text-[#3B82F6] uppercase tracking-[0.22em]">
+                <span className="text-xs font-bold text-[#3B82F6] uppercase tracking-wider">
                   {t('landing.hero.neuralSync')}
                 </span>
               </motion.div>
 
-              <h1 className="text-[40px] md:text-[54px] font-black leading-[1.04] mb-5 text-white tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-bold leading-[1.1] mb-6">
                 {t('landing.hero.title1')}
-                <span className="text-[#3B82F6] block">{t('landing.hero.title2')}</span>
+                <span className="text-[#3B82F6]">{t('landing.hero.title2')}</span>
               </h1>
 
-              {/* Accent rule */}
-              <motion.div
-                className={`flex items-center gap-2 mb-6 ${language === 'ar' ? 'justify-center md:justify-end flex-row-reverse' : 'justify-center md:justify-start'}`}
-                initial={{ opacity: 0, scaleX: 0 }}
-                animate={isHeroInView ? { opacity: 1, scaleX: 1 } : {}}
-                transition={{ delay: 0.35, duration: 0.5 }}
-                style={{ transformOrigin: language === 'ar' ? 'right' : 'left' }}
-              >
-                <div className="h-[2px] w-12 bg-[#3B82F6]" />
-                <div className="h-[2px] w-5 bg-[#3B82F6]/40" />
-                <div className="h-[2px] w-2 bg-[#3B82F6]/18" />
-              </motion.div>
-
-              <p className={`text-[14px] md:text-[15px] text-[#9CA3AF] mb-8 leading-relaxed max-w-sm mx-auto ${language === 'ar' ? 'md:mr-0' : 'md:ml-0'}`}>
+              <p className="text-base md:text-lg text-[#9CA3AF] mb-10 max-w-sm mx-auto lg:mx-0 leading-relaxed">
                 {t('landing.hero.desc1')}
-                <span className="text-white font-semibold"> {t('landing.hero.desc2')}</span>
+                <span className="text-white font-bold uppercase text-base"> {t('landing.hero.desc2')}</span>
                 {t('landing.hero.desc3')}
               </p>
 
-              <div className={`flex flex-col items-center ${language === 'ar' ? 'md:items-end' : 'md:items-start'} gap-3 max-w-xs mx-auto md:mx-0`}>
+              <div className={`flex flex-col sm:flex-row items-center justify-center ${language === 'ar' ? 'lg:justify-end' : 'lg:justify-start'} gap-4`}>
                 <Link
                   href="/register"
-                  className="w-full group relative inline-flex items-center justify-center px-8 py-4 bg-[#3B82F6] rounded-[10px] font-bold text-white text-[13px] tracking-widest uppercase active:scale-95 overflow-hidden"
+                  className="w-full sm:w-auto group relative inline-flex items-center justify-center px-10 py-4 bg-[#3B82F6] rounded-[12px] font-bold text-white text-base uppercase tracking-widest transition-all hover:bg-[#1D4ED8] shadow-xl shadow-[#3B82F6]/20 active:scale-95"
                 >
-                  <motion.span
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 rounded-[10px]"
-                    style={{ background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.13) 50%, transparent 65%)' }}
-                    animate={{ x: ['-110%', '110%'] }}
-                    transition={{ duration: 2.8, repeat: Infinity, ease: 'linear', repeatDelay: 0.8 }}
-                  />
-                  <span className="relative z-10 flex items-center gap-2.5">
-                    {t('landing.hero.startTrial')} <ArrowRight size={16} className={`${language === 'ar' ? 'rotate-180' : ''}`} />
+                  <span className="relative z-10 flex items-center gap-3">
+                    {t('landing.hero.startTrial')} <ArrowRight size={19} className={`transition-transform ${language === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
                   </span>
                 </Link>
 
-                <button className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-[10px] border border-[#2d2d2d] text-[#9CA3AF] text-[13px] font-semibold">
-                  <Play size={13} fill="#FACC15" className="text-[#FACC15]" />
+                <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-[12px] border border-[#262626] text-[#6B7280] hover:text-white hover:bg-[#1A1A1A] transition-all text-sm font-bold uppercase tracking-widest">
+                  <Play size={14} fill="#FACC15" className="text-[#FACC15]" />
                   {t('landing.hero.watchDemo')}
                 </button>
               </div>
             </motion.div>
 
-            {/* Right: Demo Visual */}
             <motion.div
-              className="flex-shrink-0 w-full md:w-[400px] order-1 md:order-none mb-6 md:mb-0"
-              initial={{ opacity: 0, y: 18 }}
-              animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.05 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={isHeroInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative mx-auto w-full max-w-sm"
             >
-              {/* Engineering corner-bracket frame */}
-              <div className="relative p-3">
-                <span className="absolute top-0 left-0 w-7 h-7 border-t-[2px] border-l-[2px] border-[#3B82F6]/50" />
-                <span className="absolute top-0 right-0 w-7 h-7 border-t-[2px] border-r-[2px] border-[#3B82F6]/50" />
-                <span className="absolute bottom-0 left-0 w-7 h-7 border-b-[2px] border-l-[2px] border-[#3B82F6]/50" />
-                <span className="absolute bottom-0 right-0 w-7 h-7 border-b-[2px] border-r-[2px] border-[#3B82F6]/50" />
-                {/* Label strip */}
-                <div className="absolute -top-3 left-10 bg-[#121212] px-2 flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#3B82F6] animate-pulse" />
-                  <span className="text-[8px] font-black tracking-[0.25em] uppercase text-[#3B82F6]">AI · LIVE DEMO</span>
-                </div>
+              <div className="relative z-10 p-2">
                 <AIGenerationSVG />
               </div>
             </motion.div>
@@ -1728,71 +1748,56 @@ export default function LandingPage() {
       </section>
 
       {/* STATS */}
-      <section className="bg-[#222222] border-y border-[#2A2A2A]">
-        <div className="px-5">
-          <div className="grid grid-cols-2 divide-x divide-y divide-[#2A2A2A]">
+      <section className="border-y border-[#262626] bg-[#121212]">
+        <div className="max-w-5xl mx-auto px-4 py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
-              { value: 94, suffix: "%", label: t('landing.stats.retentionRate'), color: "#3B82F6" },
-              { value: 3, suffix: "x", label: t('landing.stats.fasterLearning'), color: "#FACC15" },
-              { value: 50, suffix: "ms", label: t('landing.stats.generation'), color: "#10B981" },
-              { value: 2, suffix: "min", label: t('landing.stats.dailyAverage'), color: "#EF4444" }
+              { value: 94, suffix: "%", label: t('landing.stats.retentionRate'), color: "#3B82F6", source: t('landing.stats.neuralSync') },
+              { value: 3, suffix: "x", label: t('landing.stats.fasterLearning'), color: "#FACC15", source: t('landing.stats.cognitiveLoad') },
+              { value: 50, suffix: "ms", label: t('landing.stats.generation'), color: "#10B981", source: t('landing.stats.edgeEngine') },
+              { value: 2, suffix: "min", label: t('landing.stats.dailyAverage'), color: "#EF4444", source: t('landing.stats.sessionFlow') }
             ].map((stat, i) => (
               <motion.div
                 key={i}
-                className="py-8 px-5 flex flex-col items-center gap-1.5 text-center relative overflow-hidden"
+                className="bg-[#1C1C1E] p-4 rounded-[12px] border border-[#2D2D2F]"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.07 }}
+                transition={{ delay: i * 0.1 }}
                 viewport={{ once: true }}
               >
-                <motion.div
-                  className="absolute top-0 left-0 w-full h-[2px]"
-                  style={{ backgroundColor: stat.color }}
-                  initial={{ scaleX: 0, transformOrigin: 'left' }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 + i * 0.07, duration: 0.5 }}
-                />
-                <div className="text-[42px] font-black leading-none tabular-nums tracking-tighter" style={{ color: stat.color }}>
+                <div className="text-2xl font-bold mb-1" style={{ color: stat.color }}>
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 </div>
-                <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#6B7280] leading-tight">{stat.label}</div>
+                <div className="text-white text-sm font-bold mb-1">{stat.label}</div>
+                <div className="text-[#6B7280] text-[10px] uppercase tracking-wider font-bold">{stat.source}</div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Decorator: Stats → Problem */}
-      <div className="bg-[#121212]">
-        <div className="max-w-3xl mx-auto">
-          <FloatingDots count={6} color="#EF4444" />
-        </div>
-      </div>
+      
 
       {/* PROBLEM SECTION */}
-      <section className="py-20 px-4 bg-[#121212]">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EF4444]/8 border border-[#EF4444]/20 rounded-sm mb-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
-              <p className="text-[10px] font-bold uppercase text-[#EF4444] tracking-[0.28em]">{t('landing.problem.challenge')}</p>
-            </div>
-            <h2 className="text-[26px] md:text-[30px] font-bold text-white mb-3 leading-tight">{t('landing.problem.title')}</h2>
-            <p className="text-[#9CA3AF] text-[14px] max-w-md mx-auto">{t('landing.problem.subtitle')}</p>
+      <section className="py-24 px-4 bg-[#121212]">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-xs font-bold uppercase text-[#EF4444] tracking-widest mb-3">{t('landing.problem.challenge')}</h2>
+            <h3 className="text-3xl font-bold text-white">{t('landing.problem.title')}</h3>
+            <p className="text-[#9CA3AF] text-base mt-2">{t('landing.problem.subtitle')}</p>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-10"
-          >
-            <RetentionGraph />
-          </motion.div>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <RetentionGraph />
+            </motion.div>
 
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-3"
+            className="grid grid-cols-1 gap-3"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -1805,22 +1810,24 @@ export default function LandingPage() {
             ].map((item, i) => (
               <motion.div
                 key={i}
-                className="rounded-xl p-5 bg-[#1a1a1a] border border-[#2A2A2A] flex flex-col gap-3"
+                className="rounded-xl p-5 bg-[#1C1C1E] border border-[#2D2D2F] flex flex-row items-start gap-4 relative overflow-hidden"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.06 * i }}
               >
-                <div className="w-8 h-8 rounded-[8px] bg-[#EF4444]/8 flex items-center justify-center flex-shrink-0 border border-[#EF4444]/18">
+                <div className="absolute top-0 left-0 w-1 h-full bg-[#EF4444] opacity-50" />
+                <div className="w-8 h-8 rounded-lg bg-[#EF4444]/10 flex items-center justify-center shrink-0 border border-[#EF4444]/20 shadow-[0_0_10px_rgba(239,68,68,0.1)]">
                   <X className="text-[#EF4444]" size={14} />
                 </div>
-                <div>
-                  <h3 className="text-[13px] font-bold text-white mb-1">{item.title}</h3>
-                  <p className="text-[#9CA3AF] text-[12px] leading-relaxed">{item.desc}</p>
+                <div className="flex-1">
+                  <h3 className="text-sm font-bold text-white mb-1">{item.title}</h3>
+                  <p className="text-[#9CA3AF] text-xs leading-relaxed">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
           </motion.div>
+        </div>
         </div>
       </section>
 
@@ -1848,15 +1855,22 @@ export default function LandingPage() {
                 {t('landing.methodology.title')}
               </p>
             </div>
-            <h2 className="text-[28px] md:text-[34px] font-black leading-[1.1] mb-3 text-white tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-black leading-[1.1] mb-3 text-white tracking-tight">
               {t('landing.methodology.heading1')}<span className="text-[#3B82F6]">Flotter</span>{t('landing.methodology.heading2')}
             </h2>
           </motion.div>
 
           {/* ══════════════════════════════════════════════════════
-              PART 01: AI FLASHCARD CREATION ENGINE
+              METHODS CONTAINER WITH VERTICAL LINE
               ══════════════════════════════════════════════════════ */}
-          <div className="mb-20">
+          <div className="relative">
+            {/* Vertical Connecting Line */}
+            <div className="absolute left-[17.5px] top-[36px] bottom-[36px] w-[2px] bg-gradient-to-b from-[#3B82F6] via-[#3B82F6]/20 to-[#3B82F6] hidden md:block z-0" />
+
+            {/* ══════════════════════════════════════════════════════
+                PART 01: AI FLASHCARD CREATION ENGINE
+                ══════════════════════════════════════════════════════ */}
+            <div className="mb-20 relative z-10">
             {/* Section Header */}
             <motion.div
               className="flex items-center gap-3 mb-6"
@@ -1864,10 +1878,10 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#3B82F6] text-white text-[12px] font-bold flex-shrink-0">
+              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#3B82F6] text-white text-xs font-bold flex-shrink-0">
                 01
               </div>
-              <h3 className="text-[19px] font-bold text-white">{t('landing.engine.title')}</h3>
+              <h3 className="text-xl font-bold text-white">{t('landing.engine.title')}</h3>
               <div className="flex-1 h-px bg-[#2A2A2A]" />
             </motion.div>
 
@@ -1879,33 +1893,34 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] overflow-hidden">
+                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] overflow-hidden relative">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#3B82F6] to-transparent opacity-50" />
                   <div className="p-6">
                     <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#3B82F6] mb-4 inline-block">
                       {t('landing.engine.badge')}
                     </span>
-                    <h4 className="text-[20px] font-bold mb-2 text-white">{t('landing.engine.subtitle')}</h4>
-                    <p className="text-[14px] leading-relaxed text-[#9CA3AF]">{t('landing.engine.desc')}</p>
+                    <h4 className="text-xl font-bold mb-2 text-white">{t('landing.engine.subtitle')}</h4>
+                    <p className="text-sm leading-relaxed text-[#9CA3AF]">{t('landing.engine.desc')}</p>
                   </div>
 
                   {/* KPI Stats */}
-                  <div className="grid grid-cols-3 border-t border-[#2A2A2A]">
+                  <div className="grid grid-cols-3 border-t border-[#2D2D2F] bg-[#121212]/50">
                     {[
                       { val: t('landing.engine.kpi1'), label: t('landing.engine.kpi1Label'), sub: t('landing.engine.kpi1Sub'), color: '#3B82F6' },
                       { val: t('landing.engine.kpi2'), label: t('landing.engine.kpi2Label'), sub: t('landing.engine.kpi2Sub'), color: '#FBBF24' },
                       { val: t('landing.engine.kpi3'), label: t('landing.engine.kpi3Label'), sub: t('landing.engine.kpi3Sub'), color: '#10B981' },
                     ].map((kpi, i) => (
-                      <div key={i} className={`p-4 text-center ${i < 2 ? 'border-r border-[#2A2A2A]' : ''}`}>
-                        <div className="text-[22px] font-bold" style={{ color: kpi.color }}>{kpi.val}</div>
+                      <div key={i} className={`p-4 text-center ${i < 2 ? 'border-r border-[#2D2D2F]' : ''}`}>
+                        <div className="text-2xl font-bold" style={{ color: kpi.color, textShadow: `0 0 10px ${kpi.color}40` }}>{kpi.val}</div>
                         <div className="text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF] mt-1">{kpi.label}</div>
-                        <div className="text-[9px] text-[#6B7280] mt-0.5">{kpi.sub}</div>
+                        <div className="text-[10px] text-[#6B7280] mt-0.5">{kpi.sub}</div>
                       </div>
                     ))}
                   </div>
 
                   {/* Generation Pipeline */}
-                  <div className="p-6 border-t border-[#2A2A2A]">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-[#4B5563]">{t('landing.engine.processTitle')}</p>
+                  <div className="p-6 border-t border-[#2D2D2F]">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-[#6B7280]">{t('landing.engine.processTitle')}</p>
                     <AIGenerationVisualizer />
                   </div>
                 </div>
@@ -1918,11 +1933,12 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.15 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] p-6">
-                  <h4 className="text-[17px] font-bold mb-1 text-white">{t('landing.engine.tetradTitle')}</h4>
-                  <p className="text-[13px] text-[#6B7280] mb-5 leading-relaxed">{t('landing.engine.tetradDesc')}</p>
+                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] p-6 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#10B981] blur-[100px] opacity-10 pointer-events-none" />
+                  <h4 className="text-lg font-bold mb-1 text-white relative z-10">{t('landing.engine.tetradTitle')}</h4>
+                  <p className="text-sm text-[#9CA3AF] mb-5 leading-relaxed relative z-10">{t('landing.engine.tetradDesc')}</p>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-3 relative z-10">
                     {[
                       { icon: Eye, title: t('landing.engine.trace1'), desc: t('landing.engine.trace1Desc'), color: '#3B82F6' },
                       { icon: Layers, title: t('landing.engine.trace2'), desc: t('landing.engine.trace2Desc'), color: '#10B981' },
@@ -1931,10 +1947,10 @@ export default function LandingPage() {
                     ].map((trace, i) => (
                       <motion.div
                         key={i}
-                        className="rounded-xl p-4 border"
+                        className="rounded-xl p-4 border bg-[#121212]"
                         style={{
-                          borderColor: `${trace.color}35`,
-                          background: `${trace.color}08`
+                          borderColor: `${trace.color}30`,
+                          boxShadow: `inset 0 0 20px ${trace.color}05`
                         }}
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
@@ -1942,12 +1958,12 @@ export default function LandingPage() {
                         transition={{ delay: 0.1 + i * 0.06 }}
                       >
                         <div className="flex items-center gap-2 mb-2">
-                          <trace.icon size={14} style={{ color: trace.color }} />
-                          <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: trace.color }}>
+                          <trace.icon size={14} style={{ color: trace.color, filter: `drop-shadow(0 0 4px ${trace.color}80)` }} />
+                          <span className="text-xs font-bold uppercase tracking-wider" style={{ color: trace.color }}>
                             {trace.title}
                           </span>
                         </div>
-                        <p className="text-[11px] text-[#9CA3AF] leading-relaxed">{trace.desc}</p>
+                        <p className="text-xs text-[#9CA3AF] leading-relaxed">{trace.desc}</p>
                       </motion.div>
                     ))}
                   </div>
@@ -1961,10 +1977,11 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] p-6">
-                  <h4 className="text-[17px] font-bold mb-5 text-white">{t('landing.engine.scienceTitle')}</h4>
+                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] p-6 relative overflow-hidden">
+                  <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#FBBF24] blur-[100px] opacity-10 pointer-events-none" />
+                  <h4 className="text-lg font-bold mb-5 text-white relative z-10">{t('landing.engine.scienceTitle')}</h4>
 
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 relative z-10">
                     {[
                       { icon: Layers, title: t('landing.engine.p1'), desc: t('landing.engine.p1d'), color: '#3B82F6' },
                       { icon: Eye, title: t('landing.engine.p2'), desc: t('landing.engine.p2d'), color: '#FBBF24' },
@@ -1982,22 +1999,22 @@ export default function LandingPage() {
                         transition={{ delay: 0.05 * i }}
                       >
                         <div
-                          className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                          style={{ backgroundColor: `${p.color}12` }}
+                          className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 border"
+                          style={{ backgroundColor: `${p.color}10`, borderColor: `${p.color}30` }}
                         >
-                          <p.icon size={13} style={{ color: p.color }} />
+                          <p.icon size={13} style={{ color: p.color, filter: `drop-shadow(0 0 4px ${p.color}80)` }} />
                         </div>
                         <div>
-                          <span className="text-[11px] font-bold text-white block mb-0.5">{p.title}</span>
-                          <p className="text-[10px] text-[#6B7280] leading-relaxed">{p.desc}</p>
+                          <span className="text-xs font-bold text-white block mb-0.5">{p.title}</span>
+                          <p className="text-[10px] text-[#9CA3AF] leading-relaxed">{p.desc}</p>
                         </div>
                       </motion.div>
                     ))}
                   </div>
 
                   {/* Bottom Line Quote */}
-                  <div className="mt-6 pt-5 border-t border-[#2A2A2A] text-center">
-                    <p className="text-[13px] font-medium text-[#9CA3AF] italic leading-relaxed">
+                  <div className="mt-6 pt-5 border-t border-[#2D2D2F] text-center relative z-10">
+                    <p className="text-sm font-medium text-[#9CA3AF] italic leading-relaxed">
                       &ldquo;{t('landing.engine.bottomLine')}&rdquo;
                     </p>
                   </div>
@@ -2007,12 +2024,14 @@ export default function LandingPage() {
           </div>
 
           {/* Decorator: Engine → ACASRS */}
-          <PulseLine color="#10B981" />
+          <div className="relative z-10 bg-[#121212] py-4">
+            <PulseLine color="#3B82F6" />
+          </div>
 
           {/* ══════════════════════════════════════════════════════
               PART 02: ACASRS PROTOCOL
               ══════════════════════════════════════════════════════ */}
-          <div>
+          <div className="relative z-10">
             {/* Section Header */}
             <motion.div
               className="flex items-center gap-3 mb-6"
@@ -2020,11 +2039,11 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#10B981] text-white text-[12px] font-bold flex-shrink-0">
+              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#3B82F6] text-white text-xs font-bold flex-shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
                 02
               </div>
-              <h3 className="text-[19px] font-bold text-white">{t('landing.acasrs2.title')}</h3>
-              <div className="flex-1 h-px bg-[#2A2A2A]" />
+              <h3 className="text-xl font-bold text-white">{t('landing.acasrs2.title')}</h3>
+              <div className="flex-1 h-px bg-[#2D2D2F]" />
             </motion.div>
 
             <div className="flex flex-col gap-4">
@@ -2035,18 +2054,20 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] overflow-hidden">
+                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] overflow-hidden relative">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#10B981] to-transparent opacity-50" />
                   <div className="p-6">
                     <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#10B981] mb-4 inline-block">
                       {t('landing.acasrs2.badge')}
                     </span>
-                    <h4 className="text-[20px] font-bold mb-2 text-white">{t('landing.acasrs2.subtitle')}</h4>
-                    <p className="text-[14px] mb-5 leading-relaxed text-[#9CA3AF]">{t('landing.acasrs2.desc')}</p>
+                    <h4 className="text-xl font-bold mb-2 text-white">{t('landing.acasrs2.subtitle')}</h4>
+                    <p className="text-sm mb-5 leading-relaxed text-[#9CA3AF]">{t('landing.acasrs2.desc')}</p>
 
                     {/* Forgetting Curve Highlight */}
-                    <div className="rounded-xl p-4 border border-[#EF4444]/25 bg-[#EF4444]/[0.04]">
-                      <h5 className="text-[13px] font-bold text-[#EF4444] mb-1.5">{t('landing.acasrs2.curveTitle')}</h5>
-                      <p className="text-[12px] text-[#9CA3AF] leading-relaxed">{t('landing.acasrs2.curveDesc')}</p>
+                    <div className="rounded-xl p-4 border border-[#EF4444]/30 bg-[#EF4444]/5 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-16 h-16 bg-[#EF4444] blur-[40px] opacity-20 pointer-events-none" />
+                      <h5 className="text-sm font-bold text-[#EF4444] mb-1.5 relative z-10">{t('landing.acasrs2.curveTitle')}</h5>
+                      <p className="text-xs text-[#9CA3AF] leading-relaxed relative z-10">{t('landing.acasrs2.curveDesc')}</p>
                     </div>
                   </div>
                 </div>
@@ -2059,10 +2080,11 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.15 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] p-6">
-                  <h4 className="text-[17px] font-bold mb-5 text-white">{t('landing.acasrs2.phasesTitle')}</h4>
+                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] p-6 relative overflow-hidden">
+                  <div className="absolute top-1/2 right-0 w-32 h-32 bg-[#3B82F6] blur-[100px] opacity-10 pointer-events-none -translate-y-1/2" />
+                  <h4 className="text-lg font-bold mb-5 text-white relative z-10">{t('landing.acasrs2.phasesTitle')}</h4>
 
-                  <div className="space-y-4">
+                  <div className="space-y-4 relative z-10">
                     {[
                       { phase: t('landing.acasrs2.phase1'), time: t('landing.acasrs2.phase1Time'), desc: t('landing.acasrs2.phase1Desc'), color: '#3B82F6', icon: Clock },
                       { phase: t('landing.acasrs2.phase2'), time: t('landing.acasrs2.phase2Time'), desc: t('landing.acasrs2.phase2Desc'), color: '#FBBF24', icon: Brain },
@@ -2079,26 +2101,26 @@ export default function LandingPage() {
                         {/* Timeline connector */}
                         <div className="flex flex-col items-center flex-shrink-0">
                           <div
-                            className="w-10 h-10 rounded-xl flex items-center justify-center border"
-                            style={{ borderColor: `${p.color}30` }}
+                            className="w-10 h-10 rounded-xl flex items-center justify-center border bg-[#121212]"
+                            style={{ borderColor: `${p.color}40`, boxShadow: `0 0 10px ${p.color}20` }}
                           >
-                            <p.icon size={18} style={{ color: p.color }} />
+                            <p.icon size={18} style={{ color: p.color, filter: `drop-shadow(0 0 4px ${p.color}80)` }} />
                           </div>
-                          {i < 2 && <div className="w-px h-6 bg-[#2A2A2A] mt-1" />}
+                          {i < 2 && <div className="w-px h-6 bg-[#2D2D2F] mt-1" />}
                         </div>
                         <div className="flex-1 pb-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[14px] font-bold text-white">{p.phase}</span>
-                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md" style={{ color: p.color, backgroundColor: `${p.color}10` }}>{p.time}</span>
+                            <span className="text-sm font-bold text-white">{p.phase}</span>
+                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border" style={{ color: p.color, backgroundColor: `${p.color}10`, borderColor: `${p.color}30` }}>{p.time}</span>
                           </div>
-                          <p className="text-[12px] text-[#6B7280] leading-relaxed">{p.desc}</p>
+                          <p className="text-xs text-[#9CA3AF] leading-relaxed">{p.desc}</p>
                         </div>
                       </motion.div>
                     ))}
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-[#2A2A2A]">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-[#4B5563]">
+                  <div className="mt-6 pt-6 border-t border-[#2D2D2F] relative z-10">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-[#6B7280]">
                       {language === 'ar' ? 'معاينة مراحل الخوارزمية' : 'Algorithm Phase Preview'}
                     </p>
                     <ACASRSVisualizer />
@@ -2113,19 +2135,20 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] p-6">
-                  <h4 className="text-[17px] font-bold mb-5 text-white">{t('landing.acasrs2.vsTitle')}</h4>
+                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] p-6 relative overflow-hidden">
+                  <div className="absolute bottom-0 left-1/2 w-40 h-40 bg-[#A78BFA] blur-[120px] opacity-10 pointer-events-none -translate-x-1/2" />
+                  <h4 className="text-lg font-bold mb-5 text-white relative z-10">{t('landing.acasrs2.vsTitle')}</h4>
 
                   {/* Table Header */}
                   <div className="grid grid-cols-3 gap-2 mb-3">
                     <div />
                     <div className="flex items-center justify-center gap-1.5 py-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#EF4444]">{t('landing.acasrs2.legacy')}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#EF4444]">{t('landing.acasrs2.legacy')}</span>
                     </div>
                     <div className="flex items-center justify-center gap-1.5 py-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#10B981]">{t('landing.acasrs2.acasrsLabel')}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#10B981]">{t('landing.acasrs2.acasrsLabel')}</span>
                     </div>
                   </div>
 
@@ -2173,11 +2196,12 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.25 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] p-6">
-                  <h4 className="text-[17px] font-bold mb-1 text-white">{t('landing.acasrs2.signals')}</h4>
-                  <p className="text-[13px] text-[#6B7280] mb-5 leading-relaxed">{t('landing.acasrs2.signalsDesc')}</p>
+                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] p-6 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-32 h-32 bg-[#FBBF24] blur-[100px] opacity-10 pointer-events-none" />
+                  <h4 className="text-lg font-bold mb-1 text-white relative z-10">{t('landing.acasrs2.signals')}</h4>
+                  <p className="text-sm text-[#9CA3AF] mb-5 leading-relaxed relative z-10">{t('landing.acasrs2.signalsDesc')}</p>
 
-                  <div className="space-y-3">
+                  <div className="space-y-3 relative z-10">
                     {[
                       { icon: Clock, title: t('landing.acasrs2.signal1'), desc: t('landing.acasrs2.signal1Desc'), color: '#3B82F6' },
                       { icon: Zap, title: t('landing.acasrs2.signal2'), desc: t('landing.acasrs2.signal2Desc'), color: '#FBBF24' },
@@ -2185,7 +2209,7 @@ export default function LandingPage() {
                     ].map((signal, i) => (
                       <motion.div
                         key={i}
-                        className="flex items-start gap-3 rounded-xl p-4 bg-[#1A1A1A] border border-[#222222]"
+                        className="flex items-start gap-3 rounded-xl p-4 bg-[#121212] border border-[#2D2D2F]"
                         initial={{ opacity: 0, y: 6 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -2193,13 +2217,13 @@ export default function LandingPage() {
                       >
                         <div
                           className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 border"
-                          style={{ borderColor: `${signal.color}25` }}
+                          style={{ borderColor: `${signal.color}30`, backgroundColor: `${signal.color}10` }}
                         >
-                          <signal.icon size={16} style={{ color: signal.color }} />
+                          <signal.icon size={16} style={{ color: signal.color, filter: `drop-shadow(0 0 4px ${signal.color}80)` }} />
                         </div>
                         <div>
-                          <span className="text-[13px] font-bold text-white block mb-0.5">{signal.title}</span>
-                          <span className="text-[12px] text-[#6B7280] leading-relaxed">{signal.desc}</span>
+                          <span className="text-sm font-bold text-white block mb-0.5">{signal.title}</span>
+                          <span className="text-xs text-[#9CA3AF] leading-relaxed">{signal.desc}</span>
                         </div>
                       </motion.div>
                     ))}
@@ -2207,6 +2231,7 @@ export default function LandingPage() {
                 </div>
               </motion.div>
             </div>
+          </div>
           </div>
         </div>
       </section>
@@ -2220,17 +2245,24 @@ export default function LandingPage() {
 
       {/* FINAL CTA */}
       <section className={`py-20 px-4 bg-[#121212] relative overflow-hidden`}>
+        {/* Background Grid & Glow */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0)',
+          backgroundSize: '20px 20px'
+        }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#3B82F6] blur-[150px] opacity-10 pointer-events-none" />
+
         <div className="max-w-lg mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className={`text-[28px] font-bold mb-3 leading-tight text-white`}>
+            <h2 className={`text-3xl font-bold mb-3 leading-tight text-white`}>
               {t('landing.cta.upgrade')}
-              <span className="text-[#3B82F6]"> {t('landing.cta.pathways')}</span>
+              <span className="text-[#3B82F6]" style={{ textShadow: '0 0 20px rgba(59,130,246,0.5)' }}> {t('landing.cta.pathways')}</span>
             </h2>
-            <p className="text-[14px] text-[#6B7280] mb-8 max-w-sm mx-auto leading-relaxed">
+            <p className="text-sm text-[#9CA3AF] mb-8 max-w-sm mx-auto leading-relaxed">
               {t('landing.cta.join')}
             </p>
 
@@ -2249,14 +2281,14 @@ export default function LandingPage() {
                 ))}
                 <Link
                   href="/register"
-                  className="relative w-full inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-[#3B82F6] text-white rounded-[14px] font-bold text-[15px] tracking-wide active:scale-95 overflow-hidden"
+                  className="relative w-full inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-[#3B82F6] text-white rounded-[14px] font-bold text-base tracking-wide active:scale-95 overflow-hidden shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-shadow"
                 >
                   {/* Shimmer sweep */}
                   <motion.span
                     aria-hidden
                     className="pointer-events-none absolute inset-0 rounded-[14px]"
                     style={{
-                      background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.13) 50%, transparent 65%)'
+                      background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.2) 50%, transparent 65%)'
                     }}
                     animate={{ x: ['-110%', '110%'] }}
                     transition={{ duration: 2.8, repeat: Infinity, ease: 'linear', repeatDelay: 0.8 }}
@@ -2267,7 +2299,7 @@ export default function LandingPage() {
                   </span>
                 </Link>
               </div>
-              <p className="text-[11px] font-medium tracking-wider text-[#4B5563]">
+              <p className="text-xs font-medium tracking-wider text-[#6B7280]">
                 {t('landing.cta.noCreditCard')}
               </p>
             </div>
@@ -2276,12 +2308,13 @@ export default function LandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className={`border-t border-[#2A2A2A] py-10 px-4 bg-[#121212]`}>
-        <div className="max-w-lg mx-auto flex flex-col items-center gap-5">
+      <footer className={`border-t border-[#2D2D2F] py-10 px-4 bg-[#121212] relative overflow-hidden`}>
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-32 bg-[#3B82F6] blur-[150px] opacity-5 pointer-events-none" />
+        <div className="max-w-lg mx-auto flex flex-col items-center gap-5 relative z-10">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3">
               <div className="w-8 h-8 flex-shrink-0">
-                <svg width="32" height="32" viewBox="0 0 104 104" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8">
+                <svg width="32" height="32" viewBox="0 0 104 104" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]">
                   <defs>
                     <linearGradient id="paint0_footer_15_32" x1="52" y1="0" x2="52" y2="104" gradientUnits="userSpaceOnUse">
                       <stop offset="0" stopColor="#3FA9F5" />
@@ -2295,14 +2328,14 @@ export default function LandingPage() {
                   <path d="M47.3989 29.2772C48.7907 29.0168 50.0583 28.9062 51.2084 29.0937C52.5778 29.317 53.4728 29.9077 54.0959 30.4637C54.1693 30.5292 54.23 30.5839 54.28 30.6291C54.3236 30.6308 54.3745 30.6319 54.4334 30.6319C56.5042 30.6319 58.7893 30.9109 60.6764 31.5213C61.6045 31.8216 62.6522 32.2702 63.5342 32.9681C64.1496 33.4551 64.8364 34.1968 65.2063 35.1939C65.3732 35.2193 65.5576 35.2407 65.755 35.2571C66.1333 35.2885 66.4899 35.2965 66.7541 35.2965C67.8924 35.2965 68.7663 35.7585 69.2418 36.0639C69.7753 36.4067 70.2279 36.8255 70.5978 37.2293C71.3441 38.0439 72.0213 39.0904 72.5741 40.2554C73.6851 42.5972 74.4668 45.7871 74.0554 49.3383C73.7404 52.058 72.4081 54.5899 69.5137 55.8016C67.7866 56.5246 65.8466 56.615 63.8733 56.3525C63.3428 57.0189 62.701 57.6088 61.9507 58.1094C60.3093 59.2043 58.3396 59.7481 56.2761 59.9533C54.9839 60.0817 53.5676 59.968 52.2426 59.3263C50.8681 58.6606 49.9155 57.583 49.3354 56.3471C48.6953 54.9834 48.4886 53.3922 48.5406 51.7138C45.3686 51.0112 42.6441 49.8467 40.6909 47.9939C37.485 44.9531 37.5667 40.348 38.7594 35.8853C38.7706 35.8433 38.7827 35.8016 38.7955 35.7601C39.9878 31.9239 43.46 30.014 47.3989 29.2772ZM49.7422 35.6779C49.5298 35.6938 49.1993 35.7325 48.7152 35.8231C46.1511 36.3027 45.6035 37.1304 45.4331 37.6254C44.4299 41.4294 45.0988 42.7813 45.4992 43.2015L45.5374 43.2395C46.5271 44.1783 48.6742 45.1656 52.7531 45.6601C53.6909 45.7738 54.5394 46.253 55.1013 46.986C55.6632 47.7191 55.8893 48.6422 55.7271 49.5403C55.5066 50.7608 55.4294 51.7113 55.4486 52.4258C55.4598 52.842 55.5027 53.1316 55.5462 53.3222C55.5532 53.3216 55.5603 53.3212 55.5675 53.3205C56.8879 53.1892 57.6269 52.8866 58.0187 52.6252C58.3454 52.4073 58.5576 52.1412 58.6908 51.6775C58.9362 50.8233 59.5241 50.0986 60.3245 49.6634C61.125 49.2282 62.0722 49.1184 62.9568 49.3582C65.3565 50.0087 66.4347 49.8217 66.7618 49.6848C66.8513 49.6473 66.876 49.6224 66.9148 49.5635C66.9769 49.469 67.1163 49.1955 67.1855 48.598C67.4403 46.3988 66.9477 44.4198 66.2885 43.0303C66.0628 42.5546 65.8372 42.1899 65.6512 41.9343C64.8894 41.8918 63.9352 41.7913 63.0142 41.5576C62.294 41.3748 61.3003 41.0406 60.4224 40.3661C59.6966 39.8085 59.0302 38.9896 58.7312 37.9315C58.658 37.9038 58.5741 37.8742 58.4785 37.8433C57.4713 37.5175 55.9623 37.2998 54.4334 37.2998C53.1457 37.2998 51.9751 37.0896 50.9278 36.5251C50.4238 36.2535 50.0522 35.9547 49.7926 35.7234C49.7754 35.7082 49.7587 35.6929 49.7422 35.6779Z" fill="#082032" />
                 </svg>
               </div>
-              <span className="font-bold text-[18px] tracking-tight">Flotter</span>
+              <span className="font-bold text-lg tracking-tight text-white">Flotter</span>
             </Link>
           </div>
 
-          <div className={`flex gap-6 ${language === 'ar' ? 'text-[11px] font-bold uppercase tracking-widest' : 'text-[13px] font-medium'} text-[#6B7280]`}>
-            <Link href="/legal/mentions" className={`text-[#9CA3AF] whitespace-nowrap`}>{t('globalFooter.legalNotice')}</Link>
-            <Link href="/legal/privacy" className={`text-[#9CA3AF] whitespace-nowrap`}>{t('globalFooter.privacyPolicy')}</Link>
-            <Link href="/legal/terms" className={`text-[#9CA3AF] whitespace-nowrap`}>{t('globalFooter.termsOfService')}</Link>
+          <div className={`flex gap-6 ${language === 'ar' ? 'text-xs font-bold uppercase tracking-widest' : 'text-sm font-medium'} text-[#9CA3AF]`}>
+            <Link href="/legal/mentions" className={`hover:text-white transition-colors whitespace-nowrap`}>{t('globalFooter.legalNotice')}</Link>
+            <Link href="/legal/privacy" className={`hover:text-white transition-colors whitespace-nowrap`}>{t('globalFooter.privacyPolicy')}</Link>
+            <Link href="/legal/terms" className={`hover:text-white transition-colors whitespace-nowrap`}>{t('globalFooter.termsOfService')}</Link>
           </div>
 
           <div className="flex flex-col items-center gap-2">
@@ -2313,9 +2346,9 @@ export default function LandingPage() {
                 <path d="M175.638 113.107C176.177 113.006 176.668 112.964 177.113 113.036C177.643 113.123 177.989 113.351 178.231 113.567C178.259 113.592 178.283 113.613 178.302 113.631C178.319 113.631 178.339 113.632 178.361 113.632C179.163 113.632 180.047 113.74 180.778 113.976C181.137 114.092 181.543 114.266 181.884 114.536C182.122 114.725 182.388 115.012 182.531 115.398C182.596 115.407 182.667 115.416 182.744 115.422C182.89 115.434 183.028 115.437 183.131 115.437C183.571 115.437 183.91 115.616 184.094 115.734C184.3 115.867 184.475 116.029 184.619 116.186C184.907 116.501 185.17 116.906 185.384 117.357C185.814 118.263 186.116 119.498 185.957 120.873C185.835 121.926 185.319 122.906 184.199 123.375C183.53 123.655 182.779 123.69 182.015 123.588C181.81 123.846 181.562 124.074 181.271 124.268C180.636 124.692 179.873 124.903 179.075 124.982C178.574 125.032 178.026 124.988 177.513 124.739C176.981 124.482 176.612 124.064 176.388 123.586C176.14 123.058 176.06 122.442 176.08 121.792C174.852 121.52 173.798 121.07 173.042 120.352L173.042 120.353C171.801 119.175 171.832 117.393 172.294 115.665C172.298 115.649 172.303 115.633 172.308 115.617C172.769 114.132 174.114 113.393 175.638 113.107ZM176.545 115.585C176.463 115.591 176.335 115.606 176.148 115.641H176.148C175.155 115.827 174.943 116.147 174.877 116.339C174.489 117.811 174.748 118.335 174.903 118.497L174.918 118.512L174.918 118.512C175.301 118.876 176.132 119.258 177.711 119.449C178.074 119.493 178.402 119.679 178.62 119.962C178.837 120.246 178.925 120.603 178.862 120.951C178.777 121.424 178.747 121.791 178.754 122.068C178.759 122.229 178.775 122.341 178.792 122.415C178.795 122.415 178.798 122.415 178.8 122.414C179.311 122.364 179.598 122.246 179.749 122.145C179.876 122.061 179.958 121.958 180.009 121.778C180.104 121.448 180.332 121.167 180.642 120.999C180.952 120.83 181.318 120.788 181.661 120.881C182.59 121.132 183.007 121.06 183.134 121.007C183.168 120.993 183.178 120.983 183.193 120.96C183.217 120.923 183.271 120.818 183.298 120.586V120.586C183.396 119.735 183.206 118.969 182.95 118.431C182.863 118.247 182.776 118.106 182.704 118.007C182.409 117.99 182.039 117.951 181.683 117.861C181.404 117.79 181.019 117.661 180.68 117.4C180.399 117.184 180.141 116.867 180.025 116.457C179.997 116.447 179.964 116.435 179.927 116.423C179.537 116.297 178.953 116.213 178.361 116.213C177.863 116.213 177.41 116.131 177.004 115.913C176.809 115.808 176.665 115.692 176.565 115.603C176.558 115.597 176.552 115.591 176.545 115.585Z" fill="#D1D5DB" />
                 <path d="M180.845 123.19C181.507 122.823 182.377 123.005 182.788 123.596C183.199 124.187 182.995 124.964 182.333 125.331C182.02 125.505 181.642 125.74 181.303 125.984C180.944 126.243 180.713 126.452 180.619 126.57L180.619 126.57C180.348 126.908 180.09 127.212 179.864 127.479C179.632 127.752 179.441 127.978 179.277 128.187C178.936 128.62 178.827 128.843 178.795 128.985C178.643 129.668 177.9 130.111 177.136 129.976C176.372 129.84 175.875 129.176 176.027 128.494C176.18 127.81 176.583 127.227 176.967 126.738C177.166 126.485 177.391 126.221 177.614 125.957C177.842 125.688 178.078 125.409 178.325 125.102L178.325 125.102C178.646 124.703 179.115 124.323 179.53 124.023C179.967 123.708 180.44 123.414 180.845 123.19Z" fill="#D1D5DB" />
               </svg>
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em]">{t('landing.footer.copyright')}</span>
+              <span className="text-xs font-bold uppercase tracking-[0.2em]">{t('landing.footer.copyright')}</span>
             </div>
-            <p className="text-[#4B5563] text-[11px] font-medium">
+            <p className="text-[#4B5563] text-xs font-medium">
               {t('landing.footer.framework')}
             </p>
           </div>
