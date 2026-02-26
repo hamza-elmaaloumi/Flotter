@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 
 import { useLanguage } from './providers/LanguageProvider'
+import { useTheme } from './providers/ThemeProvider'
 import FlotterLogo from './components/FlotterLogo'
 
 // ==========================================
@@ -29,7 +30,7 @@ import FlotterLogo from './components/FlotterLogo'
 
 const NeuralBackground = () => {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 select-none overflow-hidden bg-[#121212]">
+    <div className="fixed inset-0 pointer-events-none z-0 select-none overflow-hidden bg-[var(--bg-primary)]">
       {/* Ambient Glows */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#3B82F6] blur-[120px] opacity-10 rounded-full" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#8B5CF6] blur-[120px] opacity-10 rounded-full" />
@@ -144,18 +145,18 @@ const AIGenerationSVG = () => {
         72%, 100% { opacity: 0; transform: scale(1.1); }
       }
       @keyframes corePulse {
-        0%, 53% { fill: #1E293B; transform: scale(1); }
+        0%, 53% { fill: var(--bg-secondary); transform: scale(1); }
         58%, 68% { fill: #3B82F6; filter: url(#glow-strong); transform: scale(1.15); }
-        72%, 100% { fill: #1E293B; transform: scale(1); }
+        72%, 100% { fill: var(--bg-secondary); transform: scale(1); }
       }
       @keyframes ringSpin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
       @keyframes ringFastSpin {
-        0%, 53% { transform: rotate(0deg); opacity: 0.2; stroke: #475569; }
+        0%, 53% { transform: rotate(0deg); opacity: 0.2; stroke: var(--text-tertiary); }
         58%, 68% { transform: rotate(180deg); opacity: 1; stroke: #3B82F6; }
-        72%, 100% { transform: rotate(360deg); opacity: 0.2; stroke: #475569; }
+        72%, 100% { transform: rotate(360deg); opacity: 0.2; stroke: var(--text-tertiary); }
       }
 
       /* Phase 3: Sequential Step Nodes */
@@ -165,10 +166,10 @@ const AIGenerationSVG = () => {
       @keyframes n-sense   { 0%, 46% { opacity: 0; transform: scale(0.8); } 50%, 68% { opacity: 1; transform: scale(1); } 72%, 100% { opacity: 0; transform: scale(0.8); } }
 
       /* Node Activation Colors */
-      @keyframes fill-context { 0%, 19% { fill: #1E293B; filter: none; } 22%, 68% { fill: #3B82F6; filter: url(#glow-strong); } 72%, 100% { fill: #1E293B; filter: none; } }
-      @keyframes fill-image   { 0%, 29% { fill: #1E293B; filter: none; } 32%, 68% { fill: #FBBF24; filter: url(#glow-strong); } 72%, 100% { fill: #1E293B; filter: none; } }
-      @keyframes fill-vibe    { 0%, 39% { fill: #1E293B; filter: none; } 42%, 68% { fill: #8B5CF6; filter: url(#glow-strong); } 72%, 100% { fill: #1E293B; filter: none; } }
-      @keyframes fill-sense   { 0%, 49% { fill: #1E293B; filter: none; } 52%, 68% { fill: #10B981; filter: url(#glow-strong); } 72%, 100% { fill: #1E293B; filter: none; } }
+      @keyframes fill-context { 0%, 19% { fill: var(--bg-secondary); filter: none; } 22%, 68% { fill: #3B82F6; filter: url(#glow-strong); } 72%, 100% { fill: var(--bg-secondary); filter: none; } }
+      @keyframes fill-image   { 0%, 29% { fill: var(--bg-secondary); filter: none; } 32%, 68% { fill: #FBBF24; filter: url(#glow-strong); } 72%, 100% { fill: var(--bg-secondary); filter: none; } }
+      @keyframes fill-vibe    { 0%, 39% { fill: var(--bg-secondary); filter: none; } 42%, 68% { fill: #8B5CF6; filter: url(#glow-strong); } 72%, 100% { fill: var(--bg-secondary); filter: none; } }
+      @keyframes fill-sense   { 0%, 49% { fill: var(--bg-secondary); filter: none; } 52%, 68% { fill: #10B981; filter: url(#glow-strong); } 72%, 100% { fill: var(--bg-secondary); filter: none; } }
 
       /* Connecting Data Beams */
       @keyframes beamDash { to { stroke-dashoffset: -40; } }
@@ -237,9 +238,9 @@ const AIGenerationSVG = () => {
 
     {/* PHASE 1: INPUT */}
     <g className="anim input-wrap">
-      <rect x="120" y="140" width="160" height="40" rx="8" fill="#14151A" stroke="#3B82F6" strokeWidth="1.5" filter="drop-shadow(0 4px 12px rgba(59,130,246,0.3))" />
+      <rect x="120" y="140" width="160" height="40" rx="8" fill="var(--bg-elevated)" stroke="#3B82F6" strokeWidth="1.5" filter="drop-shadow(0 4px 12px rgba(59,130,246,0.3))" />
       <g className="anim input-text">
-        <text x="200" y="165" fill="#FFFFFF" fontFamily="monospace" fontSize="15" fontWeight="bold" textAnchor="middle" letterSpacing="1">
+        <text x="200" y="165" fill="var(--text-primary)" fontFamily="monospace" fontSize="15" fontWeight="bold" textAnchor="middle" letterSpacing="1">
           Ephemeral<tspan className="cursor" fill="#3B82F6">_</tspan>
         </text>
       </g>
@@ -254,48 +255,48 @@ const AIGenerationSVG = () => {
       <line x1="200" y1="248" x2="200" y2="192" strokeWidth="2" className="beam-s beam-flow" />
 
       {/* Integration Center (Core) */}
-      <circle cx="200" cy="160" r="24" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
-      <circle cx="200" cy="160" r="32" fill="none" stroke="#475569" strokeWidth="1" strokeDasharray="4 6" className="core-ring" />
+      <circle cx="200" cy="160" r="24" fill="var(--bg-elevated)" stroke="var(--border-primary)" strokeWidth="2" />
+      <circle cx="200" cy="160" r="32" fill="none" stroke="var(--text-tertiary)" strokeWidth="1" strokeDasharray="4 6" className="core-ring" />
       <circle cx="200" cy="160" r="42" fill="none" strokeWidth="1.5" strokeDasharray="20 40 10 30" className="anim core-ring-fast" />
       <circle cx="200" cy="160" r="10" className="anim core-inner" />
 
       {/* Node 1: Context (Left) */}
       <g className="anim node-c">
-        <circle cx="70" cy="160" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
+        <circle cx="70" cy="160" r="22" fill="var(--bg-elevated)" stroke="var(--border-primary)" strokeWidth="2" />
         <circle cx="70" cy="160" r="6" className="anim fill-c" />
-        <text x="70" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.contexts').toUpperCase()}</text>
+        <text x="70" y="200" fill="var(--text-secondary)" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.contexts').toUpperCase()}</text>
       </g>
 
       {/* Node 2: Image (Top) */}
       <g className="anim node-i">
-        <circle cx="200" cy="50" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
+        <circle cx="200" cy="50" r="22" fill="var(--bg-elevated)" stroke="var(--border-primary)" strokeWidth="2" />
         <circle cx="200" cy="50" r="6" className="anim fill-i" />
-        <text x="200" y="16" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.semantics').toUpperCase()}</text>
+        <text x="200" y="16" fill="var(--text-secondary)" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.semantics').toUpperCase()}</text>
       </g>
 
       {/* Node 3: Vibe (Right) */}
       <g className="anim node-v">
-        <circle cx="330" cy="160" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
+        <circle cx="330" cy="160" r="22" fill="var(--bg-elevated)" stroke="var(--border-primary)" strokeWidth="2" />
         <circle cx="330" cy="160" r="6" className="anim fill-v" />
-        <text x="330" y="200" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.vibe').toUpperCase()}</text>
+        <text x="330" y="200" fill="var(--text-secondary)" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.vibe').toUpperCase()}</text>
       </g>
 
       {/* Node 4: Sensory (Bottom) */}
       <g className="anim node-s">
-        <circle cx="200" cy="270" r="22" fill="#14151A" stroke="#2D3748" strokeWidth="2" />
+        <circle cx="200" cy="270" r="22" fill="var(--bg-elevated)" stroke="var(--border-primary)" strokeWidth="2" />
         <circle cx="200" cy="270" r="6" className="anim fill-s" />
-        <text x="200" y="310" fill="#9CA3AF" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.visuals').toUpperCase()}</text>
+        <text x="200" y="310" fill="var(--text-secondary)" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1.5">{t('landing.visualizer.visuals').toUpperCase()}</text>
       </g>
     </g>
 
     {/* PHASE 3: FINAL CENTERED GENERATED CARD */}
     <g className="anim card-wrap">
       {/* Card Base */}
-      <rect x="90" y="20" width="220" height="280" rx="16" fill="#1A1D24" stroke="#2D3748" strokeWidth="1.5" filter="drop-shadow(0 20px 40px rgba(0,0,0,0.8))" />
+      <rect x="90" y="20" width="220" height="280" rx="16" fill="var(--bg-secondary)" stroke="var(--border-primary)" strokeWidth="1.5" filter="var(--card-drop-shadow)" />
 
       {/* Card Image Block - Real Image of Yellow Flowers */}
       <g className="anim card-img">
-        <rect x="106" y="36" width="188" height="110" rx="10" fill="#101216" />
+        <rect x="106" y="36" width="188" height="110" rx="10" fill="var(--bg-elevated)" />
         <image 
           x="106" 
           y="36" 
@@ -305,26 +306,26 @@ const AIGenerationSVG = () => {
           href="https://images.unsplash.com/photo-1621789098261-433128ee8d1e?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YmVhY2glMjBmbG93ZXJ8ZW58MHx8MHx8fDA%3D" 
           clipPath="url(#imgClip)" 
         />
-        <rect x="106" y="36" width="188" height="110" rx="10" fill="none" stroke="#262626" strokeWidth="2" pointerEvents="none" />
+        <rect x="106" y="36" width="188" height="110" rx="10" fill="none" stroke="var(--border-secondary)" strokeWidth="2" pointerEvents="none" />
       </g>
 
       {/* Card Word & Type */}
       <g className="anim card-word">
-        <text x="200" y="176" fill="#FFFFFF" fontSize="22" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">Ephemeral</text>
+        <text x="200" y="176" fill="var(--text-primary)" fontSize="22" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">{t('landing.demo.ephemeral')}</text>
         <rect x="165" y="188" width="70" height="18" rx="9" fill="#3B82F6" fillOpacity="0.15" stroke="#3B82F6" strokeOpacity="0.4" strokeWidth="1" />
-        <text x="200" y="201" fill="#60A5FA" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1">ADJECTIVE</text>
+        <text x="200" y="201" fill="#60A5FA" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="1">{t('landing.demo.adjective')}</text>
       </g>
 
       {/* Card Centered Sentence */}
       <g className="anim card-sent">
-        <text x="200" y="232" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">You attempt to capture the</text>
-        <text x="200" y="248" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">ephemeral snowflake, but it melts</text>
-        <text x="200" y="264" fill="#D1D5DB" fontSize="12" textAnchor="middle" letterSpacing="0.2">away, leaving only a memory.</text>
+        <text x="200" y="232" fill="var(--text-secondary)" fontSize="12" textAnchor="middle" letterSpacing="0.2">{t('landing.demo.sentence1')}</text>
+        <text x="200" y="248" fill="var(--text-secondary)" fontSize="12" textAnchor="middle" letterSpacing="0.2">{t('landing.demo.sentence2')}</text>
+        <text x="200" y="264" fill="var(--text-secondary)" fontSize="12" textAnchor="middle" letterSpacing="0.2">{t('landing.demo.sentence3')}</text>
         
         {/* Aesthetic Centered Dots */}
-        <circle cx="200" cy="282" r="2" fill="#4B5563" />
-        <circle cx="190" cy="282" r="2" fill="#4B5563" opacity="0.5" />
-        <circle cx="210" cy="282" r="2" fill="#4B5563" opacity="0.5" />
+        <circle cx="200" cy="282" r="2" fill="var(--text-tertiary)" />
+        <circle cx="190" cy="282" r="2" fill="var(--text-tertiary)" opacity="0.5" />
+        <circle cx="210" cy="282" r="2" fill="var(--text-tertiary)" opacity="0.5" />
       </g>
     </g>
   </svg>
@@ -350,10 +351,10 @@ const AIGenerationVisualizer = () => {
   ]
 
   return (
-    <div className="relative w-full h-40 bg-[#121212] rounded-[12px] border border-[#2D2D2F] overflow-hidden flex flex-col items-center justify-center">
+    <div className="relative w-full h-40 bg-[var(--bg-primary)] rounded-[12px] border border-[var(--border-primary)] overflow-hidden flex flex-col items-center justify-center">
       {/* Background Grid & Glow */}
       <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0)',
+        backgroundImage: 'radial-gradient(circle at 2px 2px, var(--grid-dot-color) 1px, transparent 0)',
         backgroundSize: '20px 20px'
       }} />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 blur-[80px] opacity-20 pointer-events-none transition-colors duration-500" style={{ backgroundColor: steps[step].color }} />
@@ -375,11 +376,11 @@ const AIGenerationVisualizer = () => {
               style: { color: steps[step].color, filter: `drop-shadow(0 0 8px ${steps[step].color}80)` }
             })}
           </div>
-          <p className="text-xs font-bold text-white tracking-widest uppercase" style={{ textShadow: `0 0 10px ${steps[step].color}40` }}>{steps[step].label}</p>
+          <p className="text-xs font-bold text-[var(--text-primary)] tracking-widest uppercase" style={{ textShadow: `0 0 10px ${steps[step].color}40` }}>{steps[step].label}</p>
         </motion.div>
       </AnimatePresence>
 
-      <div className="absolute bottom-5 w-3/4 h-1 bg-[#1C1C1E] rounded-full overflow-hidden border border-[#2D2D2F]">
+      <div className="absolute bottom-5 w-3/4 h-1 bg-[var(--bg-secondary)] rounded-full overflow-hidden border border-[var(--border-primary)]">
         <motion.div
           className="h-full relative"
           style={{ backgroundColor: steps[step].color, boxShadow: `0 0 10px ${steps[step].color}` }}
@@ -406,33 +407,33 @@ const ACASRSVisualizer = () => {
 
   const steps = [
     { label: t('landing.acasrs.phase1'), time: "15m", color: "#3B82F6", icon: Clock,
-      desc: "Synthesizing immediate semantic bridge" },
+      desc: t('landing.acasrs.phase1DescShort') },
     { label: t('landing.acasrs.phase2'), time: "24h", color: "#FBBF24", icon: Brain,
-      desc: "Mapping cross-domain neural anchors" },
+      desc: t('landing.acasrs.phase2DescShort') },
     { label: t('landing.acasrs.phase3'), time: "72h", color: "#10B981", icon: Layers,
-      desc: "Validating multi-contextual retention" },
-    { label: language === 'ar' ? 'التخرج' : 'Gradual Mastery', time: "∞", color: "#A78BFA", icon: Sparkles,
-      desc: "Graduating to exponential mastery cycle" }
+      desc: t('landing.acasrs.phase3DescShort') },
+    { label: t('landing.acasrs.gradualMastery'), time: "∞", color: "#A78BFA", icon: Sparkles,
+      desc: t('landing.acasrs.phase4DescShort') }
   ]
 
   /* retention strength per phase (0-100) */
   const retStrength = [40, 65, 82, 100]
 
   return (
-    <div className="relative w-full bg-[#121212] rounded-2xl overflow-hidden p-5 border border-[#2D2D2F]">
+    <div className="relative w-full bg-[var(--bg-primary)] rounded-2xl overflow-hidden p-5 border border-[var(--border-primary)]">
       {/* Background Grid & Glow */}
       <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0)',
+        backgroundImage: 'radial-gradient(circle at 2px 2px, var(--grid-dot-color) 1px, transparent 0)',
         backgroundSize: '20px 20px'
       }} />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-[#3B82F6] blur-[100px] opacity-10 pointer-events-none" />
 
       {/* header */}
-      <div className="relative flex items-center gap-2 mb-4 bg-[#1C1C1E] w-fit px-3 py-1.5 rounded-full border border-[#2D2D2F]">
+      <div className="relative flex items-center gap-2 mb-4 bg-[var(--bg-secondary)] w-fit px-3 py-1.5 rounded-full border border-[var(--border-primary)]">
         <motion.div className="w-2 h-2 rounded-full bg-[#3B82F6]"
           animate={{ opacity: [0.5,1,0.5], boxShadow: ["0 0 0px #3B82F6", "0 0 8px #3B82F6", "0 0 0px #3B82F6"] }} transition={{ duration:1.4, repeat: Infinity }}
         />
-        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9CA3AF]">ACASRS Engine</span>
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--text-secondary)]">{t('landing.decorator.acasrsEngine')}</span>
       </div>
 
       {/* SVG phase timeline */}
@@ -449,7 +450,7 @@ const ACASRSVisualizer = () => {
           </filter>
         </defs>
         {/* baseline rail */}
-        <line x1="20" y1="36" x2="300" y2="36" stroke="#2D2D2F" strokeWidth="2"/>
+        <line x1="20" y1="36" x2="300" y2="36" stroke="var(--border-primary)" strokeWidth="2"/>
 
         {/* completed flow */}
         <motion.line x1="20" y1="36" x2={20 + activeStep * 93.3} y2="36"
@@ -470,11 +471,11 @@ const ACASRSVisualizer = () => {
                 transition={{ duration:1.4, repeat: Infinity, delay: i*0.2 }}
               />
               <circle cx={x} cy="36" r={i === activeStep ? 6 : 4.5}
-                fill={i <= activeStep ? s.color : "#1C1C1E"}
-                stroke={i === activeStep ? "#fff" : (i <= activeStep ? "none" : "#2D2D2F")} strokeWidth="1.5"
+                fill={i <= activeStep ? s.color : "var(--bg-secondary)"}
+                stroke={i === activeStep ? "var(--text-primary)" : (i <= activeStep ? "none" : "var(--border-primary)")} strokeWidth="1.5"
                 filter={i === activeStep ? "url(#aca-glow)" : "none"}
               />
-              <text x={x} y="56" textAnchor="middle" fill={i === activeStep ? s.color : "#6B7280"}
+              <text x={x} y="56" textAnchor="middle" fill={i === activeStep ? s.color : "var(--text-tertiary)"}
                 fontSize="7" fontWeight="700" fontFamily="monospace" letterSpacing="0.5">
                 {s.time}
               </text>
@@ -489,8 +490,8 @@ const ACASRSVisualizer = () => {
           <motion.div key={i}
             className="flex items-center gap-3 p-3 rounded-xl border"
             style={{
-              borderColor: i === activeStep ? `${s.color}50` : "#2D2D2F",
-              backgroundColor: i === activeStep ? `${s.color}10` : "#1C1C1E"
+              borderColor: i === activeStep ? `${s.color}50` : "var(--border-primary)",
+              backgroundColor: i === activeStep ? `${s.color}10` : "var(--bg-secondary)"
             }}
             animate={{ opacity: i === activeStep ? 1 : 0.5 }}
             transition={{ duration: 0.3 }}
@@ -502,15 +503,15 @@ const ACASRSVisualizer = () => {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-white truncate">{s.label}</span>
+                <span className="text-xs font-bold text-[var(--text-primary)] truncate">{s.label}</span>
                 <span className="text-[10px] font-mono shrink-0" style={{ color: s.color }}>{s.time}</span>
               </div>
-              <p className="text-[10px] text-[#9CA3AF] mt-0.5 truncate">{s.desc}</p>
+              <p className="text-[10px] text-[var(--text-secondary)] mt-0.5 truncate">{s.desc}</p>
             </div>
             {/* retention strength bar */}
             <div className="flex-shrink-0 flex flex-col items-end gap-1">
-              <span className="text-[10px] font-mono text-[#9CA3AF]">{retStrength[i]}%</span>
-              <div className="w-14 h-[3px] bg-[#2D2D2F] rounded-full overflow-hidden">
+              <span className="text-[10px] font-mono text-[var(--text-secondary)]">{retStrength[i]}%</span>
+              <div className="w-14 h-[3px] bg-[var(--border-primary)] rounded-full overflow-hidden">
                 <motion.div className="h-full rounded-full" style={{ backgroundColor: s.color, boxShadow: `0 0 5px ${s.color}` }}
                   animate={{ width: i <= activeStep ? `${retStrength[i]}%` : "0%" }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
@@ -527,9 +528,9 @@ const ACASRSVisualizer = () => {
 const AutoSwipeDemo = () => {
   const { t } = useLanguage()
   const initialCards = [
-    { id: 1, word: "Ephemeral", color: "#3B82F6" },
-    { id: 2, word: "Resilient", color: "#10B981" },
-    { id: 3, word: "Luminous", color: "#FBBF24" },
+    { id: 1, word: t('landing.demo.ephemeral'), color: "#3B82F6" },
+    { id: 2, word: t('landing.demo.resilient'), color: "#10B981" },
+    { id: 3, word: t('landing.demo.luminous'), color: "#FBBF24" },
   ]
 
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -560,9 +561,9 @@ const AutoSwipeDemo = () => {
             <motion.div
               key={card.id}
               layout
-              className={`absolute w-full max-w-[200px] h-36 bg-[#1C1C1E] rounded-xl border flex flex-col items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.5)]`}
+              className={`absolute w-full max-w-[200px] h-36 bg-[var(--bg-secondary)] rounded-xl border flex flex-col items-center justify-center shadow-[var(--svg-shadow)]`}
               style={{
-                borderColor: isCurrent ? card.color : '#2D2D2F',
+                borderColor: isCurrent ? card.color : 'var(--border-primary)',
                 boxShadow: isCurrent ? `0 0 20px ${card.color}20, inset 0 0 20px ${card.color}10` : undefined,
                 zIndex: initialCards.length - index,
               }}
@@ -582,7 +583,7 @@ const AutoSwipeDemo = () => {
               }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
-              <h3 className={`text-2xl font-bold text-white tracking-wide`}>{card.word}</h3>
+              <h3 className={`text-2xl font-bold text-[var(--text-primary)] tracking-wide`}>{card.word}</h3>
 
               <AnimatePresence>
                 {isCurrent && (
@@ -658,9 +659,9 @@ const RetentionGraph = () => {
   const flotterPath = createSmoothPath('flotter')
 
   return (
-    <div className={`w-full h-48 bg-[#121212] rounded-xl p-4 relative border border-[#2D2D2F] shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden`}>
+    <div className={`w-full h-48 bg-[var(--bg-primary)] rounded-xl p-4 relative border border-[var(--border-primary)] shadow-[var(--svg-shadow)] overflow-hidden`}>
       {/* Background Grid */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+      <div className="absolute inset-0 opacity-[var(--grid-line-opacity,0.03)]" style={{ backgroundImage: 'linear-gradient(var(--text-primary) 1px, transparent 1px), linear-gradient(90deg, var(--text-primary) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
       
       <svg viewBox="0 0 400 200" className="w-full h-full overflow-visible relative z-10">
         <defs>
@@ -682,7 +683,7 @@ const RetentionGraph = () => {
         </defs>
 
         {[0, 50, 100, 150, 200].map(y => (
-          <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="#2D2D2F" strokeWidth="1" strokeDasharray={y === 200 ? "none" : "4 4"} />
+          <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="var(--border-primary)" strokeWidth="1" strokeDasharray={y === 200 ? "none" : "4 4"} />
         ))}
 
         <motion.path
@@ -733,21 +734,21 @@ const RetentionGraph = () => {
             transition={{ delay: 0.5 + (i * 0.1) }}
             viewport={{ once: true }}
           >
-            <circle cx={i * (400 / 5)} cy={200 - (data[i].standard / 100) * 180} r="4" fill="#1C1C1E" stroke="#EF4444" strokeWidth="2" />
-            <circle cx={i * (400 / 5)} cy={200 - (data[i].flotter / 100) * 180} r="5" fill="#1C1C1E" stroke="#3B82F6" strokeWidth="2.5" filter="url(#graph-glow)" />
+            <circle cx={i * (400 / 5)} cy={200 - (data[i].standard / 100) * 180} r="4" fill="var(--bg-secondary)" stroke="#EF4444" strokeWidth="2" />
+            <circle cx={i * (400 / 5)} cy={200 - (data[i].flotter / 100) * 180} r="5" fill="var(--bg-secondary)" stroke="#3B82F6" strokeWidth="2.5" filter="url(#graph-glow)" />
             <circle cx={i * (400 / 5)} cy={200 - (data[i].flotter / 100) * 180} r="2" fill="#3B82F6" />
           </motion.g>
         ))}
       </svg>
 
-      <div className="absolute top-4 right-4 flex flex-col gap-2 text-[10px] font-bold uppercase tracking-wider bg-[#1C1C1E]/80 backdrop-blur-sm p-3 rounded-lg border border-[#2D2D2F]">
+      <div className="absolute bottom-[138px] right-4 flex flex-col gap-2 text-[10px] font-bold uppercase tracking-wider bg-[var(--bg-secondary-80)] backdrop-blur-sm px-2 py-1 rounded-lg border z-40 border-[var(--border-primary)]">
         <div className="flex items-center gap-2">
           <div className="w-3 h-0.5 bg-[#EF4444] border-dashed" />
-          <span className="text-[#8B949E]">{t('landing.graph.standard')}</span>
+          <span className="text-[var(--text-tertiary)]">{t('landing.graph.standard')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-1 bg-[#3B82F6] rounded-full shadow-[0_0_5px_#3B82F6]" />
-          <span className={'text-[#FFFFFF]'}>{t('landing.graph.flotter')}</span>
+          <span className={'text-[var(--text-primary)]'}>{t('landing.graph.flotter')}</span>
         </div>
       </div>
     </div>
@@ -796,13 +797,14 @@ const AudioWaveform = () => {
  * Sits between Part 01 (AI Engine) and Part 02 (ACASRS).
  */
 const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
+  const { t } = useLanguage()
   const intervals = [
-    { x: 38,  label: "15m", phaseName: "ENCODE",  color: "#3B82F6", pct: 100, barW: 10 },
-    { x: 106, label: "1d",  phaseName: "RECALL",  color: "#60A5FA", pct: 88,  barW: 10 },
-    { x: 192, label: "3d",  phaseName: "REINFORCE",color: "#10B981",pct: 74,  barW: 10 },
-    { x: 298, label: "7d",  phaseName: "ANCHOR",  color: "#FBBF24", pct: 88,  barW: 10 },
-    { x: 412, label: "21d", phaseName: "LATCH",   color: "#F97316", pct: 95,  barW: 10 },
-    { x: 474, label: "∞",   phaseName: "MASTER",  color: "#A78BFA", pct: 99,  barW: 10 },
+    { x: 38,  label: "15m", phaseName: t('landing.phase.encode'),  color: "#3B82F6", pct: 100, barW: 10 },
+    { x: 106, label: "1d",  phaseName: t('landing.phase.recall'),  color: "#60A5FA", pct: 88,  barW: 10 },
+    { x: 192, label: "3d",  phaseName: t('landing.phase.reinforce'),color: "#10B981",pct: 74,  barW: 10 },
+    { x: 298, label: "7d",  phaseName: t('landing.phase.anchor'),  color: "#FBBF24", pct: 88,  barW: 10 },
+    { x: 412, label: "21d", phaseName: t('landing.phase.latch'),   color: "#F97316", pct: 95,  barW: 10 },
+    { x: 474, label: "∞",   phaseName: t('landing.phase.master'),  color: "#A78BFA", pct: 99,  barW: 10 },
   ]
 
   const RAIL_Y   = 108
@@ -816,16 +818,16 @@ const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
         initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
         transition={{ duration: 0.5 }}
       >
-        <div className="px-3 py-1 rounded-full bg-[#1C1C1E] border border-[#2D2D2F] flex items-center gap-2 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8B949E]">ACASRS</span>
-          <div className="w-[1px] h-3 bg-[#2D2D2F]" />
-          <span className="text-[10px] font-bold text-[#3B82F6] font-mono tracking-widest">Adaptive Spaced Repetition</span>
+        <div className="px-3 py-1 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] flex items-center gap-2 shadow-[var(--svg-shadow)]">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-tertiary)]">ACASRS</span>
+          <div className="w-[1px] h-3 bg-[var(--border-primary)]" />
+          <span className="text-[10px] font-bold text-[#3B82F6] font-mono tracking-widest">{t('landing.decorator.adaptiveSRS')}</span>
         </div>
       </motion.div>
 
-      <div className="relative w-full max-w-3xl mx-auto bg-[#121212] rounded-2xl border border-[#2D2D2F] p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden">
+      <div className="relative w-full max-w-3xl mx-auto bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-primary)] p-6 shadow-[var(--svg-shadow)] overflow-hidden">
         {/* Background Grid */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+        <div className="absolute inset-0 opacity-[var(--grid-line-opacity,0.03)]" style={{ backgroundImage: 'linear-gradient(var(--text-primary) 1px, transparent 1px), linear-gradient(90deg, var(--text-primary) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
         
         {/* Ambient Glows */}
         <div className="absolute top-1/2 left-0 w-48 h-48 bg-[#3B82F6] rounded-full blur-[100px] opacity-10 -translate-y-1/2" />
@@ -859,9 +861,9 @@ const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
             return (
               <React.Fragment key={i}>
                 <line x1="18" y1={y} x2="494" y2={y}
-                  stroke="#2D2D2F" strokeWidth="1"
+                  stroke="var(--border-primary)" strokeWidth="1"
                   strokeDasharray={i === 0 || i === 4 ? "none" : "4 4"}/>
-                <text x="14" y={y + 3} fill="#8B949E" fontSize="7" fontFamily="monospace" fontWeight="600" textAnchor="end">{pct}%</text>
+                <text x="14" y={y + 3} fill="var(--text-tertiary)" fontSize="7" fontFamily="monospace" fontWeight="600" textAnchor="end">{pct}%</text>
               </React.Fragment>
             )
           })}
@@ -889,7 +891,7 @@ const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
             return (
               <React.Fragment key={`b-${i}`}>
                 {/* track background */}
-                <rect x={x - barW / 2} y={BAR_BASE - BAR_MAX} width={barW} height={BAR_MAX} fill="#1C1C1E" rx="3" stroke="#2D2D2F" strokeWidth="1"/>
+                <rect x={x - barW / 2} y={BAR_BASE - BAR_MAX} width={barW} height={BAR_MAX} fill="var(--bg-secondary)" rx="3" stroke="var(--border-primary)" strokeWidth="1"/>
                 {/* animated fill */}
                 <motion.rect
                   x={x - barW / 2} width={barW} rx="3"
@@ -941,7 +943,7 @@ const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
               <motion.rect
                 x={x - 6} y={RAIL_Y - 6} width={12} height={12}
                 rx="2"
-                fill="#1C1C1E" stroke={nc} strokeWidth="2"
+                fill="var(--bg-secondary)" stroke={nc} strokeWidth="2"
                 transform={`rotate(45 ${x} ${RAIL_Y})`}
                 initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
                 transition={{ delay: 0.48 + i * 0.09, type: "spring", stiffness: 260 }}
@@ -962,7 +964,7 @@ const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
               >{label}</motion.text>
               {/* phase label below interval */}
               <motion.text x={x} y={RAIL_Y + 32} textAnchor="middle"
-                fill="#8B949E" fontSize="7" fontWeight="700" fontFamily="monospace" letterSpacing="0.15em"
+                fill="var(--text-tertiary)" fontSize="7" fontWeight="700" fontFamily="monospace" letterSpacing="0.15em"
                 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
                 transition={{ delay: 0.75 + i * 0.09 }}
               >{phaseName}</motion.text>
@@ -1061,7 +1063,7 @@ const _PulseLineLegacy = ({ color = "#3B82F6" }: { color?: string }) => (
           />
           {/* inner node */}
           <motion.circle cx={x} cy="28" r="4"
-            fill="#121212" stroke={color} strokeWidth="1.5"
+            fill="var(--bg-primary)" stroke={color} strokeWidth="1.5"
             initial={{ scale: 0, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
             viewport={{ once: true }}
@@ -1128,9 +1130,10 @@ const _PulseLineLegacy = ({ color = "#3B82F6" }: { color?: string }) => (
  * Represents memory beginning to erode — matching the problem section theme.
  */
 const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?: string }) => {
+  const { t } = useLanguage()
   // Forgetting curve datapoints: % retained after time without review
   const forgettingPts = [
-    { x: 20,  pct: 100, label: "Now"  },
+    { x: 20,  pct: 100, label: t('landing.graph.now')  },
     { x: 90,  pct: 76,  label: "1h"   },
     { x: 168, pct: 52,  label: "1d"   },
     { x: 258, pct: 30,  label: "3d"   },
@@ -1156,26 +1159,26 @@ const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?
     <div className="relative w-full overflow-hidden py-8 flex flex-col gap-4 items-center">
       <motion.div className="flex items-center gap-6 mb-2 z-10"
         initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-        <div className="px-4 py-1.5 rounded-full bg-[#1C1C1E] border border-[#2D2D2F] flex items-center gap-4 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+        <div className="px-4 py-1.5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] flex items-center gap-4 shadow-[var(--svg-shadow)]">
           <span className="flex items-center gap-2 text-[10px] font-black tracking-[0.2em] uppercase text-[#EF4444]">
             <span className="w-3 h-3 rounded-full bg-[#EF4444]/20 flex items-center justify-center">
               <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444] shadow-[0_0_5px_#EF4444]" />
             </span>
-            Without Flotter
+            {t('landing.decorator.withoutFlotter')}
           </span>
-          <div className="w-[1px] h-4 bg-[#2D2D2F]" />
+          <div className="w-[1px] h-4 bg-[var(--border-primary)]" />
           <span className="flex items-center gap-2 text-[10px] font-black tracking-[0.2em] uppercase text-[#3B82F6]">
             <span className="w-3 h-3 rounded-full bg-[#3B82F6]/20 flex items-center justify-center">
               <span className="w-1.5 h-1.5 rounded-full bg-[#3B82F6] shadow-[0_0_5px_#3B82F6]" />
             </span>
-            With Flotter
+            {t('landing.decorator.withFlotter')}
           </span>
         </div>
       </motion.div>
 
-      <div className="relative w-full max-w-3xl mx-auto bg-[#121212] rounded-2xl border border-[#2D2D2F] p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden">
+      <div className="relative w-full max-w-3xl mx-auto bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-primary)] p-6 shadow-[var(--svg-shadow)] overflow-hidden">
         {/* Background Grid */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+        <div className="absolute inset-0 opacity-[var(--grid-line-opacity,0.03)]" style={{ backgroundImage: 'linear-gradient(var(--text-primary) 1px, transparent 1px), linear-gradient(90deg, var(--text-primary) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
         
         {/* Ambient Glows */}
         <div className="absolute bottom-0 left-1/4 w-48 h-48 bg-[#EF4444] rounded-full blur-[100px] opacity-10" />
@@ -1205,8 +1208,8 @@ const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?
             const y = toY(pct)
             return (
               <React.Fragment key={pct}>
-                <line x1="20" y1={y} x2="460" y2={y} stroke="#2D2D2F" strokeWidth="1" strokeDasharray={pct === 0 || pct === 100 ? undefined : "4 4"}/>
-                <text x="16" y={y + 3.5} textAnchor="end" fill="#8B949E" fontSize="7" fontFamily="monospace" fontWeight="600">{pct}%</text>
+                <line x1="20" y1={y} x2="460" y2={y} stroke="var(--border-primary)" strokeWidth="1" strokeDasharray={pct === 0 || pct === 100 ? undefined : "4 4"}/>
+                <text x="16" y={y + 3.5} textAnchor="end" fill="var(--text-tertiary)" fontSize="7" fontFamily="monospace" fontWeight="600">{pct}%</text>
               </React.Fragment>
             )
           })}
@@ -1247,7 +1250,7 @@ const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?
         {forgettingPts.map(({ x, pct, label }, i) => (
           <React.Fragment key={`fd-pt-${i}`}>
             <motion.circle cx={x} cy={toY(pct)} r={3.5}
-              fill="#121212" stroke="#EF4444" strokeWidth="1.5"
+              fill="var(--bg-primary)" stroke="#EF4444" strokeWidth="1.5"
               initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
               transition={{ delay: 0.8 + i * 0.1, type: "spring", stiffness: 260 }}
               style={{ transformOrigin: `${x}px ${toY(pct)}px` }}
@@ -1260,7 +1263,7 @@ const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?
             >{pct}%</motion.text>
             {/* time label below */}
             <motion.text x={x} y={BOTTOM + 11} textAnchor="middle"
-              fill="#3A4A54" fontSize="6.5" fontFamily="monospace" fontWeight="700"
+              fill="var(--text-tertiary)" fontSize="6.5" fontFamily="monospace" fontWeight="700"
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
               transition={{ delay: 1.1 + i * 0.1 }}
             >{label}</motion.text>
@@ -1279,8 +1282,8 @@ const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?
         />
 
         {/* Terminal axis markers */}
-        <line x1="20" y1={TOP} x2="20" y2={BOTTOM + 2} stroke="#2A2A2A" strokeWidth="0.8"/>
-        <line x1="20" y1={BOTTOM} x2="462" y2={BOTTOM} stroke="#2A2A2A" strokeWidth="0.8"/>
+        <line x1="20" y1={TOP} x2="20" y2={BOTTOM + 2} stroke="var(--border-primary)" strokeWidth="0.8"/>
+        <line x1="20" y1={BOTTOM} x2="462" y2={BOTTOM} stroke="var(--border-primary)" strokeWidth="0.8"/>
       </svg>
       </div>
     </div>
@@ -1293,6 +1296,7 @@ const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?
  * Used between the Problem and Methodology sections.
  */
 const NeuralConnector = () => {
+  const { t } = useLanguage()
   // 5-layer network: raw(2) → lexical(3) → contextual(4) → semantic(3) → engram(2)
   const L0 = [{ cx: 18, cy: 42 }, { cx: 18, cy: 88 }]
   const L1 = [{ cx: 100, cy: 20 }, { cx: 100, cy: 54 }, { cx: 100, cy: 88 }]
@@ -1303,11 +1307,11 @@ const NeuralConnector = () => {
   const layers = [L0, L1, L2, L3, L4]
   const layerColors = ["#3B82F6", "#60A5FA", "#10B981", "#FBBF24", "#A78BFA"]
   const layerLabels = [
-    { x: 18,  label: "RAW",     color: "#3B82F6"  },
-    { x: 100, label: "LEXICAL", color: "#60A5FA"  },
-    { x: 192, label: "CONTEXT", color: "#10B981"  },
-    { x: 284, label: "SEMANTIC",color: "#FBBF24"  },
-    { x: 364, label: "ENGRAM",  color: "#A78BFA"  },
+    { x: 18,  label: t('landing.neural.raw'),     color: "#3B82F6"  },
+    { x: 100, label: t('landing.neural.lexical'), color: "#60A5FA"  },
+    { x: 192, label: t('landing.neural.context'), color: "#10B981"  },
+    { x: 284, label: t('landing.neural.semantic'),color: "#FBBF24"  },
+    { x: 364, label: t('landing.neural.engram'),  color: "#A78BFA"  },
   ]
 
   // Build all connections between adjacent layers
@@ -1332,9 +1336,9 @@ const NeuralConnector = () => {
     <div className="w-full py-10 flex flex-col items-center overflow-hidden relative">
       <motion.div className="flex gap-4 items-center mb-6 z-10"
         initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-        <div className="px-3 py-1 rounded-full bg-[#1C1C1E] border border-[#2D2D2F] flex items-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
-          <span className="text-[10px] font-black tracking-[0.2em] uppercase text-[#8B949E]">Memory Architecture</span>
-          <div className="w-[1px] h-3 bg-[#2D2D2F]" />
+        <div className="px-3 py-1 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] flex items-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+          <span className="text-[10px] font-black tracking-[0.2em] uppercase text-[var(--text-tertiary)]">{t('landing.decorator.memoryArch')}</span>
+          <div className="w-[1px] h-3 bg-[var(--border-primary)]" />
           <span className="flex gap-1.5">
             {layerColors.map((c, i) => (
               <motion.span key={i} className="w-1.5 h-1.5 rounded-full shadow-[0_0_5px_currentColor]" style={{ backgroundColor: c, color: c }}
@@ -1346,9 +1350,9 @@ const NeuralConnector = () => {
         </div>
       </motion.div>
 
-      <div className="relative w-full max-w-3xl mx-auto bg-[#121212] rounded-2xl border border-[#2D2D2F] p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden">
+      <div className="relative w-full max-w-3xl mx-auto bg-[var(--bg-primary)] rounded-2xl border border-[var(--border-primary)] p-6 shadow-[var(--svg-shadow)] overflow-hidden">
         {/* Background Grid */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+        <div className="absolute inset-0 opacity-[var(--grid-line-opacity,0.03)]" style={{ backgroundImage: 'radial-gradient(var(--text-primary) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
         
         {/* Ambient Glows */}
         <div className="absolute top-1/2 left-0 w-32 h-32 bg-[#3B82F6] rounded-full blur-[80px] opacity-10 -translate-y-1/2" />
@@ -1401,7 +1405,7 @@ const NeuralConnector = () => {
                 />
                 {/* ring */}
                 <motion.circle cx={cx} cy={cy} r={li === 2 ? 7 : 6}
-                  fill="#1C1C1E" stroke={layerColors[li]} strokeWidth={1.5}
+                  fill="var(--bg-secondary)" stroke={layerColors[li]} strokeWidth={1.5}
                   initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
                   transition={{ delay: 0.4 + li * 0.15 + ni * 0.08, type: "spring", stiffness: 280 }}
                 />
@@ -1421,7 +1425,7 @@ const NeuralConnector = () => {
               initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ delay: 0.6 + i * 0.15, duration: 0.6 }}
             >
-              <rect x={x - 24} y="118" width="48" height="16" rx="4" fill="#1C1C1E" stroke="#2D2D2F" strokeWidth="1" />
+              <rect x={x - 24} y="118" width="48" height="16" rx="4" fill="var(--bg-secondary)" stroke="var(--border-primary)" strokeWidth="1" />
               <text x={x} y="129" textAnchor="middle"
                 fill={color} fontSize="7" fontWeight="800" letterSpacing="0.1em"
                 fontFamily="monospace"
@@ -1458,16 +1462,17 @@ const NeuralConnector = () => {
  * Used between Methodology and CTA sections. Represents mastery achieved across 5 dimensions.
  */
 const OrbitDecoration = () => {
+  const { t } = useLanguage()
   const CX = 240, CY = 120
   const MAX_R = 90
 
   // 5 dimensions for the radar chart
   const dimensions = [
-    { label: "RETENTION", value: 94, color: "#3B82F6" },
-    { label: "SPEED",     value: 88, color: "#10B981" },
-    { label: "RECALL",    value: 98, color: "#A78BFA" },
-    { label: "FOCUS",     value: 85, color: "#FBBF24" },
-    { label: "CLARITY",   value: 92, color: "#EF4444" },
+    { label: t('landing.radar.retention'), value: 94, color: "#3B82F6" },
+    { label: t('landing.radar.speed'),     value: 88, color: "#10B981" },
+    { label: t('landing.radar.recall'),    value: 98, color: "#A78BFA" },
+    { label: t('landing.radar.focus'),     value: 85, color: "#FBBF24" },
+    { label: t('landing.radar.clarity'),   value: 92, color: "#EF4444" },
   ]
 
   // Helper to get coordinates for a given radius and angle index (0-4)
@@ -1493,9 +1498,9 @@ const OrbitDecoration = () => {
 
   return (
     <div className="w-full py-10 flex flex-col items-center overflow-hidden relative">
-      <div className="relative w-full max-w-3xl mx-auto bg-[#1C1C1E] rounded-2xl border border-[#2D2D2F] p-6 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden">
+      <div className="relative w-full max-w-3xl mx-auto bg-[var(--bg-secondary)] rounded-2xl border border-[var(--border-primary)] p-6 shadow-[var(--svg-shadow)] overflow-hidden">
         {/* Background Grid */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+        <div className="absolute inset-0 opacity-[var(--grid-line-opacity,0.03)]" style={{ backgroundImage: 'radial-gradient(var(--text-primary) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
         
         {/* Ambient Glows */}
         <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-[#3B82F6] rounded-full blur-[100px] opacity-10 -translate-x-1/2 -translate-y-1/2" />
@@ -1521,7 +1526,7 @@ const OrbitDecoration = () => {
               key={`grid-${i}`}
               d={buildPentagon(MAX_R * scale)}
               fill="none"
-              stroke="#2D2D2F"
+              stroke="var(--border-primary)"
               strokeWidth="1"
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -1538,7 +1543,7 @@ const OrbitDecoration = () => {
               <motion.line
                 key={`axis-${i}`}
                 x1={CX} y1={CY} x2={p.x} y2={p.y}
-                stroke="#2D2D2F" strokeWidth="1" strokeDasharray="4 4"
+                stroke="var(--border-primary)" strokeWidth="1" strokeDasharray="4 4"
                 initial={{ pathLength: 0 }}
                 whileInView={{ pathLength: 1 }}
                 viewport={{ once: true }}
@@ -1569,7 +1574,7 @@ const OrbitDecoration = () => {
               <motion.circle
                 key={`pt-${i}`}
                 cx={p.x} cy={p.y} r="4"
-                fill="#121212" stroke={d.color} strokeWidth="2"
+                fill="var(--bg-primary)" stroke={d.color} strokeWidth="2"
                 filter="url(#radar-glow)"
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
@@ -1601,7 +1606,7 @@ const OrbitDecoration = () => {
                 <text x={p.x} y={p.y - 6} textAnchor={anchor as "start" | "middle" | "end"} fill={d.color} fontSize="14" fontWeight="900" fontFamily="monospace" filter="url(#radar-glow)">
                   {d.value}%
                 </text>
-                <text x={p.x} y={p.y + 8} textAnchor={anchor as "start" | "middle" | "end"} fill="#8B949E" fontSize="9" fontWeight="700" letterSpacing="0.15em" fontFamily="monospace">
+                <text x={p.x} y={p.y + 8} textAnchor={anchor as "start" | "middle" | "end"} fill="var(--text-tertiary)" fontSize="9" fontWeight="700" letterSpacing="0.15em" fontFamily="monospace">
                   {d.label}
                 </text>
               </motion.g>
@@ -1628,6 +1633,7 @@ const OrbitDecoration = () => {
 
 export default function LandingPage() {
   const { t, language } = useLanguage()
+  const { isDark } = useTheme()
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -1639,14 +1645,14 @@ export default function LandingPage() {
   const isHeroInView = useInView(heroRef, { once: true })
 
   return (
-    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen bg-[#121212] text-white antialiased overflow-x-hidden selection:bg-[#3B82F6]/30`}>
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased overflow-x-hidden selection:bg-[#3B82F6]/30`}>
 
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3B82F6] via-[#FBBF24] to-[#EF4444] origin-left z-50"
         style={{ scaleX }}
       />
 
-      <nav className="fixed top-0 w-full z-40 border-b border-[#262626] bg-[#121212]/95 backdrop-blur-xl">
+      <nav className="fixed top-0 w-full z-40 border-b border-[var(--border-secondary)] bg-[var(--bg-primary-95)] backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 h-[64px] flex items-center justify-between">
           <motion.div
             className="flex items-center gap-3"
@@ -1666,7 +1672,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <Link href="/login" className="hidden sm:block text-[#6B7280] hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
+            <Link href="/login" className="hidden sm:block text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs font-bold uppercase tracking-widest transition-colors">
               {t('landing.nav.signIn')}
             </Link>
             <Link href="/register" className="bg-[#3B82F6] text-white px-5 py-2.5 rounded-[12px] text-sm font-bold uppercase tracking-widest hover:bg-[#1D4ED8] transition-all">
@@ -1677,7 +1683,7 @@ export default function LandingPage() {
       </nav>
 
       {/* HERO SECTION */}
-      <section ref={heroRef} className="relative pt-[140px] pb-[80px] px-4 overflow-hidden flex items-center justify-center min-h-[90vh] bg-[#121212]">
+      <section ref={heroRef} className="relative pt-[140px] pb-[80px] px-4 overflow-hidden flex items-center justify-center min-h-[90vh] bg-[var(--bg-primary)]">
         <div className="max-w-5xl mx-auto relative z-10 w-full">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -1687,7 +1693,7 @@ export default function LandingPage() {
               className={`text-center ${language === 'ar' ? 'lg:text-right' : 'lg:text-left'}`}
             >
               <div className={`mb-6 flex items-center justify-center ${language === 'ar' ? 'lg:justify-end' : 'lg:justify-start'}`}>
-                <FlotterLogo isDark={true} height={78} />
+                <FlotterLogo isDark={isDark} height={78} />
               </div>
 
               <motion.div
@@ -1710,9 +1716,9 @@ export default function LandingPage() {
                 <span className="text-[#3B82F6]">{t('landing.hero.title2')}</span>
               </h1>
 
-              <p className="text-base md:text-lg text-[#9CA3AF] mb-10 max-w-sm mx-auto lg:mx-0 leading-relaxed">
+              <p className="text-base md:text-lg text-[var(--text-secondary)] mb-10 max-w-sm mx-auto lg:mx-0 leading-relaxed">
                 {t('landing.hero.desc1')}
-                <span className="text-white font-bold uppercase text-base"> {t('landing.hero.desc2')}</span>
+                <span className="text-[var(--text-primary)] font-bold uppercase text-base"> {t('landing.hero.desc2')}</span>
                 {t('landing.hero.desc3')}
               </p>
 
@@ -1726,7 +1732,7 @@ export default function LandingPage() {
                   </span>
                 </Link>
 
-                <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-[12px] border border-[#262626] text-[#6B7280] hover:text-white hover:bg-[#1A1A1A] transition-all text-sm font-bold uppercase tracking-widest">
+                <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-[12px] border border-[var(--border-secondary)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all text-sm font-bold uppercase tracking-widest">
                   <Play size={14} fill="#FACC15" className="text-[#FACC15]" />
                   {t('landing.hero.watchDemo')}
                 </button>
@@ -1748,7 +1754,7 @@ export default function LandingPage() {
       </section>
 
       {/* STATS */}
-      <section className="border-y border-[#262626] bg-[#121212]">
+      <section className="border-y border-[var(--border-secondary)] bg-[var(--bg-primary)]">
         <div className="max-w-5xl mx-auto px-4 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
@@ -1759,7 +1765,7 @@ export default function LandingPage() {
             ].map((stat, i) => (
               <motion.div
                 key={i}
-                className="bg-[#1C1C1E] p-4 rounded-[12px] border border-[#2D2D2F]"
+                className="bg-[var(--bg-secondary)] p-4 rounded-[12px] border border-[var(--border-primary)]"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
@@ -1768,8 +1774,8 @@ export default function LandingPage() {
                 <div className="text-2xl font-bold mb-1" style={{ color: stat.color }}>
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 </div>
-                <div className="text-white text-sm font-bold mb-1">{stat.label}</div>
-                <div className="text-[#6B7280] text-[10px] uppercase tracking-wider font-bold">{stat.source}</div>
+                <div className="text-[var(--text-primary)] text-sm font-bold mb-1">{stat.label}</div>
+                <div className="text-[var(--text-tertiary)] text-[10px] uppercase tracking-wider font-bold">{stat.source}</div>
               </motion.div>
             ))}
           </div>
@@ -1779,12 +1785,12 @@ export default function LandingPage() {
       
 
       {/* PROBLEM SECTION */}
-      <section className="py-24 px-4 bg-[#121212]">
+      <section className="py-24 px-4 bg-[var(--bg-primary)]">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-xs font-bold uppercase text-[#EF4444] tracking-widest mb-3">{t('landing.problem.challenge')}</h2>
-            <h3 className="text-3xl font-bold text-white">{t('landing.problem.title')}</h3>
-            <p className="text-[#9CA3AF] text-base mt-2">{t('landing.problem.subtitle')}</p>
+            <h3 className="text-3xl font-bold text-[var(--text-primary)]">{t('landing.problem.title')}</h3>
+            <p className="text-[var(--text-secondary)] text-base mt-2">{t('landing.problem.subtitle')}</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -1810,7 +1816,7 @@ export default function LandingPage() {
             ].map((item, i) => (
               <motion.div
                 key={i}
-                className="rounded-xl p-5 bg-[#1C1C1E] border border-[#2D2D2F] flex flex-row items-start gap-4 relative overflow-hidden"
+                className="rounded-xl p-5 bg-[var(--bg-secondary)] border border-[var(--border-primary)] flex flex-row items-start gap-4 relative overflow-hidden"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -1821,8 +1827,8 @@ export default function LandingPage() {
                   <X className="text-[#EF4444]" size={14} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-bold text-white mb-1">{item.title}</h3>
-                  <p className="text-[#9CA3AF] text-xs leading-relaxed">{item.desc}</p>
+                  <h3 className="text-sm font-bold text-[var(--text-primary)] mb-1">{item.title}</h3>
+                  <p className="text-[var(--text-secondary)] text-xs leading-relaxed">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -1832,14 +1838,14 @@ export default function LandingPage() {
       </section>
 
       {/* Decorator: Problem → Methodology */}
-      <div className="bg-[#121212]">
+      <div className="bg-[var(--bg-primary)]">
         <div className="max-w-3xl mx-auto">
           <NeuralConnector />
         </div>
       </div>
 
       {/* METHODOLOGY SECTION */}
-      <section className="py-20 px-4 relative bg-[#121212]">
+      <section className="py-20 px-4 relative bg-[var(--bg-primary)]">
         <div className="max-w-3xl mx-auto relative z-10">
 
           {/* Section header */}
@@ -1855,7 +1861,7 @@ export default function LandingPage() {
                 {t('landing.methodology.title')}
               </p>
             </div>
-            <h2 className="text-3xl md:text-4xl font-black leading-[1.1] mb-3 text-white tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-black leading-[1.1] mb-3 text-[var(--text-primary)] tracking-tight">
               {t('landing.methodology.heading1')}<span className="text-[#3B82F6]">Flotter</span>{t('landing.methodology.heading2')}
             </h2>
           </motion.div>
@@ -1881,8 +1887,8 @@ export default function LandingPage() {
               <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#3B82F6] text-white text-xs font-bold flex-shrink-0">
                 01
               </div>
-              <h3 className="text-xl font-bold text-white">{t('landing.engine.title')}</h3>
-              <div className="flex-1 h-px bg-[#2A2A2A]" />
+              <h3 className="text-xl font-bold text-[var(--text-primary)]">{t('landing.engine.title')}</h3>
+              <div className="flex-1 h-px bg-[var(--border-primary)]" />
             </motion.div>
 
             <div className="flex flex-col gap-4">
@@ -1893,34 +1899,34 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
               >
-                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] overflow-hidden relative">
+                <div className="rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-primary)] overflow-hidden relative">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#3B82F6] to-transparent opacity-50" />
                   <div className="p-6">
                     <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#3B82F6] mb-4 inline-block">
                       {t('landing.engine.badge')}
                     </span>
-                    <h4 className="text-xl font-bold mb-2 text-white">{t('landing.engine.subtitle')}</h4>
-                    <p className="text-sm leading-relaxed text-[#9CA3AF]">{t('landing.engine.desc')}</p>
+                    <h4 className="text-xl font-bold mb-2 text-[var(--text-primary)]">{t('landing.engine.subtitle')}</h4>
+                    <p className="text-sm leading-relaxed text-[var(--text-secondary)]">{t('landing.engine.desc')}</p>
                   </div>
 
                   {/* KPI Stats */}
-                  <div className="grid grid-cols-3 border-t border-[#2D2D2F] bg-[#121212]/50">
+                  <div className="grid grid-cols-3 border-t border-[var(--border-primary)] bg-[var(--bg-primary-50)]">
                     {[
                       { val: t('landing.engine.kpi1'), label: t('landing.engine.kpi1Label'), sub: t('landing.engine.kpi1Sub'), color: '#3B82F6' },
                       { val: t('landing.engine.kpi2'), label: t('landing.engine.kpi2Label'), sub: t('landing.engine.kpi2Sub'), color: '#FBBF24' },
                       { val: t('landing.engine.kpi3'), label: t('landing.engine.kpi3Label'), sub: t('landing.engine.kpi3Sub'), color: '#10B981' },
                     ].map((kpi, i) => (
-                      <div key={i} className={`p-4 text-center ${i < 2 ? 'border-r border-[#2D2D2F]' : ''}`}>
+                      <div key={i} className={`p-4 text-center ${i < 2 ? 'border-r border-[var(--border-primary)]' : ''}`}>
                         <div className="text-2xl font-bold" style={{ color: kpi.color, textShadow: `0 0 10px ${kpi.color}40` }}>{kpi.val}</div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF] mt-1">{kpi.label}</div>
-                        <div className="text-[10px] text-[#6B7280] mt-0.5">{kpi.sub}</div>
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mt-1">{kpi.label}</div>
+                        <div className="text-[10px] text-[var(--text-tertiary)] mt-0.5">{kpi.sub}</div>
                       </div>
                     ))}
                   </div>
 
                   {/* Generation Pipeline */}
-                  <div className="p-6 border-t border-[#2D2D2F]">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-[#6B7280]">{t('landing.engine.processTitle')}</p>
+                  <div className="p-6 border-t border-[var(--border-primary)]">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-[var(--text-tertiary)]">{t('landing.engine.processTitle')}</p>
                     <AIGenerationVisualizer />
                   </div>
                 </div>
@@ -1933,10 +1939,10 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.15 }}
               >
-                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] p-6 relative overflow-hidden">
+                <div className="rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-primary)] p-6 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-[#10B981] blur-[100px] opacity-10 pointer-events-none" />
-                  <h4 className="text-lg font-bold mb-1 text-white relative z-10">{t('landing.engine.tetradTitle')}</h4>
-                  <p className="text-sm text-[#9CA3AF] mb-5 leading-relaxed relative z-10">{t('landing.engine.tetradDesc')}</p>
+                  <h4 className="text-lg font-bold mb-1 text-[var(--text-primary)] relative z-10">{t('landing.engine.tetradTitle')}</h4>
+                  <p className="text-sm text-[var(--text-secondary)] mb-5 leading-relaxed relative z-10">{t('landing.engine.tetradDesc')}</p>
 
                   <div className="grid grid-cols-2 gap-3 relative z-10">
                     {[
@@ -1947,7 +1953,7 @@ export default function LandingPage() {
                     ].map((trace, i) => (
                       <motion.div
                         key={i}
-                        className="rounded-xl p-4 border bg-[#121212]"
+                        className="rounded-xl p-4 border bg-[var(--bg-primary)]"
                         style={{
                           borderColor: `${trace.color}30`,
                           boxShadow: `inset 0 0 20px ${trace.color}05`
@@ -1963,7 +1969,7 @@ export default function LandingPage() {
                             {trace.title}
                           </span>
                         </div>
-                        <p className="text-xs text-[#9CA3AF] leading-relaxed">{trace.desc}</p>
+                        <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{trace.desc}</p>
                       </motion.div>
                     ))}
                   </div>
@@ -1977,9 +1983,9 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
               >
-                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] p-6 relative overflow-hidden">
+                <div className="rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-primary)] p-6 relative overflow-hidden">
                   <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#FBBF24] blur-[100px] opacity-10 pointer-events-none" />
-                  <h4 className="text-lg font-bold mb-5 text-white relative z-10">{t('landing.engine.scienceTitle')}</h4>
+                  <h4 className="text-lg font-bold mb-5 text-[var(--text-primary)] relative z-10">{t('landing.engine.scienceTitle')}</h4>
 
                   <div className="grid grid-cols-2 gap-x-6 gap-y-4 relative z-10">
                     {[
@@ -2005,16 +2011,16 @@ export default function LandingPage() {
                           <p.icon size={13} style={{ color: p.color, filter: `drop-shadow(0 0 4px ${p.color}80)` }} />
                         </div>
                         <div>
-                          <span className="text-xs font-bold text-white block mb-0.5">{p.title}</span>
-                          <p className="text-[10px] text-[#9CA3AF] leading-relaxed">{p.desc}</p>
+                          <span className="text-xs font-bold text-[var(--text-primary)] block mb-0.5">{p.title}</span>
+                          <p className="text-[10px] text-[var(--text-secondary)] leading-relaxed">{p.desc}</p>
                         </div>
                       </motion.div>
                     ))}
                   </div>
 
                   {/* Bottom Line Quote */}
-                  <div className="mt-6 pt-5 border-t border-[#2D2D2F] text-center relative z-10">
-                    <p className="text-sm font-medium text-[#9CA3AF] italic leading-relaxed">
+                  <div className="mt-6 pt-5 border-t border-[var(--border-primary)] text-center relative z-10">
+                    <p className="text-sm font-medium text-[var(--text-secondary)] italic leading-relaxed">
                       &ldquo;{t('landing.engine.bottomLine')}&rdquo;
                     </p>
                   </div>
@@ -2024,7 +2030,7 @@ export default function LandingPage() {
           </div>
 
           {/* Decorator: Engine → ACASRS */}
-          <div className="relative z-10 bg-[#121212] py-4">
+          <div className="relative z-10 bg-[var(--bg-primary)] py-4">
             <PulseLine color="#3B82F6" />
           </div>
 
@@ -2042,8 +2048,8 @@ export default function LandingPage() {
               <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#3B82F6] text-white text-xs font-bold flex-shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
                 02
               </div>
-              <h3 className="text-xl font-bold text-white">{t('landing.acasrs2.title')}</h3>
-              <div className="flex-1 h-px bg-[#2D2D2F]" />
+              <h3 className="text-xl font-bold text-[var(--text-primary)]">{t('landing.acasrs2.title')}</h3>
+              <div className="flex-1 h-px bg-[var(--border-primary)]" />
             </motion.div>
 
             <div className="flex flex-col gap-4">
@@ -2054,20 +2060,20 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
               >
-                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] overflow-hidden relative">
+                <div className="rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-primary)] overflow-hidden relative">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#10B981] to-transparent opacity-50" />
                   <div className="p-6">
                     <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#10B981] mb-4 inline-block">
                       {t('landing.acasrs2.badge')}
                     </span>
-                    <h4 className="text-xl font-bold mb-2 text-white">{t('landing.acasrs2.subtitle')}</h4>
-                    <p className="text-sm mb-5 leading-relaxed text-[#9CA3AF]">{t('landing.acasrs2.desc')}</p>
+                    <h4 className="text-xl font-bold mb-2 text-[var(--text-primary)]">{t('landing.acasrs2.subtitle')}</h4>
+                    <p className="text-sm mb-5 leading-relaxed text-[var(--text-secondary)]">{t('landing.acasrs2.desc')}</p>
 
                     {/* Forgetting Curve Highlight */}
                     <div className="rounded-xl p-4 border border-[#EF4444]/30 bg-[#EF4444]/5 relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-16 h-16 bg-[#EF4444] blur-[40px] opacity-20 pointer-events-none" />
                       <h5 className="text-sm font-bold text-[#EF4444] mb-1.5 relative z-10">{t('landing.acasrs2.curveTitle')}</h5>
-                      <p className="text-xs text-[#9CA3AF] leading-relaxed relative z-10">{t('landing.acasrs2.curveDesc')}</p>
+                      <p className="text-xs text-[var(--text-secondary)] leading-relaxed relative z-10">{t('landing.acasrs2.curveDesc')}</p>
                     </div>
                   </div>
                 </div>
@@ -2080,9 +2086,9 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.15 }}
               >
-                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] p-6 relative overflow-hidden">
+                <div className="rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-primary)] p-6 relative overflow-hidden">
                   <div className="absolute top-1/2 right-0 w-32 h-32 bg-[#3B82F6] blur-[100px] opacity-10 pointer-events-none -translate-y-1/2" />
-                  <h4 className="text-lg font-bold mb-5 text-white relative z-10">{t('landing.acasrs2.phasesTitle')}</h4>
+                  <h4 className="text-lg font-bold mb-5 text-[var(--text-primary)] relative z-10">{t('landing.acasrs2.phasesTitle')}</h4>
 
                   <div className="space-y-4 relative z-10">
                     {[
@@ -2101,27 +2107,27 @@ export default function LandingPage() {
                         {/* Timeline connector */}
                         <div className="flex flex-col items-center flex-shrink-0">
                           <div
-                            className="w-10 h-10 rounded-xl flex items-center justify-center border bg-[#121212]"
+                            className="w-10 h-10 rounded-xl flex items-center justify-center border bg-[var(--bg-primary)]"
                             style={{ borderColor: `${p.color}40`, boxShadow: `0 0 10px ${p.color}20` }}
                           >
                             <p.icon size={18} style={{ color: p.color, filter: `drop-shadow(0 0 4px ${p.color}80)` }} />
                           </div>
-                          {i < 2 && <div className="w-px h-6 bg-[#2D2D2F] mt-1" />}
+                          {i < 2 && <div className="w-px h-6 bg-[var(--border-primary)] mt-1" />}
                         </div>
                         <div className="flex-1 pb-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm font-bold text-white">{p.phase}</span>
+                            <span className="text-sm font-bold text-[var(--text-primary)]">{p.phase}</span>
                             <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border" style={{ color: p.color, backgroundColor: `${p.color}10`, borderColor: `${p.color}30` }}>{p.time}</span>
                           </div>
-                          <p className="text-xs text-[#9CA3AF] leading-relaxed">{p.desc}</p>
+                          <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{p.desc}</p>
                         </div>
                       </motion.div>
                     ))}
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-[#2D2D2F] relative z-10">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-[#6B7280]">
-                      {language === 'ar' ? 'معاينة مراحل الخوارزمية' : 'Algorithm Phase Preview'}
+                  <div className="mt-6 pt-6 border-t border-[var(--border-primary)] relative z-10">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-[var(--text-tertiary)]">
+                      {t('landing.decorator.algorithmPreview')}
                     </p>
                     <ACASRSVisualizer />
                   </div>
@@ -2135,9 +2141,9 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
               >
-                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] p-6 relative overflow-hidden">
+                <div className="rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-primary)] p-6 relative overflow-hidden">
                   <div className="absolute bottom-0 left-1/2 w-40 h-40 bg-[#A78BFA] blur-[120px] opacity-10 pointer-events-none -translate-x-1/2" />
-                  <h4 className="text-lg font-bold mb-5 text-white relative z-10">{t('landing.acasrs2.vsTitle')}</h4>
+                  <h4 className="text-lg font-bold mb-5 text-[var(--text-primary)] relative z-10">{t('landing.acasrs2.vsTitle')}</h4>
 
                   {/* Table Header */}
                   <div className="grid grid-cols-3 gap-2 mb-3">
@@ -2168,13 +2174,13 @@ export default function LandingPage() {
                         viewport={{ once: true }}
                         transition={{ delay: 0.06 * i }}
                       >
-                        <div className="rounded-lg p-3 flex items-center border border-[#222222] bg-[#1A1A1A]">
-                          <span className="text-[10px] font-bold text-white">{row.dim}</span>
+                        <div className="rounded-lg p-3 flex items-center border border-[var(--border-secondary)] bg-[var(--bg-tertiary)]">
+                          <span className="text-[10px] font-bold text-[var(--text-primary)]">{row.dim}</span>
                         </div>
-                        <div className="rounded-lg p-3 flex items-center border border-[#EF4444]/12 bg-[#1A1A1A]">
+                        <div className="rounded-lg p-3 flex items-center border border-[#EF4444]/12 bg-[var(--bg-tertiary)]">
                           <div className="flex items-start gap-1.5">
                             <X size={10} className="text-[#EF4444] mt-0.5 flex-shrink-0" />
-                            <span className="text-[10px] text-[#9CA3AF] leading-snug">{row.legacy}</span>
+                            <span className="text-[10px] text-[var(--text-secondary)] leading-snug">{row.legacy}</span>
                           </div>
                         </div>
                         <div className="rounded-lg p-3 flex items-center border border-[#10B981]/20">
@@ -2196,10 +2202,10 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.25 }}
               >
-                <div className="rounded-2xl bg-[#1C1C1E] border border-[#2D2D2F] p-6 relative overflow-hidden">
+                <div className="rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-primary)] p-6 relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-32 h-32 bg-[#FBBF24] blur-[100px] opacity-10 pointer-events-none" />
-                  <h4 className="text-lg font-bold mb-1 text-white relative z-10">{t('landing.acasrs2.signals')}</h4>
-                  <p className="text-sm text-[#9CA3AF] mb-5 leading-relaxed relative z-10">{t('landing.acasrs2.signalsDesc')}</p>
+                  <h4 className="text-lg font-bold mb-1 text-[var(--text-primary)] relative z-10">{t('landing.acasrs2.signals')}</h4>
+                  <p className="text-sm text-[var(--text-secondary)] mb-5 leading-relaxed relative z-10">{t('landing.acasrs2.signalsDesc')}</p>
 
                   <div className="space-y-3 relative z-10">
                     {[
@@ -2209,7 +2215,7 @@ export default function LandingPage() {
                     ].map((signal, i) => (
                       <motion.div
                         key={i}
-                        className="flex items-start gap-3 rounded-xl p-4 bg-[#121212] border border-[#2D2D2F]"
+                        className="flex items-start gap-3 rounded-xl p-4 bg-[var(--bg-primary)] border border-[var(--border-primary)]"
                         initial={{ opacity: 0, y: 6 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -2222,8 +2228,8 @@ export default function LandingPage() {
                           <signal.icon size={16} style={{ color: signal.color, filter: `drop-shadow(0 0 4px ${signal.color}80)` }} />
                         </div>
                         <div>
-                          <span className="text-sm font-bold text-white block mb-0.5">{signal.title}</span>
-                          <span className="text-xs text-[#9CA3AF] leading-relaxed">{signal.desc}</span>
+                          <span className="text-sm font-bold text-[var(--text-primary)] block mb-0.5">{signal.title}</span>
+                          <span className="text-xs text-[var(--text-secondary)] leading-relaxed">{signal.desc}</span>
                         </div>
                       </motion.div>
                     ))}
@@ -2237,17 +2243,17 @@ export default function LandingPage() {
       </section>
 
       {/* Decorator: Methodology → CTA */}
-      <div className="bg-[#121212]">
+      <div className="bg-[var(--bg-primary)]">
         <div className="max-w-3xl mx-auto">
           <OrbitDecoration />
         </div>
       </div>
 
       {/* FINAL CTA */}
-      <section className={`py-20 px-4 bg-[#121212] relative overflow-hidden`}>
+      <section className={`py-20 px-4 bg-[var(--bg-primary)] relative overflow-hidden`}>
         {/* Background Grid & Glow */}
         <div className="absolute inset-0 pointer-events-none" style={{
-          backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0)',
+          backgroundImage: 'radial-gradient(circle at 2px 2px, var(--grid-dot-color) 1px, transparent 0)',
           backgroundSize: '20px 20px'
         }} />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#3B82F6] blur-[150px] opacity-10 pointer-events-none" />
@@ -2258,11 +2264,11 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className={`text-3xl font-bold mb-3 leading-tight text-white`}>
+            <h2 className={`text-3xl font-bold mb-3 leading-tight text-[var(--text-primary)]`}>
               {t('landing.cta.upgrade')}
               <span className="text-[#3B82F6]" style={{ textShadow: '0 0 20px rgba(59,130,246,0.5)' }}> {t('landing.cta.pathways')}</span>
             </h2>
-            <p className="text-sm text-[#9CA3AF] mb-8 max-w-sm mx-auto leading-relaxed">
+            <p className="text-sm text-[var(--text-secondary)] mb-8 max-w-sm mx-auto leading-relaxed">
               {t('landing.cta.join')}
             </p>
 
@@ -2299,7 +2305,7 @@ export default function LandingPage() {
                   </span>
                 </Link>
               </div>
-              <p className="text-xs font-medium tracking-wider text-[#6B7280]">
+              <p className="text-xs font-medium tracking-wider text-[var(--text-tertiary)]">
                 {t('landing.cta.noCreditCard')}
               </p>
             </div>
@@ -2308,7 +2314,7 @@ export default function LandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className={`border-t border-[#2D2D2F] py-10 px-4 bg-[#121212] relative overflow-hidden`}>
+      <footer className={`border-t border-[var(--border-primary)] py-10 px-4 bg-[var(--bg-primary)] relative overflow-hidden`}>
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-32 bg-[#3B82F6] blur-[150px] opacity-5 pointer-events-none" />
         <div className="max-w-lg mx-auto flex flex-col items-center gap-5 relative z-10">
           <div className="flex items-center gap-3">
@@ -2328,27 +2334,27 @@ export default function LandingPage() {
                   <path d="M47.3989 29.2772C48.7907 29.0168 50.0583 28.9062 51.2084 29.0937C52.5778 29.317 53.4728 29.9077 54.0959 30.4637C54.1693 30.5292 54.23 30.5839 54.28 30.6291C54.3236 30.6308 54.3745 30.6319 54.4334 30.6319C56.5042 30.6319 58.7893 30.9109 60.6764 31.5213C61.6045 31.8216 62.6522 32.2702 63.5342 32.9681C64.1496 33.4551 64.8364 34.1968 65.2063 35.1939C65.3732 35.2193 65.5576 35.2407 65.755 35.2571C66.1333 35.2885 66.4899 35.2965 66.7541 35.2965C67.8924 35.2965 68.7663 35.7585 69.2418 36.0639C69.7753 36.4067 70.2279 36.8255 70.5978 37.2293C71.3441 38.0439 72.0213 39.0904 72.5741 40.2554C73.6851 42.5972 74.4668 45.7871 74.0554 49.3383C73.7404 52.058 72.4081 54.5899 69.5137 55.8016C67.7866 56.5246 65.8466 56.615 63.8733 56.3525C63.3428 57.0189 62.701 57.6088 61.9507 58.1094C60.3093 59.2043 58.3396 59.7481 56.2761 59.9533C54.9839 60.0817 53.5676 59.968 52.2426 59.3263C50.8681 58.6606 49.9155 57.583 49.3354 56.3471C48.6953 54.9834 48.4886 53.3922 48.5406 51.7138C45.3686 51.0112 42.6441 49.8467 40.6909 47.9939C37.485 44.9531 37.5667 40.348 38.7594 35.8853C38.7706 35.8433 38.7827 35.8016 38.7955 35.7601C39.9878 31.9239 43.46 30.014 47.3989 29.2772ZM49.7422 35.6779C49.5298 35.6938 49.1993 35.7325 48.7152 35.8231C46.1511 36.3027 45.6035 37.1304 45.4331 37.6254C44.4299 41.4294 45.0988 42.7813 45.4992 43.2015L45.5374 43.2395C46.5271 44.1783 48.6742 45.1656 52.7531 45.6601C53.6909 45.7738 54.5394 46.253 55.1013 46.986C55.6632 47.7191 55.8893 48.6422 55.7271 49.5403C55.5066 50.7608 55.4294 51.7113 55.4486 52.4258C55.4598 52.842 55.5027 53.1316 55.5462 53.3222C55.5532 53.3216 55.5603 53.3212 55.5675 53.3205C56.8879 53.1892 57.6269 52.8866 58.0187 52.6252C58.3454 52.4073 58.5576 52.1412 58.6908 51.6775C58.9362 50.8233 59.5241 50.0986 60.3245 49.6634C61.125 49.2282 62.0722 49.1184 62.9568 49.3582C65.3565 50.0087 66.4347 49.8217 66.7618 49.6848C66.8513 49.6473 66.876 49.6224 66.9148 49.5635C66.9769 49.469 67.1163 49.1955 67.1855 48.598C67.4403 46.3988 66.9477 44.4198 66.2885 43.0303C66.0628 42.5546 65.8372 42.1899 65.6512 41.9343C64.8894 41.8918 63.9352 41.7913 63.0142 41.5576C62.294 41.3748 61.3003 41.0406 60.4224 40.3661C59.6966 39.8085 59.0302 38.9896 58.7312 37.9315C58.658 37.9038 58.5741 37.8742 58.4785 37.8433C57.4713 37.5175 55.9623 37.2998 54.4334 37.2998C53.1457 37.2998 51.9751 37.0896 50.9278 36.5251C50.4238 36.2535 50.0522 35.9547 49.7926 35.7234C49.7754 35.7082 49.7587 35.6929 49.7422 35.6779Z" fill="#082032" />
                 </svg>
               </div>
-              <span className="font-bold text-lg tracking-tight text-white">Flotter</span>
+              <span className="font-bold text-lg tracking-tight text-[var(--text-primary)]">Flotter</span>
             </Link>
           </div>
 
-          <div className={`flex gap-6 ${language === 'ar' ? 'text-xs font-bold uppercase tracking-widest' : 'text-sm font-medium'} text-[#9CA3AF]`}>
-            <Link href="/legal/mentions" className={`hover:text-white transition-colors whitespace-nowrap`}>{t('globalFooter.legalNotice')}</Link>
-            <Link href="/legal/privacy" className={`hover:text-white transition-colors whitespace-nowrap`}>{t('globalFooter.privacyPolicy')}</Link>
-            <Link href="/legal/terms" className={`hover:text-white transition-colors whitespace-nowrap`}>{t('globalFooter.termsOfService')}</Link>
+          <div className={`flex gap-6 ${language === 'ar' ? 'text-xs font-bold uppercase tracking-widest' : 'text-sm font-medium'} text-[var(--text-secondary)]`}>
+            <Link href="/legal/mentions" className={`hover:text-[var(--text-primary)] transition-colors whitespace-nowrap`}>{t('globalFooter.legalNotice')}</Link>
+            <Link href="/legal/privacy" className={`hover:text-[var(--text-primary)] transition-colors whitespace-nowrap`}>{t('globalFooter.privacyPolicy')}</Link>
+            <Link href="/legal/terms" className={`hover:text-[var(--text-primary)] transition-colors whitespace-nowrap`}>{t('globalFooter.termsOfService')}</Link>
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <div className="flex items-center gap-2 text-[#6B7280]">
+            <div className="flex items-center gap-2 text-[var(--text-tertiary)]">
               <svg width="14" height="14" viewBox="164 107 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                <path d="M188.866 120.889C188.866 118.834 188.149 116.128 186.501 113.968C184.897 111.866 182.386 110.239 178.611 110.239C175.978 110.239 174.103 110.847 172.813 111.876C171.542 112.89 170.65 114.462 170.254 116.797C170.168 117.299 169.859 117.73 169.42 117.961C168.145 118.631 167.12 119.185 166.341 119.628C166.596 119.847 166.853 120.114 167.063 120.437C167.531 121.157 167.72 122.097 167.337 123.1C167.137 123.626 166.848 124.232 166.597 124.773C166.331 125.347 166.082 125.9 165.89 126.431C165.695 126.971 165.592 127.402 165.573 127.729C165.555 128.041 165.617 128.145 165.637 128.174C165.672 128.224 165.755 128.318 166.054 128.42C166.383 128.532 166.804 128.598 167.421 128.682C168.497 128.828 170.263 129.004 171.662 130.152L171.738 130.215C173.342 131.563 174.454 133.512 175.164 135.905C175.418 136.76 174.953 137.666 174.125 137.928C173.298 138.191 172.421 137.71 172.168 136.855C171.582 134.881 170.75 133.559 169.76 132.728L169.713 132.688C169.121 132.203 168.309 132.069 167.013 131.893C166.443 131.816 165.729 131.719 165.074 131.496C164.389 131.263 163.639 130.853 163.089 130.061L163.089 130.061C162.525 129.247 162.397 128.332 162.444 127.532C162.491 126.747 162.71 125.973 162.953 125.299C163.199 124.617 163.504 123.948 163.771 123.373C164.003 122.871 164.195 122.465 164.338 122.12C164.259 122.053 164.156 121.978 164.024 121.893C163.885 121.803 163.737 121.717 163.57 121.621C163.421 121.536 163.223 121.423 163.054 121.313C162.923 121.229 162.612 121.025 162.374 120.707C162.242 120.53 162.046 120.207 162.007 119.755C161.964 119.253 162.133 118.821 162.366 118.514L162.366 118.514C162.611 118.19 162.981 117.931 163.201 117.78C163.49 117.583 163.861 117.353 164.301 117.096C165.053 116.654 166.064 116.098 167.324 115.43C167.896 112.869 169.058 110.779 170.897 109.312C172.907 107.709 175.537 107 178.611 107C183.396 107 186.796 109.123 188.963 111.963C191.086 114.745 192 118.174 192 120.889C192 126.067 188.126 131.373 182.568 133.134C182.872 133.665 183.395 134.38 184.195 135.292C184.777 135.955 184.729 136.979 184.088 137.58C183.446 138.181 182.455 138.131 181.874 137.468C180.865 136.318 180.083 135.261 179.625 134.319C179.216 133.48 178.792 132.153 179.566 130.989L179.588 130.956C179.822 130.622 180.171 130.392 180.565 130.315C185.51 129.341 188.866 124.821 188.866 120.889Z" fill="#D1D5DB" />
+                <path d="M188.866 120.889C188.866 118.834 188.149 116.128 186.501 113.968C184.897 111.866 182.386 110.239 178.611 110.239C175.978 110.239 174.103 110.847 172.813 111.876C171.542 112.89 170.65 114.462 170.254 116.797C170.168 117.299 169.859 117.73 169.42 117.961C168.145 118.631 167.12 119.185 166.341 119.628C166.596 119.847 166.853 120.114 167.063 120.437C167.531 121.157 167.72 122.097 167.337 123.1C167.137 123.626 166.848 124.232 166.597 124.773C166.331 125.347 166.082 125.9 165.89 126.431C165.695 126.971 165.592 127.402 165.573 127.729C165.555 128.041 165.617 128.145 165.637 128.174C165.672 128.224 165.755 128.318 166.054 128.42C166.383 128.532 166.804 128.598 167.421 128.682C168.497 128.828 170.263 129.004 171.662 130.152L171.738 130.215C173.342 131.563 174.454 133.512 175.164 135.905C175.418 136.76 174.953 137.666 174.125 137.928C173.298 138.191 172.421 137.71 172.168 136.855C171.582 134.881 170.75 133.559 169.76 132.728L169.713 132.688C169.121 132.203 168.309 132.069 167.013 131.893C166.443 131.816 165.729 131.719 165.074 131.496C164.389 131.263 163.639 130.853 163.089 130.061L163.089 130.061C162.525 129.247 162.397 128.332 162.444 127.532C162.491 126.747 162.71 125.973 162.953 125.299C163.199 124.617 163.504 123.948 163.771 123.373C164.003 122.871 164.195 122.465 164.338 122.12C164.259 122.053 164.156 121.978 164.024 121.893C163.885 121.803 163.737 121.717 163.57 121.621C163.421 121.536 163.223 121.423 163.054 121.313C162.923 121.229 162.612 121.025 162.374 120.707C162.242 120.53 162.046 120.207 162.007 119.755C161.964 119.253 162.133 118.821 162.366 118.514L162.366 118.514C162.611 118.19 162.981 117.931 163.201 117.78C163.49 117.583 163.861 117.353 164.301 117.096C165.053 116.654 166.064 116.098 167.324 115.43C167.896 112.869 169.058 110.779 170.897 109.312C172.907 107.709 175.537 107 178.611 107C183.396 107 186.796 109.123 188.963 111.963C191.086 114.745 192 118.174 192 120.889C192 126.067 188.126 131.373 182.568 133.134C182.872 133.665 183.395 134.38 184.195 135.292C184.777 135.955 184.729 136.979 184.088 137.58C183.446 138.181 182.455 138.131 181.874 137.468C180.865 136.318 180.083 135.261 179.625 134.319C179.216 133.48 178.792 132.153 179.566 130.989L179.588 130.956C179.822 130.622 180.171 130.392 180.565 130.315C185.51 129.341 188.866 124.821 188.866 120.889Z" fill="var(--text-secondary)" />
                 <path fillRule="evenodd" clipRule="evenodd" d="M174.245 115.802C173.821 117.538 173.947 118.757 174.624 119.459C175.301 120.161 176.455 120.62 178.086 120.836C177.716 123.076 178.168 124.126 179.44 123.988C180.712 123.85 181.477 123.292 181.733 122.316C183.722 122.905 184.799 122.412 184.966 120.836C185.217 118.473 184.008 116.588 183.513 116.588C183.017 116.588 181.733 116.524 181.733 115.802C181.733 115.079 180.234 114.671 178.88 114.671C177.527 114.671 178.341 113.709 176.483 114.089C175.244 114.342 174.498 114.913 174.245 115.802Z" fill="#FCD34D" />
-                <path d="M175.638 113.107C176.177 113.006 176.668 112.964 177.113 113.036C177.643 113.123 177.989 113.351 178.231 113.567C178.259 113.592 178.283 113.613 178.302 113.631C178.319 113.631 178.339 113.632 178.361 113.632C179.163 113.632 180.047 113.74 180.778 113.976C181.137 114.092 181.543 114.266 181.884 114.536C182.122 114.725 182.388 115.012 182.531 115.398C182.596 115.407 182.667 115.416 182.744 115.422C182.89 115.434 183.028 115.437 183.131 115.437C183.571 115.437 183.91 115.616 184.094 115.734C184.3 115.867 184.475 116.029 184.619 116.186C184.907 116.501 185.17 116.906 185.384 117.357C185.814 118.263 186.116 119.498 185.957 120.873C185.835 121.926 185.319 122.906 184.199 123.375C183.53 123.655 182.779 123.69 182.015 123.588C181.81 123.846 181.562 124.074 181.271 124.268C180.636 124.692 179.873 124.903 179.075 124.982C178.574 125.032 178.026 124.988 177.513 124.739C176.981 124.482 176.612 124.064 176.388 123.586C176.14 123.058 176.06 122.442 176.08 121.792C174.852 121.52 173.798 121.07 173.042 120.352L173.042 120.353C171.801 119.175 171.832 117.393 172.294 115.665C172.298 115.649 172.303 115.633 172.308 115.617C172.769 114.132 174.114 113.393 175.638 113.107ZM176.545 115.585C176.463 115.591 176.335 115.606 176.148 115.641H176.148C175.155 115.827 174.943 116.147 174.877 116.339C174.489 117.811 174.748 118.335 174.903 118.497L174.918 118.512L174.918 118.512C175.301 118.876 176.132 119.258 177.711 119.449C178.074 119.493 178.402 119.679 178.62 119.962C178.837 120.246 178.925 120.603 178.862 120.951C178.777 121.424 178.747 121.791 178.754 122.068C178.759 122.229 178.775 122.341 178.792 122.415C178.795 122.415 178.798 122.415 178.8 122.414C179.311 122.364 179.598 122.246 179.749 122.145C179.876 122.061 179.958 121.958 180.009 121.778C180.104 121.448 180.332 121.167 180.642 120.999C180.952 120.83 181.318 120.788 181.661 120.881C182.59 121.132 183.007 121.06 183.134 121.007C183.168 120.993 183.178 120.983 183.193 120.96C183.217 120.923 183.271 120.818 183.298 120.586V120.586C183.396 119.735 183.206 118.969 182.95 118.431C182.863 118.247 182.776 118.106 182.704 118.007C182.409 117.99 182.039 117.951 181.683 117.861C181.404 117.79 181.019 117.661 180.68 117.4C180.399 117.184 180.141 116.867 180.025 116.457C179.997 116.447 179.964 116.435 179.927 116.423C179.537 116.297 178.953 116.213 178.361 116.213C177.863 116.213 177.41 116.131 177.004 115.913C176.809 115.808 176.665 115.692 176.565 115.603C176.558 115.597 176.552 115.591 176.545 115.585Z" fill="#D1D5DB" />
-                <path d="M180.845 123.19C181.507 122.823 182.377 123.005 182.788 123.596C183.199 124.187 182.995 124.964 182.333 125.331C182.02 125.505 181.642 125.74 181.303 125.984C180.944 126.243 180.713 126.452 180.619 126.57L180.619 126.57C180.348 126.908 180.09 127.212 179.864 127.479C179.632 127.752 179.441 127.978 179.277 128.187C178.936 128.62 178.827 128.843 178.795 128.985C178.643 129.668 177.9 130.111 177.136 129.976C176.372 129.84 175.875 129.176 176.027 128.494C176.18 127.81 176.583 127.227 176.967 126.738C177.166 126.485 177.391 126.221 177.614 125.957C177.842 125.688 178.078 125.409 178.325 125.102L178.325 125.102C178.646 124.703 179.115 124.323 179.53 124.023C179.967 123.708 180.44 123.414 180.845 123.19Z" fill="#D1D5DB" />
+                <path d="M175.638 113.107C176.177 113.006 176.668 112.964 177.113 113.036C177.643 113.123 177.989 113.351 178.231 113.567C178.259 113.592 178.283 113.613 178.302 113.631C178.319 113.631 178.339 113.632 178.361 113.632C179.163 113.632 180.047 113.74 180.778 113.976C181.137 114.092 181.543 114.266 181.884 114.536C182.122 114.725 182.388 115.012 182.531 115.398C182.596 115.407 182.667 115.416 182.744 115.422C182.89 115.434 183.028 115.437 183.131 115.437C183.571 115.437 183.91 115.616 184.094 115.734C184.3 115.867 184.475 116.029 184.619 116.186C184.907 116.501 185.17 116.906 185.384 117.357C185.814 118.263 186.116 119.498 185.957 120.873C185.835 121.926 185.319 122.906 184.199 123.375C183.53 123.655 182.779 123.69 182.015 123.588C181.81 123.846 181.562 124.074 181.271 124.268C180.636 124.692 179.873 124.903 179.075 124.982C178.574 125.032 178.026 124.988 177.513 124.739C176.981 124.482 176.612 124.064 176.388 123.586C176.14 123.058 176.06 122.442 176.08 121.792C174.852 121.52 173.798 121.07 173.042 120.352L173.042 120.353C171.801 119.175 171.832 117.393 172.294 115.665C172.298 115.649 172.303 115.633 172.308 115.617C172.769 114.132 174.114 113.393 175.638 113.107ZM176.545 115.585C176.463 115.591 176.335 115.606 176.148 115.641H176.148C175.155 115.827 174.943 116.147 174.877 116.339C174.489 117.811 174.748 118.335 174.903 118.497L174.918 118.512L174.918 118.512C175.301 118.876 176.132 119.258 177.711 119.449C178.074 119.493 178.402 119.679 178.62 119.962C178.837 120.246 178.925 120.603 178.862 120.951C178.777 121.424 178.747 121.791 178.754 122.068C178.759 122.229 178.775 122.341 178.792 122.415C178.795 122.415 178.798 122.415 178.8 122.414C179.311 122.364 179.598 122.246 179.749 122.145C179.876 122.061 179.958 121.958 180.009 121.778C180.104 121.448 180.332 121.167 180.642 120.999C180.952 120.83 181.318 120.788 181.661 120.881C182.59 121.132 183.007 121.06 183.134 121.007C183.168 120.993 183.178 120.983 183.193 120.96C183.217 120.923 183.271 120.818 183.298 120.586V120.586C183.396 119.735 183.206 118.969 182.95 118.431C182.863 118.247 182.776 118.106 182.704 118.007C182.409 117.99 182.039 117.951 181.683 117.861C181.404 117.79 181.019 117.661 180.68 117.4C180.399 117.184 180.141 116.867 180.025 116.457C179.997 116.447 179.964 116.435 179.927 116.423C179.537 116.297 178.953 116.213 178.361 116.213C177.863 116.213 177.41 116.131 177.004 115.913C176.809 115.808 176.665 115.692 176.565 115.603C176.558 115.597 176.552 115.591 176.545 115.585Z" fill="var(--text-secondary)" />
+                <path d="M180.845 123.19C181.507 122.823 182.377 123.005 182.788 123.596C183.199 124.187 182.995 124.964 182.333 125.331C182.02 125.505 181.642 125.74 181.303 125.984C180.944 126.243 180.713 126.452 180.619 126.57L180.619 126.57C180.348 126.908 180.09 127.212 179.864 127.479C179.632 127.752 179.441 127.978 179.277 128.187C178.936 128.62 178.827 128.843 178.795 128.985C178.643 129.668 177.9 130.111 177.136 129.976C176.372 129.84 175.875 129.176 176.027 128.494C176.18 127.81 176.583 127.227 176.967 126.738C177.166 126.485 177.391 126.221 177.614 125.957C177.842 125.688 178.078 125.409 178.325 125.102L178.325 125.102C178.646 124.703 179.115 124.323 179.53 124.023C179.967 123.708 180.44 123.414 180.845 123.19Z" fill="var(--text-secondary)" />
               </svg>
               <span className="text-xs font-bold uppercase tracking-[0.2em]">{t('landing.footer.copyright')}</span>
             </div>
-            <p className="text-[#4B5563] text-xs font-medium">
+            <p className="text-[var(--text-quaternary)] text-xs font-medium">
               {t('landing.footer.framework')}
             </p>
           </div>
