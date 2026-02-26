@@ -313,12 +313,10 @@ export default function RankingPage() {
                         <Zap size={10} className="text-[#FACC15]" fill="currentColor" />
                         <span className="text-[11px] font-bold text-[#FACC15]">{u.monthlyXp}</span>
                       </div>
-                      {u.streakCount > 0 && (
-                        <div className="flex items-center gap-1 mt-0.5">
-                          <RedAnimatedFlame size={14} active={true} />
-                          <span className="text-[10px] text-[#EF4444] font-bold">{u.streakCount}d</span>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <RedAnimatedFlame size={14} active={u.streakCount > 0} />
+                        <span className={`text-[10px] font-bold ${u.streakCount > 0 ? 'text-[#EF4444]' : 'text-[#6B7280]'}`}>{u.streakCount}d</span>
+                      </div>
                     </div>
                   )
                 })}
@@ -364,12 +362,10 @@ export default function RankingPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      {u.streakCount > 0 && (
-                        <div className="flex items-center gap-1">
-                          <RedAnimatedFlame size={18} active={true} />
-                          <span className="text-[11px] text-[#EF4444] font-bold">{u.streakCount}</span>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1">
+                        <RedAnimatedFlame size={18} active={u.streakCount > 0} />
+                        <span className={`text-[11px] font-bold ${u.streakCount > 0 ? 'text-[#EF4444]' : 'text-[#6B7280]'}`}>{u.streakCount}</span>
+                      </div>
                       <div className={`px-3 py-1 rounded-[10px] flex items-center gap-1 border ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'}`}>
                         <Zap size={11} className="text-[#FACC15]" fill="currentColor" />
                         <span className="text-[12px] font-bold text-[#FACC15]">{u.monthlyXp}</span>

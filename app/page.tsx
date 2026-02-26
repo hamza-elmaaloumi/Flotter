@@ -312,8 +312,7 @@ const AIGenerationSVG = () => {
           />
           <rect x="106" y="36" width="188" height="110" rx="8" fill="none" stroke="#252525" strokeWidth="1" pointerEvents="none" />
           {/* image overlay label */}
-          <rect x="106" y="126" width="188" height="20" rx="0" fill="#161616" fillOpacity="0.85"/>
-          <text x="118" y="139" fill="#4B5563" fontSize="7" fontFamily="monospace" letterSpacing="1">VISUAL · SEMANTIC ANCHOR</text>
+          <rect x="106" y="152" width="188" height="16" rx="3" fill="#161616" fillOpacity="1"/>
         </g>
 
         {/* Card Word & Type */}
@@ -345,103 +344,90 @@ const AIGenerationVisualizer = () => {
   const { t } = useLanguage()
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setStep((prev) => (prev + 1) % 4)
-    }, 2500)
-    return () => clearInterval(interval)
+    const iv = setInterval(() => setStep(p => (p + 1) % 4), 2500)
+    return () => clearInterval(iv)
   }, [])
 
   const steps = [
-    { icon: Sparkles, label: t('landing.visualizer.semantics'), color: "#3B82F6", detail: "Vectorizing Lexical Meaning" },
-    { icon: Brain, label: t('landing.visualizer.contexts'), color: "#FBBF24", detail: "Synthesizing Sensory Anchors" },
-    { icon: Layers, label: t('landing.visualizer.visuals'), color: "#EF4444", detail: "Generating Mental Imagery" },
-    { icon: Zap, label: t('landing.visualizer.locked'), color: "#10B981", detail: "Encrypting For Long-Term Memory" }
+    { icon: Sparkles, label: t('landing.visualizer.semantics'), color: "#3B82F6",  detail: "Vectorizing Lexical Meaning",        short: "SEMANTICS" },
+    { icon: Brain,    label: t('landing.visualizer.contexts'), color: "#FBBF24",  detail: "Synthesizing Sensory Anchors",       short: "CONTEXT"  },
+    { icon: Layers,   label: t('landing.visualizer.visuals'),  color: "#EF4444",  detail: "Generating Mental Imagery",          short: "IMAGERY"  },
+    { icon: Zap,      label: t('landing.visualizer.locked'),   color: "#10B981", detail: "Encrypting For Long-Term Memory",   short: "LOCKED"   }
+  ]
+
+  /* encoding bar heights per step — 4 groups × 8 bars */
+  const barSets = [
+    [5,9,4,12,7,11,6,10],
+    [8,5,13,3,11,6,9,4],
+    [11,7,5,14,4,9,6,12],
+    [14,10,8,6,12,5,10,8],
   ]
 
   return (
-    <div className={`relative w-full h-[220px] bg-[#1a1a1a] rounded-2xl overflow-hidden flex flex-col items-center justify-center p-6`}>
-      {/* Circuit background pattern */}
-      <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
-        <pattern id="circuit" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M0 20h20v20M20 0v20h20" fill="none" stroke="currentColor" strokeWidth="1" />
-          <circle cx="20" cy="20" r="2" fill="currentColor" />
-        </pattern>
-        <rect width="100%" height="100%" fill="url(#circuit)" />
-      </svg>
+    <div className="relative w-full bg-[#1a1a1a] rounded-2xl overflow-hidden p-5">
+      {/* step progress bar */}
+      <div className="w-full h-[2px] bg-[#2A2A2A] mb-5 rounded-full overflow-hidden">
+        <motion.div className="h-full rounded-full"
+          style={{ backgroundColor: steps[step].color }}
+          animate={{ width: `${(step + 1) * 25}%` }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+        />
+      </div>
 
-      <div className="relative z-10 flex flex-col items-center w-full">
-        {/* Central Core */}
-        <div className="relative mb-8">
+      <div className="flex items-start gap-4">
+        {/* left: icon + step indicator */}
+        <div className="flex-shrink-0 flex flex-col items-center gap-2">
           <motion.div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center border-2 "
-            style={{
-              borderColor: `${steps[step].color}30`,
-              backgroundColor: `${steps[step].color}08`
-            }}
-            animate={{
-              rotate: [0, 90, 180, 270, 360],
-              scale: [1, 1.05, 1]
-            }}
+            className="w-14 h-14 rounded-xl flex items-center justify-center border"
+            style={{ borderColor: `${steps[step].color}35`, backgroundColor: `${steps[step].color}10` }}
+            animate={{ rotate: [0,90,180,270,360] }}
             transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
           >
-            {React.createElement(steps[step].icon, {
-              size: 32,
-              style: { color: steps[step].color }
-            })}
+            {React.createElement(steps[step].icon, { size:28, style:{ color: steps[step].color } })}
           </motion.div>
+          {/* hex ring — solid, no dashed */}
+          <svg width="56" height="20" viewBox="0 0 56 20">
+            {steps.map((s, i) => (
+              <motion.rect key={i} x={i*13+1} y="4" width="11" height="11" rx="2"
+                fill={i <= step ? s.color : "#2A2A2A"}
+                animate={{ opacity: i === step ? [0.6,1,0.6] : 1 }}
+                transition={{ duration: 1.2, repeat: Infinity }}
+              />
+            ))}
+          </svg>
+        </div>
 
-          {/* Orbits */}
-          <div className="absolute inset-[-20px] pointer-events-none">
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                className="absolute inset-0 border border-dashed rounded-full opacity-20"
-                style={{ borderColor: steps[step].color }}
-                animate={{ rotate: 360 }}
-                transition={{ duration: 8 + i * 4, repeat: Infinity, ease: "linear" }}
+        {/* right: label + waveform bars */}
+        <div className="flex-1 min-w-0">
+          <AnimatePresence mode="wait">
+            <motion.div key={step}
+              initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-8 }}
+              transition={{ duration: 0.35 }}
+            >
+              <p className="text-[9px] font-mono tracking-[0.22em] mb-0.5" style={{ color: steps[step].color }}>
+                {steps[step].short}
+              </p>
+              <h4 className="text-[13px] font-black text-white tracking-tight leading-snug">
+                {steps[step].label}
+              </h4>
+              <p className="text-[10px] text-[#6B7280] mt-1 font-mono">{steps[step].detail}</p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* encoding waveform — tight bars, solid color */}
+          <div className="mt-3 flex items-end gap-[3px] h-[18px]">
+            {barSets[step].map((h,i) => (
+              <motion.div key={`${step}-${i}`}
+                className="flex-1 rounded-[2px]"
+                style={{ backgroundColor: steps[step].color }}
+                initial={{ height: 3 }}
+                animate={{ height: h, opacity: [0.5,1,0.5] }}
+                transition={{ duration:0.8, delay: i*0.07, repeat: Infinity, ease:"easeInOut" }}
               />
             ))}
           </div>
         </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, y: 10,  }}
-            animate={{ opacity: 1, y: 0,  }}
-            exit={{ opacity: 0, y: -10,  }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col items-center text-center"
-          >
-            <h4 className={`text-[12px] font-black tracking-[0.2em] uppercase mb-1 text-white`}>
-              {steps[step].label}
-            </h4>
-            <p className="text-[10px] font-mono text-blue-500 mb-4">{steps[step].detail}</p>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Binary Stream visualizer */}
-        <div className="w-full flex justify-center gap-1">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <motion.div
-              key={i}
-              className="w-1 h-3 rounded-full"
-              style={{ backgroundColor: steps[step].color }}
-              animate={{
-                height: [4, 12, 4],
-                opacity: [0.2, 1, 0.2]
-              }}
-              transition={{
-                duration: 0.8,
-                repeat: Infinity,
-                delay: i * 0.1,
-                ease: "easeInOut"
-              }}
-            />
-          ))}
-        </div>
       </div>
-
     </div>
   )
 }
@@ -451,158 +437,112 @@ const ACASRSVisualizer = () => {
   const [activeStep, setActiveStep] = useState(0)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % 4)
-    }, 3000)
-    return () => clearInterval(interval)
+    const iv = setInterval(() => setActiveStep(p => (p + 1) % 4), 3000)
+    return () => clearInterval(iv)
   }, [])
 
   const steps = [
-    { label: t('landing.acasrs.phase1'), time: "15m", color: "#3B82F6", icon: Clock },
-    { label: t('landing.acasrs.phase2'), time: "24h", color: "#FBBF24", icon: Brain },
-    { label: t('landing.acasrs.phase3'), time: "72h", color: "#10B981", icon: Layers },
-    { label: language === 'ar' ? 'التخرج' : 'Gradual Mastery', time: "∞", color: "#EF4444", icon: Sparkles }
+    { label: t('landing.acasrs.phase1'), time: "15m", color: "#3B82F6", icon: Clock,
+      desc: "Synthesizing immediate semantic bridge" },
+    { label: t('landing.acasrs.phase2'), time: "24h", color: "#FBBF24", icon: Brain,
+      desc: "Mapping cross-domain neural anchors" },
+    { label: t('landing.acasrs.phase3'), time: "72h", color: "#10B981", icon: Layers,
+      desc: "Validating multi-contextual retention" },
+    { label: language === 'ar' ? 'التخرج' : 'Gradual Mastery', time: "∞", color: "#A78BFA", icon: Sparkles,
+      desc: "Graduating to exponential mastery cycle" }
   ]
 
+  /* retention strength per phase (0-100) */
+  const retStrength = [40, 65, 82, 100]
+
   return (
-    <div className={`relative w-full h-[320px] bg-[#1a1a1a] rounded-2xl overflow-hidden p-8 flex flex-col items-center justify-between`}>
-      {/* AI Orchestration Engine Label */}
-      <div className="absolute top-4 left-6 flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-        <span className={`text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500`}>AI Generation Engine</span>
+    <div className="relative w-full bg-[#1a1a1a] rounded-2xl overflow-hidden p-5">
+      {/* header */}
+      <div className="flex items-center gap-2 mb-4">
+        <motion.div className="w-2 h-2 rounded-full bg-[#3B82F6]"
+          animate={{ opacity: [0.5,1,0.5] }} transition={{ duration:1.4, repeat: Infinity }}
+        />
+        <span className="text-[9px] font-bold uppercase tracking-[0.22em] text-[#4B5563]">ACASRS Engine</span>
       </div>
 
-      {/* SVG Diagram Core */}
-      <div className="relative w-full flex-1 flex items-center justify-center">
-        <svg width="100%" height="160" viewBox="0 0 400 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="max-w-[500px]">
-          {/* Main Processing Line */}
-          <line x1="40" y1="80" x2="360" y2="80" stroke="#2D2D2F" strokeWidth="2" strokeDasharray="4 4" />
+      {/* SVG phase timeline */}
+      <svg width="100%" height="72" viewBox="0 0 320 72" fill="none">
+        <defs>
+          <linearGradient id="aca-flow" x1="0%" y1="0%" x2="100%" y2="0%">
+            {steps.map((s,i)=>(
+              <stop key={i} offset={`${i*33.3}%`} stopColor={s.color} stopOpacity="0.7"/>
+            ))}
+          </linearGradient>
+        </defs>
+        {/* baseline rail */}
+        <line x1="20" y1="36" x2="300" y2="36" stroke="#2A2A2A" strokeWidth="2"/>
 
-          {/* Animated Flow Path */}
-          <motion.path
-            d="M 40 80 L 360 80"
-            stroke="url(#gradient-flow)"
-            strokeWidth="3"
-            strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{
-              pathLength: [0, 1, 1],
-              opacity: [0, 1, 0],
-              pathOffset: [0, 0, 1]
+        {/* completed flow */}
+        <motion.line x1="20" y1="36" x2={20 + activeStep * 93.3} y2="36"
+          stroke="url(#aca-flow)" strokeWidth="2"
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        />
+
+        {/* strength signal above rail */}
+        {steps.map((s, i) => {
+          const x = 20 + i * 93.3
+          const barH = (retStrength[i] / 100) * 24
+          return (
+            <g key={i}>
+              <motion.rect x={x-4} y={36-barH} width="8" rx="2" height={barH}
+                fill={s.color}
+                animate={{ opacity: i <= activeStep ? [0.6,1,0.6] : 0.15 }}
+                transition={{ duration:1.4, repeat: Infinity, delay: i*0.2 }}
+              />
+              <circle cx={x} cy="36" r={i === activeStep ? 6 : 4.5}
+                fill={i <= activeStep ? s.color : "#2A2A2A"}
+                stroke={i === activeStep ? "#fff" : "none"} strokeWidth="1.5"
+              />
+              <text x={x} y="56" textAnchor="middle" fill={i === activeStep ? s.color : "#4B5563"}
+                fontSize="7" fontWeight="700" fontFamily="monospace" letterSpacing="0.5">
+                {s.time}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+
+      {/* phase detail rows */}
+      <div className="mt-4 space-y-[6px]">
+        {steps.map((s, i) => (
+          <motion.div key={i}
+            className="flex items-center gap-3 p-3 rounded-xl border"
+            style={{
+              borderColor: i === activeStep ? `${s.color}35` : "#2A2A2A",
+              backgroundColor: i === activeStep ? `${s.color}08` : "#161616"
             }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-
-          <defs>
-            <linearGradient id="gradient-flow" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0" />
-              <stop offset="50%" stopColor="#10B981" />
-              <stop offset="100%" stopColor="#EF4444" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-
-          {/* Nodes */}
-          {steps.map((step, i) => {
-            const x = 40 + (i * 106.6);
-            const isActive = activeStep === i;
-            const isCompleted = activeStep > i;
-
-            return (
-              <g key={i}>
-                {/* Connection Arcs (AI Context Branches) */}
-                {i < 3 && (
-                  <motion.path
-                    d={`M ${x} 80 Q ${x + 53} ${i % 2 === 0 ? 30 : 130} ${x + 106} 80`}
-                    stroke={step.color}
-                    strokeWidth="1.5"
-                    strokeOpacity="0.2"
-                    fill="none"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: isActive ? 1 : 0 }}
-                  />
-                )}
-
-                {/* Main Node */}
-                <motion.circle
-                  cx={x} cy="80" r="6"
-                  fill={isActive ? step.color : (isCompleted ? step.color : "#2D2D2F")}
-                  stroke={isActive ? "#fff" : "transparent"}
-                  strokeWidth="2"
-                  animate={{ scale: isActive ? 1.4 : 1 }}
-                />
-
-                {/* Label */}
-                <foreignObject x={x - 40} y="95" width="80" height="50">
-                  <div className="flex flex-col items-center text-center">
-                    <span className={`text-[9px] font-bold uppercase tracking-tighter ${isActive ? 'text-white' : 'text-gray-500'}`}>
-                      {step.label.split(':')[1]?.trim() || step.label}
-                    </span>
-                    <span className="text-[8px] font-mono opacity-60" style={{ color: step.color }}>{step.time}</span>
-                  </div>
-                </foreignObject>
-
-                {/* AI Context Points */}
-                {isActive && i < 3 && (
-                  <motion.circle
-                    cx={x + 53}
-                    cy={i % 2 === 0 ? 30 : 130}
-                    r="3"
-                    fill={step.color}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0, 1, 0], scale: [0.5, 1.5, 0.5] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  />
-                )}
-              </g>
-            )
-          })}
-        </svg>
-
-        {/* Floating Context Labels */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeStep}
-            className="absolute top-0 right-0 p-4 max-w-[140px]"
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
+            animate={{ opacity: i === activeStep ? 1 : 0.45 }}
+            transition={{ duration: 0.3 }}
           >
-            <div className={`text-[10px] font-medium leading-tight text-gray-400`}>
-              {activeStep === 0 && "Synthesizing immediate semantic bridge..."}
-              {activeStep === 1 && "Mapping cross-domain neural connections..."}
-              {activeStep === 2 && "Validating multi-contextual retention..."}
-              {activeStep === 3 && "Graduating to exponential mastery cycle."}
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 border"
+              style={{ borderColor: `${s.color}30`, backgroundColor: `${s.color}12` }}
+            >
+              {React.createElement(s.icon, { size: 16, style: { color: s.color } })}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold text-white truncate">{s.label}</span>
+                <span className="text-[9px] font-mono shrink-0" style={{ color: s.color }}>{s.time}</span>
+              </div>
+              <p className="text-[9px] text-[#6B7280] mt-0.5 truncate">{s.desc}</p>
+            </div>
+            {/* retention strength bar */}
+            <div className="flex-shrink-0 flex flex-col items-end gap-1">
+              <span className="text-[9px] font-mono text-[#4B5563]">{retStrength[i]}%</span>
+              <div className="w-14 h-[3px] bg-[#2A2A2A] rounded-full overflow-hidden">
+                <motion.div className="h-full rounded-full" style={{ backgroundColor: s.color }}
+                  animate={{ width: i <= activeStep ? `${retStrength[i]}%` : "0%" }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
+                />
+              </div>
             </div>
           </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Detail Card Overlay */}
-      <div className={`w-full mt-4 p-4 rounded-xl bg-[#1A1A1A] flex items-center gap-4`}>
-        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{
-          borderColor: `${steps[activeStep].color}30`,
-          backgroundColor: `${steps[activeStep].color}10`
-        }}>
-          {React.createElement(steps[activeStep].icon, {
-            size: 20,
-            style: { color: steps[activeStep].color }
-          })}
-        </div>
-        <div>
-          <h5 className={`text-[12px] font-bold text-white`}>
-            {steps[activeStep].label} <span className="text-blue-500 ml-1">[{steps[activeStep].time}]</span>
-          </h5>
-          <p className={`text-[11px] text-gray-500 line-clamp-1`}>
-            {(t as any)(`landing.acasrs.phase${activeStep + 1}Desc`) || "Advanced context rotation active."}
-          </p>
-        </div>
-        <div className="ml-auto">
-          <ChevronRight size={14} className="text-gray-400" />
-        </div>
+        ))}
       </div>
     </div>
   )
@@ -865,182 +805,184 @@ const AudioWaveform = () => {
  */
 const PulseLine = ({ color = "#3B82F6" }: { color?: string }) => {
   const intervals = [
-    { x: 44,  label: "15m", sublabel: "First\nReview",  color: "#3B82F6", pct: 100 },
-    { x: 128, label: "1d",  sublabel: "Short\nTerm",    color: "#60A5FA", pct: 88  },
-    { x: 212, label: "3d",  sublabel: "Mid\nTerm",      color: "#10B981", pct: 74  },
-    { x: 296, label: "7d",  sublabel: "Long\nTerm",     color: "#FBBF24", pct: 62  },
-    { x: 380, label: "21d", sublabel: "Deep\nMemory",   color: "#F97316", pct: 84  },
-    { x: 452, label: "∞",   sublabel: "Mastered",       color: "#A78BFA", pct: 96  },
+    { x: 38,  label: "15m", phaseName: "ENCODE",  color: "#3B82F6", pct: 100, barW: 10 },
+    { x: 106, label: "1d",  phaseName: "RECALL",  color: "#60A5FA", pct: 88,  barW: 10 },
+    { x: 192, label: "3d",  phaseName: "REINFORCE",color: "#10B981",pct: 74,  barW: 10 },
+    { x: 298, label: "7d",  phaseName: "ANCHOR",  color: "#FBBF24", pct: 88,  barW: 10 },
+    { x: 412, label: "21d", phaseName: "LATCH",   color: "#F97316", pct: 95,  barW: 10 },
+    { x: 474, label: "∞",   phaseName: "MASTER",  color: "#A78BFA", pct: 99,  barW: 10 },
   ]
 
-  const BAR_MAX_H = 32
-  const BAR_Y_BASE = 38
+  const RAIL_Y   = 108
+  const BAR_BASE = 96
+  const BAR_MAX  = 70
 
   return (
-    <div className="w-full overflow-hidden py-4 flex flex-col items-center gap-1">
-      <motion.p
-        className="text-[9px] font-bold uppercase tracking-[0.28em] text-[#4B5563] mb-1"
+    <div className="w-full overflow-hidden py-2 flex flex-col items-center">
+      <motion.div
+        className="w-full flex items-center justify-between px-4 mb-3"
         initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.5 }}
       >
-        ACASRS · Adaptive Review Spacing
-      </motion.p>
+        <span className="text-[8px] font-black uppercase tracking-[0.3em] text-[#4B5563]">ACASRS</span>
+        <span className="text-[8px] font-bold text-[#3B82F6] font-mono tracking-widest">Adaptive Spaced Repetition</span>
+      </motion.div>
 
-      <svg width="100%" height="130" viewBox="0 0 496 130" fill="none" className="max-w-lg overflow-visible">
+      <svg width="100%" height="160" viewBox="0 0 512 160" fill="none" className="overflow-visible">
         <defs>
-          <linearGradient id="srs-curve" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"  stopColor="#3B82F6" stopOpacity="0.6" />
-            <stop offset="50%" stopColor="#10B981" stopOpacity="0.5" />
-            <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.45" />
+          <linearGradient id="pl2-rail" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.8"/>
+            <stop offset="40%"  stopColor="#10B981" stopOpacity="0.6"/>
+            <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.8"/>
           </linearGradient>
-          <linearGradient id="bar-grad-0" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#3B82F6"/><stop offset="100%" stopColor="#3B82F6" stopOpacity="0.25"/></linearGradient>
-          <linearGradient id="bar-grad-1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#60A5FA"/><stop offset="100%" stopColor="#60A5FA" stopOpacity="0.25"/></linearGradient>
-          <linearGradient id="bar-grad-2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#10B981"/><stop offset="100%" stopColor="#10B981" stopOpacity="0.25"/></linearGradient>
-          <linearGradient id="bar-grad-3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#FBBF24"/><stop offset="100%" stopColor="#FBBF24" stopOpacity="0.25"/></linearGradient>
-          <linearGradient id="bar-grad-4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#F97316"/><stop offset="100%" stopColor="#F97316" stopOpacity="0.25"/></linearGradient>
-          <linearGradient id="bar-grad-5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#A78BFA"/><stop offset="100%" stopColor="#A78BFA" stopOpacity="0.25"/></linearGradient>
+          {intervals.map(({ color: c }, i) => (
+            <linearGradient key={i} id={`pl2-bar-${i}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={c} stopOpacity="0.9"/>
+              <stop offset="100%" stopColor={c} stopOpacity="0.15"/>
+            </linearGradient>
+          ))}
         </defs>
 
-        {/* ── background grid lines ── */}
-        {[0, 1, 2, 3].map(i => (
-          <line key={i} x1="20" y1={BAR_Y_BASE - (i * BAR_MAX_H / 3)} x2="476" y2={BAR_Y_BASE - (i * BAR_MAX_H / 3)}
-            stroke="#2A2A2A" strokeWidth="0.5" strokeDasharray="3 9" />
-        ))}
-
-        {/* ── retention % axis label ── */}
-        <text x="14" y={BAR_Y_BASE - BAR_MAX_H + 4} fill="#4B5563" fontSize="6.5" fontFamily="monospace" textAnchor="end">100%</text>
-        <text x="14" y={BAR_Y_BASE + 3} fill="#4B5563" fontSize="6.5" fontFamily="monospace" textAnchor="end">0%</text>
-
-        {/* ── retention bars ── */}
-        {intervals.map(({ x, pct, color: nc }, i) => {
-          const barH = (pct / 100) * BAR_MAX_H
+        {/* ── horizontal guide lines ── */}
+        {[0, 25, 50, 75, 100].map((pct, i) => {
+          const y = BAR_BASE - (pct / 100) * BAR_MAX
           return (
-            <React.Fragment key={`bar-${i}`}>
-              {/* bar background track */}
-              <rect x={x - 5} y={BAR_Y_BASE - BAR_MAX_H} width={10} height={BAR_MAX_H}
-                fill="#1e1e1e" rx="2" />
-              {/* animated fill bar */}
-              <motion.rect
-                x={x - 5} width={10} rx="2"
-                fill={`url(#bar-grad-${i})`}
-                initial={{ height: 0, y: BAR_Y_BASE }}
-                whileInView={{ height: barH, y: BAR_Y_BASE - barH }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 + i * 0.1, duration: 0.7, ease: "easeOut" }}
-              />
-              {/* pct label */}
-              <motion.text x={x} y={BAR_Y_BASE - BAR_MAX_H - 5} textAnchor="middle"
-                fill={nc} fontSize="7.5" fontWeight="800" fontFamily="monospace"
-                initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-                transition={{ delay: 0.7 + i * 0.1, duration: 0.4 }}
-              >{pct}%</motion.text>
+            <React.Fragment key={i}>
+              <line x1="18" y1={y} x2="494" y2={y}
+                stroke="#1e1e1e" strokeWidth="0.6"
+                strokeDasharray={i === 0 || i === 4 ? "none" : "2 8"}/>
+              <text x="14" y={y + 3} fill="#3A3A3A" fontSize="5.5" fontFamily="monospace" textAnchor="end">{pct}%</text>
             </React.Fragment>
           )
         })}
 
-        {/* ── exponential gap arcs ── */}
+        {/* ── exponential gap spans — drawn UNDER bars ── */}
         {intervals.slice(0, -1).map((a, i) => {
           const b = intervals[i + 1]
-          const mid = (a.x + b.x) / 2
-          const arcY = BAR_Y_BASE + 20 - i * 2
+          const spanW = b.x - a.x
+          const arcH  = 6 + i * 3
           return (
-            <motion.path key={i}
-              d={`M${a.x} ${BAR_Y_BASE + 10} Q${mid} ${arcY} ${b.x} ${BAR_Y_BASE + 10}`}
-              stroke={a.color} strokeWidth={0.8 + i * 0.12} strokeOpacity={0.18 + i * 0.02}
-              fill="none" strokeLinecap="round"
+            <motion.path key={`span-${i}`}
+              d={`M${a.x} ${RAIL_Y} C${a.x + spanW * 0.35} ${RAIL_Y + arcH}, ${b.x - spanW * 0.35} ${RAIL_Y + arcH}, ${b.x} ${RAIL_Y}`}
+              stroke={a.color} strokeWidth="0.7" strokeOpacity="0.22" fill="none" strokeLinecap="round"
               initial={{ pathLength: 0, opacity: 0 }}
               whileInView={{ pathLength: 1, opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.3 + i * 0.1, duration: 0.9, ease: "easeOut" }}
+              transition={{ delay: 0.5 + i * 0.1, duration: 1.1, ease: "easeOut" }}
             />
           )
         })}
 
-        {/* ── main timeline rail ── */}
-        <motion.line x1="20" y1={BAR_Y_BASE + 10} x2="476" y2={BAR_Y_BASE + 10}
-          stroke="url(#srs-curve)" strokeWidth="1.5" strokeLinecap="round"
+        {/* ── retention bars ── */}
+        {intervals.map(({ x, pct, barW, color: nc }, i) => {
+          const barH = (pct / 100) * BAR_MAX
+          return (
+            <React.Fragment key={`b-${i}`}>
+              {/* track background */}
+              <rect x={x - barW / 2} y={BAR_BASE - BAR_MAX} width={barW} height={BAR_MAX} fill="#1c1c1c" rx="2"/>
+              {/* animated fill */}
+              <motion.rect
+                x={x - barW / 2} width={barW} rx="2"
+                fill={`url(#pl2-bar-${i})`}
+                initial={{ height: 0, y: BAR_BASE }}
+                whileInView={{ height: barH, y: BAR_BASE - barH }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.35 + i * 0.09, duration: 0.75, ease: [0.34, 1.26, 0.64, 1] }}
+              />
+              {/* pct label above bar */}
+              <motion.text x={x} y={BAR_BASE - BAR_MAX - 4} textAnchor="middle"
+                fill={nc} fontSize="7" fontWeight="900" fontFamily="monospace"
+                initial={{ opacity: 0, y: BAR_BASE - BAR_MAX }} whileInView={{ opacity: 1, y: BAR_BASE - BAR_MAX - 4 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.75 + i * 0.09 }}
+              >{pct}%</motion.text>
+              {/* connector tick to rail */}
+              <motion.line x1={x} y1={BAR_BASE} x2={x} y2={RAIL_Y}
+                stroke={nc} strokeWidth="0.5" strokeOpacity="0.25"
+                initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }}
+                viewport={{ once: true }}
+                style={{ transformOrigin: `${x}px ${BAR_BASE}px` }}
+                transition={{ delay: 0.35 + i * 0.09 }}
+              />
+            </React.Fragment>
+          )
+        })}
+
+        {/* ── main rail ── */}
+        <motion.line x1="18" y1={RAIL_Y} x2="494" y2={RAIL_Y}
+          stroke="url(#pl2-rail)" strokeWidth="1.8" strokeLinecap="round"
           initial={{ pathLength: 0, opacity: 0 }}
           whileInView={{ pathLength: 1, opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 1.0, ease: "easeOut" }}
+          transition={{ duration: 0.9, ease: "easeOut" }}
         />
 
-        {/* ── interval nodes ── */}
-        {intervals.map(({ x, label, color: nc }, i) => (
-          <React.Fragment key={i}>
-            {/* outer halo */}
-            <motion.circle cx={x} cy={BAR_Y_BASE + 10} r={10}
-              fill="none" stroke={nc} strokeWidth="0.5" strokeOpacity="0.18"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.45 + i * 0.1, type: "spring", stiffness: 200 }}
-              style={{ transformOrigin: `${x}px ${BAR_Y_BASE + 10}px` }}
+        {/* ── nodes on rail ── */}
+        {intervals.map(({ x, label, phaseName, color: nc }, i) => (
+          <React.Fragment key={`n-${i}`}>
+            {/* outer halo ring */}
+            <motion.circle cx={x} cy={RAIL_Y} r={10}
+              fill="none" stroke={nc} strokeWidth="0.6" strokeOpacity="0.2"
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+              transition={{ delay: 0.5 + i * 0.09, type: "spring", stiffness: 180 }}
+              style={{ transformOrigin: `${x}px ${RAIL_Y}px` }}
             />
-            {/* node ring */}
-            <motion.circle cx={x} cy={BAR_Y_BASE + 10} r={5.5}
+            {/* diamond shape at node */}
+            <motion.rect
+              x={x - 5.5} y={RAIL_Y - 5.5} width={11} height={11}
+              rx="1"
               fill="#121212" stroke={nc} strokeWidth="1.4"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 + i * 0.1, type: "spring", stiffness: 300 }}
-              style={{ transformOrigin: `${x}px ${BAR_Y_BASE + 10}px` }}
+              transform={`rotate(45 ${x} ${RAIL_Y})`}
+              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+              transition={{ delay: 0.48 + i * 0.09, type: "spring", stiffness: 260 }}
+              style={{ transformOrigin: `${x}px ${RAIL_Y}px` }}
             />
-            {/* center fill */}
-            <motion.circle cx={x} cy={BAR_Y_BASE + 10} r={2}
+            {/* center dot */}
+            <motion.circle cx={x} cy={RAIL_Y} r={2}
               fill={nc}
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2 + i * 0.3, repeat: Infinity, delay: i * 0.25 }}
+              animate={{ opacity: [0.5, 1, 0.5], scale: [0.8, 1.2, 0.8] }}
+              transition={{ duration: 2.2 + i * 0.2, repeat: Infinity, delay: i * 0.3 }}
+              style={{ transformOrigin: `${x}px ${RAIL_Y}px` }}
             />
-            {/* interval label bottom */}
-            <motion.text x={x} y={BAR_Y_BASE + 28} textAnchor="middle"
-              fill={nc} fontSize="9" fontWeight="800" fontFamily="monospace" letterSpacing="0.5"
-              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.6 + i * 0.1, duration: 0.5 }}
+            {/* interval label below */}
+            <motion.text x={x} y={RAIL_Y + 16} textAnchor="middle"
+              fill={nc} fontSize="9.5" fontWeight="900" fontFamily="monospace"
+              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+              transition={{ delay: 0.65 + i * 0.09 }}
             >{label}</motion.text>
-            {/* tick mark */}
-            <motion.line x1={x} y1={BAR_Y_BASE + 15} x2={x} y2={BAR_Y_BASE + 21}
-              stroke={nc} strokeWidth="1" strokeOpacity="0.3"
-              initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.65 + i * 0.1, duration: 0.3 }}
-              style={{ transformOrigin: `${x}px ${BAR_Y_BASE + 15}px` }}
-            />
+            {/* phase label below interval */}
+            <motion.text x={x} y={RAIL_Y + 27} textAnchor="middle"
+              fill="#3A4A5A" fontSize="5.5" fontWeight="700" fontFamily="monospace" letterSpacing="0.8"
+              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+              transition={{ delay: 0.75 + i * 0.09 }}
+            >{phaseName}</motion.text>
           </React.Fragment>
         ))}
 
-        {/* ── widening gap annotations ── */}
-        {intervals.slice(0, -1).map((a, i) => {
-          const b = intervals[i + 1]
-          const mid = (a.x + b.x) / 2
-          if (i < 2) return null
-          return (
-            <motion.text key={i} x={mid} y={BAR_Y_BASE + 46} textAnchor="middle"
-              fill="#3B5568" fontSize="7" fontFamily="monospace"
-              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.9 + i * 0.08, duration: 0.5 }}
-            >+{Math.round((b.x - a.x) * 0.22)}x</motion.text>
-          )
-        })}
+        {/* ── traveling review packet with trail ── */}
+        {[0, 1, 2].map(trail => (
+          <motion.circle key={`trail-${trail}`}
+            cy={RAIL_Y} r={3.5 - trail}
+            fill={color}
+            style={{ opacity: 1 - trail * 0.3 }}
+            animate={{ cx: intervals.map(n => n.x) }}
+            transition={{
+              cx: { duration: 5.0, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.6,
+                times: [0, 0.1, 0.26, 0.46, 0.7, 1],
+                delay: trail * 0.12
+              }
+            }}
+          />
+        ))}
 
-        {/* ── traveling review packet ── */}
-        <motion.circle cy={BAR_Y_BASE + 10} r="4.5"
-          fill={color}
-          animate={{ cx: intervals.map(n => n.x) }}
-          transition={{
-            cx: { duration: 4.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.8,
-              times: [0, 0.12, 0.28, 0.48, 0.72, 1] }
-          }}
-        />
-
-        {/* ── arrival flash on each node ── */}
+        {/* ── node arrival flash ── */}
         {intervals.map(({ x, color: nc }, i) => (
-          <motion.circle key={`flash-${i}`} cx={x} cy={BAR_Y_BASE + 10}
+          <motion.circle key={`flash-${i}`} cx={x} cy={RAIL_Y}
             fill={nc}
             initial={{ r: 0, fillOpacity: 0 }}
-            animate={{ r: [0, 16], fillOpacity: [0.3, 0] }}
-            transition={{ duration: 0.7, repeat: Infinity, ease: "easeOut",
-              delay: (i / intervals.length) * 4.5 + 1.0, repeatDelay: 4.5 }}
+            animate={{ r: [0, 18], fillOpacity: [0.35, 0] }}
+            transition={{ duration: 0.65, repeat: Infinity, ease: "easeOut",
+              delay: (i / intervals.length) * 5.0 + 0.9, repeatDelay: 5.0 }}
           />
         ))}
       </svg>
@@ -1174,326 +1116,272 @@ const _PulseLineLegacy = ({ color = "#3B82F6" }: { color?: string }) => (
  * FloatingDots — degrading signal wave. Used between Stats and Problem sections.
  * Represents memory beginning to erode — matching the problem section theme.
  */
-const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?: string }) => (
-  <div className="relative w-full overflow-hidden py-8 flex justify-center">
-    <svg width="100%" height="72" viewBox="0 0 480 72" fill="none" className="max-w-lg">
-      <defs>
-        <linearGradient id="fd-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%"   stopColor={color} stopOpacity="0" />
-          <stop offset="25%"  stopColor={color} stopOpacity="0.55" />
-          <stop offset="75%"  stopColor={color} stopOpacity="0.25" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
-        </linearGradient>
-        <linearGradient id="fd-grad2" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%"   stopColor="#EF4444" stopOpacity="0" />
-          <stop offset="30%"  stopColor="#EF4444" stopOpacity="0.22" />
-          <stop offset="70%"  stopColor="#EF4444" stopOpacity="0.12" />
-          <stop offset="100%" stopColor="#EF4444" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-
-      {/* background rail */}
-      <line x1="0" y1="36" x2="480" y2="36" stroke={color} strokeWidth="0.4" strokeOpacity="0.06" strokeDasharray="3 11" />
-
-      {/* secondary ghost track (high-amplitude, forgetting curve) */}
-      <motion.path
-        d="M0 36 C24 14,48 58, 72 36 C96 14,120 50,144 36 C168 22,192 44,216 36 C240 28,264 44,288 36 C312 28,336 42,360 36 C384 30,408 40,432 36 L480 36"
-        stroke="url(#fd-grad2)" strokeWidth="1.2" fill="none"
-        initial={{ pathLength: 0, opacity: 0 }}
-        whileInView={{ pathLength: 1, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 2.0, ease: "easeOut", delay: 0.1 }}
-      />
-
-      {/* primary degrading wave — amplitude decays L→R (memory erosion) */}
-      <motion.path
-        d="M0 36 C30 10,60 62, 90 36 C120 10,150 54,180 36 C210 18,240 50,270 36 C300 22,330 46,360 36 C390 27,420 41,450 36 L480 36"
-        stroke="url(#fd-grad)" strokeWidth="2.2" fill="none"
-        initial={{ pathLength: 0, opacity: 0 }}
-        whileInView={{ pathLength: 1, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.5, ease: "easeOut" }}
-      />
-
-      {/* peak amplitude dots (shrinking right) */}
-      {[
-        { cx: 90,  cy: 36, r: 3.8, op: 0.85 },
-        { cx: 180, cy: 36, r: 3.2, op: 0.65 },
-        { cx: 270, cy: 36, r: 2.5, op: 0.45 },
-        { cx: 360, cy: 36, r: 1.8, op: 0.28 },
-      ].map(({ cx, cy, r, op }, i) => (
-        <React.Fragment key={i}>
-          <motion.circle cx={cx} cy={cy} r={r}
-            fill={color} fillOpacity={op}
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.7 + i * 0.12, duration: 0.4, type: "spring", stiffness: 280 }}
-            style={{ transformOrigin: `${cx}px ${cy}px` }}
-          />
-          <motion.circle cx={cx} cy={cy} r={r + 5}
-            fill="none" stroke={color} strokeWidth="0.6"
-            strokeOpacity={op * 0.3}
-            initial={{ scale: 0 }} whileInView={{ scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.85 + i * 0.12 }}
-            style={{ transformOrigin: `${cx}px ${cy}px` }}
-          />
-        </React.Fragment>
-      ))}
-
-      {/* phase labels */}
-      {[
-        { cx: 90,  label: "ENCODE",  dy: -18 },
-        { cx: 270, label: "RECALL",  dy: -14 },
-        { cx: 450, label: "FADE",    dy: -10 },
-      ].map(({ cx, label, dy }, i) => (
-        <motion.text key={i} x={cx} y={36 + dy} textAnchor="middle"
-          fill={color} fontSize="6.5" fontWeight="700" fontFamily="monospace" letterSpacing="1.5"
-          fillOpacity="0.55"
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 1.0 + i * 0.2, duration: 0.5 }}
-        >{label}</motion.text>
-      ))}
-
-      {/* traveling signal (fades right) */}
-      <motion.circle cy="36" r="3"
-        fill={color}
-        animate={{
-          cx:          [0,   90,  180, 270, 360, 480],
-          fillOpacity: [0.9, 0.8, 0.6, 0.4, 0.2, 0],
-        }}
-        transition={{ duration: 3.4, repeat: Infinity, ease: "easeIn", repeatDelay: 0.8,
-          times: [0, 0.19, 0.37, 0.56, 0.75, 1] }}
-      />
-
-      {/* terminal ticks */}
-      {[20, 460].map((x, i) => (
-        <motion.line key={i} x1={x} y1="28" x2={x} y2="44"
-          stroke={color} strokeWidth="1.5" strokeOpacity="0.25"
-          initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.9, duration: 0.35 }}
-          style={{ transformOrigin: `${x}px 36px` }}
-        />
-      ))}
-    </svg>
-  </div>
-)
-
-/**
- * NeuralConnector — fully detailed 3-layer network with staggered draw-in,
- * sequential node activation, and a traveling forward-pass pulse.
- * Used between the Problem and Methodology sections.
- */
-const NeuralConnector = () => {
-  // 4-layer network: input(2) → hidden-A(4) → hidden-B(3) → output(2)
-  const inputNodes    = [{ cx: 20,  cy: 28 }, { cx: 20,  cy: 70 }]
-  const hiddenANodes  = [{ cx: 110, cy: 14 }, { cx: 110, cy: 38 }, { cx: 110, cy: 62 }, { cx: 110, cy: 86 }]
-  const hiddenBNodes  = [{ cx: 210, cy: 24 }, { cx: 210, cy: 54 }, { cx: 210, cy: 84 }]
-  const outputNodes   = [{ cx: 300, cy: 34 }, { cx: 300, cy: 70 }]
-
-  const ia: [number,number][] = []
-  inputNodes.forEach((_,a)  => hiddenANodes.forEach((__,b) => ia.push([a,b])))
-  const ab: [number,number][] = []
-  hiddenANodes.forEach((_,a) => hiddenBNodes.forEach((__,b) => ab.push([a,b])))
-  const bo: [number,number][] = []
-  hiddenBNodes.forEach((_,a) => outputNodes.forEach((__,b)  => bo.push([a,b])))
-
-  const pulseWaypoints = [
-    { cx: 20,  cy: 28 },
-    { cx: 110, cy: 38 },
-    { cx: 210, cy: 24 },
-    { cx: 300, cy: 34 },
+const FloatingDots = ({ count = 5, color = "#3B82F6" }: { count?: number; color?: string }) => {
+  // Forgetting curve datapoints: % retained after time without review
+  const forgettingPts = [
+    { x: 20,  pct: 100, label: "Now"  },
+    { x: 90,  pct: 76,  label: "1h"   },
+    { x: 168, pct: 52,  label: "1d"   },
+    { x: 258, pct: 30,  label: "3d"   },
+    { x: 362, pct: 14,  label: "7d"   },
+    { x: 460, pct: 5,   label: "30d"  },
   ]
-  const pulseWaypoints2 = [
-    { cx: 20,  cy: 70 },
-    { cx: 110, cy: 62 },
-    { cx: 210, cy: 84 },
-    { cx: 300, cy: 70 },
-  ]
+  const H = 90, TOP = 12, BOTTOM = TOP + H
+  const toY = (pct: number) => BOTTOM - (pct / 100) * H
+
+  // Build smooth bezier path through forgetting curve points
+  const buildCurve = (pts: typeof forgettingPts) => {
+    let d = `M ${pts[0].x} ${toY(pts[0].pct)}`
+    for (let i = 1; i < pts.length; i++) {
+      const p = pts[i - 1], c = pts[i]
+      const cpx = p.x + (c.x - p.x) * 0.5
+      d += ` C ${cpx} ${toY(p.pct)}, ${cpx} ${toY(c.pct)}, ${c.x} ${toY(c.pct)}`
+    }
+    return d
+  }
+  const curvePath = buildCurve(forgettingPts)
 
   return (
-    <div className="w-full py-8 flex justify-center overflow-hidden">
-      <svg width="100%" height="112" viewBox="0 0 320 112" fill="none" className="max-w-md">
+    <div className="relative w-full overflow-hidden py-4 flex flex-col gap-1 items-center">
+      <motion.div className="flex items-center gap-4 mb-1"
+        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+        <span className="flex items-center gap-1.5 text-[8px] font-black tracking-[0.25em] uppercase text-[#EF4444]">
+          <span className="w-5 h-[2px] bg-[#EF4444] inline-block"/>Without Flotter
+        </span>
+        <span className="flex items-center gap-1.5 text-[8px] font-black tracking-[0.25em] uppercase text-[#3B82F6]">
+          <span className="w-5 h-[2px] bg-[#3B82F6] inline-block"/>With Flotter
+        </span>
+      </motion.div>
+      <svg width="100%" height="138" viewBox="0 0 480 138" fill="none">
         <defs>
-          <linearGradient id="nc-ia" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.08" />
+          <linearGradient id="fd-forget-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#EF4444" stopOpacity="0.18"/>
+            <stop offset="100%" stopColor="#EF4444" stopOpacity="0.03"/>
           </linearGradient>
-          <linearGradient id="nc-ab" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="#10B981" stopOpacity="0.15" />
-            <stop offset="100%" stopColor="#10B981" stopOpacity="0.08" />
-          </linearGradient>
-          <linearGradient id="nc-bo" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="#FBBF24" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="#FBBF24" stopOpacity="0.3" />
+          <linearGradient id="fd-retain-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.15"/>
+            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.02"/>
           </linearGradient>
         </defs>
 
-        {/* layer labels */}
-        {[
-          { x: 20,  label: "INPUT",    color: "#3B82F6", delay: 0.1 },
-          { x: 110, label: "ENCODE",   color: "#10B981", delay: 0.25 },
-          { x: 210, label: "PROCESS",  color: "#10B981", delay: 0.4  },
-          { x: 300, label: "OUTPUT",   color: "#FBBF24", delay: 0.55 },
-        ].map(({ x, label, color, delay }) => (
-          <motion.text key={label} x={x} y="108" textAnchor="middle"
-            fill={color} fillOpacity="0.45" fontSize="6" fontWeight="700" letterSpacing="1.2"
-            fontFamily="monospace"
-            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-            viewport={{ once: true }} transition={{ delay, duration: 0.5 }}
-          >{label}</motion.text>
-        ))}
+        {/* Y-axis guide lines */}
+        {[0, 25, 50, 75, 100].map((pct) => {
+          const y = toY(pct)
+          return (
+            <React.Fragment key={pct}>
+              <line x1="20" y1={y} x2="460" y2={y} stroke="#1e1e1e" strokeWidth="0.5" strokeDasharray={pct === 0 || pct === 100 ? undefined : "2 8"}/>
+              <text x="16" y={y + 3.5} textAnchor="end" fill="#303030" fontSize="5.5" fontFamily="monospace">{pct}%</text>
+            </React.Fragment>
+          )
+        })}
 
-        {/* input→hiddenA connections */}
-        {ia.map(([a,b],i) => (
-          <motion.line key={`ia-${i}`}
-            x1={inputNodes[a].cx}   y1={inputNodes[a].cy}
-            x2={hiddenANodes[b].cx} y2={hiddenANodes[b].cy}
-            stroke="url(#nc-ia)" strokeWidth="0.75"
-            initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.15 + i * 0.035, duration: 0.65 }}
-          />
-        ))}
+        {/* Flotter retention line (stays high) */}
+        <motion.path
+          d={`M 20 ${toY(100)} C 120 ${toY(98)}, 240 ${toY(95)}, 460 ${toY(88)}`}
+          fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round"
+          initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
+          transition={{ duration: 1.4, delay: 0.2, ease: "easeOut" }}
+        />
+        {/* Flotter area fill */}
+        <motion.path
+          d={`M 20 ${toY(100)} C 120 ${toY(98)}, 240 ${toY(95)}, 460 ${toY(88)} L 460 ${BOTTOM} L 20 ${BOTTOM} Z`}
+          fill="url(#fd-retain-fill)"
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          transition={{ duration: 1.2, delay: 0.4 }}
+        />
 
-        {/* hiddenA→hiddenB connections */}
-        {ab.map(([a,b],i) => (
-          <motion.line key={`ab-${i}`}
-            x1={hiddenANodes[a].cx} y1={hiddenANodes[a].cy}
-            x2={hiddenBNodes[b].cx} y2={hiddenBNodes[b].cy}
-            stroke="url(#nc-ab)" strokeWidth="0.75"
-            initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 + i * 0.03, duration: 0.65 }}
-          />
-        ))}
+        {/* Forgetting curve fill area */}
+        <motion.path
+          d={`${curvePath} L ${forgettingPts[forgettingPts.length - 1].x} ${BOTTOM} L ${forgettingPts[0].x} ${BOTTOM} Z`}
+          fill="url(#fd-forget-fill)"
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          transition={{ duration: 1.2, delay: 0.1 }}
+        />
 
-        {/* hiddenB→output connections */}
-        {bo.map(([a,b],i) => (
-          <motion.line key={`bo-${i}`}
-            x1={hiddenBNodes[a].cx} y1={hiddenBNodes[a].cy}
-            x2={outputNodes[b].cx}  y2={outputNodes[b].cy}
-            stroke="url(#nc-bo)" strokeWidth="0.75"
-            initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.65 + i * 0.04, duration: 0.65 }}
-          />
-        ))}
+        {/* Forgetting curve */}
+        <motion.path
+          d={curvePath} fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round"
+          strokeDasharray="5 4"
+          initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
+          transition={{ duration: 1.6, ease: "easeOut" }}
+        />
 
-        {/* input nodes */}
-        {inputNodes.map(({ cx, cy }, i) => (
-          <React.Fragment key={`in-${i}`}>
-            <motion.circle cx={cx} cy={cy} r={11}
-              fill="none" stroke="#3B82F6" strokeWidth="0.5" strokeOpacity="0.13"
+        {/* Data points on forgetting curve */}
+        {forgettingPts.map(({ x, pct, label }, i) => (
+          <React.Fragment key={`fd-pt-${i}`}>
+            <motion.circle cx={x} cy={toY(pct)} r={3.5}
+              fill="#121212" stroke="#EF4444" strokeWidth="1.5"
               initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.1 + i * 0.1, type: "spring", stiffness: 220 }}
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
+              transition={{ delay: 0.8 + i * 0.1, type: "spring", stiffness: 260 }}
+              style={{ transformOrigin: `${x}px ${toY(pct)}px` }}
             />
-            <motion.circle cx={cx} cy={cy} r={6}
-              fill="#1A1A1A" stroke="#3B82F6" strokeWidth="1.3"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.15 + i * 0.1, type: "spring", stiffness: 260 }}
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-            />
-            <motion.circle cx={cx} cy={cy} r={2}
-              fill="#3B82F6"
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.4 }}
-            />
+            {/* pct label above dot */}
+            <motion.text x={x} y={toY(pct) - 7} textAnchor="middle"
+              fill="#EF4444" fillOpacity="0.8" fontSize="6.5" fontFamily="monospace" fontWeight="700"
+              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+              transition={{ delay: 1.0 + i * 0.1 }}
+            >{pct}%</motion.text>
+            {/* time label below */}
+            <motion.text x={x} y={BOTTOM + 11} textAnchor="middle"
+              fill="#3A4A54" fontSize="6.5" fontFamily="monospace" fontWeight="700"
+              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+              transition={{ delay: 1.1 + i * 0.1 }}
+            >{label}</motion.text>
           </React.Fragment>
         ))}
 
-        {/* hiddenA nodes */}
-        {hiddenANodes.map(({ cx, cy }, i) => (
-          <React.Fragment key={`ha-${i}`}>
-            <motion.circle cx={cx} cy={cy} r={12}
-              fill="none" stroke="#10B981" strokeWidth="0.5" strokeOpacity="0.12"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.3 + i * 0.07, type: "spring", stiffness: 200 }}
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-            />
-            <motion.circle cx={cx} cy={cy} r={6.5}
-              fill="#1A1A1A" stroke="#10B981" strokeWidth="1.2"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.35 + i * 0.07, type: "spring", stiffness: 260 }}
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-            />
-            <motion.circle cx={cx} cy={cy} r={2.5}
-              fill="#10B981"
-              animate={{ opacity: [0.4, 1, 0.4], scale: [0.9, 1.1, 0.9] }}
-              transition={{ duration: 1.8, repeat: Infinity, delay: 0.3 + i * 0.3 }}
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-            />
-          </React.Fragment>
-        ))}
+        {/* Traveling particle on forgetting curve */}
+        <motion.circle r="4" fill="#EF4444"
+          animate={{
+            cx: forgettingPts.map(p => p.x),
+            cy: forgettingPts.map(p => toY(p.pct)),
+            opacity: forgettingPts.map((_, i) => 1 - i * 0.15),
+          }}
+          transition={{ duration: 4.0, repeat: Infinity, ease: "easeIn", repeatDelay: 1,
+            times: [0, 0.12, 0.3, 0.52, 0.74, 1] }}
+        />
 
-        {/* hiddenB nodes */}
-        {hiddenBNodes.map(({ cx, cy }, i) => (
-          <React.Fragment key={`hb-${i}`}>
-            <motion.circle cx={cx} cy={cy} r={11}
-              fill="none" stroke="#10B981" strokeWidth="0.5" strokeOpacity="0.1"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.52 + i * 0.07, type: "spring", stiffness: 200 }}
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-            />
-            <motion.circle cx={cx} cy={cy} r={6}
-              fill="#1A1A1A" stroke="#3B82F6" strokeWidth="1.1"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.57 + i * 0.07, type: "spring", stiffness: 260 }}
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-            />
-            <motion.circle cx={cx} cy={cy} r={2.2}
-              fill="#3B82F6"
+        {/* Terminal axis markers */}
+        <line x1="20" y1={TOP} x2="20" y2={BOTTOM + 2} stroke="#2A2A2A" strokeWidth="0.8"/>
+        <line x1="20" y1={BOTTOM} x2="462" y2={BOTTOM} stroke="#2A2A2A" strokeWidth="0.8"/>
+      </svg>
+    </div>
+  )
+}
+
+/**
+ * NeuralConnector — 5-layer memory architecture with staggered draw-in,
+ * sequential node activation, and dual forward-pass pulses.
+ * Used between the Problem and Methodology sections.
+ */
+const NeuralConnector = () => {
+  // 5-layer network: raw(2) → lexical(3) → contextual(4) → semantic(3) → engram(2)
+  const L0 = [{ cx: 18, cy: 42 }, { cx: 18, cy: 88 }]
+  const L1 = [{ cx: 100, cy: 20 }, { cx: 100, cy: 54 }, { cx: 100, cy: 88 }]
+  const L2 = [{ cx: 192, cy: 14 }, { cx: 192, cy: 42 }, { cx: 192, cy: 70 }, { cx: 192, cy: 96 }]
+  const L3 = [{ cx: 284, cy: 20 }, { cx: 284, cy: 54 }, { cx: 284, cy: 88 }]
+  const L4 = [{ cx: 364, cy: 36 }, { cx: 364, cy: 76 }]
+
+  const layers = [L0, L1, L2, L3, L4]
+  const layerColors = ["#3B82F6", "#60A5FA", "#10B981", "#FBBF24", "#A78BFA"]
+  const layerLabels = [
+    { x: 18,  label: "RAW",     color: "#3B82F6"  },
+    { x: 100, label: "LEXICAL", color: "#60A5FA"  },
+    { x: 192, label: "CONTEXT", color: "#10B981"  },
+    { x: 284, label: "SEMANTIC",color: "#FBBF24"  },
+    { x: 364, label: "ENGRAM",  color: "#A78BFA"  },
+  ]
+
+  // Build all connections between adjacent layers
+  const allConns: { x1:number,y1:number,x2:number,y2:number,ci:number }[] = []
+  layers.slice(0, -1).forEach((layerA, ci) => {
+    const layerB = layers[ci + 1]
+    layerA.forEach(a => layerB.forEach(b => {
+      allConns.push({ x1: a.cx, y1: a.cy, x2: b.cx, y2: b.cy, ci })
+    }))
+  })
+
+  const gradIds = ["nc5-01","nc5-12","nc5-23","nc5-34"]
+  const gradPairs = [
+    ["#3B82F6","#60A5FA"],["#60A5FA","#10B981"],["#10B981","#FBBF24"],["#FBBF24","#A78BFA"]
+  ]
+
+  // Forward pass pulse paths (2 parallel)
+  const pulse1 = [L0[0], L1[1], L2[0], L3[0], L4[0]]
+  const pulse2 = [L0[1], L1[2], L2[3], L3[2], L4[1]]
+
+  return (
+    <div className="w-full py-6 flex flex-col items-center overflow-hidden">
+      <motion.div className="flex gap-4 items-center mb-3"
+        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+        <span className="text-[8px] font-black tracking-[0.3em] uppercase text-[#4B5563]">Memory Architecture</span>
+        <span className="flex gap-1">
+          {layerColors.map((c, i) => (
+            <motion.span key={i} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: c }}
               animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 0.5 + i * 0.35 }}
+              transition={{ duration: 1.6, repeat: Infinity, delay: i * 0.22 }}
             />
-          </React.Fragment>
+          ))}
+        </span>
+      </motion.div>
+      <svg width="100%" height="120" viewBox="0 0 382 120" fill="none" className="overflow-visible">
+        <defs>
+          {gradPairs.map(([c1, c2], i) => (
+            <linearGradient key={gradIds[i]} id={gradIds[i]} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stopColor={c1} stopOpacity="0.35"/>
+              <stop offset="100%" stopColor={c2} stopOpacity="0.12"/>
+            </linearGradient>
+          ))}
+        </defs>
+
+        {/* connections */}
+        {allConns.map(({ x1, y1, x2, y2, ci }, i) => (
+          <motion.line key={`nc-e-${i}`}
+            x1={x1} y1={y1} x2={x2} y2={y2}
+            stroke={`url(#${gradIds[ci]})`} strokeWidth="0.7"
+            initial={{ pathLength: 0, opacity: 0 }}
+            whileInView={{ pathLength: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 + ci * 0.14 + (i % 4) * 0.03, duration: 0.7 }}
+          />
         ))}
 
-        {/* output nodes */}
-        {outputNodes.map(({ cx, cy }, i) => (
-          <React.Fragment key={`out-${i}`}>
-            <motion.circle cx={cx} cy={cy} r={11}
-              fill="none" stroke="#FBBF24" strokeWidth="0.5" strokeOpacity="0.14"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.72 + i * 0.08, type: "spring", stiffness: 200 }}
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-            />
-            <motion.circle cx={cx} cy={cy} r={6}
-              fill="#1A1A1A" stroke="#FBBF24" strokeWidth="1.3"
-              initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
-              transition={{ delay: 0.77 + i * 0.08, type: "spring", stiffness: 260 }}
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-            />
-            <motion.circle cx={cx} cy={cy} r={2.5}
-              fill="#FBBF24"
-              animate={{ opacity: [0.55, 1, 0.55] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 0.9 + i * 0.3 }}
-            />
-          </React.Fragment>
+        {/* nodes — per layer */}
+        {layers.map((layer, li) => (
+          layer.map(({ cx, cy }, ni) => (
+            <React.Fragment key={`nc-nd-${li}-${ni}`}>
+              {/* halo */}
+              <motion.circle cx={cx} cy={cy} r={li === 2 ? 12 : 10}
+                fill="none" stroke={layerColors[li]} strokeWidth="0.5" strokeOpacity="0.2"
+                initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+                transition={{ delay: 0.15 + li * 0.15 + ni * 0.06, type: "spring", stiffness: 200 }}
+                style={{ transformOrigin: `${cx}px ${cy}px` }}
+              />
+              {/* ring */}
+              <motion.circle cx={cx} cy={cy} r={li === 2 ? 6.5 : 5.5}
+                fill="#121212" stroke={layerColors[li]} strokeWidth={li === 2 ? 1.5 : 1.2}
+                initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+                transition={{ delay: 0.2 + li * 0.15 + ni * 0.06, type: "spring", stiffness: 280 }}
+                style={{ transformOrigin: `${cx}px ${cy}px` }}
+              />
+              {/* center dot */}
+              <motion.circle cx={cx} cy={cy} r={li === 2 ? 2.5 : 2}
+                fill={layerColors[li]}
+                animate={{ opacity: [0.45, 1, 0.45], scale: [0.9, 1.15, 0.9] }}
+                transition={{ duration: 1.8 + ni * 0.2, repeat: Infinity, delay: li * 0.25 + ni * 0.18 }}
+                style={{ transformOrigin: `${cx}px ${cy}px` }}
+              />
+            </React.Fragment>
+          ))
+        ))}
+
+        {/* layer labels */}
+        {layerLabels.map(({ x, label, color }, i) => (
+          <motion.text key={`nc-lbl-${i}`} x={x} y="114" textAnchor="middle"
+            fill={color} fillOpacity="0.5" fontSize="5.5" fontWeight="800" letterSpacing="0.8"
+            fontFamily="monospace"
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+            transition={{ delay: 0.3 + i * 0.12, duration: 0.5 }}
+          >{label}</motion.text>
         ))}
 
         {/* forward-pass pulse 1 */}
         <motion.circle r={4} fill="#3B82F6"
-          animate={{
-            cx: pulseWaypoints.map(p => p.cx),
-            cy: pulseWaypoints.map(p => p.cy),
-          }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.4, times: [0, 0.32, 0.65, 1] }}
+          animate={{ cx: pulse1.map(p => p.cx), cy: pulse1.map(p => p.cy) }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.5,
+            times: [0, 0.22, 0.46, 0.72, 1] }}
         />
-        {/* forward-pass pulse 2 — offset path */}
-        <motion.circle r={3} fill="#10B981" fillOpacity="0.8"
-          animate={{
-            cx: pulseWaypoints2.map(p => p.cx),
-            cy: pulseWaypoints2.map(p => p.cy),
-          }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.4, delay: 0.8, times: [0, 0.32, 0.65, 1] }}
+        {/* forward-pass pulse 2 */}
+        <motion.circle r={3} fill="#10B981"
+          animate={{ cx: pulse2.map(p => p.cx), cy: pulse2.map(p => p.cy) }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.5,
+            delay: 0.9, times: [0, 0.22, 0.46, 0.72, 1] }}
+        />
+        {/* backward error signal */}
+        <motion.circle r={2} fill="#EF4444"
+          animate={{ cx: [...pulse1].reverse().map(p => p.cx), cy: [...pulse1].reverse().map(p => p.cy) }}
+          transition={{ duration: 2.0, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.2,
+            delay: 2.6, times: [0, 0.22, 0.52, 0.76, 1] }}
         />
       </svg>
     </div>
@@ -1501,92 +1389,92 @@ const NeuralConnector = () => {
 }
 
 /**
- * OrbitDecoration — convergence starburst with concentric orbits.
+ * OrbitDecoration — full-width mastery system visual with concentric geometry.
  * Used between Methodology and CTA sections. Represents mastery achieved.
  */
 const OrbitDecoration = () => {
-  const CX = 80, CY = 80
+  const CX = 240, CY = 120
 
-  // 12 ray endpoints at r=68
-  const rays12 = Array.from({ length: 12 }, (_, i) => {
-    const angle = (i * Math.PI * 2) / 12
-    return { x2: CX + Math.round(68 * Math.cos(angle)), y2: CY + Math.round(68 * Math.sin(angle)) }
+  // 16 ray endpoints at r=98
+  const rays = Array.from({ length: 16 }, (_, i) => {
+    const angle = (i * Math.PI * 2) / 16
+    return {
+      x2: CX + Math.round(98 * Math.cos(angle)),
+      y2: CY + Math.round(98 * Math.sin(angle)),
+      heavy: i % 4 === 0
+    }
   })
 
-  // hexagon at r=28
-  const hexPts = Array.from({ length: 6 }, (_, i) => {
-    const a = (i * Math.PI * 2) / 6 - Math.PI / 6
-    return [CX + 28 * Math.cos(a), CY + 28 * Math.sin(a)]
-  })
-  const hexPath = hexPts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ') + ' Z'
+  // Hexagon builder
+  const hexPath = (r: number, offset = 0) => {
+    const pts = Array.from({ length: 6 }, (_, i) => {
+      const a = (i * Math.PI * 2) / 6 + offset
+      return [CX + r * Math.cos(a), CY + r * Math.sin(a)]
+    })
+    return pts.map(([x,y],i) => `${i===0?'M':'L'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ') + ' Z'
+  }
 
-  // inner hex r=14
-  const hexPts2 = Array.from({ length: 6 }, (_, i) => {
-    const a = (i * Math.PI * 2) / 6
-    return [CX + 14 * Math.cos(a), CY + 14 * Math.sin(a)]
-  })
-  const hexPath2 = hexPts2.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ') + ' Z'
+  const achieveMetrics = [
+    { label: "RETENTION", value: "94%", color: "#3B82F6",  angle: -90 },
+    { label: "SPEED",     value: "3×",  color: "#10B981",  angle: 30  },
+    { label: "RECALL",    value: "∞",   color: "#A78BFA",  angle: 150 },
+  ]
 
   return (
-    <div className="w-full py-6 flex justify-center overflow-hidden">
-      <svg width="160" height="160" viewBox="0 0 160 160" fill="none">
+    <div className="w-full py-4 flex flex-col items-center overflow-hidden">
+      <svg width="100%" height="240" viewBox="0 0 480 240" fill="none" className="overflow-visible">
         <defs>
-          <radialGradient id="od-core" cx="50%" cy="50%" r="50%">
-            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.18" />
-            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+          <radialGradient id="od2-core" cx="50%" cy="50%" r="50%">
+            <stop offset="0%"   stopColor="#3B82F6" stopOpacity="0.12"/>
+            <stop offset="60%"  stopColor="#3B82F6" stopOpacity="0.04"/>
+            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0"/>
           </radialGradient>
         </defs>
 
-        {/* radial background glow */}
-        <circle cx={CX} cy={CY} r="68" fill="url(#od-core)" />
+        {/* radial background circle */}
+        <circle cx={CX} cy={CY} r="108" fill="url(#od2-core)"/>
 
-        {/* 12 converging rays — alternating weight */}
-        {rays12.map(({ x2, y2 }, i) => (
-          <motion.line key={i}
+        {/* 16 rays */}
+        {rays.map(({ x2, y2, heavy }, i) => (
+          <motion.line key={`r-${i}`}
             x1={CX} y1={CY} x2={x2} y2={y2}
             stroke="#3B82F6"
-            strokeWidth={i % 3 === 0 ? 0.9 : 0.45}
-            strokeOpacity={i % 3 === 0 ? 0.2 : 0.1}
+            strokeWidth={heavy ? 0.8 : 0.35}
+            strokeOpacity={heavy ? 0.22 : 0.1}
             strokeLinecap="round"
             initial={{ pathLength: 0, opacity: 0 }}
             whileInView={{ pathLength: 1, opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.05 + i * 0.055, duration: 0.6, ease: "easeOut" }}
+            transition={{ delay: 0.04 + i * 0.035, duration: 0.5, ease: "easeOut" }}
           />
         ))}
 
-        {/* outer hex boundary (r≈68) */}
+        {/* hexagonal rings at radii 32, 54, 78, 98 */}
         {[
-          { r: 68, color: "#3B82F6", op: 0.08, sw: 0.6 },
-          { r: 52, color: "#3B82F6", op: 0.1,  sw: 0.5 },
-          { r: 36, color: "#10B981", op: 0.1,  sw: 0.5 },
-        ].map(({ r, color, op, sw }, i) => {
-          const pts = Array.from({ length: 6 }, (_, j) => {
-            const a = (j * Math.PI * 2) / 6 - Math.PI / 6
-            return [CX + r * Math.cos(a), CY + r * Math.sin(a)]
-          })
-          const p = pts.map(([x,y],j) => `${j===0?'M':'L'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ') + ' Z'
-          return (
-            <motion.path key={i} d={p}
-              fill="none" stroke={color} strokeWidth={sw} strokeOpacity={op}
-              animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
-              transition={{ duration: 30 + i * 12, repeat: Infinity, ease: "linear" }}
-              style={{ transformOrigin: `${CX}px ${CY}px` }}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-            />
-          )
-        })}
+          { r: 32,  color: "#10B981", sw: 0.9, op: 0.25, dir: 1,  dur: 14 },
+          { r: 54,  color: "#3B82F6", sw: 0.7, op: 0.18, dir: -1, dur: 22 },
+          { r: 78,  color: "#FBBF24", sw: 0.6, op: 0.14, dir: 1,  dur: 34 },
+          { r: 98,  color: "#3B82F6", sw: 0.5, op: 0.1,  dir: -1, dur: 50 },
+        ].map(({ r, color, sw, op, dir, dur }, i) => (
+          <motion.path key={`h-${i}`}
+            d={hexPath(r, i % 2 === 0 ? Math.PI / 6 : 0)}
+            fill="none" stroke={color} strokeWidth={sw} strokeOpacity={op}
+            animate={{ rotate: dir * 360 }}
+            transition={{ duration: dur, repeat: Infinity, ease: "linear" }}
+            style={{ transformOrigin: `${CX}px ${CY}px` }}
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          />
+        ))}
 
-        {/* 3 circular orbit rings */}
+        {/* circular orbit rings */}
         {[
-          { r: 44, dur: 22, dash: "4 8",  color: "#3B82F6", op: 0.16 },
-          { r: 56, dur: 35, dash: "2 6",  color: "#10B981", op: 0.12 },
-          { r: 64, dur: 50, dash: "5 11", color: "#FBBF24", op: 0.09 },
+          { r: 44, dur: 18, dash: "3 7",   color: "#3B82F6", op: 0.2 },
+          { r: 68, dur: 28, dash: "2 5",   color: "#10B981", op: 0.15},
+          { r: 88, dur: 42, dash: "6 10",  color: "#FBBF24", op: 0.12},
+          { r: 104,dur: 60, dash: "4 12",  color: "#A78BFA", op: 0.1 },
         ].map(({ r, dur, dash, color, op }, i) => (
-          <motion.circle key={`orbit-${i}`} cx={CX} cy={CY} r={r}
-            fill="none" stroke={color} strokeWidth="0.7"
+          <motion.circle key={`o-${i}`} cx={CX} cy={CY} r={r}
+            fill="none" stroke={color} strokeWidth="0.6"
             strokeOpacity={op} strokeDasharray={dash}
             animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
             transition={{ duration: dur, repeat: Infinity, ease: "linear" }}
@@ -1594,66 +1482,86 @@ const OrbitDecoration = () => {
           />
         ))}
 
-        {/* inner hexagons */}
-        <motion.path d={hexPath}
-          fill="none" stroke="#3B82F6" strokeWidth="0.7" strokeOpacity="0.22"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: `${CX}px ${CY}px` }}
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-        />
-        <motion.path d={hexPath2}
-          fill="none" stroke="#10B981" strokeWidth="0.8" strokeOpacity="0.28"
-          animate={{ rotate: -360 }}
-          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: `${CX}px ${CY}px` }}
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-        />
-
-        {/* 3 orbiting dots */}
+        {/* 4 orbiting dots */}
         {[
-          { r: 44, dur: 5.5, color: "#3B82F6", size: 3,   startAngle: 0   },
-          { r: 56, dur: 9,   color: "#10B981", size: 2.5, startAngle: 120 },
-          { r: 64, dur: 14,  color: "#FBBF24", size: 2,   startAngle: 240 },
-        ].map(({ r, dur, color, size, startAngle }, i) => (
-          <motion.circle key={`dot-${i}`}
-            cx={CX + r * Math.cos((startAngle * Math.PI) / 180)}
-            cy={CY + r * Math.sin((startAngle * Math.PI) / 180)}
-            r={size} fill={color}
+          { r: 44,  dur: 4.5,  color: "#3B82F6", sz: 3.5, start: 0   },
+          { r: 68,  dur: 7.5,  color: "#10B981", sz: 3,   start: 90  },
+          { r: 88,  dur: 12,   color: "#FBBF24", sz: 2.5, start: 180 },
+          { r: 104, dur: 18,   color: "#A78BFA", sz: 2,   start: 270 },
+        ].map(({ r, dur, color, sz, start }, i) => (
+          <motion.circle key={`od-${i}`}
+            cx={CX + r * Math.cos((start * Math.PI) / 180)}
+            cy={CY + r * Math.sin((start * Math.PI) / 180)}
+            r={sz} fill={color}
             animate={{ rotate: 360 }}
             transition={{ duration: dur, repeat: Infinity, ease: "linear" }}
             style={{ transformOrigin: `${CX}px ${CY}px` }}
           />
         ))}
 
-        {/* diamond outline at center */}
-        <motion.path d={`M${CX} ${CY-14} L${CX+14} ${CY} L${CX} ${CY+14} L${CX-14} ${CY} Z`}
-          fill="none" stroke="#3B82F6" strokeWidth="0.8" strokeOpacity="0.3"
-          animate={{ rotate: [0, 45, 90, 135, 180] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: `${CX}px ${CY}px` }}
-          initial={{ scale: 0, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }}
-          viewport={{ once: true }}
-        />
+        {/* metric labels at 3 positions around the ring */}
+        {achieveMetrics.map(({ label, value, color, angle }, i) => {
+          const rad = (angle * Math.PI) / 180
+          const lx = CX + 130 * Math.cos(rad)
+          const ly = CY + 130 * Math.sin(rad)
+          return (
+            <React.Fragment key={`m-${i}`}>
+              <motion.text x={lx} y={ly - 5} textAnchor="middle"
+                fill={color} fontSize="14" fontWeight="900" fontFamily="monospace"
+                initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.7 + i * 0.15, type: "spring", stiffness: 200 }}
+                style={{ transformOrigin: `${lx}px ${ly}px` }}
+              >{value}</motion.text>
+              <motion.text x={lx} y={ly + 8} textAnchor="middle"
+                fill="#4B5563" fontSize="6" fontWeight="700" letterSpacing="1.2" fontFamily="monospace"
+                initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+                transition={{ delay: 0.85 + i * 0.15 }}
+              >{label}</motion.text>
+              {/* connector line from metric to orbit */}
+              <motion.line
+                x1={CX + 108 * Math.cos(rad)} y1={CY + 108 * Math.sin(rad)}
+                x2={CX + 120 * Math.cos(rad)} y2={CY + 120 * Math.sin(rad)}
+                stroke={color} strokeWidth="1" strokeOpacity="0.4"
+                initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
+                transition={{ delay: 0.75 + i * 0.15 }}
+              />
+            </React.Fragment>
+          )
+        })}
 
-        {/* emanation rings */}
-        {[0, 1, 2].map(i => (
+        {/* emanation pulse rings */}
+        {[0, 1, 2, 3].map(i => (
           <motion.circle key={`em-${i}`} cx={CX} cy={CY} fill="none"
-            stroke="#3B82F6" strokeWidth="0.6"
-            initial={{ r: 5, opacity: 0.5 }}
-            animate={{ r: [5, 42], opacity: [0.5, 0] }}
-            transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut", delay: i * 0.88 }}
+            stroke="#3B82F6" strokeWidth="0.7"
+            initial={{ r: 6, opacity: 0.6 }}
+            animate={{ r: [6, 52], opacity: [0.5, 0] }}
+            transition={{ duration: 3.2, repeat: Infinity, ease: "easeOut", delay: i * 0.8 }}
           />
         ))}
 
-        {/* center dot */}
-        <motion.circle cx={CX} cy={CY} r="5"
+        {/* center complex — diamond + inner dot */}
+        <motion.path d={`M${CX} ${CY-18} L${CX+18} ${CY} L${CX} ${CY+18} L${CX-18} ${CY} Z`}
+          fill="none" stroke="#3B82F6" strokeWidth="1" strokeOpacity="0.35"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          style={{ transformOrigin: `${CX}px ${CY}px` }}
+          initial={{ scale: 0, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }} viewport={{ once: true }}
+        />
+        <motion.path d={`M${CX} ${CY-12} L${CX+12} ${CY} L${CX} ${CY+12} L${CX-12} ${CY} Z`}
+          fill="none" stroke="#10B981" strokeWidth="0.7" strokeOpacity="0.3"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 7, repeat: Infinity, ease: "linear", delay: 0.3 }}
+          style={{ transformOrigin: `${CX}px ${CY}px` }}
+          initial={{ scale: 0, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }} viewport={{ once: true }}
+        />
+        <motion.circle cx={CX} cy={CY} r="7"
           fill="#3B82F6"
-          animate={{ opacity: [0.7, 1, 0.7], scale: [0.9, 1.1, 0.9] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ opacity: [0.8, 1, 0.8], scale: [0.9, 1.12, 0.9] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
           style={{ transformOrigin: `${CX}px ${CY}px` }}
         />
-        <circle cx={CX} cy={CY} r="2.5" fill="#FFFFFF" opacity="0.9" />
+        <circle cx={CX} cy={CY} r="3" fill="#FFFFFF"/>
       </svg>
     </div>
   )
@@ -1678,7 +1586,6 @@ export default function LandingPage() {
 
   return (
     <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen bg-[#121212] text-white antialiased overflow-x-hidden selection:bg-[#3B82F6]/30`}>
-      <NeuralBackground />
 
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3B82F6] via-[#FBBF24] to-[#EF4444] origin-left z-50"
@@ -1716,22 +1623,16 @@ export default function LandingPage() {
       </nav>
 
       {/* HERO SECTION */}
-      <section ref={heroRef} className="relative pt-[72px] overflow-hidden min-h-screen bg-[#121212] flex items-center">
-        {/* Decorative diagonal accent lines */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="absolute top-0 right-0 w-[60vw] h-px bg-gradient-to-l from-transparent via-[#3B82F6]/20 to-transparent" style={{ top: '38%' }} />
-          <div className="absolute top-0 right-0 w-[40vw] h-px bg-gradient-to-l from-transparent via-[#3B82F6]/12 to-transparent" style={{ top: '55%' }} />
-        </div>
-
-        <div className="max-w-5xl mx-auto px-6 relative z-10 w-full py-16 md:py-0">
+      <section ref={heroRef} className="relative pt-[72px] overflow-hidden min-h-[100svh] bg-[#121212] flex items-start">
+        <div className="w-full px-5 relative z-10 py-8">
           <div className={`flex flex-col ${language === 'ar' ? 'md:flex-row-reverse' : 'md:flex-row'} md:items-center md:gap-16`}>
 
             {/* Left: Text */}
             <motion.div
-              className={`flex-1 text-center ${language === 'ar' ? 'md:text-right' : 'md:text-left'}`}
-              initial={{ opacity: 0, x: language === 'ar' ? 24 : -24 }}
-              animate={isHeroInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.65 }}
+              className={`flex-1 text-center ${language === 'ar' ? 'md:text-right' : 'md:text-left'} order-2 md:order-none`}
+              initial={{ opacity: 0, y: 18 }}
+              animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.25 }}
             >
               <div className={`mb-5 flex items-center ${language === 'ar' ? 'justify-center md:justify-end' : 'justify-center md:justify-start'}`}>
                 <FlotterLogo isDark={true} height={56} />
@@ -1803,10 +1704,10 @@ export default function LandingPage() {
 
             {/* Right: Demo Visual */}
             <motion.div
-              className="flex-shrink-0 w-full md:w-[400px] mt-12 md:mt-0"
-              initial={{ opacity: 0, x: language === 'ar' ? -24 : 24 }}
-              animate={isHeroInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.2 }}
+              className="flex-shrink-0 w-full md:w-[400px] order-1 md:order-none mb-6 md:mb-0"
+              initial={{ opacity: 0, y: 18 }}
+              animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.05 }}
             >
               {/* Engineering corner-bracket frame */}
               <div className="relative p-3">
@@ -1827,9 +1728,9 @@ export default function LandingPage() {
       </section>
 
       {/* STATS */}
-      <section className="border-y border-[#1e1e1e] bg-[#222222]">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-[#2A2A2A]">
+      <section className="bg-[#222222] border-y border-[#2A2A2A]">
+        <div className="px-5">
+          <div className="grid grid-cols-2 divide-x divide-y divide-[#2A2A2A]">
             {[
               { value: 94, suffix: "%", label: t('landing.stats.retentionRate'), color: "#3B82F6" },
               { value: 3, suffix: "x", label: t('landing.stats.fasterLearning'), color: "#FACC15" },
@@ -1838,24 +1739,24 @@ export default function LandingPage() {
             ].map((stat, i) => (
               <motion.div
                 key={i}
-                className="py-9 px-6 flex flex-col items-center gap-2 text-center"
+                className="py-8 px-5 flex flex-col items-center gap-1.5 text-center relative overflow-hidden"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.07 }}
                 viewport={{ once: true }}
               >
-                <div className="text-[36px] font-black leading-none tabular-nums" style={{ color: stat.color }}>
-                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-                </div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#6B7280]">{stat.label}</div>
                 <motion.div
-                  className="h-px w-8"
+                  className="absolute top-0 left-0 w-full h-[2px]"
                   style={{ backgroundColor: stat.color }}
-                  initial={{ scaleX: 0 }}
+                  initial={{ scaleX: 0, transformOrigin: 'left' }}
                   whileInView={{ scaleX: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.35 + i * 0.07, duration: 0.4 }}
+                  transition={{ delay: 0.2 + i * 0.07, duration: 0.5 }}
                 />
+                <div className="text-[42px] font-black leading-none tabular-nums tracking-tighter" style={{ color: stat.color }}>
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                </div>
+                <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#6B7280] leading-tight">{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -1978,7 +1879,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] overflow-hidden">
+                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] overflow-hidden">
                   <div className="p-6">
                     <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#3B82F6] mb-4 inline-block">
                       {t('landing.engine.badge')}
@@ -2017,7 +1918,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.15 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] p-6">
+                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] p-6">
                   <h4 className="text-[17px] font-bold mb-1 text-white">{t('landing.engine.tetradTitle')}</h4>
                   <p className="text-[13px] text-[#6B7280] mb-5 leading-relaxed">{t('landing.engine.tetradDesc')}</p>
 
@@ -2030,10 +1931,10 @@ export default function LandingPage() {
                     ].map((trace, i) => (
                       <motion.div
                         key={i}
-                        className="rounded-xl p-4 border border-dashed"
+                        className="rounded-xl p-4 border"
                         style={{
                           borderColor: `${trace.color}35`,
-                          background: `linear-gradient(135deg, ${trace.color}08 0%, transparent 60%)`
+                          background: `${trace.color}08`
                         }}
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
@@ -2060,7 +1961,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] p-6">
+                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] p-6">
                   <h4 className="text-[17px] font-bold mb-5 text-white">{t('landing.engine.scienceTitle')}</h4>
 
                   <div className="grid grid-cols-2 gap-x-6 gap-y-4">
@@ -2134,7 +2035,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] overflow-hidden">
+                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] overflow-hidden">
                   <div className="p-6">
                     <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#10B981] mb-4 inline-block">
                       {t('landing.acasrs2.badge')}
@@ -2143,7 +2044,7 @@ export default function LandingPage() {
                     <p className="text-[14px] mb-5 leading-relaxed text-[#9CA3AF]">{t('landing.acasrs2.desc')}</p>
 
                     {/* Forgetting Curve Highlight */}
-                    <div className="rounded-xl p-4 border border-dashed border-[#EF4444]/25 bg-[#EF4444]/[0.03]">
+                    <div className="rounded-xl p-4 border border-[#EF4444]/25 bg-[#EF4444]/[0.04]">
                       <h5 className="text-[13px] font-bold text-[#EF4444] mb-1.5">{t('landing.acasrs2.curveTitle')}</h5>
                       <p className="text-[12px] text-[#9CA3AF] leading-relaxed">{t('landing.acasrs2.curveDesc')}</p>
                     </div>
@@ -2158,7 +2059,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.15 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] p-6">
+                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] p-6">
                   <h4 className="text-[17px] font-bold mb-5 text-white">{t('landing.acasrs2.phasesTitle')}</h4>
 
                   <div className="space-y-4">
@@ -2212,7 +2113,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] p-6">
+                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] p-6">
                   <h4 className="text-[17px] font-bold mb-5 text-white">{t('landing.acasrs2.vsTitle')}</h4>
 
                   {/* Table Header */}
@@ -2244,10 +2145,10 @@ export default function LandingPage() {
                         viewport={{ once: true }}
                         transition={{ delay: 0.06 * i }}
                       >
-                        <div className="rounded-lg p-3 flex items-center border border-dashed border-[#383838] bg-[#1A1A1A]">
+                        <div className="rounded-lg p-3 flex items-center border border-[#222222] bg-[#1A1A1A]">
                           <span className="text-[10px] font-bold text-white">{row.dim}</span>
                         </div>
-                        <div className="rounded-lg p-3 flex items-center border border-dashed border-[#383838] bg-[#1A1A1A]">
+                        <div className="rounded-lg p-3 flex items-center border border-[#EF4444]/12 bg-[#1A1A1A]">
                           <div className="flex items-start gap-1.5">
                             <X size={10} className="text-[#EF4444] mt-0.5 flex-shrink-0" />
                             <span className="text-[10px] text-[#9CA3AF] leading-snug">{row.legacy}</span>
@@ -2272,7 +2173,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.25 }}
               >
-                <div className="rounded-2xl bg-[#1a1a1a] border border-dashed border-[#383838] p-6">
+                <div className="rounded-2xl bg-[#1a1a1a] border border-[#2A2A2A] p-6">
                   <h4 className="text-[17px] font-bold mb-1 text-white">{t('landing.acasrs2.signals')}</h4>
                   <p className="text-[13px] text-[#6B7280] mb-5 leading-relaxed">{t('landing.acasrs2.signalsDesc')}</p>
 
@@ -2284,7 +2185,7 @@ export default function LandingPage() {
                     ].map((signal, i) => (
                       <motion.div
                         key={i}
-                        className="flex items-start gap-3 rounded-xl p-4 bg-[#1A1A1A] border border-dashed border-[#383838]"
+                        className="flex items-start gap-3 rounded-xl p-4 bg-[#1A1A1A] border border-[#222222]"
                         initial={{ opacity: 0, y: 6 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "../../auth/[...nextauth]/route"
+import { getEffectiveStreak } from "@/lib/xp"
 
 export async function GET(req: Request) {
     try {
@@ -45,7 +46,11 @@ export async function GET(req: Request) {
             dueCardsCount, 
             learnedCardsCount, 
             cards: totalCards,
-            streak: userXp?.streakCount ?? 0,
+            streak: getEffectiveStreak(
+                userXp?.streakCount ?? 0,
+                userXp?.lastActiveDate ?? null,
+                userXp?.isPro ?? false,
+            ),
             lastActiveDate: userXp?.lastActiveDate,
             totalXp: userXp?.totalXp ?? 0,
             isPro: userXp?.isPro ?? false,

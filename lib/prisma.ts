@@ -2,16 +2,26 @@ import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+// In Prisma 7+, direct database connections require a driver adapter.
+// CockroachDB is PostgreSQL-compatible, so we use @prisma/adapter-pg.
+// PrismaPg requires a pg.Pool instance — passing a raw URL string causes errors.
+const prismaClientSingleton = () => {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is not defined in your environment variables");
+  }
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+  const adapter = new PrismaPg(pool)
+  return new PrismaClient({ adapter })
 }
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-})
+declare global {
+  var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>
+}
 
-const adapter = new PrismaPg(pool)
+// We create the instance
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter })
+// Exporting it so your routes can use it
+export { prisma }
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma

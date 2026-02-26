@@ -4,6 +4,7 @@ import { authOptions } from '../api/auth/[...nextauth]/route'
 import { prisma } from '@/lib/prisma'
 import { redirect } from 'next/navigation'
 import ProfileContent from './ProfileContent'
+import { getEffectiveStreak } from '@/lib/xp'
 
 export default async function ProfilePage(props: { searchParams: Promise<{ edit?: string }> }) {
   const searchParams = await props.searchParams
@@ -48,6 +49,9 @@ export default async function ProfilePage(props: { searchParams: Promise<{ edit?
   const isStale = resetMonth !== currentMonth || resetYear !== currentYear
   const effectiveMonthlyXp = isStale ? 0 : user.monthlyXp
 
+  // Calculate effective streak (respects missed days)
+  const effectiveStreak = getEffectiveStreak(user.streakCount, user.lastActiveDate, user.isPro)
+
   // Calculate rank
   const usersAbove = await prisma.user.count({
     where: {
@@ -67,7 +71,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ edit?
     updatedAt: user.updatedAt.toISOString(),
     totalXp: user.totalXp,
     monthlyXp: user.monthlyXp,
-    streakCount: user.streakCount,
+    streakCount: effectiveStreak,
     isPro: user.isPro,
     subscriptionStatus: user.subscriptionStatus,
     subscriptionStartedAt: user.subscriptionStartedAt?.toISOString() ?? null,

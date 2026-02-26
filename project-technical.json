@@ -1,0 +1,546 @@
+{
+  "project": {
+    "name": "flotter",
+    "version": "0.1.0",
+    "description": "A spaced-repetition flashcard application for vocabulary learning, featuring AI-generated sentences, image search, text-to-speech, an XP/streak system, and a Pro subscription tier.",
+    "repository": "private",
+    "deploymentPlatform": "Vercel",
+    "productionUrl": "https://flotter.vercel.app"
+  },
+
+  "stack": {
+    "framework": {
+      "name": "Next.js",
+      "version": "16.1.6",
+      "renderingStrategy": "App Router (server components + API routes)",
+      "nodeOptions": "--max-http-header-size=64000"
+    },
+    "language": {
+      "name": "TypeScript",
+      "version": "^5",
+      "target": "ES2017",
+      "strict": true,
+      "moduleResolution": "bundler",
+      "pathAlias": { "@/*": "./*" }
+    },
+    "runtime": "Node.js",
+    "styling": {
+      "framework": "Tailwind CSS",
+      "version": "^4.1.18",
+      "postcss": true
+    },
+    "uiLibraries": {
+      "framerMotion": "^12.34.0",
+      "lucideReact": "^0.563.0",
+      "reactHookForm": "^7.71.1"
+    }
+  },
+
+  "database": {
+    "engine": "PostgreSQL",
+    "orm": "Prisma",
+    "prismaVersion": "^7.4.0",
+    "adapter": "@prisma/adapter-pg (PrismaPg with pg Pool)",
+    "schemaFilePath": "prisma/schema.prisma",
+    "migrationsPath": "prisma/migrations",
+    "connectionEnvVar": "DATABASE_URL",
+    "initScript": "postinstall: prisma generate",
+    "models": {
+      "User": {
+        "tableName": "users",
+        "primaryKey": { "field": "id", "type": "UUID", "generator": "uuid()" },
+        "fields": {
+          "name": "String?",
+          "email": "String @unique",
+          "emailVerified": "DateTime?",
+          "image": "String?",
+          "passwordHash": "String?",
+          "createdAt": "DateTime @default(now())",
+          "updatedAt": "DateTime @default(now()) @updatedAt",
+          "totalXp": "Int @default(0)",
+          "monthlyXp": "Int @default(0)",
+          "monthlyXpResetAt": "DateTime @default(now())",
+          "streakCount": "Int @default(0)",
+          "lastActiveDate": "DateTime?",
+          "isPro": "Boolean @default(false)",
+          "polarCustomerId": "String?",
+          "polarSubscriptionId": "String?",
+          "subscriptionStatus": "String? (active | canceled | past_due)",
+          "subscriptionStartedAt": "DateTime?",
+          "subscriptionEndsAt": "DateTime?",
+          "aiGenerationsToday": "Int @default(0)",
+          "aiGenerationsResetAt": "DateTime @default(now())"
+        },
+        "relations": ["Card[]", "Account[]", "Session[]"]
+      },
+      "Account": {
+        "tableName": "accounts",
+        "description": "NextAuth OAuth account links",
+        "primaryKey": { "field": "id", "type": "cuid" },
+        "uniqueConstraint": ["provider", "providerAccountId"]
+      },
+      "Session": {
+        "tableName": "sessions",
+        "description": "NextAuth session records"
+      },
+      "VerificationToken": {
+        "tableName": "verification_tokens",
+        "uniqueConstraints": ["token", ["identifier", "token"]]
+      },
+      "Card": {
+        "tableName": "cards",
+        "primaryKey": { "field": "id", "type": "UUID", "generator": "uuid()" },
+        "fields": {
+          "userId": "String (FK → users.id, cascade delete)",
+          "word": "String",
+          "imageUrl": "String",
+          "sentences": "String[]",
+          "currentSentenceIndex": "Int @default(0)",
+          "consecutiveCorrect": "Int @default(0)",
+          "easeFactor": "Float @default(2.5)",
+          "lastReviewedAt": "DateTime?",
+          "nextReviewAt": "DateTime @default(now())",
+          "currentIntervalMs": "BigInt @default(0)",
+          "createdAt": "DateTime @default(now())"
+        },
+        "index": "idx_cards_user_review ON (userId, nextReviewAt)"
+      }
+    },
+    "migrations": [
+      { "id": "20260212035405_init", "description": "Initial schema" },
+      { "id": "20260214105257_integrated_nextauth", "description": "NextAuth adapter tables" },
+      { "id": "20260217144139_add_xp_streak_system", "description": "XP, streak, and daily activity fields" },
+      { "id": "20260221111955_add_subscription_fields", "description": "Polar subscription + AI generation quota fields" }
+    ]
+  },
+
+  "authentication": {
+    "library": "next-auth",
+    "version": "^4.24.13",
+    "adapter": "@next-auth/prisma-adapter ^1.0.7",
+    "sessionStrategy": "JWT",
+    "signInPage": "/login",
+    "providers": {
+      "google": {
+        "envVars": {
+          "clientId": "GOOGLE_CLIENT_ID",
+          "clientSecret": "GOOGLE_CLIENT_SECRET"
+        }
+      },
+      "credentials": {
+        "description": "Email + bcrypt password login",
+        "passwordHashing": "bcryptjs ^3.0.3",
+        "normalization": "email.toLowerCase().trim()"
+      }
+    },
+    "jwtCallbacks": {
+      "tokenId": "token.id = user.id",
+      "base64ImageGuard": "Strips data: URIs from token to prevent 431 Request Header Too Large errors"
+    },
+    "secretEnvVar": "NEXTAUTH_SECRET",
+    "baseUrlEnvVar": "NEXTAUTH_URL"
+  },
+
+  "middleware": {
+    "file": "middleware.ts",
+    "library": "next-auth/middleware (withAuth)",
+    "protectedRoutes": [
+      "/cards/:path*",
+      "/api/cards/:path*",
+      "/api/tts/:path*",
+      "/api/ai/:path*",
+      "/api/xp/:path*",
+      "/api/profile/:path*",
+      "/api/checkout/:path*",
+      "/api/images/:path*",
+      "/profile/:path*",
+      "/settings/:path*",
+      "/ranking/:path*"
+    ]
+  },
+
+  "thirdPartyServices": {
+    "googleOAuth": {
+      "purpose": "Social login via Google",
+      "provider": "Google Cloud Console",
+      "documentation": "https://console.cloud.google.com",
+      "envVars": {
+        "GOOGLE_CLIENT_ID": "OAuth 2.0 client ID",
+        "GOOGLE_CLIENT_SECRET": "OAuth 2.0 client secret"
+      }
+    },
+    "polar": {
+      "purpose": "Subscription billing and payment checkout",
+      "sdk": "@polar-sh/sdk ^0.43.1",
+      "nextjsIntegration": "@polar-sh/nextjs ^0.9.3",
+      "server": "production",
+      "documentation": "https://polar.sh",
+      "webhookEndpoint": "/api/webhook",
+      "webhookEvents": [
+        "subscription.created",
+        "subscription.updated",
+        "subscription.canceled",
+        "subscription.revoked"
+      ],
+      "envVars": {
+        "POLAR_ACCESS_TOKEN": "API access token from polar.sh/settings",
+        "POLAR_PRODUCT_ID": "Product UUID from polar.sh dashboard (Pro plan)",
+        "POLAR_WEBHOOK_SECRET": "Webhook signing secret from polar.sh webhook endpoint settings"
+      }
+    },
+    "groq": {
+      "purpose": "AI-generated mnemonic sentences and image query for new vocabulary cards",
+      "sdk": "groq-sdk ^0.37.0",
+      "model": "mixtral-8x7b (via Groq Cloud)",
+      "documentation": "https://console.groq.com",
+      "endpoint": "/api/ai/generate-sentences",
+      "freeTierDailyLimit": 3,
+      "envVars": {
+        "GROQ_API_KEY": "API key from console.groq.com"
+      }
+    },
+    "unsplash": {
+      "purpose": "Image search proxy for vocabulary card illustrations",
+      "documentation": "https://unsplash.com/developers",
+      "endpoint": "/api/images/search",
+      "resultsPerPage": 32,
+      "envVars": {
+        "UNSPLASH_ACCESS_KEY": "Application Access Key from unsplash.com/oauth/applications"
+      }
+    },
+    "unrealSpeech": {
+      "purpose": "High-quality text-to-speech audio (premium TTS option)",
+      "documentation": "https://unrealspeech.com",
+      "apiEndpoint": "https://api.v6.unrealspeech.com/stream",
+      "voiceId": "Will",
+      "bitrate": "192k",
+      "codec": "libmp3lame",
+      "fallback": "google-tts-api (free, no API key required)",
+      "envVars": {
+        "UNREAL_SPEECH_KEY": "Bearer token from unrealspeech.com dashboard"
+      }
+    },
+    "googleTTS": {
+      "purpose": "Fallback text-to-speech via google-tts-api (no auth required)",
+      "sdk": "google-tts-api ^2.0.2",
+      "language": "en",
+      "envVars": {}
+    },
+    "vercel": {
+      "purpose": "Hosting and serverless deployment",
+      "documentation": "https://vercel.com",
+      "envVars": {
+        "NEXTAUTH_URL": "Canonical deployment URL, e.g. https://flotter.vercel.app"
+      }
+    },
+    "postgresql": {
+      "purpose": "Primary relational database",
+      "hostedOn": "Neon (serverless PostgreSQL with connection pooling)",
+      "envVars": {
+        "DATABASE_URL": "Full PostgreSQL connection string (pooled or direct)"
+      }
+    }
+  },
+
+  "envVariablesReference": {
+    "_note": "All values below are env variable NAMES. Never store actual secrets here.",
+    "DATABASE_URL": "PostgreSQL connection string",
+    "NEXTAUTH_SECRET": "Random secret used to sign NextAuth JWTs",
+    "NEXTAUTH_URL": "Base URL of the deployment (e.g. https://flotter.vercel.app)",
+    "GOOGLE_CLIENT_ID": "Google OAuth 2.0 client ID",
+    "GOOGLE_CLIENT_SECRET": "Google OAuth 2.0 client secret",
+    "POLAR_ACCESS_TOKEN": "Polar.sh production API access token",
+    "POLAR_PRODUCT_ID": "Polar.sh Pro product UUID",
+    "POLAR_WEBHOOK_SECRET": "Polar.sh webhook signing secret",
+    "GROQ_API_KEY": "Groq Cloud API key",
+    "UNSPLASH_ACCESS_KEY": "Unsplash API Client-ID access key",
+    "UNREAL_SPEECH_KEY": "Unreal Speech bearer token (optional; falls back to Google TTS)"
+  },
+
+  "apiRoutes": {
+    "auth": {
+      "POST /api/auth/register": {
+        "description": "Create a new credentials account",
+        "rateLimiting": "5 requests per 15 min per IP",
+        "auth": "public",
+        "passwordMinLength": 8
+      },
+      "ANY /api/auth/[...nextauth]": {
+        "description": "NextAuth.js handler (sign in, sign out, session, callbacks)",
+        "auth": "public"
+      }
+    },
+    "cards": {
+      "POST /api/cards": {
+        "description": "Create a new flashcard; awards +50 XP",
+        "auth": "required (JWT)",
+        "validation": "word (string ≤100), sentences (array ≤20), imageUrl (string ≤2048)"
+      },
+      "GET /api/cards": {
+        "description": "Fetch all cards for the authenticated user",
+        "auth": "required"
+      },
+      "GET /api/cards/dash": {
+        "description": "Dashboard stats: total/due/learned counts, full card list, XP, streak, isPro",
+        "auth": "required"
+      },
+      "GET /api/cards/search": {
+        "description": "Full-text search cards by word (case-insensitive, limit 20)",
+        "auth": "required",
+        "queryParam": "q"
+      },
+      "GET|PATCH|DELETE /api/cards/[id]": {
+        "description": "Get, update, or delete a single card by ID",
+        "auth": "required; ownership enforced"
+      }
+    },
+    "ai": {
+      "POST /api/ai/generate-sentences": {
+        "description": "Generate mnemonic sentences + imageQuery for a word via Groq AI",
+        "auth": "required",
+        "rateLimiting": "10 requests per minute per user",
+        "freeTierDailyLimit": 3,
+        "proTier": "unlimited",
+        "inputSanitization": "Word: a-zA-Z, spaces, hyphens only; max 50 chars",
+        "atomicDailyCountIncrement": true
+      }
+    },
+    "images": {
+      "GET /api/images/search": {
+        "description": "Proxy to Unsplash image search; returns up to 32 results",
+        "auth": "required",
+        "queryParam": "query",
+        "envRequired": "UNSPLASH_ACCESS_KEY"
+      }
+    },
+    "tts": {
+      "GET /api/tts": {
+        "description": "Streams audio MP3 for given text. Uses Unreal Speech if UNREAL_SPEECH_KEY is set and provider=unreal; falls back to Google TTS",
+        "auth": "required",
+        "queryParams": { "text": "string", "provider": "google | unreal" },
+        "caching": "Cache-Control: public, max-age=31536000, immutable"
+      }
+    },
+    "xp": {
+      "POST /api/xp/add": {
+        "description": "DEPRECATED (HTTP 410). XP is now awarded server-side within card and review routes.",
+        "status": "deprecated"
+      }
+    },
+    "profile": {
+      "GET /api/profile": {
+        "description": "Returns authenticated user's profile, XP, streak, subscription status, and leaderboard rank",
+        "auth": "required"
+      },
+      "PATCH /api/profile": {
+        "description": "Update user's name and/or profile image",
+        "auth": "required"
+      }
+    },
+    "ranking": {
+      "GET /api/ranking": {
+        "description": "Public leaderboard ranked by monthly XP. Supports ?limit (max 100) and ?offset (max 1000).",
+        "auth": "public",
+        "pagination": { "defaultLimit": 100, "maxLimit": 100, "maxOffset": 1000 }
+      }
+    },
+    "checkout": {
+      "POST /api/checkout": {
+        "description": "Creates a Polar.sh checkout session and returns the checkout URL",
+        "auth": "required",
+        "envRequired": ["POLAR_ACCESS_TOKEN", "POLAR_PRODUCT_ID"],
+        "successRedirect": "${NEXTAUTH_URL}/subscribe?success=true"
+      }
+    },
+    "webhook": {
+      "POST /api/webhook": {
+        "description": "Receives Polar.sh webhook events; verifies HMAC signature; updates user subscription status in DB",
+        "auth": "HMAC signature validation (POLAR_WEBHOOK_SECRET)",
+        "handledEvents": [
+          "subscription.created",
+          "subscription.updated",
+          "subscription.canceled",
+          "subscription.revoked"
+        ]
+      }
+    }
+  },
+
+  "appPages": {
+    "public": [
+      { "path": "/", "file": "app/page.tsx", "description": "Landing / home page" },
+      { "path": "/login", "file": "app/login/page.tsx", "description": "Sign in page" },
+      { "path": "/register", "file": "app/register/page.tsx", "description": "Account registration" },
+      { "path": "/legal/mentions", "file": "app/legal/mentions/page.tsx", "description": "Legal mentions" },
+      { "path": "/legal/privacy", "file": "app/legal/privacy/page.tsx", "description": "Privacy policy" },
+      { "path": "/legal/terms", "file": "app/legal/terms/page.tsx", "description": "Terms of service" }
+    ],
+    "protected": [
+      { "path": "/cards/deck", "file": "app/cards/deck/page.tsx", "description": "Flashcard deck view" },
+      { "path": "/cards/learning", "file": "app/cards/learning/page.tsx", "description": "Active learning / review session" },
+      { "path": "/cards/new", "file": "app/cards/new/page.tsx", "description": "Create a new flashcard" },
+      { "path": "/cards/search", "file": "app/cards/search/page.tsx", "description": "Search existing cards" },
+      { "path": "/cards/[id]/edit", "file": "app/cards/[id]/edit/page.tsx", "description": "Edit an existing card" },
+      { "path": "/profile", "file": "app/profile/page.tsx", "description": "User profile and stats" },
+      { "path": "/settings", "file": "app/settings/page.tsx", "description": "Account settings" },
+      { "path": "/ranking", "file": "app/ranking/page.tsx", "description": "Global leaderboard" },
+      { "path": "/subscribe", "file": "app/subscribe/page.tsx", "description": "Subscription purchase page" },
+      { "path": "/trial", "file": "app/trial/page.tsx", "description": "Free trial page" }
+    ],
+    "utility": [
+      { "path": "/logout", "file": "app/logout/page.tsx", "description": "Sign-out handler page" }
+    ]
+  },
+
+  "coreLibraries": {
+    "lib/prisma.ts": {
+      "description": "Singleton Prisma client with pg Pool adapter; uses globalThis to prevent multiple instances in dev hot-reload",
+      "connectionVar": "DATABASE_URL"
+    },
+    "lib/rate-limit.ts": {
+      "description": "In-memory rate limiter (Map-based). Suitable for single-instance dev/staging. For production Vercel (multi-instance serverless), consider Upstash Redis.",
+      "cleanupInterval": "Every 5 minutes (stale entries pruned)",
+      "functions": {
+        "checkRateLimit(key, { maxRequests, windowMs })": "Returns { success, remaining, resetAt }",
+        "getClientIp(req)": "Reads x-real-ip first (trusted proxy), falls back to x-forwarded-for"
+      },
+      "usages": {
+        "register": "5 requests / 15 min per IP",
+        "login:email": "10 requests / 15 min per email",
+        "login-ip:ip": "30 requests / 15 min per IP",
+        "ai:userId": "10 requests / 60 s per user"
+      }
+    },
+    "lib/xp.ts": {
+      "description": "XP and streak business logic",
+      "functions": {
+        "getEffectiveStreak(streakCount, lastActiveDate, isPro)": "Computes real-time streak; Pro users get 1-day freeze (max 2-day gap)",
+        "awardXp(userId, amount)": "Prisma interactive transaction: adds XP to totalXp + monthlyXp, resets monthly counter on new month, updates streakCount with Pro-freeze rule"
+      },
+      "xpEvents": {
+        "createCard": "+50 XP",
+        "reviewCard": "+10 XP (base), +15 XP if audio was played before swiping"
+      }
+    },
+    "lib/translations.ts": {
+      "description": "i18n translation utilities for multi-language UI support"
+    }
+  },
+
+  "components": {
+    "app/components": [
+      { "file": "AdBanner.tsx", "description": "Advertisement banner (ads.txt present)" },
+      { "file": "FlotterLogo.tsx", "description": "Brand logo component" },
+      { "file": "footer.tsx", "description": "Global footer" },
+      { "file": "header.tsx", "description": "Global navigation header" }
+    ],
+    "app/cards/deck/components": [
+      { "file": "FlashCard.tsx", "description": "Core flashcard component with flip animation" },
+      { "file": "StreakCelebration.tsx", "description": "Animated streak milestone overlay" },
+      { "file": "XpNotification.tsx", "description": "Toast-style XP award notification" }
+    ],
+    "app/profile": [
+      { "file": "ProfileContent.tsx", "description": "Profile stats display" },
+      { "file": "ProfileForm.tsx", "description": "Profile edit form (name, image)" }
+    ],
+    "app/cards/[id]/edit": [
+      { "file": "EditCardForm.tsx", "description": "Card edit form component" }
+    ]
+  },
+
+  "providers": {
+    "app/providers": [
+      { "file": "LanguageProvider.tsx", "description": "Provides locale/language context to the app" },
+      { "file": "NextAuthSessionProvider.tsx", "description": "Wraps SessionProvider from next-auth/react" },
+      { "file": "ThemeProvider.tsx", "description": "Light/dark theme context" },
+      { "file": "UserProvider.tsx", "description": "Supplies user profile data via React context" }
+    ]
+  },
+
+  "subscriptionTiers": {
+    "free": {
+      "aiGenerationsPerDay": 3,
+      "streakFreeze": false,
+      "features": ["Unlimited cards", "Google TTS", "Leaderboard access"]
+    },
+    "pro": {
+      "aiGenerationsPerDay": "unlimited",
+      "streakFreeze": true,
+      "freezeGracePeriod": "1 missed day (gap of 2 days keeps streak alive)",
+      "features": ["All Free features", "Unlimited AI generations", "Streak freeze", "Unreal Speech TTS"]
+    }
+  },
+
+  "spacedRepetitionAlgorithm": {
+    "description": "SM-2 inspired algorithm implemented in the cards PATCH route",
+    "initialReviewInterval": "15 minutes",
+    "fields": {
+      "easeFactor": "Float, default 2.5 — adjusted per review outcome",
+      "currentIntervalMs": "BigInt — interval until next review in milliseconds",
+      "consecutiveCorrect": "Int — consecutive correct answers for ease factor growth",
+      "nextReviewAt": "DateTime — scheduled review timestamp"
+    }
+  },
+
+  "testing": {
+    "framework": "Vitest ^4.0.18",
+    "configFile": "vitest.config.ts",
+    "environment": "node",
+    "aliasResolution": "@ → project root",
+    "testSuites": {
+      "__tests__/unit/logical-fixes.test.ts": "Unit tests for logical bug fixes",
+      "__tests__/unit/rate-limit.test.ts": "Unit tests for rate limiter",
+      "__tests__/integration/logical-fixes.test.ts": "Integration tests for logical fixes",
+      "__tests__/integration/security-fixes.test.ts": "Integration tests for security patches",
+      "__tests__/e2e/logical-fixes-e2e.test.ts": "End-to-end logical flow tests"
+    },
+    "scripts": {
+      "test": "vitest run",
+      "test:unit": "vitest run __tests__/unit",
+      "test:integration": "vitest run __tests__/integration",
+      "test:typecheck": "tsc --noEmit"
+    }
+  },
+
+  "buildAndDeploy": {
+    "scripts": {
+      "dev": "NODE_OPTIONS='--max-http-header-size=64000' next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "eslint",
+      "postinstall": "prisma generate"
+    },
+    "eslint": {
+      "configFile": "eslint.config.mjs",
+      "extends": "eslint-config-next 16.1.6"
+    },
+    "postcss": {
+      "configFile": "postcss.config.mjs",
+      "plugins": ["@tailwindcss/postcss", "autoprefixer"]
+    },
+    "prismaConfig": {
+      "configFile": "prisma.config.ts",
+      "schemaPath": "prisma/schema.prisma",
+      "migrationsPath": "prisma/migrations",
+      "datasourceUrlEnvVar": "DATABASE_URL"
+    }
+  },
+
+  "securityNotes": {
+    "jwtHeaderOverflow": "NODE_OPTIONS max-http-header-size=64000 prevents 431 errors from large Base64 JWTs. Base64 images are stripped from JWT token to avoid bloat.",
+    "rateLimiting": "In-memory rate limiting on login, registration, and AI endpoints. Not shared across serverless instances — consider Upstash Redis for multi-instance production.",
+    "inputSanitization": "AI word input validated against /^[a-zA-Z\\s-]+$/ (max 50 chars). Card fields validated for type, length, and array bounds.",
+    "webhookVerification": "Polar webhooks verified via HMAC validateEvent(); requests with missing or invalid POLAR_WEBHOOK_SECRET are rejected with 403/500.",
+    "passwordMinLength": "8 characters minimum enforced on registration.",
+    "credentialStuffingProtection": "Both per-email and per-IP rate limits on login route.",
+    "xpEndpointDeprecated": "POST /api/xp/add deprecated and returns 410; XP awarded exclusively server-side.",
+    "imageSanitization": "Unsplash images stored as URLs only; Base64 images disallowed in imageUrl field on cards."
+  },
+
+  "knownArchitecturalConsiderations": {
+    "rateLimiterScaling": "Current in-memory rate limiter (lib/rate-limit.ts) is per-process. On Vercel serverless with concurrent instances, counters are not shared. Upstash Redis is the recommended upgrade path.",
+    "prismaPooling": "Direct pg.Pool connection; ensure DATABASE_URL points to a pooler (e.g., PgBouncer / Neon pooled) for serverless environments to avoid connection exhaustion.",
+    "monthlyXpResetLogic": "Monthly XP reset is lazy (on next XP award). The ranking route applies stale-month detection client-side at read time.",
+    "streakConsistency": "Streak stored in DB is updated only on XP award; getEffectiveStreak() computes real-time value at query time."
+  }
+}
