@@ -5,8 +5,7 @@ import { Polar } from '@polar-sh/sdk'
 
 const polar = new Polar({
   accessToken: process.env.POLAR_ACCESS_TOKEN!,
-  // ISSUE-010: Dynamically use correct environment based on NODE_ENV
-  server: process.env.NODE_ENV === 'production' ? 'production' : 'sandbox',
+  server: 'production',
 })
 
 export async function POST(req: Request) {
