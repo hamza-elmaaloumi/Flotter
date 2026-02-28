@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
 import { Plus, Search, Check, ChevronLeft, Loader2, X, Sparkles, Crown, HelpCircle, ChevronRight, Type, PenLine, ImageIcon, MousePointerClick } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useLanguage } from '../../providers/LanguageProvider'
 import { useTheme } from '../../providers/ThemeProvider'
 import Link from 'next/link'
@@ -12,12 +12,14 @@ import Link from 'next/link'
 export default function NewCardPage() {
   const { user } = useUser()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { t, language } = useLanguage()
   const { isDark } = useTheme()
   
   // State
   const [word, setWord] = useState('')
-  const [sentences, setSentences] = useState(['']) 
+  const [sentences, setSentences] = useState([''])
+  const [wordFromLibrary, setWordFromLibrary] = useState(false) 
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<any[]>([])
   const [selected, setSelected] = useState<any | null>(null)
@@ -47,6 +49,24 @@ export default function NewCardPage() {
     }
     if (user?.id) checkCardCount()
   }, [user?.id])
+
+  // Auto-populate word from URL query parameter (from Word Library)
+  useEffect(() => {
+    const wordParam = searchParams.get('word')
+    if (wordParam && wordParam.trim()) {
+      const decodedWord = decodeURIComponent(wordParam.trim())
+      setWord(decodedWord)
+      setWordFromLibrary(true)
+    }
+  }, [searchParams])
+
+  // Auto-trigger AI generation when word comes from library
+  useEffect(() => {
+    if (wordFromLibrary && word && !aiLoading) {
+      setWordFromLibrary(false)
+      handleWordBlur()
+    }
+  }, [wordFromLibrary, word])
 
   // Sentence Handlers
   const addSentence = () => setSentences([...sentences, ''])

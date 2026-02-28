@@ -32,8 +32,8 @@ export default function TermsOfService() {
           </h2>
           <p>
             {isAr 
-              ? 'تتم معالجة المدفوعات لفئة "Pro" ($1/شهريًا) بواسطة Polar. تتولى Polar جميع عمليات الفوترة والضرائب والامتثال المالي نيابة عن Mezuma.' 
-              : 'Payments for the "Pro" tier ($1/month) are processed by Polar. Polar handles all billing, taxes, and financial compliance on behalf of Mezuma.'}
+              ? 'تتم معالجة المدفوعات لفئة "Pro" (1$/شهريًا) بواسطة Polar. تتولى Polar جميع عمليات الفوترة والضرائب والامتثال المالي نيابة عن Mezuma.' 
+              : 'Payments for the "Pro" tier (1$/month) are processed by Polar. Polar handles all billing, taxes, and financial compliance on behalf of Mezuma.'}
           </p>
         </section>
 

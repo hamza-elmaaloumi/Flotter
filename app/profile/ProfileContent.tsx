@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import ProfileForm from './ProfileForm'
 import { useLanguage } from '../providers/LanguageProvider'
 import { useTheme } from '../providers/ThemeProvider'
+import { shareProfileCard } from './exportProfileCard'
 import { 
   User, 
   Mail, 
@@ -19,7 +20,10 @@ import {
   Trophy,
   X,
   Crown,
-  Shield
+  Shield,
+  Download,
+  Share2,
+  Check
 } from 'lucide-react'
 
 const RedAnimatedFlame = ({ size = 20, active = false, className = "" }: { size?: number, active?: boolean, className?: string }) => (
@@ -155,6 +159,45 @@ type ProfileContentProps = {
 export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditing }: ProfileContentProps) {
   const { t, language } = useLanguage()
   const { isDark } = useTheme()
+  const [exporting, setExporting] = useState(false)
+  const [exportDone, setExportDone] = useState(false)
+
+  const handleExport = async () => {
+    if (exporting) return
+    setExporting(true)
+    setExportDone(false)
+    try {
+      await shareProfileCard({
+        name: user.name || t('profile.learner'),
+        email: user.email || '',
+        image: user.image,
+        totalXp: user.totalXp,
+        monthlyXp: effectiveMonthlyXp,
+        streakCount: user.streakCount,
+        rank,
+        isPro: user.isPro,
+        memberSince: new Date(user.createdAt).toLocaleDateString(),
+        labels: {
+          title: t('profile.exportTitle'),
+          totalXp: t('profile.totalXp'),
+          dayStreak: t('profile.dayStreak'),
+          rank: t('profile.rank'),
+          monthlyXp: t('profile.monthlyXp'),
+          memberSince: t('profile.memberSince'),
+          plan: t('profile.currentPlan'),
+          pro: t('profile.planPro'),
+          free: t('profile.planFree'),
+          poweredBy: 'flotter.app',
+        },
+      })
+      setExportDone(true)
+      setTimeout(() => setExportDone(false), 3000)
+    } catch (err) {
+      console.error('Export failed', err)
+    } finally {
+      setExporting(false)
+    }
+  }
 
   return (
     <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen antialiased pb-[64px] ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
@@ -197,6 +240,28 @@ export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditi
             >
               {t('profile.editProfile')}
             </Link>
+
+            <button
+              onClick={handleExport}
+              disabled={exporting}
+              className={`mt-3 flex items-center gap-2 px-5 py-2 rounded-full border text-[11px] font-bold uppercase tracking-widest transition-all active:scale-95 ${
+                exportDone
+                  ? 'text-[#10B981] border-[#10B981]/30 bg-[#10B981]/10'
+                  : exporting
+                    ? 'text-[#6B7280] border-[#2D2D2F] opacity-60 cursor-wait'
+                    : isDark
+                      ? 'text-[#9CA3AF] bg-[#1C1C1E] border-[#2D2D2F] hover:bg-[#222222] hover:text-white'
+                      : 'text-[#6B7280] bg-white border-[#E2E4E9] hover:bg-[#F0F1F3] hover:text-[#111827]'
+              }`}
+            >
+              {exportDone ? (
+                <><Check size={14} /> {t('profile.exported')}</>
+              ) : exporting ? (
+                <><Download size={14} className="animate-pulse" /> {t('profile.exporting')}</>
+              ) : (
+                <><Share2 size={14} /> {t('profile.exportProfile')}</>
+              )}
+            </button>
           </section>
         )}
 

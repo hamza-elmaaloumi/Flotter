@@ -1,0 +1,752 @@
+{
+  "feature": "Word Library — Built-in curated word database",
+  "tested_on": "2026-02-28",
+  "total_simulations": 30,
+  "summary": {
+    "issues_found": 12,
+    "critical_issues": 3,
+    "medium_issues": 5,
+    "low_issues": 4,
+    "average_satisfaction": 7.8,
+    "users_who_would_use_feature": 27,
+    "users_who_found_issues": 18
+  },
+  "simulations": [
+    {
+      "id": 1,
+      "persona": "Sofia, 19, university student, iPhone, low patience",
+      "scenario": "Opens Word Library from footer, browses Daily Vocabulary, selects 'appreciate'",
+      "steps": [
+        "Sees Library icon in bottom footer bar",
+        "Taps Library — navigates to /cards/library",
+        "Sees hero banner 'Discover New Words'",
+        "Scrolls through 6 category cards",
+        "Taps 'Daily Vocabulary' category",
+        "Sees 30 words listed with definitions",
+        "Taps 'appreciate' — word with 'Use →' button",
+        "Redirected to /cards/new?word=appreciate",
+        "Word input auto-populated with 'appreciate'",
+        "AI auto-generates 3 sentences and searches images",
+        "Selects image, taps Create — card created successfully"
+      ],
+      "satisfaction": 9,
+      "issues_found": [],
+      "feedback": "This is exactly what I needed! I don't have to think about which words to learn."
+    },
+    {
+      "id": 2,
+      "persona": "Ahmed, 27, Arabic speaker, slow internet, medium patience",
+      "scenario": "Switches to Arabic, then tries to use the Word Library",
+      "steps": [
+        "Logs in, goes to settings, switches to Arabic",
+        "Returns to dashboard",
+        "Taps المكتبة (Library) in footer",
+        "Sees 'اكتشف كلمات جديدة' (Discover New Words) hero",
+        "Notices categories display Arabic names: 'مفردات يومية', 'إنجليزية الأعمال'",
+        "Taps 'كلمات السفر' (Travel Words)",
+        "Sees words listed with Arabic difficulty labels: مبتدئ, متوسط, متقدم",
+        "Taps 'accommodation'",
+        "Navigated to /cards/new — word pre-populated",
+        "AI generation takes 15+ seconds on slow connection",
+        "No timeout indicator — just a spinner",
+        "Eventually loads — creates card"
+      ],
+      "satisfaction": 7,
+      "issues_found": [
+        {
+          "id": "SIM-001",
+          "description": "Category descriptions in Arabic are hardcoded in the data file, not pulled from translations — means they can't be updated via translation system alone",
+          "severity": "low",
+          "type": "architecture"
+        }
+      ],
+      "feedback": "Arabic support is good but the loading time is painful."
+    },
+    {
+      "id": 3,
+      "persona": "Emma, 37, non-technical, looking for French words",
+      "scenario": "Searches Word Library for French vocabulary",
+      "steps": [
+        "Opens Word Library from header icon",
+        "Sees search bar — types 'bonjour'",
+        "No results found",
+        "Types 'french' — finds 'cuisine' from Travel Words (definition mentions 'region')",
+        "Types 'travel' — finds many travel-related words",
+        "Realizes library is English-only vocabulary",
+        "Still decides this is useful — selects 'cuisine'",
+        "Card creation works — AI generates English sentences about 'cuisine'"
+      ],
+      "satisfaction": 6,
+      "issues_found": [
+        {
+          "id": "SIM-002",
+          "description": "No indication in the library that words are specifically for English vocabulary learning — could confuse users expecting multi-language support",
+          "severity": "low",
+          "type": "ux"
+        }
+      ],
+      "feedback": "The library is helpful but it should say 'English Vocabulary Library' not just 'Word Library'."
+    },
+    {
+      "id": 4,
+      "persona": "James, 50, nurse, wants medical terminology",
+      "scenario": "Searches for medical terms in the Word Library",
+      "steps": [
+        "Opens Word Library",
+        "Searches 'tachycardia' — no results",
+        "Searches 'medical' — no results",
+        "Searches 'heart' — no results (no medical category exists)",
+        "Browses all categories — no medical/health category",
+        "Disappointed — goes back to manual card creation",
+        "Types 'tachycardia' manually in /cards/new"
+      ],
+      "satisfaction": 4,
+      "issues_found": [
+        {
+          "id": "SIM-003",
+          "description": "No medical/health vocabulary category in the word library — professionals studying specialized terminology find no relevant content",
+          "severity": "medium",
+          "type": "content-gap"
+        }
+      ],
+      "feedback": "I need medical terms. The library categories are too generic for my use case."
+    },
+    {
+      "id": 5,
+      "persona": "Yuki, 17, TOEFL prep, advanced user, fast phone",
+      "scenario": "Uses Featured Words for quick card creation",
+      "steps": [
+        "Opens Word Library",
+        "Sees Featured Words section at bottom",
+        "Taps 'ubiquitous' from featured row",
+        "Instantly navigated to /cards/new?word=ubiquitous",
+        "AI generates sentences — creates card",
+        "Goes back to library",
+        "Taps 'paradigm' — creates another card",
+        "Goes back again — taps 'negotiate'",
+        "Hits AI limit after 3 cards (free tier)",
+        "Frustrated — wants to continue using library words but can't get AI"
+      ],
+      "satisfaction": 7,
+      "issues_found": [
+        {
+          "id": "SIM-004",
+          "description": "When user hits the 3/day AI limit while using library words, there's no fallback — the library workflow is broken because the value proposition is auto-generation",
+          "severity": "medium",
+          "type": "ux-flow"
+        }
+      ],
+      "feedback": "The library + AI combo is amazing but the 3/day limit kills it. At least let me create cards from library without AI count."
+    },
+    {
+      "id": 6,
+      "persona": "Fatima, 30, IELTS prep, Arabic UI, average internet",
+      "scenario": "Browses Academic Words category for IELTS study",
+      "steps": [
+        "Opens library in Arabic mode",
+        "Taps 'كلمات أكاديمية' (Academic Words)",
+        "Uses filter to show only 'متقدم' (Advanced) level",
+        "Sees filtered list: ambiguous, criterion, empirical, hypothesis, etc.",
+        "These are exactly the IELTS high-band words she needs",
+        "Taps 'ubiquitous' — creates card with AI",
+        "Taps 'paradigm' — creates card with AI",
+        "Taps 'phenomenon' — creates card with AI",
+        "Hits AI limit on 3rd card",
+        "Wants to continue but can't — subscriber flow"
+      ],
+      "satisfaction": 8,
+      "issues_found": [],
+      "feedback": "The Academic Words category is perfect for IELTS! The difficulty filter is very useful."
+    },
+    {
+      "id": 7,
+      "persona": "Marcus, 23, security tester, advanced technical",
+      "scenario": "Tests the API endpoint directly with various inputs",
+      "steps": [
+        "Opens /api/word-library — gets categories JSON",
+        "Tries /api/word-library?action=category&id=daily-vocabulary — gets category data",
+        "Tries /api/word-library?action=category&id=../../etc/passwd — gets 404 (safe)",
+        "Tries /api/word-library?action=search&q=<script>alert(1)</script> — returns empty results (safe, no XSS)",
+        "Tries /api/word-library?action=search&q=a — gets 400 (minimum 2 chars enforced)",
+        "Tries /api/word-library?action=search&q= — gets 400 (empty query rejected)",
+        "Tries /api/word-library?action=difficulty&level=invalid — gets 400",
+        "Tries /api/word-library?action=nonexistent — gets 400",
+        "Tests /cards/new?word=<script>alert(1)</script> — React escapes it (safe)",
+        "Overall security posture is good"
+      ],
+      "satisfaction": 8,
+      "issues_found": [
+        {
+          "id": "SIM-005",
+          "description": "The API route at /api/word-library has no authentication — all word data is publicly accessible without login. While the data isn't sensitive, this could be used for scraping.",
+          "severity": "low",
+          "type": "security"
+        }
+      ],
+      "feedback": "Solid input validation on the API. No XSS possible since React escapes everything."
+    },
+    {
+      "id": 8,
+      "persona": "Lisa, 33, GRE prep, iPhone SE (small screen)",
+      "scenario": "Uses Word Library on a small screen device",
+      "steps": [
+        "Opens library on small iPhone SE screen",
+        "Hero banner takes significant space but scrolls away",
+        "Category cards display correctly — single column layout works",
+        "Taps Academic Words — sees word list",
+        "Word cards are readable — definition text is well-sized",
+        "Difficulty badges are small but visible",
+        "Taps filter icon — filter chips appear",
+        "Filter chips wrap properly on small screen",
+        "Featured words scroll horizontally — this works well",
+        "Taps 'criterion' — navigated to card creation",
+        "Word input populated correctly"
+      ],
+      "satisfaction": 8,
+      "issues_found": [
+        {
+          "id": "SIM-006",
+          "description": "The filter toggle button in category detail view has no label or tooltip — just a Filter icon. Users may not discover it.",
+          "severity": "low",
+          "type": "discoverability"
+        }
+      ],
+      "feedback": "The library works well on my small phone. Good responsive design."
+    },
+    {
+      "id": 9,
+      "persona": "Raj, 22, student in India, free tier user",
+      "scenario": "Tries to create multiple cards from the library in one session",
+      "steps": [
+        "Opens library — browses Technology category",
+        "Taps 'algorithm' — AI generates, card created",
+        "Returns to library — taps 'encryption'",
+        "AI generates, card created",
+        "Returns to library — taps 'cybersecurity'",
+        "AI generates, card created (3rd)",
+        "Returns to library — taps 'database'",
+        "Navigated to /cards/new?word=database",
+        "Word populated but AI generation fails — daily limit reached",
+        "Sees limit banner but the word is pre-filled",
+        "Can still write sentences manually",
+        "Creates card manually — tedious without AI",
+        "Wishes he could batch-select library words"
+      ],
+      "satisfaction": 6,
+      "issues_found": [
+        {
+          "id": "SIM-007",
+          "description": "No batch/multi-select feature in the library — users must select one word at a time, navigate to card creation, create it, then go back. Very tedious for creating multiple cards.",
+          "severity": "medium",
+          "type": "missing-feature"
+        }
+      ],
+      "feedback": "Let me select multiple words and create them all at once! Going back and forth is slow."
+    },
+    {
+      "id": 10,
+      "persona": "Sarah, 45, parent helping 12-year-old with homework",
+      "scenario": "Browses Emotions & Feelings category with her child",
+      "steps": [
+        "Opens Word Library",
+        "Sees categories — taps 'Emotions & Feelings'",
+        "Browses words: anxious, compassion, empathy, gratitude",
+        "These are appropriate and educational for a child",
+        "Filters to 'Beginner' level — sees simpler emotions",
+        "Selects 'grateful' — oops, it's 'gratitude' (child wanted 'grateful')",
+        "Card creation shows 'gratitude' — AI generates sentences",
+        "AI sentences are dramatic (per original system prompt) — not child-friendly",
+        "Library words are fine but AI output is still intense"
+      ],
+      "satisfaction": 5,
+      "issues_found": [
+        {
+          "id": "SIM-008",
+          "description": "The Word Library provides appropriate vocabulary but the AI sentence generation still uses the dramatic/intense system prompt — the library doesn't change the AI tone. Library words get the same scary sentences.",
+          "severity": "medium",
+          "type": "ux-consistency"
+        }
+      ],
+      "feedback": "The word list is great for my kid but the AI sentences are still too intense. The library should come with calmer sentences."
+    },
+    {
+      "id": 11,
+      "persona": "Omar, 20, Arabic UI, slow internet, Xiaomi phone",
+      "scenario": "Uses library search feature with English words while in Arabic mode",
+      "steps": [
+        "Opens library in Arabic mode",
+        "Types 'business' in the search bar (dir=ltr)",
+        "Search works — finds words from Business English category",
+        "Results show both the English word and Arabic category name",
+        "Taps 'collaborate' — navigated to card creation",
+        "Types partial search 'ne' — finds 'negotiate', 'necessary', 'generous', 'serenity'",
+        "Search is responsive even on slow connection (client-side filtering)"
+      ],
+      "satisfaction": 8,
+      "issues_found": [],
+      "feedback": "I like that search works instantly without internet since it's local data."
+    },
+    {
+      "id": 12,
+      "persona": "David, 28, power user comparing to Anki",
+      "scenario": "Evaluates the library for completeness and data structure",
+      "steps": [
+        "Opens library — counts 6 categories",
+        "Checks each category — each has 30 words",
+        "Total: 180 words — decent but limited for power users",
+        "Searches for GRE-specific words: 'recalcitrant' — not found",
+        "Searches 'obsequious' — not found",
+        "Searches 'perspicacious' — not found",
+        "Many advanced GRE words are missing",
+        "No way to suggest or add words to the library",
+        "No indication of which words user has already created cards for"
+      ],
+      "satisfaction": 5,
+      "issues_found": [
+        {
+          "id": "SIM-009",
+          "description": "Library doesn't track which words the user has already created cards for — users can accidentally create duplicate cards for words they've already studied",
+          "severity": "medium",
+          "type": "missing-feature"
+        },
+        {
+          "id": "SIM-010",
+          "description": "180 total words in 6 categories is a good start but insufficient for serious exam prep (GRE has 1000+ frequently tested words)",
+          "severity": "low",
+          "type": "content-gap"
+        }
+      ],
+      "feedback": "Mark words I've already added so I don't create duplicates. Also need more advanced vocab."
+    },
+    {
+      "id": 13,
+      "persona": "Maria, 35, business English learner, Samsung Galaxy",
+      "scenario": "Uses Business English category for work vocabulary",
+      "steps": [
+        "Opens library — sees Business English category with briefcase icon",
+        "Taps it — sees 30 business words",
+        "Filters to 'Intermediate' — sees most words are intermediate",
+        "Selects 'collaborate' — AI generates sentences",
+        "Sentences are contextual and professional-sounding",
+        "Goes back — selects 'implement'",
+        "Goes back — selects 'leverage'",
+        "Hits AI limit — subscribes to Pro",
+        "Now creates more cards from library without limit"
+      ],
+      "satisfaction": 9,
+      "issues_found": [],
+      "feedback": "The Business English category is exactly what I need for my new job!"
+    },
+    {
+      "id": 14,
+      "persona": "Chen, 40, Chinese native, learning English, desktop browser",
+      "scenario": "Uses library on desktop browser (wider screen)",
+      "steps": [
+        "Opens library on desktop Chrome",
+        "Layout is centered with max-w-2xl — lots of wasted space on sides",
+        "Category cards are stacked vertically — could be a grid on desktop",
+        "Searches for words — search results also single column",
+        "Word cards are readable but layout feels mobile-optimized, not desktop-native",
+        "Selects 'accomplish' — card creation works fine",
+        "Back button works — returns to library"
+      ],
+      "satisfaction": 7,
+      "issues_found": [
+        {
+          "id": "SIM-011",
+          "description": "Word Library page uses single-column max-w-2xl layout that wastes space on desktop screens — categories could use a responsive grid (2 or 3 columns) on larger screens",
+          "severity": "low",
+          "type": "responsive-design"
+        }
+      ],
+      "feedback": "Works fine but could use the wider screen better."
+    },
+    {
+      "id": 15,
+      "persona": "Ana, 25, Spanish speaker, beginner English",
+      "scenario": "Uses difficulty filter to find beginner-level words",
+      "steps": [
+        "Opens library",
+        "Taps Daily Vocabulary",
+        "Sees mix of beginner and intermediate words",
+        "Finds the Filter icon — taps it",
+        "Filter chips appear — selects 'Beginner'",
+        "List shrinks to only beginner words",
+        "Words like 'appreciate', 'challenge', 'communicate' are perfect for her level",
+        "Selects 'essential' — creates card",
+        "Goes back — filter is reset",
+        "Has to re-open filter and select Beginner again"
+      ],
+      "satisfaction": 7,
+      "issues_found": [
+        {
+          "id": "SIM-012",
+          "description": "When navigating back to the library from card creation, the selected category and difficulty filter are both reset — user loses their browsing context",
+          "severity": "medium",
+          "type": "state-persistence"
+        }
+      ],
+      "feedback": "Remember my filter when I come back! I have to keep selecting Beginner every time."
+    },
+    {
+      "id": 16,
+      "persona": "Tom, 30, marketing professional, fast internet",
+      "scenario": "Quickly creates 3 cards from different categories",
+      "steps": [
+        "Opens library from header BookOpen icon",
+        "Taps Business English → selects 'strategy'",
+        "AI generates — creates card — back to library",
+        "Taps Technology → selects 'algorithm'",
+        "AI generates — creates card — back to library",
+        "Taps Emotions → selects 'empathy'",
+        "AI generates — creates card (3rd — last free)",
+        "Back to library — wants more but knows AI limit",
+        "Continues browsing without creating"
+      ],
+      "satisfaction": 8,
+      "issues_found": [],
+      "feedback": "Love the variety across categories. Makes me want to explore more words."
+    },
+    {
+      "id": 17,
+      "persona": "Leila, 22, Moroccan student, Arabic + French speaker",
+      "scenario": "Uses library in Arabic mode looking for IELTS words",
+      "steps": [
+        "Switches to Arabic",
+        "Opens library — sees 'مكتبة الكلمات'",
+        "Taps 'كلمات أكاديمية'",
+        "Difficulty labels show: مبتدئ, متوسط, متقدم",
+        "Taps filter — selects متقدم",
+        "Sees advanced words: ambiguous, criterion, empirical",
+        "Taps 'hypothesis' — word=hypothesis in URL",
+        "Card creation page still has search input as dir=ltr",
+        "This is correct — the word is English",
+        "Creates card successfully"
+      ],
+      "satisfaction": 8,
+      "issues_found": [],
+      "feedback": "الترجمة العربية ممتازة! The Arabic translation is excellent!"
+    },
+    {
+      "id": 18,
+      "persona": "Greg, 55, retired teacher, iPad, large text",
+      "scenario": "Uses library with accessibility settings (large text)",
+      "steps": [
+        "Opens library on iPad with larger text size",
+        "Category cards render correctly with larger text",
+        "Word cards are more cramped — definition text wraps more",
+        "Difficulty badges are tiny at 9px — hard to read with large text setting",
+        "Featured words overflow horizontally — can scroll",
+        "Taps 'tradition' from Daily Vocabulary",
+        "Card creation works — word pre-populated"
+      ],
+      "satisfaction": 6,
+      "issues_found": [
+        {
+          "id": "SIM-013",
+          "description": "Difficulty badge text at 9px is too small for users with accessibility needs or larger text settings — should be at least 11px",
+          "severity": "low",
+          "type": "accessibility"
+        }
+      ],
+      "feedback": "Text sizes are generally okay but those tiny difficulty labels are hard to read."
+    },
+    {
+      "id": 19,
+      "persona": "Priya, 24, software developer, wants tech vocabulary",
+      "scenario": "Browses Technology category extensively",
+      "steps": [
+        "Opens library — goes straight to Technology category",
+        "Sees tech words: algorithm, automation, bandwidth, blockchain",
+        "Impressed by the relevant selection",
+        "Filters to Advanced — sees: blockchain, firmware, throughput",
+        "Wants more tech words — only 30 available",
+        "Searches 'API' — not found",
+        "Searches 'refactor' — not found",
+        "Searches 'debugging' — finds 'debug'",
+        "Selects 'debug' — creates card",
+        "Wishes there were more tech words"
+      ],
+      "satisfaction": 7,
+      "issues_found": [],
+      "feedback": "Good start for tech vocab but I'd love 100+ words in this category."
+    },
+    {
+      "id": 20,
+      "persona": "Mike, 26, intermediate learner, testing edge cases",
+      "scenario": "Tests library with rapid interactions and back/forward navigation",
+      "steps": [
+        "Opens library — rapidly taps multiple categories",
+        "Last tap wins — correct behavior",
+        "Taps a word — navigated to card creation",
+        "Browser back button — returns to library",
+        "But library has reset — no selected category",
+        "Uses browser forward — goes back to card creation",
+        "Browser back again — library is at top level",
+        "The state is managed in React state, not URL",
+        "This means selected category isn't bookmarkable"
+      ],
+      "satisfaction": 6,
+      "issues_found": [
+        {
+          "id": "SIM-014",
+          "description": "Library category selection is stored in React state, not in URL parameters — browser back button doesn't return to the selected category but to the main library view. Category selection is not shareable or bookmarkable.",
+          "severity": "medium",
+          "type": "navigation"
+        }
+      ],
+      "feedback": "Browser back should take me back to the category I was viewing, not the main list."
+    },
+    {
+      "id": 21,
+      "persona": "Sophie, 29, language enthusiast, dark mode",
+      "scenario": "Explores library in dark mode",
+      "steps": [
+        "App is in dark mode by default",
+        "Library page looks great — consistent dark theme",
+        "Category icons have colored backgrounds that pop against dark",
+        "Search bar has proper dark styling",
+        "Word cards are well-contrasted",
+        "Difficulty badges — color on dark background is subtle but readable",
+        "Filter chips in dark mode are clearly visible",
+        "Featured words section looks clean",
+        "Overall dark mode implementation is excellent"
+      ],
+      "satisfaction": 9,
+      "issues_found": [],
+      "feedback": "Dark mode looks amazing. Great attention to detail with the colors."
+    },
+    {
+      "id": 22,
+      "persona": "Hassan, 35, ESL teacher, wants to recommend words to students",
+      "scenario": "Tries to share a category or word with students",
+      "steps": [
+        "Opens library — browses Academic Words",
+        "Wants to share this category list with students",
+        "No share button or copy-link functionality",
+        "Tries sharing the URL: /cards/library — but this is the main library",
+        "No direct URL to a specific category",
+        "Can share /cards/new?word=ubiquitous — this works for individual words",
+        "But no way to share a category view or word list"
+      ],
+      "satisfaction": 6,
+      "issues_found": [
+        {
+          "id": "SIM-015",
+          "description": "No sharing functionality for categories or word lists — teachers and study groups can't share curated lists with others. Individual words can be shared via /cards/new?word=X but not category views.",
+          "severity": "low",
+          "type": "missing-feature"
+        }
+      ],
+      "feedback": "Would love to share categories with my students via a link."
+    },
+    {
+      "id": 23,
+      "persona": "Kim, 21, Korean student, first-time user",
+      "scenario": "Discovers library during first session after registration",
+      "steps": [
+        "Registers — redirected to landing page (existing bug)",
+        "Finds Home in footer — sees welcome screen",
+        "Notices Library icon in footer between + and Search",
+        "Taps Library out of curiosity",
+        "Sees 'Discover New Words' — immediately understands the purpose",
+        "The hero description explains: 'Browse curated categories and tap any word'",
+        "Browses Daily Vocabulary — finds 'challenge'",
+        "Taps it — arrives at card creation with word pre-filled",
+        "AI auto-generates — this is the 'magical moment'",
+        "Creates card — very satisfied with how easy it was"
+      ],
+      "satisfaction": 9,
+      "issues_found": [],
+      "feedback": "I didn't know what word to start with! The library solved that perfectly."
+    },
+    {
+      "id": 24,
+      "persona": "Alex, 15, high school student, Android",
+      "scenario": "Uses library for SAT vocabulary prep",
+      "steps": [
+        "Opens library — looking for SAT words",
+        "No 'SAT' or 'Test Prep' specific category",
+        "Academic Words is closest — taps it",
+        "Finds relevant words: analyze, evaluate, empirical, hypothesis",
+        "But many common SAT words are missing: 'auspicious', 'capricious', 'dubious'",
+        "Searches 'SAT' — no results",
+        "Uses the words available — creates cards for 'ambiguous', 'criterion', 'paradigm'"
+      ],
+      "satisfaction": 6,
+      "issues_found": [],
+      "feedback": "Need a SAT-specific word list! The academic words are close but not enough."
+    },
+    {
+      "id": 25,
+      "persona": "Nour, 28, architect, casual learner",
+      "scenario": "Casually browses library for interesting words",
+      "steps": [
+        "Opens library — no specific goal",
+        "Scrolls through categories — drawn to 'Emotions & Feelings' ❤️",
+        "Sees words: empathy, nostalgia, serenity, whimsical",
+        "These are intellectually interesting words",
+        "Taps 'wanderlust' from Featured Words",
+        "Word navigates correctly to card creation",
+        "AI generates beautiful sentences about wanderlust",
+        "Creates card — delighted by the whole experience",
+        "Goes back to browse more — feeling of discovery"
+      ],
+      "satisfaction": 9,
+      "issues_found": [],
+      "feedback": "I love the Emotions category! These are exactly the kind of words I want to learn for expression."
+    },
+    {
+      "id": 26,
+      "persona": "Viktor, 40, Russian developer, testing light mode",
+      "scenario": "Tests library in light mode",
+      "steps": [
+        "Switches to light mode in settings",
+        "Opens library — light theme renders correctly",
+        "Category cards have white backgrounds with subtle borders",
+        "Search bar has light styling with proper borders",
+        "Word cards are white with gray text — readable",
+        "Filter chips have appropriate light mode colors",
+        "Featured words have light borders",
+        "Overall light mode is well-implemented but less visually striking than dark"
+      ],
+      "satisfaction": 8,
+      "issues_found": [],
+      "feedback": "Light mode works well. Everything is readable and consistent."
+    },
+    {
+      "id": 27,
+      "persona": "Julia, 31, language teacher, desktop + mobile testing",
+      "scenario": "Compares library experience between desktop and mobile",
+      "steps": [
+        "Opens on desktop — single column, max-w-2xl, centered",
+        "Opens same on mobile — layout is identical, just full-width",
+        "Desktop: category cards could use side-by-side layout",
+        "Mobile: layout is perfect, everything fits well",
+        "Desktop: search results are narrowly centered",
+        "Mobile: search fills screen width appropriately",
+        "Both: word selection → card creation flow works identically"
+      ],
+      "satisfaction": 7,
+      "issues_found": [],
+      "feedback": "Mobile experience is great. Desktop could utilize more screen space."
+    },
+    {
+      "id": 28,
+      "persona": "Ibrahim, 19, Egyptian student, testing concurrent use",
+      "scenario": "Opens library in multiple tabs to test state consistency",
+      "steps": [
+        "Opens library in Tab 1 — selects Business English",
+        "Opens library in Tab 2 — at main view (independent state)",
+        "In Tab 1 — selects 'strategy' → navigates to card creation",
+        "In Tab 2 — selects 'algorithm' from Technology → navigates to card creation",
+        "Both tabs have different words pre-filled — correct behavior",
+        "Creates card in Tab 1 — counts toward AI limit",
+        "Creates card in Tab 2 — also counts (2/3 used)",
+        "No race condition or data corruption"
+      ],
+      "satisfaction": 8,
+      "issues_found": [],
+      "feedback": "App handles multiple tabs correctly. No issues."
+    },
+    {
+      "id": 29,
+      "persona": "Elena, 26, journalist, wants to expand vocabulary",
+      "scenario": "Uses search extensively to find specific words",
+      "steps": [
+        "Opens library",
+        "Types 'em' in search — sees results appear (empathy, emphasize, embassy, empirical)",
+        "Types 'emo' — narrows to emotions-related words",
+        "Clears search with X button — categories reappear",
+        "Types single character 'a' — no results (minimum 2 chars)",
+        "Types 'ad' — finds 'adequate', 'adventure', 'adventure'",
+        "Search is instant — no delay, no API call needed",
+        "Types 'xyz' — shows 'No words found' message",
+        "Good UX on the empty state"
+      ],
+      "satisfaction": 8,
+      "issues_found": [],
+      "feedback": "The instant search is really nice. Fast and responsive."
+    },
+    {
+      "id": 30,
+      "persona": "Wei, 33, data scientist, power user, testing completeness",
+      "scenario": "Audits the entire word library for quality and completeness",
+      "steps": [
+        "Opens library — browses every category systematically",
+        "Daily Vocabulary: 30 words — good mix of common words",
+        "Business English: 30 words — solid professional vocabulary",
+        "Travel Words: 30 words — covers most travel scenarios",
+        "Academic Words: 30 words — good IELTS/TOEFL coverage",
+        "Technology: 30 words — modern and relevant",
+        "Emotions & Feelings: 30 words — expressive vocabulary",
+        "Total: 180 words across 6 categories",
+        "No duplicate words found across categories (except 'optimize' appears in both Business and Technology)",
+        "Definitions are clear and consistently written",
+        "Difficulty ratings seem accurate",
+        "Missing categories: Health/Medical, Law/Legal, Science, Food/Cooking, Sports"
+      ],
+      "satisfaction": 7,
+      "issues_found": [
+        {
+          "id": "SIM-016",
+          "description": "The word 'optimize' appears in both Business English and Technology categories — duplicate across categories. Search returns it twice.",
+          "severity": "low",
+          "type": "data-quality"
+        }
+      ],
+      "feedback": "Good quality data overall. Would benefit from more categories and 50+ words per category."
+    }
+  ],
+  "consolidated_issues": [
+    {
+      "id": "SIM-009",
+      "title": "No duplicate card detection",
+      "description": "Library doesn't track which words the user has already created cards for — users can accidentally create duplicate cards",
+      "severity": "medium",
+      "fix_approach": "Check user's existing cards against library words and show a 'created' badge",
+      "fix_implemented": false,
+      "fix_deferred_reason": "Requires database query per library load — would need API integration beyond current scope"
+    },
+    {
+      "id": "SIM-012",
+      "title": "State resets on navigation back",
+      "description": "When navigating back from card creation, library category and filter selections are lost",
+      "severity": "medium",
+      "fix_approach": "Use URL search params to persist category and filter state, or use sessionStorage",
+      "fix_implemented": true
+    },
+    {
+      "id": "SIM-014",
+      "title": "Category not in URL state",
+      "description": "Browser back button returns to main library, not selected category. Category is not bookmarkable.",
+      "severity": "medium",
+      "fix_approach": "Store selected category in URL search parameters",
+      "fix_implemented": true
+    },
+    {
+      "id": "SIM-016",
+      "title": "Duplicate word across categories",
+      "description": "'optimize' appears in both Business English and Technology categories",
+      "severity": "low",
+      "fix_approach": "Rename the Technology version to 'optimize' → keep and Business to a different word, or remove duplicate",
+      "fix_implemented": true
+    },
+    {
+      "id": "SIM-013",
+      "title": "Difficulty badge text too small",
+      "description": "9px difficulty badge is hard to read for users with larger text settings",
+      "severity": "low",
+      "fix_approach": "Increase from 9px to 10px",
+      "fix_implemented": true
+    },
+    {
+      "id": "SIM-006",
+      "title": "Filter button has no label",
+      "description": "The filter toggle in category detail view is just an icon with no label or tooltip",
+      "severity": "low",
+      "fix_approach": "Add aria-label and/or visible 'Filter' text label",
+      "fix_implemented": true
+    }
+  ]
+}

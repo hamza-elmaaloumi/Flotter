@@ -9,6 +9,8 @@ export const translations: Record<Language, Record<string, string>> = {
     // ─── Footer (Bottom Nav) ───
     'footer.home': 'Home',
     'footer.search': 'Search',
+    'footer.library': 'Library',
+    'footer.profile': 'Profile',
 
     // ─── Landing Page ───
     'landing.badge': 'Neural Optimization Active',
@@ -376,7 +378,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.terms.contract': '1. Contract',
     'settings.terms.contractDesc': 'This is an agreement between the user and Mezuma regarding the use of Flotter.',
     'settings.terms.merchant': '2. Merchant of Record',
-    'settings.terms.merchantDesc': 'Payments for the "Pro" tier ($1/month) are processed by Polar. Polar handles all billing, taxes, and financial compliance on behalf of Mezuma.',
+    'settings.terms.merchantDesc': 'Payments for the "Pro" tier (1$/month) are processed by Polar. Polar handles all billing, taxes, and financial compliance on behalf of Mezuma.',
     'settings.terms.refund': '3. Refund Policy',
     'settings.terms.refundDesc': 'All sales for Flotter Pro are final. No refunds.',
     'settings.terms.rules': '4. Usage Rules',
@@ -402,6 +404,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'profile.signOut': 'Sign Out',
     'profile.endSession': 'End Session',
     'profile.systemId': 'System ID:',
+    'profile.exportProfile': 'Export Profile',
+    'profile.exporting': 'Exporting...',
+    'profile.exported': 'Exported!',
+    'profile.exportTitle': 'My Flotter Profile',
 
     // ─── Profile Form ───
     'profileForm.changePhoto': 'Change Profile Photo',
@@ -530,7 +536,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'subscribe.heroDesc1': 'For just ',
     'subscribe.heroPrice': '1$/month',
     'subscribe.heroDesc2': ', get unlimited AI cards, no ads, streak protection, and help us make Flotter better for everyone.',
-    'subscribe.price': '$1',
+    'subscribe.price': '1$',
     'subscribe.perMonth': '/month',
     'subscribe.priceSubtext': 'Cancel anytime. No hidden fees. Less than a cup of coffee.',
     'subscribe.subscribeNow': 'Subscribe Now',
@@ -539,7 +545,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'subscribe.pro': 'Pro',
     'subscribe.bottomMsg1': 'Your subscription helps us keep Flotter free for everyone',
     'subscribe.bottomMsg2': 'and fund new features. Every dollar counts. ❤️',
-    'subscribe.getProBtn': 'Get Pro for $1/month',
+    'subscribe.getProBtn': 'Get Pro for 1$/month',
     'subscribe.feat1Title': 'Unlimited AI Cards',
     'subscribe.feat1Desc': 'Generate as many AI-powered flashcards as you want, every day.',
     'subscribe.feat1Free': '3/day',
@@ -568,7 +574,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'profile.planName': 'Flotter Pro',
     'profile.activeSub': 'Active subscription',
     'profile.renews': 'Renews',
-    'profile.upgradeDesc': 'Upgrade to Pro for just $1/month to unlock unlimited AI cards, no ads, and streak protection.',
+    'profile.upgradeDesc': 'Upgrade to Pro for just 1$/month to unlock unlimited AI cards, no ads, and streak protection.',
     'profile.upgradeToPro': 'Upgrade to Pro',
 
     // ─── Learning Page Subscription ───
@@ -584,14 +590,14 @@ export const translations: Record<Language, Record<string, string>> = {
     'learning.tagNoAds': 'No Ads',
     'learning.tagStreakFreeze': 'Streak Freeze',
     'learning.tagProBadge': 'Pro Badge',
-    'learning.subscribeBtn': 'Subscribe for $1/month',
+    'learning.subscribeBtn': 'Subscribe for 1$/month',
 
     // ─── Deck Page Subscription ───
     'deck.onFire': "You're on fire! 🔥",
     'deck.reviewedCards1': "You've reviewed ",
     'deck.reviewedCards2': ' cards this session!',
-    'deck.upsellDesc': 'Upgrade to Pro for just $1/month — unlimited AI card generations, no ads, streak protection, and a Pro badge on the leaderboard.',
-    'deck.getProBtn': 'Get Pro — $1/month',
+    'deck.upsellDesc': 'Upgrade to Pro for just 1$/month — unlimited AI card generations, no ads, streak protection, and a Pro badge on the leaderboard.',
+    'deck.getProBtn': 'Get Pro — 1$/month',
     'deck.continueLearning': 'Continue Learning',
     'deck.sessionComplete': 'Session Complete! 🎉',
     'deck.streakAlive': 'Your streak is alive!',
@@ -600,12 +606,12 @@ export const translations: Record<Language, Record<string, string>> = {
     'deck.sessionSummary3': ' XP this session. Keep learning and go back everyday to maintain your streak.',
     'deck.proStreakHint': '💡 Pro users get streak freeze — never lose your progress!',
     'deck.backToDashboard': 'Back to Dashboard',
-    'deck.protectStreak': 'Protect Your Streak — $1/mo',
+    'deck.protectStreak': 'Protect Your Streak — 1$/mo',
 
     // ─── New Card Page Limit ───
     'newCard.limitTitle': 'Daily AI Limit Reached',
     'newCard.limitDesc': "You've used all 3 free AI generations for today. You can still create cards manually, or upgrade to Pro for unlimited AI-powered card creation.",
-    'newCard.limitCta': 'Get Unlimited AI Cards — $1/mo',
+    'newCard.limitCta': 'Get Unlimited AI Cards — 1$/mo',
 
     // ─── New Card Walkthrough ───
     'newCard.walkthrough.stepOf': 'Step {current} of {total}',
@@ -664,7 +670,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // ─── Deck: Redesigned Ad ───
     'deck.adTitle': 'Level up your learning',
     'deck.adDesc': 'Remove distractions and unlock your full potential with Flotter Pro.',
-    'deck.adCta': 'Try Pro — $1/month',
+    'deck.adCta': 'Try Pro — 1$/month',
     'deck.adDismiss': 'Maybe later',
 
     // ─── Global Footer ───
@@ -672,6 +678,25 @@ export const translations: Record<Language, Record<string, string>> = {
     'globalFooter.privacyPolicy': 'Privacy Policy',
     'globalFooter.termsOfService': 'Terms of Service',
     'globalFooter.rightsReserved': 'All rights reserved.',
+
+    // ─── Word Library ───
+    'wordLibrary.title': 'Word Library',
+    'wordLibrary.badge': 'Curated Collection',
+    'wordLibrary.heroTitle': 'Discover New Words',
+    'wordLibrary.heroDesc': 'Browse curated categories and tap any word to instantly create a flashcard with AI-generated sentences and images.',
+    'wordLibrary.searchPlaceholder': 'Search words or definitions...',
+    'wordLibrary.searchResults': 'Search Results',
+    'wordLibrary.noResults': 'No words found. Try a different search term.',
+    'wordLibrary.categories': 'Categories',
+    'wordLibrary.words': 'words',
+    'wordLibrary.wordsAvailable': 'words available',
+    'wordLibrary.featured': 'Featured Words',
+    'wordLibrary.use': 'Use',
+    'wordLibrary.allLevels': 'All',
+    'wordLibrary.noWordsFound': 'No words found',
+    'wordLibrary.tryAnotherFilter': 'Try selecting a different difficulty level.',
+    'wordLibrary.megaCategories': 'Explore Collections',
+    'wordLibrary.allCategories': 'All Categories',
   },
 
   ar: {
@@ -685,6 +710,8 @@ export const translations: Record<Language, Record<string, string>> = {
     // ─── Footer (Bottom Nav) ───
     'footer.home': 'الرئيسية',
     'footer.search': 'بحث',
+    'footer.library': 'المكتبة',
+    'footer.profile': 'الملف',
 
     // ─── Landing Page ───
     'landing.badge': 'التحسين العصبي نشط',
@@ -883,14 +910,14 @@ export const translations: Record<Language, Record<string, string>> = {
     'landing.acasrs.phase3DescShort': 'التحقق من الاحتفاظ متعدد السياقات',
     'landing.acasrs.phase4DescShort': 'التخرج إلى دورة إتقان أسية',
 
-    // ─── Landing: SVG Decorator Labels ───
-    'landing.demo.ephemeral': 'سريع الزوال',
-    'landing.demo.adjective': 'صفة',
-    'landing.demo.sentence1': 'تحاول التقاط',
-    'landing.demo.sentence2': 'ندفة الثلج العابرة، لكنها تذوب',
-    'landing.demo.sentence3': 'ولا يبقى سوى ذكرى.',
-    'landing.demo.resilient': 'مرن',
-    'landing.demo.luminous': 'مشرق',
+    // ─── Landing: SVG Decorator Labels (English card content — never translate) ───
+    'landing.demo.ephemeral': 'Ephemeral',
+    'landing.demo.adjective': 'ADJECTIVE',
+    'landing.demo.sentence1': 'You attempt to capture the',
+    'landing.demo.sentence2': 'ephemeral snowflake, but it melts',
+    'landing.demo.sentence3': 'away, leaving only a memory.',
+    'landing.demo.resilient': 'Resilient',
+    'landing.demo.luminous': 'Luminous',
     'landing.phase.encode': 'ترميز',
     'landing.phase.recall': 'استرجاع',
     'landing.phase.reinforce': 'تعزيز',
@@ -1052,7 +1079,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.terms.contract': '1. العقد',
     'settings.terms.contractDesc': 'هذه اتفاقية بين المستخدم و Mezuma فيما يتعلق باستخدام خدمة Flotter.',
     'settings.terms.merchant': '2. التاجر المسجل',
-    'settings.terms.merchantDesc': 'تتم معالجة المدفوعات لفئة "Pro" ($1/شهريًا) بواسطة Polar. تتولى Polar جميع عمليات الفوترة والضرائب والامتثال المالي نيابة عن Mezuma.',
+    'settings.terms.merchantDesc': 'تتم معالجة المدفوعات لفئة "Pro" (1$/شهريًا) بواسطة Polar. تتولى Polar جميع عمليات الفوترة والضرائب والامتثال المالي نيابة عن Mezuma.',
     'settings.terms.refund': '3. سياسة الاسترداد',
     'settings.terms.refundDesc': 'جميع المبيعات لـ Flotter Pro نهائية. لا توجد مبالغ مستردة.',
     'settings.terms.rules': '4. قواعد الاستخدام',
@@ -1078,6 +1105,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'profile.signOut': 'تسجيل الخروج',
     'profile.endSession': 'إنهاء الجلسة',
     'profile.systemId': 'معرف النظام:',
+    'profile.exportProfile': 'تصدير الملف الشخصي',
+    'profile.exporting': 'جاري التصدير...',
+    'profile.exported': 'تم التصدير!',
+    'profile.exportTitle': 'ملفي على فلوتر',
 
     // ─── Profile Form ───
     'profileForm.changePhoto': 'تغيير صورة الملف',
@@ -1203,7 +1234,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'subscribe.heroDesc1': 'مقابل ',
     'subscribe.heroPrice': '1$/شهرياً',
     'subscribe.heroDesc2': ' فقط، احصل على بطاقات ذكاء اصطناعي غير محدودة، بدون إعلانات، حماية السلسلة، وساعدنا في تحسين فلوتر للجميع.',
-    'subscribe.price': '$1',
+    'subscribe.price': '1$',
     'subscribe.perMonth': '/شهرياً',
     'subscribe.priceSubtext': 'إلغاء في أي وقت. بدون رسوم خفية. أقل من فنجان قهوة.',
     'subscribe.subscribeNow': 'اشترك الآن',
@@ -1212,7 +1243,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'subscribe.pro': 'برو',
     'subscribe.bottomMsg1': 'اشتراكك يساعدنا على إبقاء فلوتر مجانياً للجميع',
     'subscribe.bottomMsg2': 'وتمويل ميزات جديدة. كل دولار مهم. ❤️',
-    'subscribe.getProBtn': 'احصل على برو مقابل $1/شهرياً',
+    'subscribe.getProBtn': 'احصل على برو مقابل 1$/شهرياً',
     'subscribe.feat1Title': 'بطاقات ذكاء اصطناعي غير محدودة',
     'subscribe.feat1Desc': 'أنشئ أي عدد تريده من البطاقات بالذكاء الاصطناعي، كل يوم.',
     'subscribe.feat1Free': '3/يومياً',
@@ -1241,7 +1272,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'profile.planName': 'فلوتر برو',
     'profile.activeSub': 'اشتراك مفعّل',
     'profile.renews': 'يتجدد',
-    'profile.upgradeDesc': 'ترقّ إلى برو مقابل $1/شهرياً فقط لفتح بطاقات ذكاء اصطناعي غير محدودة، بدون إعلانات، وحماية السلسلة.',
+    'profile.upgradeDesc': 'ترقّ إلى برو مقابل 1$/شهرياً فقط لفتح بطاقات ذكاء اصطناعي غير محدودة، بدون إعلانات، وحماية السلسلة.',
     'profile.upgradeToPro': 'ترقية إلى برو',
 
     // ─── صفحة التعلم - الاشتراك ───
@@ -1257,14 +1288,14 @@ export const translations: Record<Language, Record<string, string>> = {
     'learning.tagNoAds': 'بدون إعلانات',
     'learning.tagStreakFreeze': 'تجميد السلسلة',
     'learning.tagProBadge': 'شارة برو',
-    'learning.subscribeBtn': 'اشترك مقابل $1/شهرياً',
+    'learning.subscribeBtn': 'اشترك مقابل 1$/شهرياً',
 
     // ─── صفحة المراجعة - الاشتراك ───
     'deck.onFire': 'أنت مشتعل! 🔥',
     'deck.reviewedCards1': 'لقد راجعت ',
     'deck.reviewedCards2': ' بطاقة في هذه الجلسة!',
-    'deck.upsellDesc': 'ترقّ إلى برو مقابل $1/شهرياً — بطاقات ذكاء اصطناعي غير محدودة، بدون إعلانات، حماية السلسلة، وشارة برو في لوحة المتصدرين.',
-    'deck.getProBtn': 'احصل على برو — $1/شهرياً',
+    'deck.upsellDesc': 'ترقّ إلى برو مقابل 1$/شهرياً — بطاقات ذكاء اصطناعي غير محدودة، بدون إعلانات، حماية السلسلة، وشارة برو في لوحة المتصدرين.',
+    'deck.getProBtn': 'احصل على برو — 1$/شهرياً',
     'deck.continueLearning': 'تابع التعلم',
     'deck.sessionComplete': 'اكتملت الجلسة! 🎉',
     'deck.streakAlive': 'سلسلتك حية!',
@@ -1273,12 +1304,12 @@ export const translations: Record<Language, Record<string, string>> = {
     'deck.sessionSummary3': ' نقطة خبرة في هذه الجلسة. واصل التعلّم وارجع كل يوم للحفاظ على سلسلة التقدّم الخاصة بك.',
     'deck.proStreakHint': '💡 مستخدمو برو يحصلون على تجميد السلسلة — لا تفقد تقدمك أبداً!',
     'deck.backToDashboard': 'العودة للوحة القيادة',
-    'deck.protectStreak': 'احمِ سلسلتك — $1/شهرياً',
+    'deck.protectStreak': 'احمِ سلسلتك — 1$/شهرياً',
 
     // ─── صفحة البطاقة الجديدة - الحد اليومي ───
     'newCard.limitTitle': 'تم الوصول للحد اليومي للذكاء الاصطناعي',
     'newCard.limitDesc': 'لقد استخدمت جميع الإنشاءات الثلاثة المجانية بالذكاء الاصطناعي لهذا اليوم. يمكنك إنشاء بطاقات يدوياً، أو الترقية إلى برو لإنشاء بطاقات غير محدودة بالذكاء الاصطناعي.',
-    'newCard.limitCta': 'بطاقات ذكاء اصطناعي غير محدودة — $1/شهرياً',
+    'newCard.limitCta': 'بطاقات ذكاء اصطناعي غير محدودة — 1$/شهرياً',
 
     // ─── شرح إنشاء البطاقة خطوة بخطوة ───
     'newCard.walkthrough.stepOf': 'الخطوة {current} من {total}',
@@ -1337,7 +1368,7 @@ export const translations: Record<Language, Record<string, string>> = {
     // ─── المراجعة: الإعلان المعاد تصميمه ───
     'deck.adTitle': 'ارتقِ بتعلمك',
     'deck.adDesc': 'أزل المشتتات وأطلق العنان لإمكاناتك الكاملة مع فلوتر برو.',
-    'deck.adCta': 'جرب برو — $1/شهرياً',
+    'deck.adCta': 'جرب برو — 1$/شهرياً',
     'deck.adDismiss': 'ربما لاحقاً',
 
     // ─── Global Footer ───
@@ -1345,5 +1376,24 @@ export const translations: Record<Language, Record<string, string>> = {
     'globalFooter.privacyPolicy': 'سياسة الخصوصية',
     'globalFooter.termsOfService': 'شروط الخدمة',
     'globalFooter.rightsReserved': 'جميع الحقوق محفوظة.',
+
+    // ─── مكتبة الكلمات ───
+    'wordLibrary.title': 'مكتبة الكلمات',
+    'wordLibrary.badge': 'مجموعة منتقاة',
+    'wordLibrary.heroTitle': 'اكتشف كلمات جديدة',
+    'wordLibrary.heroDesc': 'تصفح الفئات المنتقاة واضغط على أي كلمة لإنشاء بطاقة تعليمية فوراً مع جمل وصور مولّدة بالذكاء الاصطناعي.',
+    'wordLibrary.searchPlaceholder': 'ابحث عن كلمات أو تعريفات...',
+    'wordLibrary.searchResults': 'نتائج البحث',
+    'wordLibrary.noResults': 'لم يتم العثور على كلمات. جرّب مصطلح بحث مختلف.',
+    'wordLibrary.categories': 'الفئات',
+    'wordLibrary.words': 'كلمة',
+    'wordLibrary.wordsAvailable': 'كلمة متاحة',
+    'wordLibrary.featured': 'كلمات مميزة',
+    'wordLibrary.use': 'استخدم',
+    'wordLibrary.allLevels': 'الكل',
+    'wordLibrary.noWordsFound': 'لم يتم العثور على كلمات',
+    'wordLibrary.tryAnotherFilter': 'جرّب اختيار مستوى صعوبة مختلف.',
+    'wordLibrary.megaCategories': 'استكشف المجموعات',
+    'wordLibrary.allCategories': 'جميع الفئات',
   },
 }

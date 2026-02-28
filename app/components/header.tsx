@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useUser } from '../providers/UserProvider'
 import { useLanguage } from '../providers/LanguageProvider'
 import { useTheme } from '../providers/ThemeProvider'
-import { User, Layers, LifeBuoy, Settings, Trophy } from 'lucide-react'
+import { User, Layers, LifeBuoy, Settings, Trophy, BookOpen } from 'lucide-react'
 import LanguageSwitcher from './LanguageSwitcher'
 // Inlined Flotter wordmark SVG (rounded-square) per request
 
@@ -51,6 +51,15 @@ export default function Header() {
             <>
               {user ? (
                 <>
+                  {/* Action Button: Word Library */}
+                  <Link
+                    href="/cards/library"
+                    className={`p-2 hover:text-[#3B82F6] transition-colors ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}
+                    title="Word Library"
+                  >
+                    <BookOpen size={19} />
+                  </Link>
+
                   {/* Action Button: Ranking */}
                   <Link
                     href="/ranking"
