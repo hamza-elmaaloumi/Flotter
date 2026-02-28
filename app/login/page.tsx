@@ -7,6 +7,7 @@ import { signIn, useSession } from 'next-auth/react'
 import { LogIn } from 'lucide-react'
 import { useLanguage } from '../providers/LanguageProvider'
 import { useTheme } from '../providers/ThemeProvider'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -64,6 +65,9 @@ export default function LoginPage() {
   return (
     // Global background: primary (#121212)
     <main dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen flex items-center justify-center antialiased p-4 ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
+      <div className="absolute top-4 right-4 z-20">
+        <LanguageSwitcher />
+      </div>
       {/* Brand Blue Glow instead of Emerald */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#3B82F608_0%,_transparent_65%)] pointer-events-none" />
 

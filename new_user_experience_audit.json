@@ -1,0 +1,2186 @@
+{
+  "metadata": {
+    "generated_at": "2026-02-28T12:00:00Z",
+    "app_version_detected": "0.1.0",
+    "framework": "Next.js 16.1.6 with React 19.2.3",
+    "analysis_scope": "mobile_web",
+    "total_users_simulated": 20,
+    "features_detected": [
+      "Landing page with animated SVG illustrations",
+      "Email/password registration with complexity requirements",
+      "Google OAuth login",
+      "Dashboard with streak/XP/due cards overview",
+      "New card creation with AI sentence generation (Groq)",
+      "Unsplash image search for cards",
+      "Flashcard deck with swipe-to-review",
+      "Spaced repetition algorithm (SM-2 variant)",
+      "Text-to-speech (Unreal Speech + Google TTS fallback)",
+      "XP system with review and audio bonuses",
+      "Streak tracking with weekly progress visualization",
+      "Profile page with stats",
+      "Ranking/leaderboard",
+      "Pro subscription via Polar (streak freeze, unlimited AI, no ads)",
+      "Card search/list",
+      "Card editing",
+      "Settings (language EN/AR, theme dark/light)",
+      "Bilingual support (English/Arabic with RTL)",
+      "Ad banners for free users"
+    ],
+    "protected_routes": [
+      "/cards/*",
+      "/profile/*",
+      "/settings/*",
+      "/ranking/*",
+      "/api/cards/*",
+      "/api/tts/*",
+      "/api/ai/*",
+      "/api/xp/*",
+      "/api/profile/*",
+      "/api/checkout/*",
+      "/api/images/*"
+    ]
+  },
+  "user_simulations": [
+    {
+      "persona": {
+        "id": 1,
+        "name": "Sofia Martinez",
+        "age_range": "18-22",
+        "technical_level": "average",
+        "goal": "Learn English vocabulary for university entrance exam",
+        "how_they_found_the_app": "Instagram ad showing flashcard swipe mechanic",
+        "expectations_before_entering": "Expects a Duolingo-like polished app with guided onboarding and gamification",
+        "device_type": "iPhone 14, Safari, mobile",
+        "internet_quality": "fast",
+        "patience_level": "low"
+      },
+      "journey_steps": [
+        "Opens landing page URL from Instagram link",
+        "Sees animated hero section with 'Shield your mind from memory decay' heading",
+        "Scrolls down through methodology sections with SVG animations",
+        "Notices 'Get Started' button in the top-right navigation area",
+        "Taps 'Get Started' which links to /register",
+        "Sees clean registration form with email and password fields",
+        "Types email: sofia@gmail.com",
+        "Types password: 'hello123' — gets no immediate feedback",
+        "Taps 'Create Account' button",
+        "Receives error: 'Password must contain at least one uppercase letter'",
+        "Tries 'Hello123' — success, account created",
+        "Auto-signed in, redirected to landing page (/) instead of /cards/learning",
+        "Confused — sees landing page again, not a dashboard",
+        "Taps Flotter logo in header — goes to empty href ''",
+        "Notices the bottom tab bar appeared (Home, +, Search)",
+        "Taps 'Home' in footer — navigates to /cards/learning",
+        "Sees 'Welcome to Flotter' new user screen with 3 onboarding steps",
+        "Reads steps: 1) Create card, 2) Review with swipe, 3) Track progress",
+        "Taps 'Create Your First Card' CTA button",
+        "Arrives at /cards/new — sees word input field",
+        "Types 'abandon' in the word field",
+        "Clicks outside the field (blur event triggers AI generation)",
+        "Sees loading spinner — AI generates 3 sentences and searches images",
+        "Sentences appear in the context fields, images load in the grid",
+        "Selects an image from the grid",
+        "Taps green 'Create' button at the bottom",
+        "Card created successfully, redirected to /cards/learning",
+        "Dashboard now shows 1 due card with red ring indicator",
+        "Taps 'Start' button to begin review",
+        "Navigates to /cards/deck — sees flashcard with masked word and sentence",
+        "Taps the card — it flips revealing the word and full sentence",
+        "Audio plays automatically — hears pronunciation",
+        "Swipes right to mark as 'Learned'",
+        "Sees 'All caught up!' empty state",
+        "Returns to dashboard"
+      ],
+      "positive_points": [
+        "AI sentence generation is impressive and saves significant time",
+        "Image search integration makes card creation visually engaging",
+        "Swipe mechanic is intuitive and satisfying on mobile",
+        "Dark theme looks premium and modern",
+        "Audio pronunciation plays automatically on card flip — great for learning",
+        "XP notification after swiping provides instant gratification",
+        "Welcome screen for new users explains the 3-step process clearly"
+      ],
+      "negative_points": [
+        "After registration, user is redirected to '/' (landing page) not '/cards/learning' — extremely confusing for a new user who just signed up",
+        "No password strength indicator during registration — user discovers requirements only after submission",
+        "Landing page is very long with heavy animations — may feel overwhelming on first visit",
+        "No onboarding tutorial or walkthrough — user must figure out the AI hint mechanism on blur event",
+        "The hint text 'Click outside the box after typing to generate sentences and search images automatically' is tiny (10px) and easy to miss",
+        "Only 3 free AI generations per day — user hits this limit fast when experimenting",
+        "No 'Forgot Password' link on the login page"
+      ],
+      "ux_confusions": [
+        "After registration, landing back on the marketing landing page instead of the dashboard",
+        "The Flotter logo in the header has an empty href — tapping it goes nowhere useful",
+        "The blur-triggered AI generation is non-obvious — no button to explicitly trigger it",
+        "The card creation requires all 3 elements (word + sentence + image) but there's no progress indicator showing what's missing"
+      ],
+      "friction_points": [
+        "Password complexity rules only revealed on error — no inline validation",
+        "Post-registration redirect goes to '/' instead of '/cards/learning'",
+        "AI generation triggered on blur is invisible to users who don't read the tiny hint",
+        "3 free AI generations is very limiting for first-time exploration"
+      ],
+      "bugs_detected": [
+        {
+          "description": "After successful registration, signIn callback redirects to '/' instead of '/cards/learning'. The register page calls router.push('/') after successful auto-sign-in.",
+          "probable_cause": "In register/page.tsx line: router.push('/') — should be router.push('/cards/learning')",
+          "severity": "high"
+        },
+        {
+          "description": "Header logo Link href is empty string — tapping it navigates nowhere or reloads the current page",
+          "probable_cause": "In header.tsx: <Link href=\"\" ...> — should be href=\"/\" or href=\"/cards/learning\"",
+          "severity": "medium"
+        }
+      ],
+      "missing_features": [
+        "Forgot password flow",
+        "Email verification after registration",
+        "Guided onboarding tutorial/walkthrough",
+        "Password strength meter during registration",
+        "Explicit 'Generate with AI' button instead of blur-only trigger"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Impressed by the polished landing page animations and dark theme — feels premium",
+        "mid_experience": "Confused after registration when landing back on marketing page — feels like something broke",
+        "frustration_points": [
+          "Password rejected without inline guidance",
+          "Post-registration redirect to landing page instead of dashboard",
+          "Tiny AI hint text that was missed initially"
+        ],
+        "final_emotional_state": "Cautiously positive — the core card creation + swipe review flow is genuinely good, but the onboarding had friction"
+      },
+      "dropoff_risk_level": "medium",
+      "retention_probability_percent": 55,
+      "final_decision": "stay",
+      "improvement_suggestions_from_user_perspective": [
+        "Send me directly to the dashboard after I register — why show me the marketing page again?",
+        "Show me what the password needs BEFORE I submit, not after",
+        "Add an obvious 'Generate with AI' button — I almost missed the blur trigger entirely",
+        "Give me more free AI uses on my first day so I can actually try the app"
+      ]
+    },
+    {
+      "persona": {
+        "id": 2,
+        "name": "Ahmed Ben Salah",
+        "age_range": "25-30",
+        "technical_level": "non-technical",
+        "goal": "Improve English for job interviews in Morocco",
+        "how_they_found_the_app": "Friend shared a link via WhatsApp",
+        "expectations_before_entering": "Simple Arabic-friendly app to memorize English words",
+        "device_type": "Samsung Galaxy A14, Chrome, mobile",
+        "internet_quality": "slow",
+        "patience_level": "medium"
+      },
+      "journey_steps": [
+        "Opens WhatsApp link — lands on landing page",
+        "Page loads slowly due to heavy SVG animations and framer-motion bundle",
+        "Sees English text — looks for language switcher",
+        "Cannot find language switcher on landing page — it's only in /settings which requires login",
+        "Scrolls through landing page — impressed by visuals but can't read most text",
+        "Finds 'Sign In' link in top navigation",
+        "Taps through to /login page",
+        "Notices Google login button — prefers this for simplicity",
+        "Taps 'Continue with Google' — OAuth flow starts",
+        "Google OAuth completes — redirected to /cards/learning",
+        "Sees welcome screen in English — still no Arabic option visible",
+        "Taps the settings icon (gear) in the header",
+        "Finds the language switcher — switches to Arabic",
+        "UI flips to RTL — text is now in Arabic",
+        "Returns to /cards/learning — welcome screen now in Arabic",
+        "Creates first card — types English word",
+        "AI generates English sentences — this is correct and useful",
+        "Selects image, creates card",
+        "Goes to deck — swipes through card",
+        "Notices streak count and XP",
+        "Explores profile page — sees stats",
+        "Returns to learning page"
+      ],
+      "positive_points": [
+        "Google OAuth makes registration frictionless — no password needed",
+        "Full Arabic/RTL support is excellent and rare for language apps",
+        "Once Arabic is enabled, the entire UI translates properly",
+        "Dark mode by default looks good on the Samsung screen",
+        "The streak and XP gamification elements are motivating"
+      ],
+      "negative_points": [
+        "Language switcher is buried in settings — not accessible from landing page or login/register pages",
+        "Landing page is English-only — Arabic speakers have no way to know the app supports Arabic before signing up",
+        "Heavy animations cause slow loading on a budget Android device with slow internet",
+        "The landing page bundles framer-motion which adds significant JS payload",
+        "No browser language auto-detection to default to Arabic",
+        "The word input field has dir='ltr' hardcoded — this is correct for English words but confusing in an otherwise RTL layout"
+      ],
+      "ux_confusions": [
+        "No obvious language switcher on the landing page or auth pages",
+        "Settings gear icon doesn't clearly indicate 'language options are here'",
+        "The bottom footer tab bar overlaps content on shorter Android screens"
+      ],
+      "friction_points": [
+        "Must create an account before being able to switch language",
+        "Slow loading on budget device — user waited 5+ seconds for landing page",
+        "AI generation on blur won't work well on slow connections — no timeout handling visible to user"
+      ],
+      "bugs_detected": [
+        {
+          "description": "The landing page has no language switcher — Arabic speakers must sign up, navigate to settings, then switch. The LanguageProvider is available but no UI exposes it on public pages.",
+          "probable_cause": "Language switcher component only exists in /settings page, not exposed in header or landing page",
+          "severity": "high"
+        }
+      ],
+      "missing_features": [
+        "Language switcher on landing page and auth pages",
+        "Browser language auto-detection (navigator.language)",
+        "Lighter landing page for slow connections (reduce animation payload)",
+        "Offline mode or PWA support for unreliable connections"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Confused — the app looks great but is in English and user can't find Arabic option",
+        "mid_experience": "Relieved after finding Arabic in settings — the RTL support is genuinely good",
+        "frustration_points": [
+          "Slow page load on budget device",
+          "Language wall before registration",
+          "Having to dig into settings just to find Arabic"
+        ],
+        "final_emotional_state": "Satisfied with the Arabic support quality, but the initial language barrier almost caused a bounce"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 40,
+      "final_decision": "stay",
+      "improvement_suggestions_from_user_perspective": [
+        "Put a language button on the landing page — I almost left because I thought it was English-only",
+        "The app should detect my browser is set to Arabic and default to it",
+        "Make the page load faster — I almost gave up waiting",
+        "Add a simple toggle in the header for quick language switching"
+      ]
+    },
+    {
+      "persona": {
+        "id": 3,
+        "name": "Emma Thompson",
+        "age_range": "35-40",
+        "technical_level": "non-technical",
+        "goal": "Learn vocabulary for traveling to Paris",
+        "how_they_found_the_app": "Google search 'best flashcard app for vocabulary'",
+        "expectations_before_entering": "Multi-language support (French, Spanish, etc.) with ready-made decks",
+        "device_type": "iPhone 12, Safari, mobile",
+        "internet_quality": "fast",
+        "patience_level": "low"
+      },
+      "journey_steps": [
+        "Lands on landing page from Google search",
+        "Reads hero: 'Shield your mind from memory decay' — feels dramatic but intriguing",
+        "Scrolls to 'The Methodology' section — reads about Active Recall and Visual Anchoring",
+        "Notices mentions of 'words' and 'language acquisition' but no specific language listed",
+        "Looks for French or Spanish options — doesn't find any",
+        "Taps 'Start Free Trial' — navigates to /register",
+        "Registers with email/password",
+        "Lands on landing page after registration (redirect bug)",
+        "Manually navigates to /cards/learning via footer",
+        "Sees welcome screen — instructions say 'Create your first card'",
+        "Goes to /cards/new — types 'bonjour'",
+        "AI generation fires on blur — but AI rejects the word",
+        "Gets error because word fails regex validation (AI route only accepts [a-zA-Z\\s-]+, but 'bonjour' passes this)",
+        "Actually 'bonjour' passes validation but AI generates English-context sentences which are about the word 'bonjour' used in English context",
+        "Realizes the app is specifically for learning English vocabulary, not French",
+        "Disappointed — this doesn't match her goal",
+        "Checks settings and profile for language learning options",
+        "No option to set target language for learning",
+        "Decides to leave"
+      ],
+      "positive_points": [
+        "Landing page copy is compelling and professional",
+        "Registration is quick",
+        "The AI generation concept is impressive"
+      ],
+      "negative_points": [
+        "The app is specifically for English vocabulary learning but never clearly states this",
+        "Landing page marketing is generic about 'language acquisition' — misleading for non-English learners",
+        "No language pair selection (what language am I learning? what's my native language?)",
+        "AI sentences are generated in English context only — the Groq prompt is hardcoded for English",
+        "No pre-built decks or discovery — user must know exactly what words to learn",
+        "Post-registration redirect bug compounds the confusion"
+      ],
+      "ux_confusions": [
+        "What language is this app actually for?",
+        "Is this for learning English or can I learn French?",
+        "Why does the AI generate English contexts for a French word?"
+      ],
+      "friction_points": [
+        "Unclear value proposition for the target language",
+        "AI word validation only accepts English alphabet characters — can't input accented characters (é, ñ, ü)",
+        "No onboarding that explains 'this is an English vocabulary builder'"
+      ],
+      "bugs_detected": [
+        {
+          "description": "AI sentence generation sanitizer rejects words with accented characters: regex /^[a-zA-Z\\s-]+$/ fails for words like 'café', 'résumé', 'naïve'",
+          "probable_cause": "VUL-009 sanitization in generate-sentences/route.ts is too restrictive — doesn't allow valid English words with diacritics",
+          "severity": "medium"
+        }
+      ],
+      "missing_features": [
+        "Clear statement on landing page that this is an English vocabulary app",
+        "Multi-language learning support (French, Spanish, etc.)",
+        "Pre-built vocabulary decks for common topics",
+        "Language pair selection during onboarding",
+        "Support for accented characters in word input"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Intrigued by the professional design and 'neural' branding",
+        "mid_experience": "Confused about what language this app actually teaches",
+        "frustration_points": [
+          "Discovering the app is English-only after registering",
+          "No way to learn French vocabulary",
+          "Feeling misled by generic 'language acquisition' marketing"
+        ],
+        "final_emotional_state": "Disappointed — the app doesn't serve her specific use case"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 5,
+      "final_decision": "leave",
+      "improvement_suggestions_from_user_perspective": [
+        "State clearly on the landing page that this is for English vocabulary",
+        "Or better yet, support multiple languages for learning",
+        "Let me choose my learning language during signup",
+        "Have some pre-made word lists I can import instead of starting from zero"
+      ]
+    },
+    {
+      "persona": {
+        "id": 4,
+        "name": "James O'Brien",
+        "age_range": "45-55",
+        "technical_level": "non-technical",
+        "goal": "Memorize medical terminology for nursing certification",
+        "how_they_found_the_app": "Colleague recommendation",
+        "expectations_before_entering": "Simple flashcard tool, no gimmicks, just create cards and study",
+        "device_type": "Google Pixel 7, Chrome, mobile",
+        "internet_quality": "fast",
+        "patience_level": "high"
+      },
+      "journey_steps": [
+        "Opens the landing page — sees sci-fi style 'neural' branding",
+        "Slightly put off by the tech-heavy messaging but continues",
+        "Registers with email/password — 'Hello123!' works",
+        "Redirected to landing page (bug) — navigates to Home via footer",
+        "Creates first card with medical term: 'tachycardia'",
+        "AI generates sentences about tachycardia — sentences are creative but not medically accurate",
+        "The AI prompt focuses on 'emotional intensity' and 'shocking scenarios' — inappropriate for medical study",
+        "Wants to write his own clinical sentences instead",
+        "Manually edits the AI-generated sentences to proper medical examples",
+        "Searches images — Unsplash returns nature/generic photos, not medical diagrams",
+        "Selects best available image reluctantly",
+        "Creates the card — goes to deck",
+        "Reviews the card — swipe mechanic works well",
+        "Creates 3 more medical cards using his daily AI allotment",
+        "Hits the 3/day AI limit — sees upgrade banner",
+        "Doesn't want to pay $4.99/mo for a simple flashcard tool",
+        "Continues creating cards manually without AI",
+        "Finds the manual creation process tedious without AI assistance",
+        "Checks if he can import a CSV of terms — no import feature exists",
+        "Continues using the app but at reduced enthusiasm"
+      ],
+      "positive_points": [
+        "Core flashcard creation and review works well",
+        "Spaced repetition intervals feel appropriate",
+        "Manual sentence editing is possible and straightforward",
+        "The swipe review is genuinely enjoyable even for a non-tech user",
+        "Dark mode is easy on the eyes during late-night study sessions"
+      ],
+      "negative_points": [
+        "AI-generated sentences prioritize 'emotional intensity' and 'shocking scenarios' — completely wrong for professional/academic study",
+        "Unsplash images are not suitable for medical/technical vocabulary",
+        "3 free AI generations per day is insufficient for any serious study session",
+        "No bulk import feature for vocabulary lists",
+        "No custom image upload — must use Unsplash search only",
+        "The 'Neural Optimization' branding feels gimmicky for a simple flashcard app",
+        "No categories or tags for organizing cards by subject"
+      ],
+      "ux_confusions": [
+        "Why are AI sentences about 'sheer panic' and 'heartbreak' when I'm studying medical terms?",
+        "Where do I import my existing flashcard list?",
+        "Can I upload my own images?"
+      ],
+      "friction_points": [
+        "AI sentence style is hardcoded for emotional/dramatic contexts — not suitable for professional use",
+        "Image selection limited to Unsplash — no upload option",
+        "3/day AI limit forces manual creation which is slow",
+        "No bulk creation or import workflow"
+      ],
+      "bugs_detected": [],
+      "missing_features": [
+        "CSV/bulk import for vocabulary lists",
+        "Custom image upload",
+        "Card categories/tags/decks for organization",
+        "AI tone selection (academic, casual, professional, dramatic)",
+        "Export functionality"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Skeptical about the 'neural' marketing — just wants a flashcard tool",
+        "mid_experience": "Frustrated that AI generates dramatic movie-scene sentences for medical terms",
+        "frustration_points": [
+          "AI tone inappropriate for professional study",
+          "Hitting the 3/day AI limit quickly",
+          "No bulk import capability",
+          "No custom image upload"
+        ],
+        "final_emotional_state": "Resigned — the core swipe mechanic is good but the tool isn't designed for professional use cases"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 25,
+      "final_decision": "unsure",
+      "improvement_suggestions_from_user_perspective": [
+        "Let me choose the tone, I don't want horror-movie sentences for medical study",
+        "Let me upload my own images — I need medical diagrams not stock photos",
+        "Let me import a list of words from a spreadsheet",
+        "Organize cards into folders or subjects",
+        "Give me more free AI generations — 3 is not enough for even one study session"
+      ]
+    },
+    {
+      "persona": {
+        "id": 5,
+        "name": "Yuki Tanaka",
+        "age_range": "16-18",
+        "technical_level": "advanced",
+        "goal": "Build English vocabulary for TOEFL preparation",
+        "how_they_found_the_app": "TikTok video showing the swipe mechanic",
+        "expectations_before_entering": "Fast, modern app with social features and achievements",
+        "device_type": "iPhone 15 Pro, Safari, mobile",
+        "internet_quality": "fast",
+        "patience_level": "low"
+      },
+      "journey_steps": [
+        "Lands on landing page — immediately impressed by animations",
+        "Scrolls quickly through content — notes the retention rate stats",
+        "Taps 'Get Started' — goes to /register",
+        "Registers with Google OAuth — fast and easy",
+        "Redirected to /cards/learning — sees welcome screen",
+        "Creates first card: 'ubiquitous'",
+        "AI generates impressive sentences — very satisfied",
+        "Creates second card: 'ephemeral'",
+        "Creates third card: 'amalgamation'",
+        "Hits AI limit — sees upgrade banner",
+        "Closes banner — continues creating card manually",
+        "Types own sentences for the 4th card",
+        "Goes to deck — reviews 4 cards rapidly",
+        "Enjoys the swipe mechanic — feels like a mobile game",
+        "Gets streak celebration modal after first swipe",
+        "Sees XP notifications — addictive feedback loop",
+        "Checks ranking page — sees leaderboard",
+        "Only sees own name — no other users visible (or very few)",
+        "Checks profile — sees XP and streak stats",
+        "Wonders where the social features are — no friends, no sharing",
+        "Looks for achievements/badges — none exist",
+        "Wants to challenge friends — no feature for this",
+        "Uses the app for 15 more minutes creating and reviewing",
+        "Saves app to home screen"
+      ],
+      "positive_points": [
+        "Landing page animations are exactly the quality a Gen-Z user expects",
+        "Google OAuth registration is instant — zero friction",
+        "AI sentence generation quality is excellent for TOEFL words",
+        "Swipe mechanic feels native and satisfying on iPhone",
+        "XP and streak gamification are motivating",
+        "Streak celebration modal is a nice touch",
+        "Dark theme is visually appealing"
+      ],
+      "negative_points": [
+        "No social features — can't add friends or compare progress",
+        "Leaderboard is bare — no visible community",
+        "No achievement badges or milestones beyond XP count",
+        "3 AI generations per day is extremely limiting for an eager learner",
+        "No 'share' functionality to post progress to social media",
+        "No daily goals or challenges system",
+        "Every 10 swipes shows a Pro upsell modal — feels aggressive"
+      ],
+      "ux_confusions": [
+        "Ranking page shows users but there's no way to interact with them",
+        "What's the difference between 'Learning' and 'Mastered' card counts?",
+        "How does the XP formula work? The settings page explains it but it's buried"
+      ],
+      "friction_points": [
+        "Pro upsell every 10 swipes interrupts the flow",
+        "3 AI daily limit hit within 5 minutes of first use",
+        "No social sharing capability"
+      ],
+      "bugs_detected": [],
+      "missing_features": [
+        "Social features (friends, challenges, sharing)",
+        "Achievement badges and milestones",
+        "Daily goals or challenge system",
+        "Share progress to social media",
+        "More leaderboard context (global vs friends)"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Excited — the UI feels premium and modern",
+        "mid_experience": "Engaged but wanting more social/competitive features",
+        "frustration_points": [
+          "AI limit hit very quickly",
+          "Upsell modal every 10 swipes",
+          "No way to share or compete with friends"
+        ],
+        "final_emotional_state": "Positive but wanting more — the core is great but it feels like a solo experience"
+      },
+      "dropoff_risk_level": "medium",
+      "retention_probability_percent": 60,
+      "final_decision": "stay",
+      "improvement_suggestions_from_user_perspective": [
+        "Let me add friends and see their streaks",
+        "Add achievements and badges for milestones",
+        "Give me daily challenges like 'Review 20 cards today'",
+        "The upsell popup every 10 cards is really annoying — make it less frequent",
+        "Let me share my streak to Instagram stories"
+      ]
+    },
+    {
+      "persona": {
+        "id": 6,
+        "name": "Fatima Al-Rashid",
+        "age_range": "28-32",
+        "technical_level": "average",
+        "goal": "Prepare for IELTS English exam",
+        "how_they_found_the_app": "Arabic tech blog review",
+        "expectations_before_entering": "Full Arabic interface with English learning tools",
+        "device_type": "iPhone 13, Safari, mobile",
+        "internet_quality": "average",
+        "patience_level": "medium"
+      },
+      "journey_steps": [
+        "Opens landing page — sees English text",
+        "Scrolls looking for Arabic — doesn't find language option",
+        "Notices 'Sign In' and 'Join' buttons",
+        "Hesitates but decides to register since the blog said it supports Arabic",
+        "Registers with email — password 'Fatima2026!'",
+        "Redirected to landing page (bug)",
+        "Finds bottom nav — taps Home",
+        "Sees English welcome screen",
+        "Goes to settings via gear icon",
+        "Switches to Arabic — entire UI flips to RTL",
+        "Returns to learning page — now in Arabic",
+        "Creates card with word 'negotiate'",
+        "AI generates English sentences with the word — makes sense",
+        "Notes that AI sentences are in English while her UI is in Arabic — this is correct behavior",
+        "Creates card, reviews it",
+        "Audio pronunciation works — hears English pronunciation",
+        "Creates two more cards using AI — uses all 3 daily generations",
+        "Wants to create more — sees upgrade prompt",
+        "At $4.99/month, considers it reasonable for IELTS prep",
+        "Navigates to /subscribe page",
+        "Reads the feature comparison in Arabic",
+        "Taps 'Subscribe Now' — gets redirected to Polar checkout",
+        "Completes payment",
+        "Returns with ?success=true — sees confirmation page",
+        "Pro badge now visible on learning dashboard"
+      ],
+      "positive_points": [
+        "Arabic RTL support is comprehensive and well-implemented",
+        "All UI labels properly translated to Arabic",
+        "The transition from English to Arabic is seamless",
+        "Subscribe page clearly explains free vs Pro differences",
+        "Pro subscription workflow is smooth end-to-end",
+        "Audio pronunciation is valuable for IELTS listening prep",
+        "The subscription price is reasonable"
+      ],
+      "negative_points": [
+        "Had to register before discovering Arabic support",
+        "Landing page is English-only — frustrating for Arabic-first users",
+        "Post-registration redirect bug",
+        "No Arabic word definitions or translations alongside English",
+        "No IELTS-specific word lists or study guides",
+        "Settings page scrollable content sections (accordions) are only tap-toggled — no swipe gestures"
+      ],
+      "ux_confusions": [
+        "Why can't I switch language before signing up?",
+        "The subscribe page says 'Cancel anytime' but no cancel button is visible in the profile",
+        "How do I cancel my subscription if I need to?"
+      ],
+      "friction_points": [
+        "Language switching requires navigating to settings — not in header or landing page",
+        "Registration before language discovery",
+        "No visible subscription management or cancellation UI"
+      ],
+      "bugs_detected": [
+        {
+          "description": "No subscription cancellation UI exists in the app. Profile shows subscription status but no 'Cancel' or 'Manage' button. Users must go to Polar directly to cancel.",
+          "probable_cause": "No /api/cancel-subscription endpoint or link to Polar customer portal implemented",
+          "severity": "high"
+        }
+      ],
+      "missing_features": [
+        "Subscription management/cancellation UI",
+        "Language switcher on landing and auth pages",
+        "Arabic word definitions alongside English cards",
+        "IELTS/TOEFL specific study modes or word lists",
+        "Subscription receipt or billing history"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Hesitant — saw English-only landing page and almost left",
+        "mid_experience": "Pleasantly surprised by the quality of Arabic support",
+        "frustration_points": [
+          "English-only landing page",
+          "Redirect bug after registration",
+          "No subscription management UI"
+        ],
+        "final_emotional_state": "Satisfied with the product after subscribing — the Arabic support quality won her over"
+      },
+      "dropoff_risk_level": "low",
+      "retention_probability_percent": 75,
+      "final_decision": "stay",
+      "improvement_suggestions_from_user_perspective": [
+        "Show the Arabic option on the first page — I almost left",
+        "Add a 'Manage Subscription' button somewhere",
+        "Include Arabic definitions for English words",
+        "Add IELTS vocabulary lists I can import"
+      ]
+    },
+    {
+      "persona": {
+        "id": 7,
+        "name": "Marcus Johnson",
+        "age_range": "22-25",
+        "technical_level": "advanced",
+        "goal": "Test the app's security and tech stack out of curiosity",
+        "how_they_found_the_app": "ProductHunt listing",
+        "expectations_before_entering": "Clean code, good security practices, modern stack",
+        "device_type": "Google Pixel 8 Pro, Chrome, mobile",
+        "internet_quality": "fast",
+        "patience_level": "high"
+      },
+      "journey_steps": [
+        "Opens landing page — inspects the source code via Chrome DevTools",
+        "Notes React 19.2.3, Next.js 16, framer-motion, lucide-react",
+        "Registers with test email",
+        "Tests password: tries SQL injection in email field — properly sanitized",
+        "Tests XSS in word field — HTML is escaped by React rendering",
+        "Creates a card with extremely long word (100+ chars) — gets proper validation error",
+        "Tests rate limit by refreshing AI generation — hits 429 after 10 rapid requests",
+        "Checks network tab — sees JWT token in cookies, not in localStorage (good)",
+        "Tries accessing /api/cards without auth — gets proper 401",
+        "Tries modifying another user's card via API — gets 403 (ownership check works)",
+        "Tests the TTS endpoint — works with auth, proper caching headers",
+        "Checks for CSRF protection — NextAuth handles this via JWT strategy",
+        "Notes the rate limiting implementation uses in-memory Map — won't scale horizontally",
+        "Tests the image search API — properly proxied through backend",
+        "Reviews the checkout flow — Polar.sh integration looks solid",
+        "Tests the XP system — can't exploit audio XP since it's combined with review",
+        "Overall impressed with security posture"
+      ],
+      "positive_points": [
+        "Proper input validation on all API endpoints",
+        "Rate limiting on authentication and AI endpoints",
+        "Card ownership verification prevents unauthorized access",
+        "BCrypt password hashing with 12 rounds",
+        "JWT session strategy prevents session fixation",
+        "XP system is tied to review actions — can't be exploited via TTS endpoint alone",
+        "Proper HTTP status codes used throughout",
+        "Server-side session validation on all protected routes"
+      ],
+      "negative_points": [
+        "Rate limiting uses in-memory Map — resets on server restart and doesn't work across multiple instances",
+        "No CAPTCHA on registration or login forms",
+        "No Content-Security-Policy headers visible",
+        "The lastRequest global variable in auth route is a race condition risk",
+        "No email verification flow — accounts can be created with any email",
+        "AdSense client ID is hardcoded as 'ca-pub-XXXXXXXXXXXXXXXX' in the AdBanner component — not a real ID",
+        "Google Ads script loads from layout.tsx even when user is Pro — should be conditional"
+      ],
+      "ux_confusions": [],
+      "friction_points": [
+        "In-memory rate limiting is a deployment risk for scaled environments"
+      ],
+      "bugs_detected": [
+        {
+          "description": "Global variable `lastRequest` in auth/[...nextauth]/route.ts creates a race condition — concurrent login requests will use the wrong IP for rate limiting",
+          "probable_cause": "Storing request reference in module-level variable to pass IP to authorize callback, which doesn't receive the request object directly",
+          "severity": "medium"
+        },
+        {
+          "description": "AdBanner component uses placeholder client ID 'ca-pub-XXXXXXXXXXXXXXXX' — ads will never load",
+          "probable_cause": "Placeholder not replaced with actual Google AdSense publisher ID",
+          "severity": "low"
+        }
+      ],
+      "missing_features": [
+        "Redis-based rate limiting for horizontal scaling",
+        "Email verification on registration",
+        "CAPTCHA integration for bot protection",
+        "Content-Security-Policy headers",
+        "Two-factor authentication"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Curious and analytical — examining the tech stack",
+        "mid_experience": "Generally impressed by the security measures implemented",
+        "frustration_points": [
+          "In-memory rate limiting is a security concern at scale"
+        ],
+        "final_emotional_state": "Positive — solid security for a v0.1 product, some improvements needed for production"
+      },
+      "dropoff_risk_level": "low",
+      "retention_probability_percent": 45,
+      "final_decision": "unsure",
+      "improvement_suggestions_from_user_perspective": [
+        "Move rate limiting to Redis for production",
+        "Add email verification to prevent abuse",
+        "Add CAPTCHA at least for registration",
+        "Fix the lastRequest race condition in auth route"
+      ]
+    },
+    {
+      "persona": {
+        "id": 8,
+        "name": "Lisa Chen",
+        "age_range": "30-35",
+        "technical_level": "average",
+        "goal": "Learn GRE vocabulary words systematically",
+        "how_they_found_the_app": "Reddit recommendation in r/GRE",
+        "expectations_before_entering": "Anki-like app with pre-made GRE decks",
+        "device_type": "iPhone SE (3rd gen, small screen), Safari, mobile",
+        "internet_quality": "fast",
+        "patience_level": "medium"
+      },
+      "journey_steps": [
+        "Lands on landing page — the hero section takes up entire small screen",
+        "Scrolls through — animations feel slightly janky on iPhone SE",
+        "Taps 'Get Started' — registers with email",
+        "Redirected to '/' (bug) — uses footer to navigate to Home",
+        "Sees new user welcome screen",
+        "Taps 'Create Your First Card'",
+        "On /cards/new — the word input, sentence area, and image grid compete for small screen space",
+        "Types 'perspicacious' — AI generates sentences",
+        "Scrolls down to see image results — the layout requires significant scrolling on small screen",
+        "The floating 'Create' button at bottom partially overlaps image grid content",
+        "Selects image, creates card",
+        "Goes to deck — flashcard aspect ratio fits well on small screen",
+        "Reviews card — swipe works but card text is small",
+        "The 'Learned' and 'Review' swipe labels are large enough to read",
+        "Edit button (pencil icon) on flashcard is in the top-right corner — easy to accidentally tap",
+        "Creates 2 more cards, hits AI limit",
+        "Wants to import her Anki deck — no import feature",
+        "Wants to search for 'GRE word lists' — no discovery/community feature",
+        "Goes to card search — sees only her 3 cards",
+        "Checks if there's a web app or desktop version for easier card creation — the site is responsive but lacks desktop optimization beyond basic layouts"
+      ],
+      "positive_points": [
+        "Flashcard review UI works well even on smaller iPhone SE screen",
+        "Swipe labels are readable at proper size",
+        "The card search feature is functional with instant filtering",
+        "Audio pronunciation is helpful for GRE words with tricky pronunciation"
+      ],
+      "negative_points": [
+        "Card creation page is cramped on iPhone SE screen — too much content",
+        "Floating Create button overlaps content on small screens",
+        "No import from Anki or other flashcard apps",
+        "No pre-made word lists or community decks",
+        "No deck/folder organization — all cards in one flat list",
+        "Edit button on flashcard is too close to the swipe zone — accidental taps while reviewing",
+        "The card list shows 'Recently added' for every card — not actually dynamic metadata"
+      ],
+      "ux_confusions": [
+        "Why does every card in the search list say 'Recently added'? Some are from days ago",
+        "How do I organize cards into GRE categories?",
+        "Where's the import feature?"
+      ],
+      "friction_points": [
+        "Small screen layout issues on card creation page",
+        "No bulk import from existing study tools",
+        "Edit button misclicks during card review",
+        "Static 'Recently added' label on all cards in search"
+      ],
+      "bugs_detected": [
+        {
+          "description": "Card search list shows 'Recently added' text for every card regardless of creation date — it's a static translation key, not dynamic data",
+          "probable_cause": "In cards/search/page.tsx, the subtitle text is hardcoded as t('searchCards.recentlyAdded') for all cards instead of showing actual creation date or review status",
+          "severity": "low"
+        }
+      ],
+      "missing_features": [
+        "Anki/CSV import functionality",
+        "Pre-made word lists (GRE, TOEFL, SAT, etc.)",
+        "Deck/folder organization",
+        "Community-shared card sets",
+        "Desktop-optimized card creation interface"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Hopeful — the app looks modern and well-designed",
+        "mid_experience": "Disappointed that there are no pre-made GRE decks or import options",
+        "frustration_points": [
+          "No import from Anki",
+          "Cramped creation UI on small screen",
+          "AI limit prevents batch creation",
+          "No deck organization"
+        ],
+        "final_emotional_state": "Frustrated — creating 300+ GRE words one by one with only 3 AI generations per day is impractical"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 20,
+      "final_decision": "leave",
+      "improvement_suggestions_from_user_perspective": [
+        "Please add Anki import — I have 500+ cards there already",
+        "Pre-made GRE, TOEFL, SAT word lists would be game-changing",
+        "Let me create folders or decks to organize by topic",
+        "The 'Recently added' label should show actual dates",
+        "The create page needs a better layout for small phones"
+      ]
+    },
+    {
+      "persona": {
+        "id": 9,
+        "name": "Raj Patel",
+        "age_range": "20-24",
+        "technical_level": "average",
+        "goal": "Improve English for software development career",
+        "how_they_found_the_app": "Twitter/X thread about learning tools",
+        "expectations_before_entering": "Free, functional tool — doesn't want to pay",
+        "device_type": "OnePlus Nord, Chrome, mobile",
+        "internet_quality": "average",
+        "patience_level": "medium"
+      },
+      "journey_steps": [
+        "Opens landing page — reads the features",
+        "Taps 'Initialize Training' — goes to /register",
+        "Registers with Google account — fast",
+        "Lands on /cards/learning — welcome screen",
+        "Creates first card: 'algorithm'",
+        "AI generates great sentences — impressed",
+        "Creates 'debugging' and 'refactor'",
+        "AI limit reached after 3 cards",
+        "Sees Pro upsell banner — closes it",
+        "Creates 4th card manually without AI",
+        "Writes his own sentences — takes much longer",
+        "Goes to deck — reviews 4 cards",
+        "After 10 swipes, Pro upsell modal appears",
+        "Dismisses it — continues reviewing",
+        "Notices Ad Banner in dashboard — ad doesn't actually load (placeholder)",
+        "After deck is empty, returns to dashboard",
+        "Creates more cards manually — the process is tedious without AI",
+        "Checks the ranking page — sees his XP",
+        "Uses the app daily for a few days",
+        "Consistently annoyed by the 3/day AI limit",
+        "Considers the Pro price — $4.99/mo feels high for a student budget",
+        "Finds alternative free tools",
+        "Reduces usage over time"
+      ],
+      "positive_points": [
+        "Google OAuth + Welcome screen provides good initial experience",
+        "AI sentence quality for tech vocabulary is excellent",
+        "XP and streak tracking provides motivation to return daily",
+        "The spaced repetition scheduling seems well-calibrated",
+        "The app is genuinely free to use — just with limitations"
+      ],
+      "negative_points": [
+        "3 AI generations per day is extremely restrictive for someone trying to build a deck",
+        "The Pro upsell modal every 10 swipes disrupts the learning flow",
+        "Manual card creation without AI is tedious and time-consuming",
+        "Ad banner doesn't work (placeholder ID) — wasted screen space",
+        "No free tier of AI that increases over time (e.g., earn more AI uses through streaks)",
+        "$4.99/mo pricing may be too high for students in India/developing countries",
+        "No referral program to earn free Pro access"
+      ],
+      "ux_confusions": [
+        "The ad space shows nothing — is the app broken?",
+        "Can I earn more AI generations through gameplay/streaks?",
+        "Why is the upsell after exactly 10 swipes? Seems arbitrary"
+      ],
+      "friction_points": [
+        "3/day AI limit is the biggest friction — kills the creation momentum",
+        "Upsell modal every 10 swipes is disruptive",
+        "Manual card creation without AI is 5x slower",
+        "No way to earn additional AI generations through app usage"
+      ],
+      "bugs_detected": [
+        {
+          "description": "AdBanner component renders with placeholder IDs — ad space is reserved but shows nothing, wasting screen real estate",
+          "probable_cause": "dataAdClient='ca-pub-XXXXXXXXXXXXXXXX' and dataAdSlot='XXXXXXXXXX' are placeholder values in learning/page.tsx",
+          "severity": "low"
+        }
+      ],
+      "missing_features": [
+        "Earn additional AI generations through streaks or achievements",
+        "Regional pricing for different markets",
+        "Referral program for free Pro access",
+        "Ad-supported AI generations (watch an ad, get a generation)",
+        "More generous free tier (5-10 per day instead of 3)"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Excited — the AI feature is genuinely useful",
+        "mid_experience": "Frustrated by the 3/day limit — momentum killed",
+        "frustration_points": [
+          "AI limit hit within 5 minutes",
+          "Upsell modals interrupting study",
+          "Manual creation being tedious",
+          "Price too high for student budget"
+        ],
+        "final_emotional_state": "Conflicted — loves the AI feature but can't afford/justify Pro for a flashcard app"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 30,
+      "final_decision": "unsure",
+      "improvement_suggestions_from_user_perspective": [
+        "Let me earn AI generations by maintaining streaks — reward loyal free users",
+        "5-10 free AI generations per day instead of 3",
+        "Show the upsell less frequently — once per session max, not every 10 cards",
+        "Add regional pricing — $4.99 is expensive in India",
+        "Let me watch an ad to get an extra AI generation"
+      ]
+    },
+    {
+      "persona": {
+        "id": 10,
+        "name": "Sarah Williams",
+        "age_range": "40-50",
+        "technical_level": "non-technical",
+        "goal": "Help her 12-year-old child with English vocabulary homework",
+        "how_they_found_the_app": "Search for 'vocabulary app for kids'",
+        "expectations_before_entering": "Kid-friendly interface with educational content",
+        "device_type": "iPad Air, Safari, tablet",
+        "internet_quality": "fast",
+        "patience_level": "low"
+      },
+      "journey_steps": [
+        "Opens landing page — reads 'Shield your mind from memory decay'",
+        "Finds the messaging sci-fi themed and not kid-friendly",
+        "Scrolls down — sees 'Neural Optimization Active' badge",
+        "Concerned this isn't appropriate for a 12-year-old",
+        "Reads further — sees it's about vocabulary learning with flashcards",
+        "Decides to try it anyway",
+        "Registers with email — creates account for her child",
+        "Redirected to landing page (bug)",
+        "Navigates to Home via bottom bar",
+        "Shows the welcome screen to her child",
+        "Child creates first card: 'habitat'",
+        "AI generates sentences — one says 'The fire burning through the forest destroyed every habitat, animals screamed in terror as smoke choked the sky.'",
+        "Mother is alarmed by the violent/intense AI-generated content",
+        "The AI prompt explicitly requests 'shocking', 'sheer panic', 'heartbreak', 'extreme danger' scenarios",
+        "Reads the next sentence — similarly intense",
+        "Decides this is inappropriate for a 12-year-old",
+        "Leaves the app"
+      ],
+      "positive_points": [
+        "The concept of AI-generated context sentences is educational",
+        "Visual card creation with images is engaging for children",
+        "The swipe mechanic is intuitive for kids"
+      ],
+      "negative_points": [
+        "AI prompt explicitly generates violent, disturbing, and emotionally intense content",
+        "The AI system prompt says: 'NEVER write weak, boring, or everyday sentences. Every sentence MUST be emotionally intense, shocking, or dramatic'",
+        "No content safety filter or age-appropriate mode",
+        "No parental controls or kid-friendly mode",
+        "The 'neural optimization' branding is confusing for parents",
+        "No terms of service mentioning minimum age requirement visible during registration"
+      ],
+      "ux_confusions": [
+        "Is this app appropriate for children?",
+        "Why are the AI sentences so violent and scary?",
+        "Where are the parental controls?"
+      ],
+      "friction_points": [
+        "AI content is explicitly designed to be disturbing — deal-breaker for parents",
+        "No age gate or content filter option",
+        "No kid-friendly mode"
+      ],
+      "bugs_detected": [],
+      "missing_features": [
+        "Content safety filter for age-appropriate sentences",
+        "Kid-friendly mode with gentler AI prompts",
+        "Parental controls",
+        "Age verification during registration",
+        "AI tone selection (gentle, academic, everyday, dramatic)"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Skeptical about the sci-fi branding but willing to try",
+        "mid_experience": "Alarmed when AI generates violent content for her child",
+        "frustration_points": [
+          "AI content is frightening for a child",
+          "No way to control content intensity",
+          "No parental features"
+        ],
+        "final_emotional_state": "Upset and leaving immediately — the AI content is inappropriate for children"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 0,
+      "final_decision": "leave",
+      "improvement_suggestions_from_user_perspective": [
+        "Add a content filter — not everyone wants horror-movie sentences",
+        "Create a kid-friendly mode with gentle, everyday sentences",
+        "At minimum, let users choose the tone of AI generation",
+        "The branding shouldn't be so dark/sci-fi if you want families to use it"
+      ]
+    },
+    {
+      "persona": {
+        "id": 11,
+        "name": "Omar Khalil",
+        "age_range": "19-22",
+        "technical_level": "average",
+        "goal": "Build English vocabulary quickly before studying abroad",
+        "how_they_found_the_app": "Arabic YouTube review",
+        "expectations_before_entering": "Duolingo-like experience in Arabic with English lessons",
+        "device_type": "Xiaomi Redmi Note 12, Chrome, mobile",
+        "internet_quality": "slow",
+        "patience_level": "medium"
+      },
+      "journey_steps": [
+        "Opens landing page — loads slowly on 3G",
+        "Large JS bundle causes 8+ second initial load",
+        "Sees English landing page — scrolls looking for Arabic",
+        "Decides to try anyway — taps Join",
+        "Registers with email/password",
+        "Password 'Omar1234' accepted (meets requirements)",
+        "Redirected to landing page (bug)",
+        "Footer appears — taps Home",
+        "Dashboard loads — sees welcome screen",
+        "Goes to settings — switches to Arabic",
+        "Creates first card: 'scholarship'",
+        "AI generation starts — takes 15+ seconds on slow connection",
+        "No loading timeout indicator — just spinner",
+        "AI eventually responds with sentences",
+        "Image search also slow but works",
+        "Selects image, creates card — success",
+        "Goes to deck — card loads with image",
+        "Image loads slowly — white space visible during loading",
+        "TTS audio takes 5+ seconds to start loading",
+        "Reviews card — swipe works despite slow connection",
+        "Creates 2 more cards — uses AI limit",
+        "Continues using app daily — adapts to slow loading",
+        "Streak builds to 3 days",
+        "Sees streak freeze upsell for Pro — interested but can't afford"
+      ],
+      "positive_points": [
+        "The app works on slow connections — just slowly",
+        "Arabic support is well-implemented",
+        "Core functionality doesn't break on slow networks",
+        "Streak gamification keeps the user coming back despite issues",
+        "Card data is small — review sessions are fast once loaded"
+      ],
+      "negative_points": [
+        "8+ second initial page load on slow connection",
+        "No loading skeleton or progressive content display on landing page",
+        "AI generation has no timeout or cancellation — user waits indefinitely",
+        "Images don't have loading placeholders — layout shift during loading",
+        "TTS audio pre-fetch fires for 5 cards simultaneously — overwhelming for slow connection",
+        "No offline capability or PWA support",
+        "No image compression options — full Unsplash images loaded even on slow connections"
+      ],
+      "ux_confusions": [
+        "Is the AI generation stuck or just slow?",
+        "The page seems broken when images are loading — blank spaces appear",
+        "Why is the landing page so heavy to load?"
+      ],
+      "friction_points": [
+        "Extremely slow initial page load",
+        "No loading feedback for AI generation timeout",
+        "Image loading causes layout shifts",
+        "Audio pre-fetch congests slow connection"
+      ],
+      "bugs_detected": [
+        {
+          "description": "Audio pre-fetch in deck/page.tsx fetches 5 cards simultaneously without considering connection speed — this can overwhelm slow connections and cause the current card's audio to fail",
+          "probable_cause": "cards.slice(0, 5) pre-fetch in useEffect doesn't check navigator.connection or implement sequential loading",
+          "severity": "medium"
+        }
+      ],
+      "missing_features": [
+        "PWA/offline support",
+        "Adaptive image quality based on connection speed",
+        "AI generation timeout with retry option",
+        "Loading skeletons for images",
+        "Connection-aware audio pre-fetching",
+        "Lighter landing page bundle for slow connections"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Frustrated by slow loading but willing to wait",
+        "mid_experience": "Adapts to slow loading — core experience is good",
+        "frustration_points": [
+          "8+ second page loads",
+          "AI generation with no timeout feedback",
+          "Image loading layout shifts"
+        ],
+        "final_emotional_state": "Cautiously committed — the app works despite performance issues on slow connections"
+      },
+      "dropoff_risk_level": "medium",
+      "retention_probability_percent": 45,
+      "final_decision": "stay",
+      "improvement_suggestions_from_user_perspective": [
+        "Make the app work offline — I can't always have good internet",
+        "Show me a clear timer or progress for AI generation",
+        "Compress images for slow connections",
+        "The landing page should load faster — it's the first thing new users see"
+      ]
+    },
+    {
+      "persona": {
+        "id": 12,
+        "name": "David Kim",
+        "age_range": "26-30",
+        "technical_level": "advanced",
+        "goal": "Test and compare against Anki for personal vocabulary workflow",
+        "how_they_found_the_app": "Hacker News comment thread",
+        "expectations_before_entering": "Customizable SRS algorithm, data export, mature feature set",
+        "device_type": "Samsung Galaxy S24, Chrome, mobile",
+        "internet_quality": "fast",
+        "patience_level": "high"
+      },
+      "journey_steps": [
+        "Opens landing page — reads about SRS algorithm claims",
+        "Notes the '98% retention rate' stat — wants to verify the algorithm",
+        "Registers with Google OAuth",
+        "Navigates to dashboard",
+        "Creates 10 cards (3 with AI, 7 manually)",
+        "Reviews all cards in deck — tests the SRS scheduling",
+        "Notes first review interval is 15 minutes",
+        "Reviews again after 15 minutes — interval goes to 1 day",
+        "Examines the algorithm: success path is 15m → 1d → 3d → ease factor multiplication",
+        "Notes this is a simplified SM-2 variant",
+        "Looks for ease factor customization — none available",
+        "Looks for interval customization — none available",
+        "Checks for card statistics — no per-card stats visible",
+        "Tries to export his cards — no export feature",
+        "Tries to tag or categorize cards — no tagging system",
+        "Checks settings for SRS configuration — only language and theme options",
+        "Creates cards with multi-word phrases — works fine",
+        "Tests the sentence rotation on review — sentences cycle per successful review",
+        "Likes the sentence cycling concept but wants more control",
+        "Decides the app is too basic compared to Anki"
+      ],
+      "positive_points": [
+        "The SM-2 variant algorithm is correctly implemented",
+        "Ease factor adjustment on success (+0.1, max 3.0) and failure (-0.2, min 1.3) follows standard practice",
+        "Sentence cycling per successful review adds variety",
+        "The AI sentence generation is unique and valuable",
+        "Clean, distraction-free review interface"
+      ],
+      "negative_points": [
+        "No SRS algorithm customization (intervals, ease factor bounds, etc.)",
+        "No per-card statistics (review history, success rate, etc.)",
+        "No data export (JSON, CSV, Anki .apkg)",
+        "No data import from other tools",
+        "No card tagging, categorization, or deck separation",
+        "No reverse card creation (show meaning, guess word)",
+        "No cloze deletion card type",
+        "No study session statistics (time spent, accuracy, etc.)",
+        "No review schedule preview (upcoming reviews calendar)",
+        "Card model is too simple — single word + sentences + image only"
+      ],
+      "ux_confusions": [
+        "Where are my per-card statistics?",
+        "Can I adjust the SRS intervals?",
+        "How do I export my data?",
+        "Why can't I create reverse cards?"
+      ],
+      "friction_points": [
+        "No export — data lock-in is a deal-breaker for power users",
+        "No algorithm customization",
+        "No card type variety",
+        "No study analytics"
+      ],
+      "bugs_detected": [],
+      "missing_features": [
+        "Data export (JSON, CSV, Anki format)",
+        "Data import from Anki, Quizlet, etc.",
+        "Per-card statistics and review history",
+        "SRS algorithm parameter customization",
+        "Multiple card types (cloze, reverse, multiple choice)",
+        "Deck/folder organization with separate statistics",
+        "Study session analytics dashboard",
+        "Review schedule calendar/preview",
+        "Custom fields on cards"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Intrigued by the AI-powered approach",
+        "mid_experience": "Disappointed by lack of power-user features",
+        "frustration_points": [
+          "No export capability — data is trapped",
+          "No algorithm customization",
+          "No card types beyond basic word + sentences",
+          "No statistics or analytics"
+        ],
+        "final_emotional_state": "Unimpressed for power use case — nice concept but too basic for serious SRS users"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 15,
+      "final_decision": "leave",
+      "improvement_suggestions_from_user_perspective": [
+        "Add data export — I need to be able to take my cards with me",
+        "Show me per-card statistics — accuracy, review count, etc.",
+        "Let me customize the SRS algorithm parameters",
+        "Add more card types — cloze deletion, reverse cards",
+        "Add study session analytics"
+      ]
+    },
+    {
+      "persona": {
+        "id": 13,
+        "name": "Maria Gonzalez",
+        "age_range": "32-38",
+        "technical_level": "non-technical",
+        "goal": "Learn business English vocabulary for new corporate job",
+        "how_they_found_the_app": "Google Play Store search (but found web app instead)",
+        "expectations_before_entering": "Native mobile app experience",
+        "device_type": "Samsung Galaxy A53, Chrome, mobile",
+        "internet_quality": "average",
+        "patience_level": "low"
+      },
+      "journey_steps": [
+        "Searched for 'vocabulary flashcard app' on Google",
+        "Clicked on Flotter result — opens in Chrome browser",
+        "Notices it's a web app, not a native app — slightly disappointed",
+        "Sees no 'Add to Home Screen' prompt or PWA install banner",
+        "Landing page loads — scrolls through",
+        "Registers with email — 'Maria2026!'",
+        "Redirected to landing page (bug)",
+        "Finds Home in footer nav",
+        "Creates card: 'synergy'",
+        "AI generates dramatic sentences — one involves 'screaming in board rooms'",
+        "Not exactly business-appropriate but creative",
+        "Creates a few more cards",
+        "Goes to review — works well",
+        "Closes browser — later returns to flotter.app",
+        "Has to navigate back to /cards/learning — no deep link saved",
+        "Wishes there was a native app with notifications",
+        "Misses a day — streak resets to 0",
+        "No push notification reminded her to study",
+        "Feels discouraged by streak loss",
+        "Returns next day — streak is at 0",
+        "No way to restore streak for free users",
+        "Gradually stops using the app"
+      ],
+      "positive_points": [
+        "Web app works well in mobile Chrome",
+        "The card creation and review flow is intuitive",
+        "The app looks like a native app thanks to the premium design"
+      ],
+      "negative_points": [
+        "No native mobile app — reduces discoverability and engagement",
+        "No PWA install prompt or service worker for offline access",
+        "No push notifications for review reminders",
+        "Streak resets completely on missed day for free users — very punishing",
+        "No streak restore option for free users",
+        "AI sentences are too dramatic for business context",
+        "No bookmark or home screen prompt"
+      ],
+      "ux_confusions": [
+        "Is there a mobile app I should download instead?",
+        "Why did my streak reset — I only missed one day?",
+        "Can I get notifications to remind me?"
+      ],
+      "friction_points": [
+        "No push notifications means easy to forget",
+        "Streak reset with no recovery option is punishing",
+        "Web app discoverability is poor — no app store presence",
+        "Has to manually navigate to the URL each time"
+      ],
+      "bugs_detected": [],
+      "missing_features": [
+        "Native mobile app (iOS/Android)",
+        "PWA with install prompt and offline support",
+        "Push notifications for review reminders",
+        "Streak recovery for free users (e.g., watch ad to restore)",
+        "Customizable daily reminder settings"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Slightly disappointed it's not a native app",
+        "mid_experience": "Enjoying the core experience but worried about forgetting to use it",
+        "frustration_points": [
+          "Missing a day and losing all streak progress",
+          "No notification system to help stay consistent",
+          "Having to bookmark and manually navigate to URL"
+        ],
+        "final_emotional_state": "Discouraged after streak loss — motivation dropped without external reminders"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 20,
+      "final_decision": "leave",
+      "improvement_suggestions_from_user_perspective": [
+        "Please make a real app I can download from the App Store",
+        "Send me reminders when I have cards to review",
+        "Losing my 5-day streak because I missed one day is really demotivating — give me a chance to recover it",
+        "At least add 'Add to Home Screen' prompt so I can access it easily"
+      ]
+    },
+    {
+      "persona": {
+        "id": 14,
+        "name": "Tom Hansen",
+        "age_range": "55-65",
+        "technical_level": "non-technical",
+        "goal": "Learn English vocabulary for retirement travel",
+        "how_they_found_the_app": "Son sent him the link",
+        "expectations_before_entering": "Large text, simple interface, easy to understand",
+        "device_type": "iPad 10th gen, Safari, tablet",
+        "internet_quality": "fast",
+        "patience_level": "high"
+      },
+      "journey_steps": [
+        "Opens link from son — sees landing page",
+        "Text is small — has to squint at 11px label text and 14px body text",
+        "Struggles with the 'neural optimization' jargon",
+        "Son helps navigate to register page",
+        "Types email slowly — keyboard covers half the screen on iPad",
+        "Password requirements: struggles to remember what was needed",
+        "Tries 'travel123' — fails (no uppercase)",
+        "Tries 'Travel123' — success",
+        "Redirected to landing page — confused, asks son for help",
+        "Son navigates to /cards/learning",
+        "Sees welcome screen — the step-by-step layout is helpful",
+        "Creates first card: 'airport'",
+        "AI generates sentences — text is small in the textarea",
+        "Image grid thumbnails are tiny on iPad, hard to select accurately",
+        "Selects image with difficulty — taps wrong image first",
+        "Creates card — goes to deck",
+        "Flashcard text on front face: word shows as 'a_______' with masked sections",
+        "Doesn't understand the masking concept — what does '______' mean?",
+        "Taps card — it flips, audio plays",
+        "Understands now — the word was hidden and revealed",
+        "Swipe gesture is not intuitive for older user — tries to tap buttons instead",
+        "Taps the card back — sees swipe hint animation (arrows)",
+        "Learns to swipe — manages to review the card",
+        "Creates a few more cards with son's help"
+      ],
+      "positive_points": [
+        "The step-by-step welcome screen is clear and easy to follow",
+        "Audio pronunciation is valuable for correct word learning",
+        "The swipe hint animation (triggered on back tap) helps teach the gesture",
+        "Card flip animation is satisfying and easy to understand"
+      ],
+      "negative_points": [
+        "Text throughout the app is too small for older users — base is 14px, labels are 11px",
+        "No font size/accessibility settings",
+        "The masking concept (showing '______' for the word) is not explained",
+        "No tutorial explaining what the masked word means on the front of the card",
+        "Swipe gesture is not natural for older users — no tap-to-review alternative",
+        "No physical buttons for 'Learned' / 'Review Again' — only swipe",
+        "Complex registration with password requirements is frustrating",
+        "The jargon ('Neural Sync', 'SRS Engine', 'Cognitive Load') is alienating"
+      ],
+      "ux_confusions": [
+        "What does '______' mean on the card?",
+        "How do I mark a card as learned? (swipe not obvious)",
+        "What is 'Neural Optimization'?",
+        "Where did my card go after swiping? (success removes from deck)"
+      ],
+      "friction_points": [
+        "Small text throughout the entire app",
+        "Swipe-only review with no button alternative",
+        "Complex password requirements",
+        "Unexplained card masking UI",
+        "Jargon-heavy branding"
+      ],
+      "bugs_detected": [],
+      "missing_features": [
+        "Font size / accessibility settings",
+        "Alternative review buttons (tap 'Learned'/'Review') alongside swipe",
+        "Tutorial/tooltip explaining the card masking concept",
+        "Simplified registration (magic link instead of passwords)",
+        "High contrast mode"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Overwhelmed by the complex branding and small text",
+        "mid_experience": "Understanding improved with son's help — the core concept is good",
+        "frustration_points": [
+          "Can't read small text comfortably",
+          "Swipe gesture is unintuitive",
+          "Card masking not explained",
+          "Password requirements confusing"
+        ],
+        "final_emotional_state": "Needs assistance — would use it only with help from family member"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 15,
+      "final_decision": "unsure",
+      "improvement_suggestions_from_user_perspective": [
+        "Make the text bigger — I can barely read it",
+        "Add buttons to mark cards, not just swiping",
+        "Explain what the blank line means before I see it",
+        "Use simpler words in the app — I don't know what 'SRS Engine' means"
+      ]
+    },
+    {
+      "persona": {
+        "id": 15,
+        "name": "Aisha Mohammed",
+        "age_range": "23-27",
+        "technical_level": "average",
+        "goal": "Build everyday English vocabulary as an ESL student",
+        "how_they_found_the_app": "University English teacher recommended it",
+        "expectations_before_entering": "Structured learning path with progressive difficulty",
+        "device_type": "iPhone 11, Safari, mobile",
+        "internet_quality": "fast",
+        "patience_level": "medium"
+      },
+      "journey_steps": [
+        "Opens landing page — impressed by design",
+        "Scrolls to CTA — taps 'Start Free Trial'",
+        "Registers with email — smooth process",
+        "Redirected to landing page (bug) — taps Home in footer",
+        "Sees welcome screen — creates first card",
+        "Types 'hello' — AI generates sentences (word is simple)",
+        "AI sentences: overly dramatic for the word 'hello' — feels wrong",
+        "Creates 'goodbye' and 'please'",
+        "All AI sentences are intensely dramatic — doesn't match simple everyday words",
+        "Goes to deck — review works well",
+        "Returns to dashboard — sees streak and XP",
+        "Looks for a study plan or learning path — doesn't find one",
+        "Looks for word difficulty levels (beginner, intermediate, advanced) — doesn't find any",
+        "Looks for recommended words to learn next — no suggestions",
+        "The app is entirely self-directed — user must decide what to learn",
+        "Wants structured progression — 'Learn these 20 words this week'",
+        "Checks settings for any curriculum options — only language and theme",
+        "Continues creating cards but feels directionless"
+      ],
+      "positive_points": [
+        "Clean and professional design",
+        "Card creation works smoothly",
+        "Review mechanic is intuitive after first use",
+        "Audio pronunciation helps with common words"
+      ],
+      "negative_points": [
+        "No learning path or curriculum structure",
+        "No word recommendations based on difficulty level",
+        "No progression system beyond XP/streak (no levels, no unlocks)",
+        "AI generates inappropriately dramatic sentences for simple words like 'hello'",
+        "No word frequency data or difficulty indicators",
+        "The app provides no guidance on WHAT to learn",
+        "ESL beginners need more structure than advanced users",
+        "No comprehension checking — only recognition recall"
+      ],
+      "ux_confusions": [
+        "What words should I learn first?",
+        "Is there a study plan or syllabus?",
+        "Why are the AI sentences so dramatic for simple words?",
+        "How do I know if I'm making progress beyond XP numbers?"
+      ],
+      "friction_points": [
+        "No guided learning path — fully self-directed",
+        "AI tone is wrong for beginner vocabulary",
+        "No way to know optimal word order for ESL progression",
+        "XP and streak don't indicate actual language proficiency"
+      ],
+      "bugs_detected": [],
+      "missing_features": [
+        "Structured learning curriculum/path",
+        "Word difficulty levels (A1-C2 CEFR)",
+        "Recommended words based on frequency/importance",
+        "Progress assessment beyond XP",
+        "AI tone that adapts to word complexity",
+        "Weekly study plans",
+        "Comprehension quizzes beyond flashcard review"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Positive — the app looks well-made",
+        "mid_experience": "Lost — no guidance on what to study",
+        "frustration_points": [
+          "No structured learning path",
+          "AI tone inappropriate for simple words",
+          "No recommendation system"
+        ],
+        "final_emotional_state": "Uncertain — the tool is good but the lack of structure is a problem for ESL learners"
+      },
+      "dropoff_risk_level": "medium",
+      "retention_probability_percent": 35,
+      "final_decision": "unsure",
+      "improvement_suggestions_from_user_perspective": [
+        "Give me a study plan — 'Learn these 10 words this week'",
+        "Suggest words based on my level",
+        "The AI sentences should match the word's difficulty",
+        "Add some kind of test or quiz to check my understanding"
+      ]
+    },
+    {
+      "persona": {
+        "id": 16,
+        "name": "Chen Wei",
+        "age_range": "28-33",
+        "technical_level": "advanced",
+        "goal": "Evaluate for use in his language learning startup",
+        "how_they_found_the_app": "Competitor analysis research",
+        "expectations_before_entering": "API documentation, team features, white-label options",
+        "device_type": "iPhone 15, Safari, mobile",
+        "internet_quality": "fast",
+        "patience_level": "medium"
+      },
+      "journey_steps": [
+        "Opens landing page — analyzes the value proposition",
+        "Notes the tech stack: Next.js, Prisma, CockroachDB",
+        "Registers to test the full app",
+        "Creates several cards to evaluate AI quality",
+        "Tests Groq AI model: 'moonshotai/kimi-k2-instruct-0905'",
+        "Evaluates the sentence quality — good for consumer use",
+        "Checks for API documentation — none exists",
+        "Looks for team/classroom features — none",
+        "Checks for admin dashboard — none",
+        "Evaluates the pricing model: $4.99/mo via Polar",
+        "Notes single-tier pricing — no enterprise plan",
+        "Checks for white-label options — none",
+        "Tests the webhook endpoint — exists for Polar subscription management",
+        "Evaluates the user schema — basic, no team/org support",
+        "Notes no multi-tenancy support",
+        "Concludes the app is consumer-focused, not B2B-ready"
+      ],
+      "positive_points": [
+        "AI integration quality is impressive for a v0.1 product",
+        "Clean codebase architecture",
+        "Modern tech stack choices",
+        "The core UX is polished"
+      ],
+      "negative_points": [
+        "No API for third-party integrations",
+        "No team/classroom features",
+        "No admin or teacher dashboard",
+        "No white-label or embedding options",
+        "Single-tier consumer pricing only",
+        "No usage analytics or reporting",
+        "No multi-tenancy architecture"
+      ],
+      "ux_confusions": [],
+      "friction_points": [
+        "Product is consumer-only — no B2B features",
+        "No API access for integration"
+      ],
+      "bugs_detected": [],
+      "missing_features": [
+        "Public API with documentation",
+        "Team/classroom management",
+        "Teacher/admin dashboard",
+        "White-label/embedding options",
+        "Enterprise pricing tier",
+        "Usage analytics and reporting",
+        "Multi-tenancy architecture"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Impressed by polish, curious about capabilities",
+        "mid_experience": "Quickly realizes it's consumer-only",
+        "frustration_points": [
+          "No B2B features",
+          "No API access"
+        ],
+        "final_emotional_state": "Neutral — good consumer product but not suitable for B2B use case"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 5,
+      "final_decision": "leave",
+      "improvement_suggestions_from_user_perspective": [
+        "Consider a B2B tier with team management and API access",
+        "Classroom features would open the education market",
+        "Publish API documentation for third-party integrations"
+      ]
+    },
+    {
+      "persona": {
+        "id": 17,
+        "name": "Nina Petrova",
+        "age_range": "35-42",
+        "technical_level": "non-technical",
+        "goal": "Memorize English vocabulary for immigration interview",
+        "how_they_found_the_app": "Facebook community group recommendation",
+        "expectations_before_entering": "Reliable tool with offline support for subway commute study",
+        "device_type": "Huawei P30 Lite, Chrome, mobile",
+        "internet_quality": "slow",
+        "patience_level": "high"
+      },
+      "journey_steps": [
+        "Opens the link — page loads very slowly",
+        "Eventually sees landing page — registers",
+        "Creates an account with email",
+        "Navigates to Home via footer",
+        "Creates 3 cards with AI assistance",
+        "Cards created, reviews them in deck",
+        "Underground on subway — internet drops",
+        "App becomes completely unusable — all API calls fail",
+        "Card review fails because PATCH request can't reach server",
+        "No cached content available offline",
+        "Returns to surface — app works again but lost review progress",
+        "Realizes the app requires constant internet connection",
+        "For daily subway commute study (30 min x 2), the app won't work",
+        "This is a deal-breaker for her use case",
+        "Considers the app for home use only",
+        "Decides the value is too limited without offline support"
+      ],
+      "positive_points": [
+        "When online, the app works well and the review experience is good",
+        "Card creation AI is helpful for her vocabulary needs",
+        "The app works across different browsers and devices"
+      ],
+      "negative_points": [
+        "Zero offline functionality — completely dependent on internet",
+        "No service worker or PWA support",
+        "No local caching of card data",
+        "Review progress lost when connection drops",
+        "No error recovery when network requests fail mid-review",
+        "No queue system for offline review submissions",
+        "App shows console errors instead of user-friendly offline message"
+      ],
+      "ux_confusions": [
+        "Why can't I review cards I already downloaded?",
+        "My review was lost — did it count?",
+        "Is there an offline mode?"
+      ],
+      "friction_points": [
+        "Complete internet dependency is a deal-breaker for commute use",
+        "No graceful offline degradation",
+        "Lost review progress without clear notification"
+      ],
+      "bugs_detected": [
+        {
+          "description": "When review PATCH request fails due to network loss, the card is removed from the local state but the review is never persisted. User loses progress silently.",
+          "probable_cause": "In deck/page.tsx, handleReview removes the card from state immediately but fetch(...).catch(() => {}) silently swallows the error without re-adding the card",
+          "severity": "high"
+        }
+      ],
+      "missing_features": [
+        "PWA with service worker for offline access",
+        "Local storage caching of card data",
+        "Offline review queue that syncs when online",
+        "Graceful offline mode with clear messaging",
+        "Background sync for review submissions"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Hopeful — the app concept fits her needs perfectly",
+        "mid_experience": "Disappointed when the app breaks completely offline",
+        "frustration_points": [
+          "Complete failure without internet",
+          "Lost review progress",
+          "Can't use during subway commute"
+        ],
+        "final_emotional_state": "Frustrated — the app is useless for her primary study context (subway commute)"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 15,
+      "final_decision": "leave",
+      "improvement_suggestions_from_user_perspective": [
+        "Please add offline mode — I study on the subway where there's no signal",
+        "Cache my cards locally so I can review them anywhere",
+        "If I lose connection, save my reviews and sync later",
+        "Show me a clear message when I'm offline instead of silent failure"
+      ]
+    },
+    {
+      "persona": {
+        "id": 18,
+        "name": "Alex Turner",
+        "age_range": "15-17",
+        "technical_level": "advanced",
+        "goal": "Prep SAT vocabulary with minimal effort",
+        "how_they_found_the_app": "Discord server recommendation",
+        "expectations_before_entering": "Quick, gamified learning with leaderboards and social proof",
+        "device_type": "iPhone 13 Mini, Safari, mobile",
+        "internet_quality": "fast",
+        "patience_level": "low"
+      },
+      "journey_steps": [
+        "Opens landing page — likes the dark theme and animations",
+        "Sees animated stats: '98% Retention Rate', '3x Faster Learning'",
+        "Impressed by claims — taps 'Start Free Trial'",
+        "Registers with Google — fast",
+        "Goes to Home — welcome screen",
+        "Creates card: 'pernicious'",
+        "AI generates dramatic sentences — perfect SAT-level vocabulary",
+        "Creates 'laconic' and 'obsequious' — AI handles well",
+        "Hits AI limit — creates more manually but only writes basic sentences",
+        "Goes to deck — reviews 3 cards",
+        "Enjoys the swipe mechanic — feels like Tinder for words",
+        "After 10 swipes, sees Pro upsell modal",
+        "Closes it — keeps reviewing",
+        "Notices the streak counter — wants to maintain it",
+        "Checks ranking — leaderboard exists but feels empty/meaningless",
+        "No friends, no school group, no context for ranks",
+        "Leaves app — comes back next day",
+        "Reviews due cards — streak increases to 2",
+        "Tries to find SAT word lists — none available",
+        "Goes to Google: 'SAT vocabulary words list'",
+        "Copies words and creates cards one by one — very tedious",
+        "Wishes for a paste-multiple-words feature",
+        "Continues using sporadically"
+      ],
+      "positive_points": [
+        "AI sentence generation quality for SAT words is excellent",
+        "Swipe mechanic is engaging and game-like",
+        "Streak gamification provides daily motivation",
+        "Dark theme and animations appeal to teen aesthetic",
+        "The app feels premium and modern"
+      ],
+      "negative_points": [
+        "No SAT/GRE pre-made word lists — must create each card individually",
+        "3 AI generations per day makes SAT prep impractical (need 500+ words)",
+        "No bulk card creation workflow",
+        "Leaderboard feels meaningless without school/friend groups",
+        "No 'study set' or 'deck' concept for organizing SAT vs regular vocabulary",
+        "No spaced repetition preview — can't see when cards are coming up"
+      ],
+      "ux_confusions": [
+        "Where are the SAT word lists?",
+        "Can I add 50 words at once?",
+        "Who are these people on the leaderboard?"
+      ],
+      "friction_points": [
+        "Creating 500+ SAT cards one by one is impractical",
+        "3 AI/day limit severely slows SAT prep",
+        "No bulk import or creation tools"
+      ],
+      "bugs_detected": [],
+      "missing_features": [
+        "Pre-made SAT/GRE/TOEFL word lists",
+        "Bulk card creation (paste list of words)",
+        "Study sets / decks for organization",
+        "Scheduled review preview/calendar",
+        "School/class group leaderboards"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Excited — the AI and UI feel premium",
+        "mid_experience": "Frustrated by the slow card creation for SAT prep",
+        "frustration_points": [
+          "No SAT word lists available",
+          "Creating cards one at a time",
+          "3 AI/day limit"
+        ],
+        "final_emotional_state": "It's cool but I don't have 6 months to create 500 cards one by one"
+      },
+      "dropoff_risk_level": "medium",
+      "retention_probability_percent": 35,
+      "final_decision": "unsure",
+      "improvement_suggestions_from_user_perspective": [
+        "Add SAT word lists I can import with one tap",
+        "Let me paste a list of 20 words and create cards for all of them",
+        "The AI should be able to generate sentences for a batch of words at once",
+        "Make leaderboards school-based or friend-group-based"
+      ]
+    },
+    {
+      "persona": {
+        "id": 19,
+        "name": "Priya Sharma",
+        "age_range": "27-32",
+        "technical_level": "average",
+        "goal": "Maintain English vocabulary while on maternity leave",
+        "how_they_found_the_app": "LinkedIn post about learning tools",
+        "expectations_before_entering": "Quick 5-minute daily sessions with gentle reminders",
+        "device_type": "iPhone 12 Pro, Safari, mobile",
+        "internet_quality": "fast",
+        "patience_level": "medium"
+      },
+      "journey_steps": [
+        "Opens landing page — impressed by 'zero-friction swiping' claim",
+        "Registers with Google — fast and easy",
+        "Navigates to Home — welcome screen appears",
+        "Creates first card: 'resilient'",
+        "AI generates sentences — dramatic but interesting",
+        "Creates 'tenacious' and 'perseverance'",
+        "Reviews 3 cards in deck — takes about 2 minutes",
+        "Enjoys the quick session — fits into nap time",
+        "Returns next day — 1 card due for review",
+        "Reviews it — session takes 30 seconds",
+        "Creates 2 more cards with remaining AI generations",
+        "Day 3 — reviews 2 due cards",
+        "Notices the session is very short — only a few cards are due",
+        "Streak is at 3 — feels motivating",
+        "Day 4 — baby wakes up during review",
+        "Closes app mid-session — card was swiped but review PATCH may have failed on slow close",
+        "Day 5 — missed study day entirely (baby sick)",
+        "Day 6 — streak reset to 0",
+        "Feels punished for life circumstances beyond control",
+        "Considers Pro for streak freeze but $4.99/mo feels like a ransom",
+        "The upsell messaging 'Protect your streak' feels manipulative when she genuinely couldn't study",
+        "Continues but with reduced motivation",
+        "Wonders if there's a 'vacation mode' or 'pause' option — there isn't"
+      ],
+      "positive_points": [
+        "Quick session times fit busy schedules — 2-3 minute reviews",
+        "Google OAuth makes login fast for repeat sessions",
+        "The spaced repetition naturally creates manageable daily loads",
+        "Swipe mechanic is one-handed friendly (important for holding a baby)"
+      ],
+      "negative_points": [
+        "Streak reset for a single missed day feels punishing",
+        "No vacation/pause mode for life events",
+        "Streak freeze locked behind paywall feels manipulative",
+        "No notification system to remind about reviews",
+        "The app mid-session closure may lose review data (fire-and-forget fetch)",
+        "Daily AI generation limit means deck grows very slowly",
+        "No concept of 'life happens' — only streak freeze for Pro users"
+      ],
+      "ux_confusions": [
+        "Can I pause my streak without losing it?",
+        "Did my review count when I closed the app mid-swipe?",
+        "Is there a way to get streak freeze without paying?"
+      ],
+      "friction_points": [
+        "Punitive streak reset on missed days",
+        "Streak freeze paywall feels coercive",
+        "No vacation/pause mode",
+        "Potential data loss on app close mid-review"
+      ],
+      "bugs_detected": [],
+      "missing_features": [
+        "Vacation/pause mode",
+        "Streak recovery option for free users (e.g., exercise, ad)",
+        "Push notifications for review reminders",
+        "Grace period before streak reset (e.g., 2 missed days instead of 1)",
+        "Offline review queue to prevent data loss on sudden app close"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Positive — quick sessions fit her lifestyle",
+        "mid_experience": "Building a habit, enjoying the streak motivation",
+        "frustration_points": [
+          "Streak reset after unavoidable missed day",
+          "Streak freeze paywall messaging",
+          "No pause or recovery options"
+        ],
+        "final_emotional_state": "Demotivated — the streak system feels punitive rather than supportive for real-life constraints"
+      },
+      "dropoff_risk_level": "medium",
+      "retention_probability_percent": 40,
+      "final_decision": "unsure",
+      "improvement_suggestions_from_user_perspective": [
+        "Let me pause my streak for a few days — life happens",
+        "Give free users a way to recover their streak once per month",
+        "The 'Protect your streak' message shouldn't feel like a threat",
+        "Send me a gentle reminder notification when I have cards to review"
+      ]
+    },
+    {
+      "persona": {
+        "id": 20,
+        "name": "Jake Wilson",
+        "age_range": "20-24",
+        "technical_level": "average",
+        "goal": "Just check out the app because he saw it on social media — low commitment",
+        "how_they_found_the_app": "Random Twitter scroll — the landing page animation caught his eye",
+        "expectations_before_entering": "Quick demo or preview without creating an account",
+        "device_type": "iPhone 14 Pro, Safari, mobile",
+        "internet_quality": "fast",
+        "patience_level": "low"
+      },
+      "journey_steps": [
+        "Opens landing page — immediately engaged by the SVG animations",
+        "Spends 30 seconds admiring the neural grid background and animated components",
+        "Reads hero text — 'Master Words at Neural Speed'",
+        "Scrolls to see the methodology section — 4 steps explained",
+        "Sees the demo card illustration — wants to try it",
+        "Looks for a 'Try Demo' or 'Preview' button — doesn't find one",
+        "The 'Watch Demo' button exists in hero but doesn't actually play a video",
+        "Taps 'Start Free Trial' — goes to register page",
+        "Doesn't want to create an account just to test",
+        "Taps 'Sign In' instead — no account, goes back",
+        "Looks for guest mode or preview — none available",
+        "All card features require authentication (middleware enforces this)",
+        "Decides the signup barrier is too high for casual browsing",
+        "Leaves without registering"
+      ],
+      "positive_points": [
+        "Landing page animations are genuinely impressive and attention-grabbing",
+        "The methodology explanation is clear and compelling",
+        "Social media-worthy visual design"
+      ],
+      "negative_points": [
+        "No demo mode or preview without account creation",
+        "No guest/anonymous trial experience",
+        "The 'Watch Demo' button doesn't link to an actual demo video",
+        "All features require full registration — high barrier",
+        "'Free Trial' implies no commitment but requires email/password or Google account",
+        "No interactive demo on the landing page to showcase the swipe mechanic",
+        "Landing page stats ('98% Retention Rate', '3x Faster Learning') have no source or credibility"
+      ],
+      "ux_confusions": [
+        "Where's the demo?",
+        "Can I try without signing up?",
+        "What does 'Watch Demo' do? It seems to scroll to the methodology section, not play a video",
+        "Are these statistics real?"
+      ],
+      "friction_points": [
+        "Account creation required for any app functionality",
+        "No guest or anonymous trial",
+        "'Watch Demo' is misleading — no video or interactive demo exists",
+        "Landing page overclaims with unsourced statistics"
+      ],
+      "bugs_detected": [
+        {
+          "description": "'Watch Demo' button in the hero section doesn't navigate to a video or interactive demo — it appears to scroll or do nothing meaningful",
+          "probable_cause": "The button likely scrolls to a section on the landing page or has no implemented action for an actual demo video",
+          "severity": "medium"
+        }
+      ],
+      "missing_features": [
+        "Interactive demo on landing page (embeddable card swipe preview)",
+        "Guest/anonymous trial mode with limited cards",
+        "Demo video showing the app in action",
+        "Credibility markers for statistics (research citations, user testimonials, user count)"
+      ],
+      "emotional_timeline": {
+        "first_impression": "Impressed by visual design — 'this looks cool'",
+        "mid_experience": "Curious but unwilling to commit to account creation",
+        "frustration_points": [
+          "No way to try the app without signing up",
+          "Watch Demo button is misleading",
+          "Signup wall for basic exploration"
+        ],
+        "final_emotional_state": "Interested but bounced — the signup barrier prevented conversion"
+      },
+      "dropoff_risk_level": "high",
+      "retention_probability_percent": 0,
+      "final_decision": "leave",
+      "improvement_suggestions_from_user_perspective": [
+        "Let me try one card without creating an account",
+        "Add an interactive demo directly on the landing page — show me the swipe mechanic",
+        "If there's a 'Watch Demo' button, it needs to play an actual video",
+        "Show real user count or testimonials to build trust"
+      ]
+    }
+  ],
+  "global_analysis": {
+    "total_users_simulated": 20,
+    "overall_retention_average_percent": 28,
+    "overall_stay_count": 7,
+    "overall_leave_count": 8,
+    "overall_unsure_count": 5,
+    "recurring_issues": [
+      {
+        "rank": 1,
+        "issue": "Post-registration redirect to landing page instead of dashboard",
+        "affected_users": 15,
+        "severity": "critical",
+        "description": "After successful registration, users are redirected to the marketing landing page (/) instead of /cards/learning. This causes immediate confusion and disorientation for every new user. The bug is in register/page.tsx where router.push('/') is called instead of router.push('/cards/learning')."
+      },
+      {
+        "rank": 2,
+        "issue": "AI daily generation limit of 3 is too restrictive",
+        "affected_users": 14,
+        "severity": "high",
+        "description": "Free users can only generate 3 AI-assisted cards per day. For users trying to build a vocabulary deck (SAT, GRE, IELTS), this makes the app impractical. Users hit the limit within 5 minutes of their first session, immediately encountering a paywall during their most engaged moment."
+      },
+      {
+        "rank": 3,
+        "issue": "No language switcher on landing/auth pages",
+        "affected_users": 6,
+        "severity": "high",
+        "description": "Arabic speakers must create an account and navigate to Settings to discover the app supports Arabic. The language switcher is only available in /settings, not on the landing page, login, or register pages. This causes Arabic-speaking users to bounce before ever discovering the bilingual support."
+      },
+      {
+        "rank": 4,
+        "issue": "AI sentence tone is hardcoded to dramatic/disturbing — no customization",
+        "affected_users": 8,
+        "severity": "high",
+        "description": "The Groq AI prompt explicitly instructs: 'Every sentence MUST be emotionally intense, shocking, or dramatic (e.g., sheer panic, heartbreak, fear, pain, extreme danger)'. This is inappropriate for children, professional/medical study, beginners, and business contexts. No tone selection or content filter exists."
+      },
+      {
+        "rank": 5,
+        "issue": "No demo, preview, or guest mode before registration",
+        "affected_users": 5,
+        "severity": "high",
+        "description": "All app features require authentication through NextAuth middleware. Casual visitors cannot experience the core product (card creation, swipe review) without creating an account. This creates an unnecessary conversion barrier. The 'Watch Demo' button doesn't link to an actual demo."
+      }
+    ],
+    "strongest_features": [
+      {
+        "rank": 1,
+        "feature": "AI-powered sentence generation",
+        "description": "The Groq AI integration that generates contextual sentences for vocabulary words is consistently praised as the app's most unique and valuable feature. It saves significant time and produces high-quality, memorable contexts."
+      },
+      {
+        "rank": 2,
+        "feature": "Swipe-to-review flashcard mechanic",
+        "description": "The Tinder-style swipe interface for reviewing flashcards is universally intuitive, engaging, and satisfying. The framer-motion animations make it feel premium and native-quality."
+      },
+      {
+        "rank": 3,
+        "feature": "Dark theme and visual design quality",
+        "description": "The premium dark theme with consistent design system, custom SVG animations, and attention to visual detail makes the app feel high-quality and modern. Users consistently note it looks premium."
+      },
+      {
+        "rank": 4,
+        "feature": "Arabic/RTL support",
+        "description": "The comprehensive Arabic language support with proper RTL layout transformation is rare among language learning apps and extremely well-implemented."
+      },
+      {
+        "rank": 5,
+        "feature": "Spaced repetition with XP/streak gamification",
+        "description": "The combination of SM-2 algorithm scheduling with XP rewards, streaks, and a leaderboard creates an effective motivation system that encourages daily engagement."
+      }
+    ],
+    "most_confusing_flow": "Post-registration redirect to landing page. Users register, expect to enter the app, and instead see the marketing page again. Combined with the landing page being entirely different from the authenticated dashboard, users don't know where they are or what happened.",
+    "biggest_onboarding_weakness": "No guided tutorial or interactive walkthrough after account creation. Users land on a welcome screen with text instructions but never see an actual demo of the card creation → AI generation → swipe review workflow. The AI blur-trigger mechanism is particularly non-obvious without explicit guidance.",
+    "highest_dropoff_point": "The moment after registration (redirect to landing page) and the AI daily limit wall (hit within 5 minutes). These two points cause the most user abandonments — the first from confusion, the second from frustration when the most valuable feature is gated.",
+    "trust_risk_points": [
+      "Landing page statistics ('98% Retention Rate', '3x Faster Learning') have no sources, citations, or methodology — they appear fabricated",
+      "'Watch Demo' button doesn't deliver an actual demo — feels deceptive",
+      "'Start Free Trial' label implies a trial period but no trial mechanics exist — it's just a freemium signup",
+      "No visible privacy policy or terms acceptance during registration flow",
+      "No email verification — accounts can be created with any email address",
+      "Subscription has no visible cancellation/management UI — users may feel trapped",
+      "AI-generated content has no safety filters — inappropriate content for minors is possible"
+    ],
+    "performance_risk_points": [
+      "Landing page loads a large JS bundle with framer-motion animations — 8+ seconds on slow 3G connections",
+      "No code splitting or lazy loading visible for the landing page SVG components (2365 lines in page.tsx)",
+      "In-memory rate limiting resets on server restart and doesn't work across multiple Vercel serverless instances",
+      "Audio pre-fetch fires for 5 cards simultaneously — can overwhelm slow connections",
+      "No image optimization or responsive srcset — full Unsplash images loaded regardless of device",
+      "CockroachDB queries in dash endpoint run sequentially (4 separate queries) instead of parallel",
+      "The layout.tsx renders Google Ads script for all users including Pro subscribers"
+    ],
+    "prioritized_recommendations": {
+      "critical": [
+        {
+          "id": "C1",
+          "title": "Fix post-registration redirect",
+          "description": "Change router.push('/') to router.push('/cards/learning') in register/page.tsx. Every new user currently hits this bug.",
+          "effort": "5 minutes",
+          "impact": "Fixes the first impression for 100% of new users"
+        },
+        {
+          "id": "C2",
+          "title": "Add AI content tone selection or safety filter",
+          "description": "The AI prompt's requirement for 'shocking', 'panic', and 'extreme danger' scenarios makes the app unsuitable for children, parents, professional users, and beginners. Add at minimum a toggle for academic/gentle/dramatic tone. This is also a potential content liability issue.",
+          "effort": "2-4 hours",
+          "impact": "Removes a deal-breaker for 40% of potential users (families, professionals, ESL beginners)"
+        },
+        {
+          "id": "C3",
+          "title": "Fix header logo empty href",
+          "description": "The Flotter logo in the header has href='' — change to href='/' or href='/cards/learning' depending on auth state.",
+          "effort": "2 minutes",
+          "impact": "Fixes broken navigation and brand click behavior"
+        }
+      ],
+      "high_impact": [
+        {
+          "id": "H1",
+          "title": "Add language switcher to landing page and auth pages",
+          "description": "Expose the LanguageProvider's language toggle on the landing page, login page, and register page. Arabic-speaking users currently bounce because they can't discover the Arabic support without creating an account first.",
+          "effort": "1-2 hours",
+          "impact": "Prevents bounce for Arabic-speaking visitors — potentially large market segment"
+        },
+        {
+          "id": "H2",
+          "title": "Increase free AI generation limit to 5-10 per day",
+          "description": "3 generations is hit within the first 5 minutes. Increasing to 5-10 would let users experience the AI value proposition long enough to build a meaningful deck and consider upgrading.",
+          "effort": "5 minutes (change constant)",
+          "impact": "Significantly improves first-session experience and conversion likelihood"
+        },
+        {
+          "id": "H3",
+          "title": "Add interactive demo or guest preview on landing page",
+          "description": "Create a demo card component on the landing page that lets visitors experience the swipe mechanic without registration. This would dramatically reduce bounce rate for casual visitors.",
+          "effort": "4-8 hours",
+          "impact": "Reduces signup wall friction — could improve conversion by 20-40%"
+        },
+        {
+          "id": "H4",
+          "title": "Add no-signup-needed subscription cancellation/management UI",
+          "description": "Users who subscribe have no visible way to cancel or manage their subscription within the app. Add a link to Polar's customer portal or build a management page.",
+          "effort": "1-2 hours",
+          "impact": "Legal/trust obligation — reduces support burden and potential chargebacks"
+        },
+        {
+          "id": "H5",
+          "title": "Reduce Pro upsell modal frequency",
+          "description": "Showing upsell every 10 swipes is too aggressive. Change to once per session or once per day. The current frequency disrupts the learning flow and creates negative sentiment.",
+          "effort": "15 minutes",
+          "impact": "Improves review session flow and user satisfaction"
+        }
+      ],
+      "medium": [
+        {
+          "id": "M1",
+          "title": "Add password strength indicator to registration form",
+          "description": "Show inline validation with checkmarks for each password requirement (8+ chars, uppercase, lowercase, number) as the user types instead of revealing rules only on form submission failure.",
+          "effort": "1-2 hours",
+          "impact": "Eliminates registration friction for all new credential users"
+        },
+        {
+          "id": "M2",
+          "title": "Add PWA support with install prompt and basic offline mode",
+          "description": "Add a service worker that caches card data for offline review. Add 'Add to Home Screen' prompt. This enables subway commuters and users with unreliable connections.",
+          "effort": "8-16 hours",
+          "impact": "Opens the app to users with connectivity constraints"
+        },
+        {
+          "id": "M3",
+          "title": "Add bulk card creation / CSV import",
+          "description": "Let users paste a list of words or upload a CSV to create multiple cards at once. Run AI generation in batch. Critical for SAT/GRE/IELTS prep users who need 100+ cards.",
+          "effort": "8-16 hours",
+          "impact": "Makes the app viable for serious academic users"
+        },
+        {
+          "id": "M4",
+          "title": "Add deck/folder organization for cards", //important for SAT/GRE users who want separate decks for different subjects
+          "description": "Allow users to group cards into decks (SAT Vocab, Business English, etc.) with separate statistics per deck.",
+          "effort": "8-16 hours",
+          "impact": "Enables organized study for users with multiple learning goals"
+        },
+        {
+          "id": "M5",
+          "title": "Add review reminder notifications",
+          "description": "Implement web push notifications or at minimum email reminders for due reviews. Users forget to return without external prompts.",
+          "effort": "4-8 hours",
+          "impact": "Significantly improves daily active user retention"
+        },
+        {
+          "id": "M6",
+          "title": "Add tap-to-review buttons alongside swipe",
+          "description": "Show 'Learned' and 'Review Again' buttons below the flashcard as an alternative to swiping. Essential for accessibility and older users unfamiliar with swipe gestures.",
+          "effort": "2-4 hours",
+          "impact": "Makes the app accessible to non-tech-savvy users"
+        },
+        {
+          "id": "M7",
+          "title": "Optimize landing page performance",
+          "description": "The landing page is 2365 lines of client-side React with heavy framer-motion animations. Implement code splitting, lazy loading for below-fold sections, and reduce the initial JS bundle. Critical for slow-connection users.",
+          "effort": "4-8 hours",
+          "impact": "Reduces bounce rate for slow-connection users (significant in developing markets)"
+        },
+        {
+          "id": "M8",
+          "title": "Add streak grace period or free recovery option",
+          "description": "Instead of resetting streak on a single missed day, give users a 2-day grace period or let them recover the streak once per month via watching an ad or completing extra reviews.",
+          "effort": "2-4 hours",
+          "impact": "Reduces demotivation and user churn from punitive streak mechanics"
+        }
+      ],
+      "low": [
+        {
+          "id": "L1",
+          "title": "Fix static 'Recently added' label in card search",
+          "description": "All cards show 'Recently added' regardless of actual creation date. Show actual creation date or last review date instead.",
+          "effort": "30 minutes",
+          "impact": "Small UX improvement for card management"
+        },
+        {
+          "id": "L2",
+          "title": "Add font size / accessibility settings",
+          "description": "Allow users to adjust text size or choose from small/medium/large presets. Current base font sizes (11px labels, 14px body) are small for older users.",
+          "effort": "2-4 hours",
+          "impact": "Improves accessibility for older and visually impaired users"
+        },
+        {
+          "id": "L3",
+          "title": "Replace placeholder ad IDs with real values or hide the banner",
+          "description": "The AdBanner component uses 'ca-pub-XXXXXXXXXXXXXXXX' — either add real AdSense IDs or conditionally render the component only when valid IDs are configured.",
+          "effort": "15 minutes",
+          "impact": "Removes wasted screen space and broken ad impression"
+        },
+        {
+          "id": "L4",
+          "title": "Add email verification after registration",
+          "description": "Currently, any email address can be used without verification. Add email verification flow to prevent abuse and enable password recovery.",
+          "effort": "4-8 hours",
+          "impact": "Improves security and enables future features like password reset"
+        },
+        {
+          "id": "L5",
+          "title": "Add 'Forgot Password' link on login page",
+          "description": "No password recovery flow exists. Users who forget their password have no recovery path.",
+          "effort": "4-8 hours (requires email verification infrastructure)",
+          "impact": "Prevents user lockout and reduces support burden"
+        },
+        {
+          "id": "L6",
+          "title": "Conditionally load Google Ads script only for non-Pro users",
+          "description": "The AdSense script loads in layout.tsx for all users including Pro subscribers who should be ad-free. Add conditional rendering based on session/subscription status.",
+          "effort": "30 minutes",
+          "impact": "Small performance improvement and cleaner experience for Pro users"
+        }
+      ]
+    }
+  }
+}

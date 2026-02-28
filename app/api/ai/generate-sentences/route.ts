@@ -11,6 +11,26 @@ const groq = new Groq({
 
 const FREE_DAILY_LIMIT = 3;
 
+// Content safety: blocklist of inappropriate terms
+const SAFETY_BLOCKLIST = /\b(fuck|shit|damn|ass|bitch|bastard|cock|dick|pussy|cunt|nigger|faggot|retard|kill|murder|rape|suicide|molest|torture|heroin|cocaine|meth|crack|porn|nude|naked|sex|orgasm|ejaculate|masturbat)\b/i;
+
+// Image query blocklist: prevent queries that could return inappropriate images
+const IMAGE_QUERY_BLOCKLIST = /\b(girl|woman|women|man|men|boy|person|people|human|face|body|model|beauty|beautiful|pretty|hot|sexy|bikini|lingerie|underwear|nude|naked|topless|erotic|sensual|romance|romantic|couple|kiss|love|dating|bride|wedding|fashion|swimsuit|beach.?body|fitness.?model|portrait|selfie|legs|curves|chest|cleavage|booty|twerk|harem|belly.?danc)\b/i;
+
+function filterSafeSentences(sentences: string[]): string[] {
+  return sentences.filter((s) => !SAFETY_BLOCKLIST.test(s));
+}
+
+// Sanitize imageQuery: strip any human/person-related terms and replace with safe fallback
+function sanitizeImageQuery(query: string, fallbackWord: string): string {
+  if (IMAGE_QUERY_BLOCKLIST.test(query)) {
+    // Replace the offending terms; if nothing useful remains, use a nature-based fallback
+    const cleaned = query.replace(IMAGE_QUERY_BLOCKLIST, '').trim();
+    return cleaned.length >= 3 ? cleaned : `${fallbackWord} nature landscape`;
+  }
+  return query;
+}
+
 export async function POST(req: Request) {
     try {
         const session = await getServerSession(authOptions);
@@ -107,6 +127,7 @@ export async function POST(req: Request) {
                         4. NEVER use explicit emotional labels, Instead, you must SHOW the intensity by describing what happens physically, mentally, or in the environment—how the target word triggers a dramatic effect on the scene, the body, or the situation.
                         5. LENGTH & DETAIL: Sentences MUST be fully detailed and exactly 15 to 20 words long. NEVER write short sentences. Use the simple words to paint a vivid, intense picture.
                         6. 100% VARIETY: The 3 sentences must be completely unrelated scenarios, each with a different extreme emotion.
+                        7. CONTENT SAFETY: This is a language-learning app used by minors. ALL content MUST be PG-rated. NEVER include profanity, sexual content, drug references, graphic violence, hate speech, or slurs.
 
                         IMAGE QUERY RULES (For Unsplash API):
                             - Unsplash requires broad, generic photography tags. It fails with specific actions.
@@ -114,7 +135,13 @@ export async function POST(req: Request) {
                             - Provide exactly 2 or 3 simple nouns/adjectives representing the setting or vibe.
                             - NEVER use pronouns ("you", "I").
                             - NEVER use verbs or actions.
-                            - STRICTEST RULE: NEVER include the target word itself in the imageQuery. Translate the target word into a visual object or background.`
+                            - STRICTEST RULE: NEVER include the target word itself in the imageQuery. Translate the target word into a visual object or background.
+                            
+                        IMAGE QUERY CONTENT SAFETY (ABSOLUTE):
+                            - NEVER generate image queries about people, humans, women, girls, men, boys, faces, bodies, or any human figure.
+                            - ONLY use objects, landscapes, nature, animals, buildings, food, weather, abstract concepts.
+                            - Examples of FORBIDDEN queries: "woman", "girl", "man", "person", "couple", "model", "beauty", "bikini", "sexy", "body".
+                            - Examples of GOOD queries: "dark forest rain", "broken clock tower", "stormy ocean waves", "abandoned house night".`
                     },
                     {
                         role: "user",
@@ -133,15 +160,15 @@ export async function POST(req: Request) {
                 const parsed = JSON.parse(responseContent);
 
                 // Bulletproof extraction for JSON Object mode
-                let sentences = [];
+                let sentences: string[] = [];
                 let imageQuery = word;
 
                 if (Array.isArray(parsed.sentences)) {
-                    sentences = parsed.sentences;
+                    sentences = filterSafeSentences(parsed.sentences);
                 }
 
                 if (parsed.imageQuery) {
-                    imageQuery = parsed.imageQuery;
+                    imageQuery = sanitizeImageQuery(parsed.imageQuery, sanitizedWord);
                 }
 
                 // Generation slot already claimed atomically above for free users.

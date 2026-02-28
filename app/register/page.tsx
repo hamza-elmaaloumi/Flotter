@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { UserPlus, Sparkles } from "lucide-react"
 import { useLanguage } from '../providers/LanguageProvider'
 import { useTheme } from '../providers/ThemeProvider'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 
 type FormData = {
   email: string
@@ -34,9 +35,14 @@ export default function RegisterPage() {
   } = useForm<FormData>({ defaultValues: { email: "", password: "" } })
 
   const [message, setMessage] = useState<string | null>(null)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
 
   async function onSubmit(data: FormData) {
     setMessage(null)
+    if (!acceptedTerms) {
+      setMessage(t('register.termsRequired'))
+      return
+    }
     try {
       const res = await axios.post("/api/auth/register", data)
       
@@ -49,7 +55,7 @@ export default function RegisterPage() {
         })
 
         if (!result?.error) {
-          router.push('/')
+          router.push('/cards/learning')
           router.refresh()
         } else {
           setMessage(t('register.loginFailed'))
@@ -71,6 +77,9 @@ export default function RegisterPage() {
   return (
     // Global background: primary (#121212)
     <main dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen flex items-center justify-center antialiased p-4 ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
+      <div className="absolute top-4 right-4 z-20">
+        <LanguageSwitcher />
+      </div>
       {/* Brand Blue Glow Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#3B82F608_0%,_transparent_65%)] pointer-events-none" />
 
@@ -115,6 +124,22 @@ export default function RegisterPage() {
               {errors.password && (
                 <p className="text-[11px] text-[#EF4444] mt-1.5 ml-1 font-bold uppercase tracking-wider">{errors.password.message}</p>
               )}
+            </div>
+
+            <div className="flex items-start gap-2.5">
+              <input
+                type="checkbox"
+                id="acceptTerms"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded accent-[#3B82F6] cursor-pointer"
+              />
+              <label htmlFor="acceptTerms" className="text-[12px] text-[#9CA3AF] leading-relaxed cursor-pointer">
+                {t('register.acceptTerms')}{' '}
+                <Link href="/legal/terms" className="text-[#3B82F6] hover:underline font-semibold" target="_blank">{t('register.termsLink')}</Link>
+                {' '}{t('register.andThe')}{' '}
+                <Link href="/legal/privacy" className="text-[#3B82F6] hover:underline font-semibold" target="_blank">{t('register.privacyLink')}</Link>
+              </label>
             </div>
 
             {/* Primary Button: #3B82F6, radius: 12px */}

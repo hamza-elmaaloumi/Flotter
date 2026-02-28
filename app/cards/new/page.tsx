@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
-import { Plus, Search, Check, ChevronLeft, Loader2, X, Sparkles, Crown, HelpCircle } from 'lucide-react'
+import { Plus, Search, Check, ChevronLeft, Loader2, X, Sparkles, Crown, HelpCircle, ChevronRight, Type, PenLine, ImageIcon, MousePointerClick } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '../../providers/LanguageProvider'
 import { useTheme } from '../../providers/ThemeProvider'
@@ -27,8 +27,26 @@ export default function NewCardPage() {
   const [saving, setSaving] = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
   const [msg, setMsg] = useState('')
+  const [msgType, setMsgType] = useState<'success' | 'error'>('error')
   const [limitReached, setLimitReached] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
+  const [helpStep, setHelpStep] = useState(0)
+
+  // Auto-show walkthrough for users with zero cards
+  useEffect(() => {
+    async function checkCardCount() {
+      try {
+        const res = await axios.get('/api/cards/dash')
+        if (res.data?.totalCardsCount === 0) {
+          setShowHelp(true)
+          setHelpStep(0)
+        }
+      } catch {
+        // Ignore — not critical
+      }
+    }
+    if (user?.id) checkCardCount()
+  }, [user?.id])
 
   // Sentence Handlers
   const addSentence = () => setSentences([...sentences, ''])
@@ -53,7 +71,7 @@ export default function NewCardPage() {
       const res = await axios.get('/api/images/search', { params: { query: searchTerm } })
       setResults(res.data.results || [])
     } catch (err) {
-      setMsg(t('newCard.searchError'))
+      setMsg(t('newCard.searchError')); setMsgType('error')
     } finally { setLoading(false) }
   }
 
@@ -97,7 +115,7 @@ export default function NewCardPage() {
     
     const cleanSentences = sentences.filter(s => s.trim() !== '')
     if (!word.trim() || cleanSentences.length === 0 || !selected) {
-      setMsg(t('newCard.incomplete'))
+      setMsg(t('newCard.incomplete')); setMsgType('error')
       return 
     }
 
@@ -105,10 +123,10 @@ export default function NewCardPage() {
     try {
       const imageUrl = selected?.urls?.regular || selected?.urls?.small || ''
       await axios.post('/api/cards', { word, sentences: cleanSentences, imageUrl })
-      setMsg(t('newCard.success'))
+      setMsg(t('newCard.success')); setMsgType('success')
       setTimeout(() => router.push('/cards/learning'), 1000)
     } catch (err) {
-      setMsg(t('newCard.saveFailed'))
+      setMsg(t('newCard.saveFailed')); setMsgType('error')
     } finally { setSaving(false) }
   }
 
@@ -328,57 +346,197 @@ export default function NewCardPage() {
 
       {/* Status Notifications */}
       {msg && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50">
-           <div className={`px-6 py-2 rounded-full text-[12px] font-bold uppercase shadow-2xl border ${msg === 'Success' ? 'bg-[#10B981]/10 border-[#10B981] text-[#10B981]' : 'bg-[#EF4444]/10 border-[#EF4444] text-[#EF4444]'}`}>
-              {msg}
-           </div>
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className={`flex items-center gap-2.5 px-5 py-3 rounded-[14px] text-[13px] font-semibold shadow-lg backdrop-blur-xl ${
+            msgType === 'success'
+              ? isDark
+                ? 'bg-[#10B981]/15 text-[#34D399]'
+                : 'bg-[#059669]/10 text-[#059669]'
+              : isDark
+                ? 'bg-[#FFFFFF]/10 text-[#F9FAFB]'
+                : 'bg-[#111827]/90 text-[#F9FAFB]'
+          }`}>
+            {msgType === 'success' ? (
+              <div className="w-5 h-5 rounded-full bg-[#10B981] flex items-center justify-center flex-shrink-0">
+                <Check size={12} className="text-white" strokeWidth={3} />
+              </div>
+            ) : (
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${isDark ? 'bg-[#FFFFFF]/15' : 'bg-[#FFFFFF]/20'}`}>
+                <span className="text-[11px] font-bold">!</span>
+              </div>
+            )}
+            <span>{msg}</span>
+            <button onClick={() => setMsg('')} className="ml-1 opacity-50 hover:opacity-100 transition-opacity">
+              <X size={14} />
+            </button>
+          </div>
         </div>
       )}
 
-      {/* AI HELP MODAL */}
+      {/* STEP-BY-STEP WALKTHROUGH */}
       {showHelp && (
-        <div className="fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-200">
-          <div className={`relative max-w-sm w-full rounded-[20px] p-6 border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
-            <button
-              onClick={() => setShowHelp(false)}
-              className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isDark ? 'bg-[#222222] border border-[#2D2D2F] text-[#6B7280] hover:text-white' : 'bg-[#F0F1F3] border border-[#E2E4E9] text-[#6B7280] hover:text-[#111827]'}`}
-            >
-              <X size={14} />
-            </button>
+        <div className="fixed inset-0 z-[300] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className={`relative max-w-md w-full rounded-[20px] border overflow-hidden ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
 
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-[10px] bg-[#3B82F6]/10 border border-[#3B82F6]/20 flex items-center justify-center">
-                <Sparkles size={16} className="text-[#3B82F6]" />
+            {/* Progress bar */}
+            <div className={`h-1 ${isDark ? 'bg-[#222222]' : 'bg-[#F0F1F3]'}`}>
+              <div
+                className="h-full bg-[#3B82F6] transition-all duration-300 ease-out"
+                style={{ width: `${((helpStep + 1) / 5) * 100}%` }}
+              />
+            </div>
+
+            <div className="p-6">
+              {/* Step counter */}
+              <div className="flex items-center justify-between mb-5">
+                <span className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-[#6B7280]' : 'text-[#9CA3AF]'}`}>
+                  {t('newCard.walkthrough.stepOf').replace('{current}', String(helpStep + 1)).replace('{total}', '5')}
+                </span>
+                <button
+                  onClick={() => { setShowHelp(false); setHelpStep(0) }}
+                  className={`text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full transition-colors ${isDark ? 'text-[#6B7280] hover:text-white hover:bg-[#2D2D2F]' : 'text-[#9CA3AF] hover:text-[#111827] hover:bg-[#F0F1F3]'}`}
+                >
+                  {t('newCard.walkthrough.skip')}
+                </button>
               </div>
-              <h3 className="text-[16px] font-bold">{t('newCard.helpTitle')}</h3>
-            </div>
 
-            <div className="space-y-3 mb-5">
-              {[
-                { num: '1', text: t('newCard.helpStep1') },
-                { num: '2', text: t('newCard.helpStep2') },
-                { num: '3', text: t('newCard.helpStep3') },
-                { num: '4', text: t('newCard.helpStep4') },
-              ].map((step, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/20 flex items-center justify-center text-[11px] font-bold text-[#3B82F6] flex-shrink-0">
-                    {step.num}
-                  </span>
-                  <p className={`text-[13px] leading-relaxed pt-0.5 ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>{step.text}</p>
+              {/* STEP 0: Type a word */}
+              {helpStep === 0 && (
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-[14px] bg-[#3B82F6]/10 border border-[#3B82F6]/20 flex items-center justify-center">
+                    <Type size={22} className="text-[#3B82F6]" />
+                  </div>
+                  <h3 className="text-[18px] font-bold">{t('newCard.walkthrough.step1Title')}</h3>
+                  <p className={`text-[14px] leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
+                    {t('newCard.walkthrough.step1Desc')}
+                  </p>
+                  <div className={`rounded-[12px] border p-3 ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F8F9FA] border-[#E2E4E9]'}`}>
+                    <span className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${isDark ? 'text-[#6B7280]' : 'text-[#9CA3AF]'}`}>{t('newCard.walkthrough.example')}</span>
+                    <span className="text-[15px] font-bold text-[#3B82F6]">Ephemeral</span>
+                  </div>
                 </div>
-              ))}
-            </div>
+              )}
 
-            <div className={`p-3 rounded-[12px] mb-5 ${isDark ? 'bg-[#10B981]/10 border border-[#10B981]/20' : 'bg-[#059669]/5 border border-[#059669]/20'}`}>
-              <p className="text-[12px] font-bold text-[#10B981]">{t('newCard.helpTip')}</p>
-            </div>
+              {/* STEP 1: AI generates everything */}
+              {helpStep === 1 && (
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-[14px] bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 flex items-center justify-center">
+                    <Sparkles size={22} className="text-[#8B5CF6]" />
+                  </div>
+                  <h3 className="text-[18px] font-bold">{t('newCard.walkthrough.step2Title')}</h3>
+                  <p className={`text-[14px] leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
+                    {t('newCard.walkthrough.step2Desc')}
+                  </p>
+                  <div className={`rounded-[12px] border p-3 space-y-2 ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F8F9FA] border-[#E2E4E9]'}`}>
+                    <div className="flex items-center gap-2">
+                      <MousePointerClick size={12} className="text-[#8B5CF6]" />
+                      <span className={`text-[11px] font-bold uppercase tracking-wider ${isDark ? 'text-[#6B7280]' : 'text-[#9CA3AF]'}`}>{t('newCard.walkthrough.whatHappens')}</span>
+                    </div>
+                    <p className={`text-[12px] leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
+                      {t('newCard.walkthrough.step2Detail')}
+                    </p>
+                  </div>
+                </div>
+              )}
 
-            <button
-              onClick={() => setShowHelp(false)}
-              className="w-full bg-[#3B82F6] text-white py-3 rounded-[12px] font-bold text-[13px] active:scale-95 transition-all"
-            >
-              {t('newCard.helpClose')}
-            </button>
+              {/* STEP 2: Edit sentences manually */}
+              {helpStep === 2 && (
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-[14px] bg-[#10B981]/10 border border-[#10B981]/20 flex items-center justify-center">
+                    <PenLine size={22} className="text-[#10B981]" />
+                  </div>
+                  <h3 className="text-[18px] font-bold">{t('newCard.walkthrough.step3Title')}</h3>
+                  <p className={`text-[14px] leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
+                    {t('newCard.walkthrough.step3Desc')}
+                  </p>
+                  <div className={`rounded-[12px] border p-3 space-y-2 ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F8F9FA] border-[#E2E4E9]'}`}>
+                    <span className={`text-[11px] font-bold uppercase tracking-wider block mb-1 ${isDark ? 'text-[#6B7280]' : 'text-[#9CA3AF]'}`}>{t('newCard.walkthrough.youCan')}</span>
+                    <ul className={`text-[12px] leading-relaxed space-y-1 ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
+                      <li>• {t('newCard.walkthrough.editTip1')}</li>
+                      <li>• {t('newCard.walkthrough.editTip2')}</li>
+                      <li>• {t('newCard.walkthrough.editTip3')}</li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: Choose an image */}
+              {helpStep === 3 && (
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-[14px] bg-[#F59E0B]/10 border border-[#F59E0B]/20 flex items-center justify-center">
+                    <ImageIcon size={22} className="text-[#F59E0B]" />
+                  </div>
+                  <h3 className="text-[18px] font-bold">{t('newCard.walkthrough.step4Title')}</h3>
+                  <p className={`text-[14px] leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
+                    {t('newCard.walkthrough.step4Desc')}
+                  </p>
+                  <div className={`rounded-[12px] border p-3 ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F8F9FA] border-[#E2E4E9]'}`}>
+                    <p className={`text-[12px] leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
+                      {t('newCard.walkthrough.step4Detail')}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4: Save your card */}
+              {helpStep === 4 && (
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-[14px] bg-[#10B981]/10 border border-[#10B981]/20 flex items-center justify-center">
+                    <Check size={22} className="text-[#10B981]" />
+                  </div>
+                  <h3 className="text-[18px] font-bold">{t('newCard.walkthrough.step5Title')}</h3>
+                  <p className={`text-[14px] leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
+                    {t('newCard.walkthrough.step5Desc')}
+                  </p>
+                  <div className={`rounded-[12px] p-3 ${isDark ? 'bg-[#10B981]/10 border border-[#10B981]/20' : 'bg-[#059669]/5 border border-[#059669]/20'}`}>
+                    <p className="text-[12px] font-bold text-[#10B981]">
+                      {t('newCard.walkthrough.step5Tip')}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation buttons */}
+              <div className="flex items-center gap-3 mt-6">
+                {helpStep > 0 && (
+                  <button
+                    onClick={() => setHelpStep(s => s - 1)}
+                    className={`flex-1 py-3 rounded-[12px] font-bold text-[13px] transition-all active:scale-95 border ${isDark ? 'bg-[#222222] border-[#2D2D2F] text-[#9CA3AF] hover:text-white' : 'bg-[#F0F1F3] border-[#E2E4E9] text-[#6B7280] hover:text-[#111827]'}`}
+                  >
+                    {t('newCard.walkthrough.back')}
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    if (helpStep < 4) {
+                      setHelpStep(s => s + 1)
+                    } else {
+                      setShowHelp(false)
+                      setHelpStep(0)
+                    }
+                  }}
+                  className="flex-1 bg-[#3B82F6] text-white py-3 rounded-[12px] font-bold text-[13px] active:scale-95 transition-all flex items-center justify-center gap-2"
+                >
+                  {helpStep < 4 ? (
+                    <>{t('newCard.walkthrough.next')} <ChevronRight size={14} /></>
+                  ) : (
+                    t('newCard.walkthrough.done')
+                  )}
+                </button>
+              </div>
+
+              {/* Step dot indicators */}
+              <div className="flex items-center justify-center gap-1.5 mt-4">
+                {[0, 1, 2, 3, 4].map(i => (
+                  <div
+                    key={i}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      i === helpStep ? 'w-5 bg-[#3B82F6]' : i < helpStep ? 'w-1.5 bg-[#3B82F6]/40' : `w-1.5 ${isDark ? 'bg-white/15' : 'bg-black/10'}`
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}

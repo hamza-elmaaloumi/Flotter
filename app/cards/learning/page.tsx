@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
 import Link from 'next/link'
-import { Plus, Calendar, GraduationCap, ChevronDown, Image as ImageIcon, BookOpen, Check, Shield, Loader2 } from 'lucide-react'
+import { Plus, Calendar, GraduationCap, ChevronDown, Image as ImageIcon, BookOpen, Check, Shield, Loader2, Sparkles, PenLine, Wand2, Layers } from 'lucide-react'
 import { useLanguage } from '../../providers/LanguageProvider'
 import { useTheme } from '../../providers/ThemeProvider'
 import AdBanner from '../../components/AdBanner'
@@ -325,40 +325,90 @@ export default function Home() {
           <h1 className="text-[24px] font-bold text-center mb-3 tracking-tight">
             {t('learning.welcomeTitle')}
           </h1>
-          <p className={`text-[14px] text-center max-w-sm mb-10 leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
+          <p className={`text-[14px] text-center max-w-sm mb-8 leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#4B5563]'}`}>
             {t('learning.welcomeDesc')}
           </p>
 
-          {/* Onboarding Steps */}
-          <div className="w-full space-y-3 mb-10">
-            {[
-              { num: '1', title: t('learning.welcomeStep1'), desc: t('learning.welcomeStep1Desc'), color: '#3B82F6' },
-              { num: '2', title: t('learning.welcomeStep2'), desc: t('learning.welcomeStep2Desc'), color: '#10B981' },
-              { num: '3', title: t('learning.welcomeStep3'), desc: t('learning.welcomeStep3Desc'), color: '#FACC15' },
-            ].map((step, i) => (
-              <div key={i} className={`flex items-start gap-4 p-4 rounded-[14px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
-                <div
-                  className="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0 text-[14px] font-bold"
-                  style={{ backgroundColor: `${step.color}15`, color: step.color, border: `1px solid ${step.color}30` }}
-                >
-                  {step.num}
+          {/* HOW TO CREATE CARDS */}
+          <div className="w-full mb-8">
+            <h2 className={`text-[11px] font-bold uppercase tracking-widest mb-4 ${isDark ? 'text-[#6B7280]' : 'text-[#9CA3AF]'}`}>
+              {t('learning.howToCreate')}
+            </h2>
+
+            {/* Option A: AI-powered */}
+            <div className={`p-5 rounded-[14px] border mb-3 ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-[12px] bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 flex items-center justify-center flex-shrink-0">
+                  <Wand2 size={18} className="text-[#8B5CF6]" />
                 </div>
-                <div>
-                  <p className="text-[14px] font-bold mb-0.5">{step.title}</p>
-                  <p className={`text-[12px] ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>{step.desc}</p>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-[14px] font-bold">{t('learning.aiMethodTitle')}</p>
+                    <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#8B5CF6]/10 text-[#8B5CF6] border border-[#8B5CF6]/20">
+                      {t('learning.recommended')}
+                    </span>
+                  </div>
+                  <p className={`text-[12px] leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
+                    {t('learning.aiMethodDesc')}
+                  </p>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Option B: Manual */}
+            <div className={`p-5 rounded-[14px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-[12px] bg-[#3B82F6]/10 border border-[#3B82F6]/20 flex items-center justify-center flex-shrink-0">
+                  <PenLine size={18} className="text-[#3B82F6]" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[14px] font-bold mb-1">{t('learning.manualMethodTitle')}</p>
+                  <p className={`text-[12px] leading-relaxed ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
+                    {t('learning.manualMethodDesc')}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* HOW IT WORKS */}
+          <div className="w-full mb-10">
+            <h2 className={`text-[11px] font-bold uppercase tracking-widest mb-4 ${isDark ? 'text-[#6B7280]' : 'text-[#9CA3AF]'}`}>
+              {t('learning.howItWorks')}
+            </h2>
+            <div className="w-full space-y-3">
+              {[
+                { icon: <Plus size={16} strokeWidth={3} />, title: t('learning.welcomeStep1'), desc: t('learning.welcomeStep1Desc'), color: '#3B82F6' },
+                { icon: <Sparkles size={16} />, title: t('learning.welcomeStep2'), desc: t('learning.welcomeStep2Desc'), color: '#10B981' },
+                { icon: <Layers size={16} />, title: t('learning.welcomeStep3'), desc: t('learning.welcomeStep3Desc'), color: '#FACC15' },
+              ].map((step, i) => (
+                <div key={i} className={`flex items-start gap-4 p-4 rounded-[14px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+                  <div
+                    className="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: `${step.color}15`, color: step.color, border: `1px solid ${step.color}30` }}
+                  >
+                    {step.icon}
+                  </div>
+                  <div>
+                    <p className="text-[14px] font-bold mb-0.5">{step.title}</p>
+                    <p className={`text-[12px] ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* CTA */}
           <Link
             href="/cards/new"
-            className="w-full inline-flex items-center justify-center gap-2 bg-[#3B82F6] text-[#FFFFFF] px-6 py-4 rounded-[14px] font-bold text-[15px] transition-all active:scale-[0.97] shadow-[0_10px_30px_rgba(59,130,246,0.2)]"
+            className="w-full inline-flex items-center justify-center gap-2 bg-[#3B82F6] text-[#FFFFFF] px-6 py-4 rounded-[14px] font-bold text-[15px] transition-all active:scale-[0.97] shadow-[0_10px_30px_rgba(59,130,246,0.2)] mb-3"
           >
-            <Plus size={18} strokeWidth={3} />
+            <Wand2 size={18} />
             {t('learning.welcomeCta')}
           </Link>
+          <p className={`text-[11px] text-center ${isDark ? 'text-[#6B7280]' : 'text-[#9CA3AF]'}`}>
+            {t('learning.welcomeCtaHint')}
+          </p>
         </div>
       </div>
     )

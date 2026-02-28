@@ -9,7 +9,9 @@ import { useTheme } from '../../providers/ThemeProvider'
 interface SearchResult {
   id: string
   word: string
-  imageUrl?: string 
+  imageUrl?: string
+  createdAt?: string
+  lastReviewedAt?: string | null
 }
 
 export default function ListPage() {
@@ -41,6 +43,8 @@ export default function ListPage() {
           id: c.id,
           word: extractDisplayWord(c),
           imageUrl: c.imageUrl,
+          createdAt: c.createdAt,
+          lastReviewedAt: c.lastReviewedAt,
         }))
         if (mounted) {
           setAllCards(transformed)
@@ -136,7 +140,12 @@ export default function ListPage() {
                       </span>
                       {/* Typography: caption (13px, Medium, Color: secondary) */}
                       <span className="text-[13px] font-medium text-[#9CA3AF]">
-                        {t('searchCards.recentlyAdded')}
+                        {card.lastReviewedAt
+                          ? `${t('searchCards.lastReviewed')} ${new Date(card.lastReviewedAt).toLocaleDateString(language === 'ar' ? 'ar' : 'en', { month: 'short', day: 'numeric' })}`
+                          : card.createdAt
+                          ? `${t('searchCards.created')} ${new Date(card.createdAt).toLocaleDateString(language === 'ar' ? 'ar' : 'en', { month: 'short', day: 'numeric' })}`
+                          : t('searchCards.recentlyAdded')
+                        }
                       </span>
                     </div>
                   </div>

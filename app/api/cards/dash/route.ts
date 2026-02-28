@@ -31,7 +31,7 @@ export async function GET(req: Request) {
 
         const totalCards = await prisma.card.findMany({
             where: { userId },
-            select: { id: true, imageUrl: true, word: true, sentences: true, nextReviewAt: true },
+            select: { id: true, imageUrl: true, word: true, sentences: true, nextReviewAt: true, createdAt: true, lastReviewedAt: true },
             orderBy: { nextReviewAt: 'asc' }
         })
 

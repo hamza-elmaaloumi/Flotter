@@ -5,6 +5,7 @@ import { useUser } from '../providers/UserProvider'
 import { useLanguage } from '../providers/LanguageProvider'
 import { useTheme } from '../providers/ThemeProvider'
 import { User, Layers, LifeBuoy, Settings, Trophy } from 'lucide-react'
+import LanguageSwitcher from './LanguageSwitcher'
 // Inlined Flotter wordmark SVG (rounded-square) per request
 
 export default function Header() {
@@ -20,7 +21,7 @@ export default function Header() {
 
         {/* Left: Brand Logo */}
         <div className="flex items-center">
-          <Link href="" className="flex items-center" aria-label="Flotter">
+          <Link href={user ? '/cards/learning' : '/'} className="flex items-center" aria-label="Flotter">
             <svg width="34" height="34" viewBox="0 0 104 104" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
               <defs>
                 <linearGradient id="paint0_linear_15_32" x1="52" y1="0" x2="52" y2="104" gradientUnits="userSpaceOnUse">
@@ -82,6 +83,8 @@ export default function Header() {
                 </>
               ) : (
                 <div className="flex items-center gap-2">
+                  <LanguageSwitcher />
+
                   <Link
                     href="/login"
                     // body_large: 15px SemiBold

@@ -23,6 +23,8 @@ import {
 import { useLanguage } from './providers/LanguageProvider'
 import { useTheme } from './providers/ThemeProvider'
 import FlotterLogo from './components/FlotterLogo'
+import LanguageSwitcher from './components/LanguageSwitcher'
+import DemoCard from './components/DemoCard'
 
 // ==========================================
 // PREMIUM ANIMATED COMPONENTS
@@ -1642,6 +1644,7 @@ export default function LandingPage() {
   })
 
   const heroRef = useRef<HTMLDivElement>(null)
+  const demoRef = useRef<HTMLDivElement>(null)
   const isHeroInView = useInView(heroRef, { once: true })
 
   return (
@@ -1675,6 +1678,7 @@ export default function LandingPage() {
             <Link href="/login" className="hidden sm:block text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs font-bold uppercase tracking-widest transition-colors">
               {t('landing.nav.signIn')}
             </Link>
+            <LanguageSwitcher />
             <Link href="/register" className="bg-[#3B82F6] text-white px-5 py-2.5 rounded-[12px] text-sm font-bold uppercase tracking-widest hover:bg-[#1D4ED8] transition-all">
               {t('landing.nav.getStarted')}
             </Link>
@@ -1732,7 +1736,10 @@ export default function LandingPage() {
                   </span>
                 </Link>
 
-                <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-[12px] border border-[var(--border-secondary)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all text-sm font-bold uppercase tracking-widest">
+                <button
+                  onClick={() => demoRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-4 rounded-[12px] border border-[var(--border-secondary)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all text-sm font-bold uppercase tracking-widest"
+                >
                   <Play size={14} fill="#FACC15" className="text-[#FACC15]" />
                   {t('landing.hero.watchDemo')}
                 </button>
@@ -1778,6 +1785,36 @@ export default function LandingPage() {
                 <div className="text-[var(--text-tertiary)] text-[10px] uppercase tracking-wider font-bold">{stat.source}</div>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* INTERACTIVE DEMO SECTION */}
+      <section ref={demoRef} className="py-20 px-4 bg-[var(--bg-primary)] border-b border-[var(--border-secondary)]" id="demo">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className={`text-center ${language === 'ar' ? 'lg:text-right' : 'lg:text-left'}`}
+            >
+              <h2 className="text-3xl font-bold mb-3 text-[var(--text-primary)]">
+                {t('landing.demo.title')}
+              </h2>
+              <p className="text-[var(--text-secondary)] text-base leading-relaxed max-w-md">
+                {t('landing.demo.subtitle')}
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="flex justify-center"
+            >
+              <DemoCard t={t} />
+            </motion.div>
           </div>
         </div>
       </section>
