@@ -25,6 +25,7 @@ import {
   Share2,
   Check
 } from 'lucide-react'
+import IssueReportCard from '../components/IssueReportCard'
 
 const RedAnimatedFlame = ({ size = 20, active = false, className = "" }: { size?: number, active?: boolean, className?: string }) => (
   <svg width={size} height={size} viewBox="0 0 120 120" fill="none" className={`overflow-visible ${className}`}>
@@ -363,6 +364,9 @@ export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditi
             )}
           </div>
         </div>
+
+        {/* Issue report card (mobile-first, bilingual) inserted here */}
+        <IssueReportCard />
 
         <div className={`border rounded-[16px] overflow-hidden mb-6 ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
           <div className={`px-5 py-3 border-b ${isDark ? 'border-[#262626] bg-[#222222]' : 'border-[#EBEDF0] bg-[#F0F1F3]'}`}>

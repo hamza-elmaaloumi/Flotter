@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { ChevronDown, ExternalLink, Globe, Sun, Moon } from "lucide-react"
 import { useLanguage } from "../providers/LanguageProvider"
 import { useTheme } from "../providers/ThemeProvider"
+import IssueReportCard from "../components/IssueReportCard"
 
 export default function SettingsPage() {
   const { t, language, setLanguage } = useLanguage()
@@ -233,6 +234,9 @@ export default function SettingsPage() {
           </div>
         </section>
         
+        {/* Issue report card (mobile-first, bilingual) */}
+        <IssueReportCard />
+
         <div className="flex flex-col gap-3">
           {items.map((it, i) => {
             const isOpen = openIndex === i
