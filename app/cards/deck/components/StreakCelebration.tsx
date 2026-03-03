@@ -406,14 +406,16 @@ export default function StreakCelebration({
                 <button
                   onClick={() => {
                     onDismiss()
-                    router.push('/cards/learning')
                   }}
                   className="w-full bg-[#10B981] text-black py-3.5 rounded-[14px] font-bold text-[13px] transition-all active:scale-[0.97]"
                 >
                   {t('deck.continueLearning')}
                 </button>
                 <button
-                  onClick={onDismiss}
+                  onClick={()=>{
+                    onDismiss(); 
+                    router.push('/cards/learning')
+                  }}
                   className="w-full py-3 text-[11px] font-bold text-[#6B7280] uppercase tracking-widest hover:text-white transition-colors"
                 >
                   {t('deck.backToDashboard')}
