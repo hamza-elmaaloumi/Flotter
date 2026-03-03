@@ -19,16 +19,16 @@ const CelebrationFlame = () => (
     <svg width={76} height={76} viewBox="0 0 120 120" fill="none" className="overflow-visible">
       <defs>
         <linearGradient id="celebFlameFill" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#FEF5B8">
-            <animate attributeName="stop-color" values="#FEF5B8;#FFFBE3;#FEF5B8" dur="2s" repeatCount="indefinite" />
+          <stop offset="0%" stopColor="#FCA5A5">
+            <animate attributeName="stop-color" values="#FCA5A5;#FECACA;#FCA5A5" dur="2s" repeatCount="indefinite" />
           </stop>
-          <stop offset="100%" stopColor="#FCEE99">
-            <animate attributeName="stop-color" values="#FCEE99;#F5E16E;#FCEE99" dur="2s" repeatCount="indefinite" />
+          <stop offset="100%" stopColor="#F87171">
+            <animate attributeName="stop-color" values="#F87171;#FCA5A5;#F87171" dur="2s" repeatCount="indefinite" />
           </stop>
         </linearGradient>
         <linearGradient id="celebFlameStroke" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#F97316" />
-          <stop offset="100%" stopColor="#EF4444" />
+          <stop offset="0%" stopColor="#EF4444" />
+          <stop offset="100%" stopColor="#DC2626" />
         </linearGradient>
         <filter id="celebGlow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="8" result="blur" />
@@ -52,7 +52,7 @@ const CelebrationFlame = () => (
       `}</style>
 
       {/* Outer glow aura */}
-      <use href="#celebPath" className="celeb-glow-layer" fill="none" stroke="#F97316" strokeWidth="20" filter="url(#celebGlow)" strokeLinejoin="round" />
+      <use href="#celebPath" className="celeb-glow-layer" fill="none" stroke="#EF4444" strokeWidth="20" filter="url(#celebGlow)" strokeLinejoin="round" />
       {/* Core flame */}
       <g className="celeb-core">
         <use href="#celebPath" fill="url(#celebFlameFill)" stroke="url(#celebFlameStroke)" strokeWidth="10" strokeLinejoin="round" />
@@ -93,18 +93,18 @@ function AnimatedDayCircle({
         <div
           className={`w-8 h-8 rounded-full flex items-center justify-center border-[1.5px] transition-colors duration-300 ${
             filled
-              ? 'bg-[#10B981] border-[#10B981] shadow-[0_2px_10px_rgba(16,185,129,0.3)]'
+              ? 'bg-[#EF4444] border-2 border-amber-500 shadow-[4px_4px_0px_0px_#f59e0b] shadow-[0_2px_10px_rgba(239,68,68,0.3)]'
               : isFrozen
               ? 'bg-[#3B82F6]/10 border-[#3B82F6]/50 shadow-[0_2px_10px_rgba(59,130,246,0.15)]'
               : isToday
-              ? 'bg-[#1C1C1E] border-[#10B981] shadow-[0_0_12px_rgba(16,185,129,0.15)]'
+              ? 'bg-[#1C1C1E] border-2 border-blue-500 shadow-[4px_4px_0px_0px_#3b82f6] shadow-[0_0_12px_rgba(239,68,68,0.15)]'
               : 'bg-[#1C1C1E] border-[#2D2D2F]'
           } ${isToday ? 'scale-[1.15]' : ''}`}
         >
-          {/* Animated green fill for today */}
+          {/* Animated red fill for today */}
           {isToday && animateToFilled && (
             <motion.div
-              className="absolute inset-0 rounded-full bg-[#10B981] shadow-[0_0_16px_rgba(16,185,129,0.4)]"
+              className="absolute inset-0 rounded-full bg-[#EF4444] shadow-[0_0_16px_rgba(239,68,68,0.4)]"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{
@@ -134,7 +134,7 @@ function AnimatedDayCircle({
             ) : isFrozen ? (
               <Shield size={12} className="text-[#3B82F6]" fill="currentColor" fillOpacity={0.2} />
             ) : (
-              <div className={`w-1 h-1 rounded-full ${isToday ? 'bg-[#10B981]' : 'bg-[#3A3A3C]'}`} />
+              <div className={`w-1 h-1 rounded-full ${isToday ? 'bg-[#EF4444]' : 'bg-[#3A3A3C]'}`} />
             )}
           </div>
         </div>
@@ -143,13 +143,13 @@ function AnimatedDayCircle({
         {isToday && animateToFilled && (
           <>
             <motion.div
-              className="absolute inset-[-4px] rounded-full border-2 border-[#10B981]"
+              className="absolute inset-[-4px] rounded-full border-2 border-2 border-violet-500 shadow-[4px_4px_0px_0px_#8b5cf6]"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1.4, opacity: 0 }}
               transition={{ delay: delay + 0.6, duration: 1.2, repeat: Infinity, repeatDelay: 0.6 }}
             />
             <motion.div
-              className="absolute inset-[-4px] rounded-full border border-[#10B981]/30"
+              className="absolute inset-[-4px] rounded-full border border-2 border-pink-500 shadow-[4px_4px_0px_0px_#ec4899]/30"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1.7, opacity: 0 }}
               transition={{ delay: delay + 0.8, duration: 1.2, repeat: Infinity, repeatDelay: 0.6 }}
@@ -160,7 +160,7 @@ function AnimatedDayCircle({
 
       <motion.span
         className={`text-[9px] font-bold uppercase tracking-widest ${
-          isToday || filled ? 'text-[#10B981]' : isFrozen ? 'text-[#3B82F6]' : 'text-[#6B7280]'
+          isToday || filled ? 'text-[#EF4444]' : isFrozen ? 'text-[#3B82F6]' : 'text-[#6B7280]'
         }`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -290,7 +290,7 @@ export default function StreakCelebration({
               className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  'linear-gradient(105deg, transparent 40%, rgba(16,185,129,0.05) 50%, transparent 60%)',
+                  'linear-gradient(105deg, transparent 40%, rgba(239,68,68,0.05) 50%, transparent 60%)',
                 backgroundSize: '200% 100%',
               }}
               animate={{ backgroundPositionX: ['200%', '-200%'] }}
@@ -298,7 +298,7 @@ export default function StreakCelebration({
             />
 
             {/* Glow orbs */}
-            <div className="absolute top-[-50px] right-[-50px] w-[140px] h-[140px] blur-[70px] rounded-full bg-[#10B981]/15 pointer-events-none" />
+            <div className="absolute top-[-50px] right-[-50px] w-[140px] h-[140px] blur-[70px] rounded-full bg-[#EF4444]/15 pointer-events-none" />
             <div className="absolute bottom-[-40px] left-[-40px] w-[120px] h-[120px] blur-[60px] rounded-full bg-[#FACC15]/10 pointer-events-none" />
 
             {/* Confetti */}
@@ -319,7 +319,7 @@ export default function StreakCelebration({
                 transition={{ type: 'spring', damping: 14, stiffness: 200, delay: 0.3 }}
                 className="mb-1"
               >
-                <span className="text-[48px] font-black text-[#10B981] tabular-nums leading-none tracking-tight drop-shadow-md">
+                <span className="text-[48px] font-black text-[#EF4444] tabular-nums leading-none tracking-tight drop-shadow-md">
                   {newStreak}
                 </span>
               </motion.div>
@@ -424,7 +424,7 @@ export default function StreakCelebration({
                   <Link
                     href="/subscribe"
                     onClick={onDismiss}
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#FACC15]/10 border border-[#FACC15]/20 text-[#FACC15] py-3.5 rounded-[14px] font-bold text-[13px] transition-all active:scale-[0.97]"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#FACC15]/10 border border-2 border-emerald-500 shadow-[4px_4px_0px_0px_#10b981]/20 text-[#FACC15] py-3.5 rounded-[14px] font-bold text-[13px] transition-all active:scale-[0.97]"
                   >
                     <Crown size={14} fill="currentColor" />
                     {t('deck.protectStreak')}

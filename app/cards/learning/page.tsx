@@ -16,18 +16,18 @@ const MainAnimatedFlame = ({ size = 20, active = false, className = "" }: { size
     <defs>
       {/* Vibrant inner fill gradient with a subtle animated shift */}
       <linearGradient id="flameFill" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stopColor={active ? "#FEF5B8" : "#374151"}>
-          {active && <animate attributeName="stop-color" values="#FEF5B8; #FFFBE3; #FEF5B8" dur="3s" repeatCount="indefinite" />}
+        <stop offset="0%" stopColor={active ? "#FCA5A5" : "#374151"}>
+          {active && <animate attributeName="stop-color" values="#FCA5A5; #FECACA; #FCA5A5" dur="3s" repeatCount="indefinite" />}
         </stop>
-        <stop offset="100%" stopColor={active ? "#FCEE99" : "#1F2937"}>
-          {active && <animate attributeName="stop-color" values="#FCEE99; #F5E16E; #FCEE99" dur="3s" repeatCount="indefinite" />}
+        <stop offset="100%" stopColor={active ? "#F87171" : "#1F2937"}>
+          {active && <animate attributeName="stop-color" values="#F87171; #FCA5A5; #F87171" dur="3s" repeatCount="indefinite" />}
         </stop>
       </linearGradient>
 
       {/* Teal border gradient to give it depth */}
       <linearGradient id="flameStroke" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stopColor={active ? "#41DEAB" : "#4B5563"}/>
-        <stop offset="100%" stopColor={active ? "#36C497" : "#374151"}/>
+        <stop offset="0%" stopColor={active ? "#EF4444" : "#4B5563"}/>
+        <stop offset="100%" stopColor={active ? "#DC2626" : "#374151"}/>
       </linearGradient>
 
       {/* Soft outer glow filter */}
@@ -62,7 +62,7 @@ const MainAnimatedFlame = ({ size = 20, active = false, className = "" }: { size
     `}</style>
 
     {/* Underlying glowing aura */}
-    <use href="#streakPath" className="glow-layer" fill="none" stroke={active ? "#41DEAB" : "#4B5563"} strokeWidth="16" filter="url(#glowBlur)" strokeLinejoin="round" />
+    <use href="#streakPath" className="glow-layer" fill="none" stroke={active ? "#EF4444" : "#4B5563"} strokeWidth="16" filter="url(#glowBlur)" strokeLinejoin="round" />
 
     {/* Crisp, primary streak icon */}
     <g className="flame-core">
@@ -94,12 +94,12 @@ export const WeekDayFlame = ({
       <div 
         className={`relative w-[32px] h-[32px] rounded-full flex items-center justify-center transition-all duration-300 border ${
           filled 
-            ? "bg-[#10B981] border-[#10B981] shadow-[0_0_12px_rgba(16,185,129,0.4)]" 
+            ? "bg-[#EF4444] border-[#EF4444] shadow-[0_0_12px_rgba(239,68,68,0.4)]" 
             : isFrozen 
               ? "bg-[#3B82F6] border-[#3B82F6] shadow-[0_0_12px_rgba(59,130,246,0.3)]"
               : isToday
                 ? `${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} border-[2px] border-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.2)]`
-                : `${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`
+                : `${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`
         } ${isToday ? "scale-110" : "scale-100"}`}
       >
         {filled ? (
@@ -118,7 +118,7 @@ export const WeekDayFlame = ({
 
       {/* Day Label */}
       <span className={`text-[10px] font-bold uppercase tracking-wider ${
-        isToday ? (isDark ? "text-[#FFFFFF]" : "text-[#111827]") : filled ? "text-[#10B981]" : isFrozen ? "text-[#3B82F6]" : "text-[#6B7280]"
+        isToday ? (isDark ? "text-[#FFFFFF]" : "text-[#111827]") : filled ? "text-[#EF4444]" : isFrozen ? "text-[#3B82F6]" : "text-[#6B7280]"
       }`}>
         {label}
       </span>
@@ -210,7 +210,7 @@ const AnimatedCrown = ({ size = 16, className = "" }: { size?: number, className
 // --- Sub-components ---
 function StatCard({ label, value, loading, icon: Icon, colorClass, isDark }: any) {
   return (
-    <div className={`p-3 rounded-[12px] border flex flex-col items-center justify-center text-center transition-all relative overflow-hidden ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+    <div className={`p-3 rounded-[12px] border flex flex-col items-center justify-center text-center transition-all relative overflow-hidden ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
       <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
       <div className="flex items-center gap-1.5 mb-1 relative z-10">
         <div className="relative">
@@ -225,6 +225,92 @@ function StatCard({ label, value, loading, icon: Icon, colorClass, isDark }: any
       <p className={`text-[19px] font-bold ${colorClass} relative z-10`}>
         {loading ? <span className="animate-pulse opacity-20">•••</span> : value}
       </p>
+    </div>
+  )
+}
+
+// ─── DUE CARDS STACK ─────────────────────────────────────────────────────────
+// SVG logo used inside each stack circle (white fill version for blue bg)
+const FlotterLogoWhite = () => (
+  <svg width="20" height="20" viewBox="164 107 40 40" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0" style={{ display: 'block', transform: 'translate3d(3px,2px,0)' }}>
+    <path d="M188.866 120.889C188.866 118.834 188.149 116.128 186.501 113.968C184.897 111.866 182.386 110.239 178.611 110.239C175.978 110.239 174.103 110.847 172.813 111.876C171.542 112.89 170.65 114.462 170.254 116.797C170.168 117.299 169.859 117.73 169.42 117.961C168.145 118.631 167.12 119.185 166.341 119.628C166.596 119.847 166.853 120.114 167.063 120.437C167.531 121.157 167.72 122.097 167.337 123.1C167.137 123.626 166.848 124.232 166.597 124.773C166.331 125.347 166.082 125.9 165.89 126.431C165.695 126.971 165.592 127.402 165.573 127.729C165.555 128.041 165.617 128.145 165.637 128.174C165.672 128.224 165.755 128.318 166.054 128.42C166.383 128.532 166.804 128.598 167.421 128.682C168.497 128.828 170.263 129.004 171.662 130.152L171.738 130.215C173.342 131.563 174.454 133.512 175.164 135.905C175.418 136.76 174.953 137.666 174.125 137.928C173.298 138.191 172.421 137.71 172.168 136.855C171.582 134.881 170.75 133.559 169.76 132.728L169.713 132.688C169.121 132.203 168.309 132.069 167.013 131.893C166.443 131.816 165.729 131.719 165.074 131.496C164.389 131.263 163.639 130.853 163.089 130.061C162.525 129.247 162.397 128.332 162.444 127.532C162.491 126.747 162.71 125.973 162.953 125.299C163.199 124.617 163.504 123.948 163.771 123.373C164.003 122.871 164.195 122.465 164.338 122.12C164.259 122.053 164.156 121.978 164.024 121.893C163.885 121.803 163.737 121.717 163.57 121.621C163.421 121.536 163.223 121.423 163.054 121.313C162.923 121.229 162.612 121.025 162.374 120.707C162.242 120.53 162.046 120.207 162.007 119.755C161.964 119.253 162.133 118.821 162.366 118.514C162.611 118.19 162.981 117.931 163.201 117.78C163.49 117.583 163.861 117.353 164.301 117.096C165.053 116.654 166.064 116.098 167.324 115.43C167.896 112.869 169.058 110.779 170.897 109.312C172.907 107.709 175.537 107 178.611 107C183.396 107 186.796 109.123 188.963 111.963C191.086 114.745 192 118.174 192 120.889C192 126.067 188.126 131.373 182.568 133.134C182.872 133.665 183.395 134.38 184.195 135.292C184.777 135.955 184.729 136.979 184.088 137.58C183.446 138.181 182.455 138.131 181.874 137.468C180.865 136.318 180.083 135.261 179.625 134.319C179.216 133.48 178.792 132.153 179.566 130.989L179.588 130.956C179.822 130.622 180.171 130.392 180.565 130.315C185.51 129.341 188.866 124.821 188.866 120.889Z" fill="black" />
+    <path fillRule="evenodd" clipRule="evenodd" d="M174.245 115.802C173.821 117.538 173.947 118.757 174.624 119.459C175.301 120.161 176.455 120.62 178.086 120.836C177.716 123.076 178.168 124.126 179.44 123.988C180.712 123.85 181.477 123.292 181.733 122.316C183.722 122.905 184.799 122.412 184.966 120.836C185.217 118.473 184.008 116.588 183.513 116.588C183.017 116.588 181.733 116.524 181.733 115.802C181.733 115.079 180.234 114.671 178.88 114.671C177.527 114.671 178.341 113.709 176.483 114.089C175.244 114.342 174.498 114.913 174.245 115.802Z" fill="#FCD34D" />
+    <path d="M175.638 113.107C176.177 113.006 176.668 112.964 177.113 113.036C177.643 113.123 177.989 113.351 178.231 113.567C178.259 113.592 178.283 113.613 178.302 113.631C178.319 113.631 178.339 113.632 178.361 113.632C179.163 113.632 180.047 113.74 180.778 113.976C181.137 114.092 181.543 114.266 181.884 114.536C182.122 114.725 182.388 115.012 182.531 115.398C182.596 115.407 182.667 115.416 182.744 115.422C182.89 115.434 183.028 115.437 183.131 115.437C183.571 115.437 183.91 115.616 184.094 115.734C184.3 115.867 184.475 116.029 184.619 116.186C184.907 116.501 185.17 116.906 185.384 117.357C185.814 118.263 186.116 119.498 185.957 120.873C185.835 121.926 185.319 122.906 184.199 123.375C183.53 123.655 182.779 123.69 182.015 123.588C181.81 123.846 181.562 124.074 181.271 124.268C180.636 124.692 179.873 124.903 179.075 124.982C178.574 125.032 178.026 124.988 177.513 124.739C176.981 124.482 176.612 124.064 176.388 123.586C176.14 123.058 176.06 122.442 176.08 121.792C174.852 121.52 173.798 121.07 173.042 120.352C171.801 119.175 171.832 117.393 172.294 115.665C172.298 115.649 172.303 115.633 172.308 115.617C172.769 114.132 174.114 113.393 175.638 113.107ZM176.545 115.585C176.463 115.591 176.335 115.606 176.148 115.641C175.155 115.827 174.943 116.147 174.877 116.339C174.489 117.811 174.748 118.335 174.903 118.497L174.918 118.512C175.301 118.876 176.132 119.258 177.711 119.449C178.074 119.493 178.402 119.679 178.62 119.962C178.837 120.246 178.925 120.603 178.862 120.951C178.777 121.424 178.747 121.791 178.754 122.068C178.759 122.229 178.775 122.341 178.792 122.415C178.795 122.415 178.798 122.415 178.8 122.414C179.311 122.364 179.598 122.246 179.749 122.145C179.876 122.061 179.958 121.958 180.009 121.778C180.104 121.448 180.332 121.167 180.642 120.999C180.952 120.83 181.318 120.788 181.661 120.881C182.59 121.132 183.007 121.06 183.134 121.007C183.168 120.993 183.178 120.983 183.193 120.96C183.217 120.923 183.271 120.818 183.298 120.586C183.396 119.735 183.206 118.969 182.95 118.431C182.863 118.247 182.776 118.106 182.704 118.007C182.409 117.99 182.039 117.951 181.683 117.861C181.404 117.79 181.019 117.661 180.68 117.4C180.399 117.184 180.141 116.867 180.025 116.457C179.997 116.447 179.964 116.435 179.927 116.423C179.537 116.297 178.953 116.213 178.361 116.213C177.863 116.213 177.41 116.131 177.004 115.913C176.809 115.808 176.665 115.692 176.565 115.603C176.558 115.597 176.552 115.591 176.545 115.585Z" fill="black" />
+    <path d="M180.845 123.19C181.507 122.823 182.377 123.005 182.788 123.596C183.199 124.187 182.995 124.964 182.333 125.331C182.02 125.505 181.642 125.74 181.303 125.984C180.944 126.243 180.713 126.452 180.619 126.57C180.348 126.908 180.09 127.212 179.864 127.479C179.632 127.752 179.441 127.978 179.277 128.187C178.936 128.62 178.827 128.843 178.795 128.985C178.643 129.668 177.9 130.111 177.136 129.976C176.372 129.84 175.875 129.176 176.027 128.494C176.18 127.81 176.583 127.227 176.967 126.738C177.166 126.485 177.391 126.221 177.614 125.957C177.842 125.688 178.078 125.409 178.325 125.102C178.646 124.703 179.115 124.323 179.53 124.023C179.967 123.708 180.44 123.414 180.845 123.19Z" fill="black" />
+  </svg>
+)
+
+/**
+ * DueCardsStack – replaces the standalone due-count number.
+ * Renders a red-bordered count badge followed by a row of overlapping blue
+ * circles (each containing the Flotter logo) that represent today's due cards.
+ *
+ * Rules:
+ *  - due ≤ 5  → show `due` logo circles, no overflow
+ *  - due > 5  → show 4 logo circles + 1 overflow circle displaying +{due-5}
+ */
+function DueCardsStack({ due, loading, isDark }: { due: number; loading: boolean; isDark: boolean }) {
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-2">
+        <div className="w-8 h-8 rounded-full bg-[#EF4444]/20 border-2 border-[#EF4444]/30 animate-pulse" />
+        <span className={`text-[11px] font-bold uppercase tracking-widest ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>due</span>
+      </div>
+    )
+  }
+
+  // Separator color matches the bottom-section background so circles look cleanly cut out
+  const ringColor = isDark ? '#1C1C1E' : '#FFFFFF'
+
+  const logoCount = due > 5 ? 4 : Math.min(due, 4)
+  const overflow = due > 5 ? due - 5 : 0
+
+  return (
+    <div className="flex flex-col gap-2">
+      {/* Row: count badge + overlapping circles */}
+      <div className="flex items-center gap-2">
+        {/* Count badge: red stroke, light red bg */}
+        <div
+          data-testid="due-count-badge"
+          className="flex items-center justify-center min-w-[30px] h-[30px] px-1 rounded-full border-2 border-[#EF4444] bg-[#FEE2E2] shrink-0"
+        >
+          <span className="text-[14px] font-black text-[#EF4444] leading-none">{due}</span>
+        </div>
+
+        {/* Overlapping circles */}
+        {due > 0 && (
+          <div className="flex items-center" data-testid="due-cards-stack">
+            {Array.from({ length: logoCount }).map((_, i) => (
+              <div
+                key={i}
+                className="w-8 h-8 rounded-full bg-[#3B82F6] flex items-center justify-center shrink-0 border-2"
+                style={{
+                  marginLeft: i === 0 ? 0 : -16,
+                  zIndex: logoCount - i,
+                  borderColor: ringColor,
+                  position: 'relative',
+                }}
+              >
+                <FlotterLogoWhite />
+              </div>
+            ))}
+            {overflow > 0 && (
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 ${isDark ? 'bg-[#2D2D2F]' : 'bg-[#F0F1F3]'}`}
+                style={{ marginLeft: -16, zIndex: 0, borderColor: ringColor, position: 'relative' }}
+                data-testid="due-overflow-badge"
+              >
+                <span className={`text-[9px] font-black leading-none ${isDark ? 'text-[#FFFFFF]' : 'text-[#374151]'}`}>+{overflow}</span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Label */}
+      <span className={`text-[11px] font-bold uppercase tracking-widest ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
+        {due === 0 ? 'mastered' : 'due today'}
+      </span>
     </div>
   )
 }
@@ -336,7 +422,7 @@ export default function Home() {
             </h2>
 
             {/* Option A: AI-powered */}
-            <div className={`p-5 rounded-[14px] border mb-3 ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+            <div className={`p-5 rounded-[14px] border mb-3 ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-[12px] bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 flex items-center justify-center flex-shrink-0">
                   <Wand2 size={18} className="text-[#8B5CF6]" />
@@ -356,7 +442,7 @@ export default function Home() {
             </div>
 
             {/* Option B: Manual */}
-            <div className={`p-5 rounded-[14px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+            <div className={`p-5 rounded-[14px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-[12px] bg-[#3B82F6]/10 border border-[#3B82F6]/20 flex items-center justify-center flex-shrink-0">
                   <PenLine size={18} className="text-[#3B82F6]" />
@@ -382,7 +468,7 @@ export default function Home() {
                 { icon: <Sparkles size={16} />, title: t('learning.welcomeStep2'), desc: t('learning.welcomeStep2Desc'), color: '#10B981' },
                 { icon: <Layers size={16} />, title: t('learning.welcomeStep3'), desc: t('learning.welcomeStep3Desc'), color: '#FACC15' },
               ].map((step, i) => (
-                <div key={i} className={`flex items-start gap-4 p-4 rounded-[14px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+                <div key={i} className={`flex items-start gap-4 p-4 rounded-[14px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
                   <div
                     className="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: `${step.color}15`, color: step.color, border: `1px solid ${step.color}30` }}
@@ -418,145 +504,179 @@ export default function Home() {
     <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen font-sans antialiased pb-[64px] ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
       <div className="max-w-5xl mx-auto px-[6px] pt-[20px] relative">
 
-        {/* HERO SECTION - Card Radius: 14px */}
-        <section className={`relative overflow-hidden rounded-[14px] border transition-all duration-1000 p-6 mb-[20px] ${isDark ? 'bg-[#1e1e1e]' : 'bg-white'} ${isFinished ? 'border-[#10B981]/40' : isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'}`}>
-
-          {/* Animated Background SVG Effect */}
-          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none rounded-[14px]">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <radialGradient id="heroGlowFx" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor={isFinished ? "#10B981" : "#EF4444"} stopOpacity="0.12" />
-                  <stop offset="100%" stopColor="transparent" stopOpacity="0" />
-                </radialGradient>
-              </defs>
-              <circle cx="90%" cy="10%" r="150" fill="url(#heroGlowFx)">
-                <animate attributeName="cx" values="90%; 80%; 90%" dur="8s" repeatCount="indefinite" />
-                <animate attributeName="cy" values="10%; 30%; 10%" dur="10s" repeatCount="indefinite" />
-                <animate attributeName="r" values="150; 200; 150" dur="6s" repeatCount="indefinite" />
-              </circle>
-              <circle cx="10%" cy="90%" r="100" fill="url(#heroGlowFx)">
-                <animate attributeName="cx" values="10%; 20%; 10%" dur="7s" repeatCount="indefinite" />
-                <animate attributeName="cy" values="90%; 80%; 90%" dur="9s" repeatCount="indefinite" />
-              </circle>
-            </svg>
-          </div>
-
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex-1 text-center md:text-left order-2 md:order-1">
-              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4 border transition-colors duration-500 ${isFinished ? 'bg-[#10B981]/10 border-[#10B981]/20 text-[#10B981]' : isDark ? 'bg-[#121212] border-[#2D2D2F] text-[#3B82F6]' : 'bg-[#F0F1F3] border-[#E2E4E9] text-[#3B82F6]'
-                }`}>
-                <AnimatedSparkles size={12} className="text-current" />
-                <span className="text-[11px] font-bold uppercase tracking-widest">
-                  {isFinished ? t('learning.neuralSynced') : t('learning.dailyObjective')}
-                </span>
-              </div>
-
-              {/* H1 Typography: 19px, Bold */}
-              <h1 className="text-[19px] md:text-[24px] font-bold leading-tight tracking-tight mb-4">
-                {isFinished ? (
-                  <>{t('learning.everythingIs')} <br className="hidden md:block" /><span className="text-[#10B981]">{t('learning.mastered')}</span></>
-                ) : (
-                  <>{t('learning.dontLose')} <br className="hidden md:block" /><span className="text-[#EF4444]">{t('learning.momentum')}</span></>
-                )}
-              </h1>
-
-              {/* Body Medium: 14px, Regular | Color: Secondary Text #9CA3AF */}
-              <p className={`text-[14px] font-normal max-w-md mb-6 leading-relaxed mx-auto md:mx-0 ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
-                {isFinished
-                  ? t('learning.queueEmpty')
-                  : language === 'ar' ? `لديك ${due} بطاقات تحتاج مراجعة فورية.` : `You have ${due} cards needing immediate attention.`}
-              </p>
-
-              <div className="flex flex-row justify-center md:justify-start gap-3">
-                {/* Primary Button Style - Radius: 12px */}
-                <Link
-                  href="/cards/deck"
-                  className={`flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-[24px] py-[14px] rounded-[12px] font-bold text-[14px] transition-all active:scale-[0.95] ${isFinished
-                      ? "bg-[#374151] text-[#6B7280] cursor-not-allowed"
-                      : "bg-[#EF4444] text-[#FFFFFF] shadow-[0_10px_30px_rgba(239,68,68,0.2)]"
-                    }`}
-                >
-                  <AnimatedZap size={16} className="text-current" />
-                  <span>{isFinished ? t('learning.finished') : t('learning.start')}</span>
-                </Link>
-                {/* Secondary/Action Style */}
-                <Link
-                  href="/cards/new"
-                  className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 bg-[#FFFFFF] text-[#000000] px-[24px] py-[14px] rounded-[12px] font-bold text-[14px] transition-all active:scale-[0.95]"
-                >
-                  <Plus size={16} strokeWidth={3} />
-                  <span>{t('learning.new')}</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* PSYCHOPATHIC RING */}
-            <div className="relative w-[140px] h-[140px] md:w-[180px] md:h-[180px] flex items-center justify-center order-1 md:order-2">
-              {!isFinished && due > 0 && (
-                <div className="absolute inset-0 rounded-full bg-[#EF4444]/5 animate-ping" />
+        {/* HERO SECTION REDESIGNED - Vertically split */}
+        <section className={`relative overflow-hidden rounded-[14px] border mb-[20px] flex flex-col min-h-[300px] ${isFinished ? 'border-[#10B981]/40' : isDark ? 'border-[#2D2D2F]' : 'border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
+          {/* TOP SECTION (≈60% height) - Muted earthy landscape theme */}
+          <div className="relative h-[180px] md:h-[200px] w-full bg-[#292524] overflow-hidden flex items-end justify-center perspective-[1000px]">
+            {/* Soft landscape background elements */}
+            <div className="absolute top-2 right-2 z-30">
+              {total === 0 ? (
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#10B981]/10 border border-[#10B981]/20 text-[#10B981]">
+                  <span className="w-2 h-2 rounded-full bg-[#10B981]" />
+                  <span className="text-[10px] font-bold">{language === 'ar' ? 'لا بطاقات' : 'No cards'}</span>
+                </div>
+              ) : due > 0 ? (
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EF4444]/10 border border-[#EF4444]/20 text-[#EF4444]">
+                  <span className="w-2 h-2 rounded-full bg-[#EF4444]" />
+                  <span className="text-[10px] font-bold">{language === 'ar' ? `${due} مستحقة` : `${due} due`}</span>
+                </div>
+              ) : (
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/20 text-[#3B82F6]">
+                  <span className="w-2 h-2 rounded-full bg-[#3B82F6]" />
+                  <span className="text-[13px] font-bold">{language === 'ar' ? 'لا شيء مستحق' : 'All caught up'}</span>
+                </div>
               )}
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-[#3E332D] to-[#292524]" />
+            
+            {/* Sun / Moon reflection */}
+            <div className="absolute top-[20%] left-[70%] w-[60px] h-[60px] bg-[#E8C39E] rounded-full blur-[20px] opacity-20" />
+{/* Oxford Style Background SVG */}
+<svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" className="absolute inset-0 w-full h-full pointer-events-none z-0">
+  {/* Sky / Base Layer */}
+  <rect width="400" height="200" fill="#DAD6C9" />
+  
+  {/* Farthest Hill (Pale Sage/Grey) */}
+  <path 
+    d="M-50,120 Q100,70 250,100    <!--  <!--T450,80 L450,200 L-50,200 Z" 
+    fill="#B0B9AE" 
+    opacity="0.8" 
+  />
+  
+  {/* Mid Hill (Muted Olive) */}
+  <path 
+    d="M-50,150 Q150,100 300,140 T500,120 L500,200 L-50,200 Z" 
+    fill="#828D75" 
+  />
+  
+  {/* Foreground Ground (Darker Moss Green) */}
+  <path 
+    d="M-20,180 Q180,150 420,185 L420,200 L-20,200 Z" 
+    fill="#687C4D" 
+  />
 
-              <svg className="w-full h-full transform -rotate-90 relative z-10 overflow-visible" viewBox="0 0 100 100">
-                <defs>
-                  <filter id="ringGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="3" result="blur" />
-                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                  </filter>
-                </defs>
-                
-                {/* Decorative rotating dotted inner circle */}
-                <circle
-                  cx="50" cy="50" r="34"
-                  stroke="currentColor" strokeWidth="1"
-                  strokeDasharray="4 8"
-                  fill="transparent"
-                  className={isFinished ? "text-[#10B981]/40" : "text-[#EF4444]/40"}
-                >
-                  <animateTransform attributeName="transform" type="rotate" values="0 50 50; 360 50 50" dur="12s" repeatCount="indefinite" />
-                </circle>
-
-                {/* Background Track Circle */}
-                <circle
-                  cx="50" cy="50" r="42"
-                  stroke="currentColor" strokeWidth="8"
-                  fill={isFinished ? "#10B981" : "transparent"}
-                  className={`transition-all duration-1000 ${isFinished ? "text-[#10B981]" : "text-[#dd4d4d]"}`}
-                />
-                
-                {/* Progress Circle (The Stroke) */}
-                <circle
-                  cx="50" cy="50" r="42"
-                  stroke="currentColor" strokeWidth="8" fill="transparent"
-                  strokeDasharray={2 * Math.PI * 42}
-                  style={{
-                    strokeDashoffset: loading
-                      ? (2 * Math.PI * 42)
-                      : (2 * Math.PI * 42) - (completionPercentage / 100) * (2 * Math.PI * 42),
-                    transition: 'stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s'
-                  }}
-                  strokeLinecap="round"
-                  className={isFinished ? "text-[#10B981]" : "text-[#EF4444]"}
-                  filter="url(#ringGlow)"
-                />
-              </svg>
-
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center z-20">
-                {isFinished ? (
-                  <AnimatedCheck size={30} className="text-[#000000]" />
-                ) : (
-                  <>
-                    <span className="text-[#EF4444] text-[36px] font-bold tracking-tighter leading-none drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]">
-                      {loading ? ".." : due}
-                    </span>
-                    <span className="text-[#9CA3AF] text-[11px] font-bold uppercase tracking-widest mt-1">
-                      {t('learning.due')}
-                    </span>
-                  </>
-                )}
+  {/* Subtle Birds (matching the minimalist style) */}
+  <g fill="none" stroke="#4A543F" strokeWidth="1" strokeLinecap="round" opacity="0.6">
+    <g transform="translate(80, 40) scale(0.5)">
+        <animateTransform attributeName="transform" type="translate" values="80,40; 85,35; 80,40" dur="6s" repeatCount="indefinite" />
+        <path d="M0,2 Q2.5,0 5,2 Q2.5,1 0,2 Z" />
+        <path d="M5,2 Q7.5,0 10,2 Q7.5,1 5,2 Z" />
+    </g>
+    <g transform="translate(160, 30) scale(0.4)">
+        <animateTransform attributeName="transform" type="translate" values="160,30; 155,35; 160,30" dur="8s" repeatCount="indefinite" />
+        <path d="M0,2 Q2.5,0 5,2 Q2.5,1 0,2 Z" />
+        <path d="M5,2 Q7.5,0 10,2 Q7.5,1 5,2 Z" />
+    </g>
+  </g>
+</svg>
+            
+            {/* Horizontal stack of flashcards */}
+            <div className="relative z-10 flex items-center justify-center mb-[20px]">
+              
+              {/* Left Card */}
+              <div 
+                className="absolute w-[80px] md:w-[90px] h-[115px] md:h-[130px] bg-white rounded-[12px] shadow-[0_8px_16px_rgba(0,0,0,0.06)] flex flex-col overflow-hidden opacity-90"
+                style={{
+                  transform: 'translateX(-55px) translateY(10px) rotate(-10deg) translateZ(-20px)',
+                  animation: 'floatSlow 4s ease-in-out infinite alternate'
+                }}
+              >
+                <div className="h-[45%] bg-[#F3F4F6] w-full border-b border-black/5" />
+                <div className="h-[55%] p-2 flex flex-col items-center justify-center gap-1.5 w-full">
+                  <div className="w-8 h-1.5 md:h-2 bg-[#D1D5DB] rounded-full" />
+                  <div className="w-12 h-1 md:h-1.5 bg-[#E5E7EB] rounded-full" />
+                </div>
               </div>
+              
+              {/* Right Card */}
+              <div 
+                className="absolute w-[80px] md:w-[90px] h-[115px] md:h-[130px] bg-white rounded-[12px] shadow-[0_8px_16px_rgba(0,0,0,0.06)] flex flex-col overflow-hidden opacity-90"
+                style={{
+                  transform: 'translateX(55px) translateY(10px) rotate(10deg) translateZ(-20px)',
+                  animation: 'floatSlowDelayed 4s ease-in-out infinite alternate'
+                }}
+              >
+                <div className="h-[45%] bg-[#F3F4F6] w-full border-b border-black/5" />
+                <div className="h-[55%] p-2 flex flex-col items-center justify-center gap-1.5 w-full">
+                  <div className="w-8 h-1.5 md:h-2 bg-[#D1D5DB] rounded-full" />
+                  <div className="w-12 h-1 md:h-1.5 bg-[#E5E7EB] rounded-full" />
+                </div>
+              </div>
+
+              {/* Center Card (Front) */}
+              <div 
+                className="relative w-[100px] md:w-[110px] h-[140px] md:h-[155px] bg-white rounded-[14px] shadow-[0_12px_24px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden z-20"
+                style={{
+                  transform: 'translateY(-5px) translateZ(20px)',
+                  animation: 'floatMain 4s ease-in-out infinite alternate'
+                }}
+              >
+                <div className="h-[45%] bg-[#F3F4F6] w-full border-b border-black/5 flex items-center justify-center overflow-hidden">
+                  <ImageIcon size={20} className="text-[#D1D5DB]" />
+                </div>
+                <div className="h-[55%] p-3 flex flex-col items-center justify-center gap-2 w-full">
+                  <div className="w-10 h-2 md:h-2.5 bg-[#4ADE80] rounded-full" />
+                  <div className="w-14 h-1 md:h-1.5 bg-[#E5E7EB] rounded-full" />
+                  <div className="w-10 h-1 md:h-1.5 bg-[#E5E7EB] rounded-full" />
+                </div>
+              </div>
+
             </div>
           </div>
+
+          {/* BOTTOM SECTION (≈40% height) - Controls and actionable elements */}
+          <div className={`relative flex-1 p-5 md:p-6 flex flex-row items-center justify-between z-20 ${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} border-t ${isDark ? 'border-black/10' : 'border-[#E2E4E9]'}`}>
+            
+            {/* Bottom-left: Cards to review — DueCardsStack */}
+            <DueCardsStack due={due} loading={loading} isDark={isDark} />
+
+            {/* Bottom-right: Actions */}
+            <div className="flex flex-row gap-2 md:gap-3 items-center">
+              <Link
+                href="/cards/new"
+                className="flex items-center justify-center gap-2 px-[16px] md:px-[20px] py-[12px] md:py-[14px] rounded-[12px] font-bold text-[13px] md:text-[14px] transition-all active:scale-[0.95] bg-[#2D2D2F] text-[#FFFFFF] shadow-sm hover:bg-[#343436] border border-[#3A3A3C]"
+              >
+                <Plus size={16} strokeWidth={3} />
+                <span className="hidden sm:inline">{t('learning.new')}</span>
+              </Link>
+              <Link
+                href="/cards/deck"
+                className={`flex items-center justify-center gap-2 px-[20px] md:px-[24px] py-[12px] md:py-[14px] rounded-[12px] font-bold text-[13px] md:text-[14px] transition-all active:scale-[0.95] ${
+                  isFinished
+                    ? "bg-[#374151] text-[#6B7280] cursor-not-allowed"
+                    : "bg-[#EF4444] text-[#FFFFFF] shadow-[0_10px_30px_rgba(239,68,68,0.2)]"
+                }`}
+              >
+                <AnimatedZap size={16} className="text-current" />
+                <span>{isFinished ? t('learning.finished') : t('learning.start')}</span>
+              </Link>
+            </div>
+          </div>
+
+          <style dangerouslySetInnerHTML={{__html: `
+            @keyframes floatMain {
+              0% { transform: translateY(-5px) translateZ(20px); }
+              100% { transform: translateY(-15px) translateZ(20px); }
+            }
+            @keyframes floatSlow {
+              0% { transform: translateX(-55px) translateY(10px) rotate(-10deg) translateZ(-20px); }
+              100% { transform: translateX(-55px) translateY(2px) rotate(-10deg) translateZ(-20px); }
+            }
+            @keyframes floatSlowDelayed {
+              0% { transform: translateX(55px) translateY(2px) rotate(10deg) translateZ(-20px); }
+              100% { transform: translateX(55px) translateY(10px) rotate(10deg) translateZ(-20px); }
+            }
+            @media (min-width: 768px) {
+              @keyframes floatSlow {
+                0% { transform: translateX(-65px) translateY(10px) rotate(-10deg) translateZ(-20px); }
+                100% { transform: translateX(-65px) translateY(2px) rotate(-10deg) translateZ(-20px); }
+              }
+              @keyframes floatSlowDelayed {
+                0% { transform: translateX(65px) translateY(2px) rotate(10deg) translateZ(-20px); }
+                100% { transform: translateX(65px) translateY(10px) rotate(10deg) translateZ(-20px); }
+              }
+            }
+          `}} />
         </section>
 
         {/* PRO MEMBERSHIP FLAG */}
@@ -606,20 +726,20 @@ export default function Home() {
 
         {/* STREAK & XP SECTION */}
         <section className="mb-[20px]">
-          <div className={`relative overflow-hidden rounded-[14px] border p-4 transition-all ${streak > 0 ? (isDark ? 'bg-[#1C1C1E] border-[#34D399]/20' : 'bg-white border-[#34D399]/20') : (isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]')
+          <div className={`relative overflow-hidden rounded-[14px] border-4 p-4 transition-all ${streak > 0 ? (isDark ? 'bg-[#1C1C1E] border-[#EF4444]/20' : 'bg-white border-[#EF4444]/20') : (isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]')
             }`}>
             {streak > 0 && (
-              <div className="absolute top-[-30px] right-[-30px] w-[120px] h-[120px] blur-[60px] rounded-full bg-[#34D399]/10 pointer-events-none" />
+              <div className="absolute top-[-30px] right-[-30px] w-[120px] h-[120px] blur-[60px] rounded-full bg-[#EF4444]/10 pointer-events-none" />
             )}
             <div className="relative z-10 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center border ${streak > 0 ? 'bg-[#34D399]/10 border-[#34D399]/20' : isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'
+                <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center border ${streak > 0 ? 'bg-[#EF4444]/10 border-[#EF4444]/20' : isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'
                   }`}>
-                  <MainAnimatedFlame size={32} active={streak > 0} className={streak > 0 ? "text-[#34D399]" : "text-[#6B7280]"} />
+                  <MainAnimatedFlame size={32} active={streak > 0} className={streak > 0 ? "text-[#EF4444]" : "text-[#6B7280]"} />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className={`text-[19px] font-bold ${streak > 0 ? 'text-[#34D399]' : 'text-[#6B7280]'}`}>
+                    <span className={`text-[19px] font-bold ${streak > 0 ? 'text-[#EF4444]' : 'text-[#6B7280]'}`}>
                       {loading ? '...' : streak}
                     </span>
                     <span className="text-[11px] font-bold uppercase tracking-widest text-[#9CA3AF]">
@@ -641,7 +761,7 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'}`}>
+              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
                 <AnimatedZap size={12} className="text-[#FACC15]" />
                 <span className="text-[12px] font-bold text-[#FACC15]">{loading ? '...' : totalXp}</span>
                 <span className="text-[10px] text-[#6B7280] font-bold uppercase">XP</span>
@@ -650,7 +770,7 @@ export default function Home() {
 
             {/* Streak progress - UPDATED WITH FLAME SHAPES CONTAINING LETTERS */}
             {streak > 0 && (
-              <div className={`mt-4 pt-4 border-t flex items-center justify-between px-2 ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
+              <div className={`mt-4 pt-4 border-t flex items-center justify-between px-2 ${isDark ? 'border-[#262626]' : 'border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#262626]'}`}>
                 {(() => {
                   const weekLabels = language === 'ar' 
                     ? ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'أ'] 
@@ -821,19 +941,19 @@ export default function Home() {
             </button>
           </div>
 
-          <div className={`rounded-[14px] overflow-hidden transition-all duration-500 border ${isDark ? 'bg-[#121212] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'} ${isListExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+          <div className={`rounded-[14px] overflow-hidden transition-all duration-500 border ${isDark ? 'bg-[#121212] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'} ${isListExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
             <div className="w-full">
               {!loading && data?.cards?.map((c: any) => {
                 const isOpen = expandedId === c.id;
                 return (
-                  <div key={c.id} className={`border-b last:border-0 ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
+                  <div key={c.id} className={`border-b last:border-0 ${isDark ? 'border-[#262626]' : 'border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#262626]'}`}>
                     <div
                       onClick={() => setExpandedId(isOpen ? null : c.id)}
                       className={`flex items-center justify-between px-4 h-[56px] cursor-pointer transition-all ${isOpen ? (isDark ? 'bg-[#222222]' : 'bg-[#F0F1F3]') : ''} ${isDark ? 'active:bg-[#222222]' : 'active:bg-[#F0F1F3]'}`}
                     >
                       <div className="flex items-center gap-3">
                         {/* Icon Container Rounded 8px per spec */}
-                        <div className={`w-10 h-10 rounded-[8px] overflow-hidden flex-shrink-0 flex items-center justify-center border ${isDark ? 'bg-[#121212] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'}`}>
+                        <div className={`w-10 h-10 rounded-[8px] overflow-hidden flex-shrink-0 flex items-center justify-center border ${isDark ? 'bg-[#121212] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
                           {c.imageUrl ? (
                             <img src={c.imageUrl} alt="" className="w-full h-full object-cover" />
                           ) : (
@@ -852,14 +972,14 @@ export default function Home() {
                     {isOpen && (
                       <div className={`px-4 py-6 animate-in slide-in-from-top-1 duration-200 ${isDark ? 'bg-[#222222]/50' : 'bg-[#F0F1F3]/50'}`}>
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                          <div className={`md:col-span-4 aspect-video rounded-[12px] overflow-hidden border ${isDark ? 'border-[#2D2D2F] bg-[#121212]' : 'border-[#E2E4E9] bg-[#F0F1F3]'}`}>
+                          <div className={`md:col-span-4 aspect-video rounded-[12px] overflow-hidden border ${isDark ? 'border-[#2D2D2F] bg-[#121212]' : 'border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F] bg-[#F0F1F3]'}`}>
                             {c.imageUrl ? <img src={c.imageUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[#6B7280] text-[11px] font-bold uppercase">{t('learning.noVisual')}</div>}
                           </div>
                           <div className="md:col-span-8">
                             <p className="text-[11px] font-bold text-[#10B981] uppercase tracking-widest mb-3">{t('learning.contextVariations')}</p>
                             <div className="space-y-2">
                               {c.sentences.map((s: string, i: number) => (
-                                <div key={i} className={`p-3 rounded-[12px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+                                <div key={i} className={`p-3 rounded-[12px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
                                   <p className={`text-[14px] leading-snug ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>{s}</p>
                                 </div>
                               ))}

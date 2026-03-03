@@ -286,7 +286,7 @@ export default function RankingPage() {
                       className={`flex flex-col items-center p-4 rounded-[14px] border transition-all ${
                         isFirst
                           ? `${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} border-[#FACC15]/30 shadow-[0_0_30px_rgba(250,204,21,0.05)]`
-                          : `${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`
+                          : `${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)]'}`
                       } ${isMe ? 'ring-1 ring-[#3B82F6]/50' : ''} ${isFirst ? 'order-2' : podiumIndex === 0 ? 'order-1' : 'order-3'}`}
                     >
                       <div className={`w-12 h-12 rounded-[12px] overflow-hidden border-2 mb-2 flex items-center justify-center ${
@@ -324,7 +324,7 @@ export default function RankingPage() {
             )}
 
             {/* Full List */}
-            <div className={`border rounded-[14px] overflow-hidden ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+            <div className={`border rounded-[14px] overflow-hidden ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)]'}`}>
               {ranking.map((u) => {
                 const isMe = u.id === user?.id
                 return (

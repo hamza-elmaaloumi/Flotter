@@ -207,7 +207,7 @@ export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditi
       <div className="max-w-[340px] md:max-w-md mx-auto px-[6px] pt-16 relative z-10">
         
         {isEditing ? (
-          <section className={`mb-[24px] border p-6 rounded-[24px] shadow-2xl ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+          <section className={`mb-[24px] border p-6 rounded-[24px] shadow-2xl ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)]'}`}>
             <div className="flex items-center justify-between mb-8">
               <h1 className="text-[19px] font-bold tracking-tight">{t('profile.editProfile')}</h1>
               <Link 
@@ -267,14 +267,14 @@ export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditi
         )}
 
         <div className="grid grid-cols-2 gap-[8px] mb-[20px]">
-          <div className={`border p-4 rounded-[16px] ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+          <div className={`border p-4 rounded-[16px] ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)]'}`}>
             <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-1">{t('profile.memberSince')}</p>
             <div className="flex items-center gap-2">
               <Calendar size={14} className="text-[#3B82F6]" />
               <p className="text-[14px] font-regular">{new Date(user.createdAt).toLocaleDateString()}</p>
             </div>
           </div>
-          <div className={`border p-4 rounded-[16px] ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+          <div className={`border p-4 rounded-[16px] ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)]'}`}>
             <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-1">{t('profile.lastActivity')}</p>
             <div className="flex items-center gap-2">
               <Clock size={14} className="text-[#3B82F6]" />
@@ -284,24 +284,24 @@ export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditi
         </div>
 
         <div className="grid grid-cols-3 gap-[8px] mb-[20px]">
-          <div className={`border border-[#FACC15]/10 p-4 rounded-[16px] flex flex-col items-center text-center ${isDark ? 'bg-[#1C1C1E]' : 'bg-white'}`}>
+          <div className={`border p-4 rounded-[16px] flex flex-col items-center text-center ${isDark ? 'bg-[#1C1C1E] border-[#FACC15]/10' : 'bg-white border-2 border-[#FACC15]/50 shadow-[0_2px_8px_rgba(250,204,21,0.10)]'}`}>
             <Zap size={16} className="text-[#FACC15] mb-1" fill="currentColor" />
             <p className="text-[19px] font-bold text-[#FACC15]">{user.totalXp.toLocaleString()}</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mt-0.5">{t('profile.totalXp')}</p>
           </div>
-          <div className={`border border-[#EF4444]/10 p-4 rounded-[16px] flex flex-col items-center text-center ${isDark ? 'bg-[#1C1C1E]' : 'bg-white'}`}>
+          <div className={`border p-4 rounded-[16px] flex flex-col items-center text-center ${isDark ? 'bg-[#1C1C1E] border-[#EF4444]/10' : 'bg-white border-2 border-[#EF4444]/40 shadow-[0_2px_8px_rgba(239,68,68,0.08)]'}`}>
             <RedAnimatedFlame size={28} active={user.streakCount > 0} className="" />
             <p className={`text-[19px] font-bold ${user.streakCount > 0 ? 'text-[#EF4444]' : 'text-[#6B7280]'}`}>{user.streakCount}</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mt-0.5">{t('profile.dayStreak')}</p>
           </div>
-          <div className={`border border-[#3B82F6]/10 p-4 rounded-[16px] flex flex-col items-center text-center ${isDark ? 'bg-[#1C1C1E]' : 'bg-white'}`}>
+          <div className={`border p-4 rounded-[16px] flex flex-col items-center text-center ${isDark ? 'bg-[#1C1C1E] border-[#3B82F6]/10' : 'bg-white border-2 border-[#3B82F6]/40 shadow-[0_2px_8px_rgba(59,130,246,0.08)]'}`}>
             <Trophy size={16} className="text-[#3B82F6] mb-1" />
             <p className="text-[19px] font-bold text-[#3B82F6]">#{rank}</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mt-0.5">{t('profile.rank')}</p>
           </div>
         </div>
 
-        <div className={`border p-4 rounded-[16px] mb-[20px] ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+        <div className={`border p-4 rounded-[16px] mb-[20px] ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)]'}`}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-0.5">{t('profile.monthlyXp')}</p>
@@ -316,8 +316,8 @@ export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditi
         {/* Subscription Status Section */}
         <div className={`border rounded-[16px] overflow-hidden mb-[20px] ${
           user.isPro 
-            ? `${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} border-[#FACC15]/20` 
-            : `${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`
+            ? `${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} border ${isDark ? 'border-[#FACC15]/20' : 'border-2 border-[#FACC15]/60 shadow-[0_2px_8px_rgba(250,204,21,0.12)]'}` 
+            : `${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)]'}`
         }`}>
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
@@ -368,7 +368,7 @@ export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditi
         {/* Issue report card (mobile-first, bilingual) inserted here */}
         <IssueReportCard />
 
-        <div className={`border rounded-[16px] overflow-hidden mb-6 ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
+        <div className={`border rounded-[16px] overflow-hidden mb-6 ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)]'}`}>
           <div className={`px-5 py-3 border-b ${isDark ? 'border-[#262626] bg-[#222222]' : 'border-[#EBEDF0] bg-[#F0F1F3]'}`}>
             <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">{t('profile.settings')}</h3>
           </div>
@@ -409,7 +409,7 @@ export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditi
           </div>
         </div>
 
-        <div className={`border border-[#EF4444]/10 rounded-[16px] overflow-hidden ${isDark ? 'bg-[#1C1C1E]' : 'bg-white'}`}>
+        <div className={`border border-[#EF4444]/10 rounded-[16px] overflow-hidden ${isDark ? 'bg-[#1C1C1E]' : 'bg-white border-2 border-[#EF4444]/40 shadow-[0_2px_8px_rgba(239,68,68,0.08)]'}`}>
           <Link 
             href="/logout"
             className="w-full flex items-center justify-between px-5 h-[64px] hover:bg-[#EF4444]/5 transition-all group"
