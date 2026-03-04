@@ -38,8 +38,20 @@ export async function GET(req: Request) {
         // Fetch user streak & XP & subscription
         const userXp = await prisma.user.findUnique({
             where: { id: userId },
-            select: { totalXp: true, monthlyXp: true, streakCount: true, lastActiveDate: true, isPro: true },
+            select: { totalXp: true, monthlyXp: true, monthlyXpResetAt: true, streakCount: true, lastActiveDate: true, isPro: true },
         })
+
+        // Apply stale-month correction — same logic as the ranking API
+        // so users see consistent XP on their own dashboard and the leaderboard.
+        const now = new Date()
+        let correctedMonthlyXp = userXp?.monthlyXp ?? 0
+        if (userXp?.monthlyXpResetAt) {
+            const resetMonth = userXp.monthlyXpResetAt.getUTCMonth()
+            const resetYear = userXp.monthlyXpResetAt.getUTCFullYear()
+            if (resetMonth !== now.getUTCMonth() || resetYear !== now.getUTCFullYear()) {
+                correctedMonthlyXp = 0
+            }
+        }
 
         return NextResponse.json({ 
             totalCardsCount, 
@@ -53,6 +65,7 @@ export async function GET(req: Request) {
             ),
             lastActiveDate: userXp?.lastActiveDate,
             totalXp: userXp?.totalXp ?? 0,
+            monthlyXp: correctedMonthlyXp,
             isPro: userXp?.isPro ?? false,
         })
     } catch (err) {

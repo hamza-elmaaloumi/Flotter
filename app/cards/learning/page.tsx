@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useUser } from '../../providers/UserProvider'
 import Link from 'next/link'
-import { Plus, Calendar, GraduationCap, ChevronDown, Image as ImageIcon, BookOpen, Check, Shield, Loader2, Sparkles, PenLine, Wand2, Layers } from 'lucide-react'
+import { Plus, Calendar, GraduationCap, ChevronDown, ChevronLeft, Image as ImageIcon, BookOpen, Check, Shield, Loader2, Sparkles, PenLine, Wand2, Layers, HomeIcon } from 'lucide-react'
 import { useLanguage } from '../../providers/LanguageProvider'
 import { useTheme } from '../../providers/ThemeProvider'
 import AdBanner from '../../components/AdBanner'
@@ -26,8 +26,8 @@ const MainAnimatedFlame = ({ size = 20, active = false, className = "" }: { size
 
       {/* Teal border gradient to give it depth */}
       <linearGradient id="flameStroke" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stopColor={active ? "#EF4444" : "#4B5563"}/>
-        <stop offset="100%" stopColor={active ? "#DC2626" : "#374151"}/>
+        <stop offset="0%" stopColor={active ? "#EF4444" : "#4B5563"} />
+        <stop offset="100%" stopColor={active ? "#DC2626" : "#374151"} />
       </linearGradient>
 
       {/* Soft outer glow filter */}
@@ -91,16 +91,15 @@ export const WeekDayFlame = ({
   return (
     <div className={`relative flex flex-col items-center gap-1.5 ${className}`}>
       {/* Circle Holder */}
-      <div 
-        className={`relative w-[32px] h-[32px] rounded-full flex items-center justify-center transition-all duration-300 border ${
-          filled 
-            ? "bg-[#EF4444] border-[#EF4444] shadow-[0_0_12px_rgba(239,68,68,0.4)]" 
-            : isFrozen 
-              ? "bg-[#3B82F6] border-[#3B82F6] shadow-[0_0_12px_rgba(59,130,246,0.3)]"
-              : isToday
-                ? `${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} border-[2px] border-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.2)]`
-                : `${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`
-        } ${isToday ? "scale-110" : "scale-100"}`}
+      <div
+        className={`relative w-[32px] h-[32px] rounded-full flex items-center justify-center transition-all duration-300 border ${filled
+          ? "bg-[#EF4444] border-[#EF4444] shadow-[0_0_12px_rgba(239,68,68,0.4)]"
+          : isFrozen
+            ? "bg-[#3B82F6] border-[#3B82F6] shadow-[0_0_12px_rgba(59,130,246,0.3)]"
+            : isToday
+              ? `${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} border-[2px] border-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.2)]`
+              : `${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`
+          } ${isToday ? "scale-110" : "scale-100"}`}
       >
         {filled ? (
           <Check size={16} className="text-[#000000]" strokeWidth={3} />
@@ -117,9 +116,8 @@ export const WeekDayFlame = ({
       </div>
 
       {/* Day Label */}
-      <span className={`text-[10px] font-bold uppercase tracking-wider ${
-        isToday ? (isDark ? "text-[#FFFFFF]" : "text-[#111827]") : filled ? "text-[#EF4444]" : isFrozen ? "text-[#3B82F6]" : "text-[#6B7280]"
-      }`}>
+      <span className={`text-[10px] font-bold uppercase tracking-wider ${isToday ? (isDark ? "text-[#FFFFFF]" : "text-[#111827]") : filled ? "text-[#EF4444]" : isFrozen ? "text-[#3B82F6]" : "text-[#6B7280]"
+        }`}>
         {label}
       </span>
 
@@ -152,17 +150,17 @@ const AnimatedZap = ({ size = 16, className = "" }: { size?: number, className?:
 const AnimatedSparkles = ({ size = 16, className = "" }: { size?: number, className?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={`overflow-visible ${className}`}>
     <g>
-      <animateTransform attributeName="transform" type="rotate" values="0 12 12; 10 12 12; 0 12 12; -10 12 12; 0 12 12" dur="3s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" values="0 12 12; 10 12 12; 0 12 12; -10 12 12; 0 12 12" dur="3s" repeatCount="indefinite" />
       <path d="M12 2L14.5 8.5L21 11L14.5 13.5L12 20L9.5 13.5L3 11L9.5 8.5L12 2Z" fill="currentColor">
         <animateTransform attributeName="transform" type="scale" values="1; 1.1; 1" dur="2s" repeatCount="indefinite" />
       </path>
       <circle cx="19" cy="5" r="2" fill="currentColor">
-        <animate attributeName="opacity" values="0; 1; 0" dur="1.5s" repeatCount="indefinite"/>
-        <animate attributeName="r" values="1; 2.5; 1" dur="1.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0; 1; 0" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="r" values="1; 2.5; 1" dur="1.5s" repeatCount="indefinite" />
       </circle>
       <circle cx="5" cy="19" r="2" fill="currentColor">
-        <animate attributeName="opacity" values="0; 1; 0" dur="2s" repeatCount="indefinite" begin="0.5s"/>
-        <animate attributeName="r" values="1; 2.5; 1" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+        <animate attributeName="opacity" values="0; 1; 0" dur="2s" repeatCount="indefinite" begin="0.5s" />
+        <animate attributeName="r" values="1; 2.5; 1" dur="2s" repeatCount="indefinite" begin="0.5s" />
       </circle>
     </g>
   </svg>
@@ -176,7 +174,7 @@ const AnimatedCheck = ({ size = 30, className = "" }: { size?: number, className
       <animate attributeName="stroke-dashoffset" values="24;0" dur="0.8s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" />
     </path>
     <circle cx="12" cy="12" r="14" stroke="currentColor" strokeWidth="2" strokeDasharray="90" strokeDashoffset="0" className="opacity-50">
-       <animate attributeName="stroke-dashoffset" values="90;0" dur="1s" fill="freeze" />
+      <animate attributeName="stroke-dashoffset" values="90;0" dur="1s" fill="freeze" />
     </circle>
   </svg>
 )
@@ -185,7 +183,7 @@ const AnimatedShield = ({ size = 16, className = "" }: { size?: number, classNam
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`overflow-visible ${className}`}>
     <g>
       <animateTransform attributeName="transform" type="scale" values="1; 1.05; 1" dur="2.5s" repeatCount="indefinite" />
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="currentColor" fillOpacity="0.2"/>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="currentColor" fillOpacity="0.2" />
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z">
         <animate attributeName="stroke" values="currentColor; #ffffff; currentColor" dur="2.5s" repeatCount="indefinite" />
       </path>
@@ -210,7 +208,7 @@ const AnimatedCrown = ({ size = 16, className = "" }: { size?: number, className
 // --- Sub-components ---
 function StatCard({ label, value, loading, icon: Icon, colorClass, isDark }: any) {
   return (
-    <div className={`p-3 rounded-[12px] border flex flex-col items-center justify-center text-center transition-all relative overflow-hidden ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
+    <div className={`p-3 rounded-[12px] border flex flex-col items-center justify-center text-center transition-all relative overflow-hidden ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
       <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
       <div className="flex items-center gap-1.5 mb-1 relative z-10">
         <div className="relative">
@@ -250,11 +248,12 @@ const FlotterLogoWhite = () => (
  *  - due > 5  → show 4 logo circles + 1 overflow circle displaying +{due-5}
  */
 function DueCardsStack({ due, loading, isDark }: { due: number; loading: boolean; isDark: boolean }) {
+  const { t } = useLanguage()
   if (loading) {
     return (
       <div className="flex flex-col gap-2">
         <div className="w-8 h-8 rounded-full bg-[#EF4444]/20 border-2 border-[#EF4444]/30 animate-pulse" />
-        <span className={`text-[11px] font-bold uppercase tracking-widest ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>due</span>
+        <span className={`text-[11px] font-bold uppercase tracking-widest ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>{t('learning.due')}</span>
       </div>
     )
   }
@@ -285,7 +284,7 @@ function DueCardsStack({ due, loading, isDark }: { due: number; loading: boolean
                 key={i}
                 className="w-8 h-8 rounded-full bg-[#3B82F6] flex items-center justify-center shrink-0 border-2"
                 style={{
-                  marginLeft: i === 0 ? 0 : -16,
+                  marginInlineStart: i === 0 ? 0 : -16,
                   zIndex: logoCount - i,
                   borderColor: ringColor,
                   position: 'relative',
@@ -297,7 +296,7 @@ function DueCardsStack({ due, loading, isDark }: { due: number; loading: boolean
             {overflow > 0 && (
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 ${isDark ? 'bg-[#2D2D2F]' : 'bg-[#F0F1F3]'}`}
-                style={{ marginLeft: -16, zIndex: 0, borderColor: ringColor, position: 'relative' }}
+                style={{ marginInlineStart: -16, zIndex: 0, borderColor: ringColor, position: 'relative' }}
                 data-testid="due-overflow-badge"
               >
                 <span className={`text-[9px] font-black leading-none ${isDark ? 'text-[#FFFFFF]' : 'text-[#374151]'}`}>+{overflow}</span>
@@ -309,7 +308,7 @@ function DueCardsStack({ due, loading, isDark }: { due: number; loading: boolean
 
       {/* Label */}
       <span className={`text-[11px] font-bold uppercase tracking-widest ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
-        {due === 0 ? 'mastered' : 'due today'}
+        {due === 0 ? t('learning.mastered') : t('learning.due')}
       </span>
     </div>
   )
@@ -340,12 +339,12 @@ export default function Home() {
     fetchDash()
   }, [user?.id])
 
-   if (loading && !data) {
+  if (loading && !data) {
     return <div className="flex flex-col items-center justify-center py-20">
-              <Loader2 size={24} className="animate-spin text-[#3B82F6] mb-4" />
-              {/* Typography: label (12px, Bold, Uppercase) */}
-              <span className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider">{t('searchCards.loading')}</span>
-            </div>
+      <Loader2 size={24} className="animate-spin text-[#3B82F6] mb-4" />
+      {/* Typography: label (12px, Bold, Uppercase) */}
+      <span className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider">{t('searchCards.loading')}</span>
+    </div>
   }
 
   const total = data?.totalCardsCount || 0
@@ -367,7 +366,7 @@ export default function Home() {
   // ─── NEW USER WELCOME SCREEN ───
   if (isNewUser) {
     return (
-      <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen font-sans antialiased pb-[64px] ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
+      <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen font-sans antialia9sed pb-[64px] ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
         <div className="max-w-lg mx-auto px-4 pt-12 flex flex-col items-center">
           {/* Welcome Illustration */}
           <div className="relative w-[120px] h-[120px] mb-8">
@@ -422,7 +421,7 @@ export default function Home() {
             </h2>
 
             {/* Option A: AI-powered */}
-            <div className={`p-5 rounded-[14px] border mb-3 ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
+            <div className={`p-5 rounded-[14px] border mb-3 ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-[12px] bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 flex items-center justify-center flex-shrink-0">
                   <Wand2 size={18} className="text-[#8B5CF6]" />
@@ -442,7 +441,7 @@ export default function Home() {
             </div>
 
             {/* Option B: Manual */}
-            <div className={`p-5 rounded-[14px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
+            <div className={`p-5 rounded-[14px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-[12px] bg-[#3B82F6]/10 border border-[#3B82F6]/20 flex items-center justify-center flex-shrink-0">
                   <PenLine size={18} className="text-[#3B82F6]" />
@@ -468,7 +467,7 @@ export default function Home() {
                 { icon: <Sparkles size={16} />, title: t('learning.welcomeStep2'), desc: t('learning.welcomeStep2Desc'), color: '#10B981' },
                 { icon: <Layers size={16} />, title: t('learning.welcomeStep3'), desc: t('learning.welcomeStep3Desc'), color: '#FACC15' },
               ].map((step, i) => (
-                <div key={i} className={`flex items-start gap-4 p-4 rounded-[14px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
+                <div key={i} className={`flex items-start gap-4 p-4 rounded-[14px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
                   <div
                     className="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: `${step.color}15`, color: step.color, border: `1px solid ${step.color}30` }}
@@ -501,11 +500,21 @@ export default function Home() {
   }
 
   return (
-    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen font-sans antialiased pb-[64px] ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
-      <div className="max-w-5xl mx-auto px-[6px] pt-[20px] relative">
+    <div dir={language === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen font-sans antialiased px-[3px] pb-[64px] ${isDark ? 'bg-[#121212] text-[#FFFFFF]' : 'bg-[#F8F9FA] text-[#111827]'}`}>
+      {/* Header — matches library/ranking pages */}
+      <header dir={language === 'ar' ? 'rtl' : 'ltr'} className={`sticky top-0 z-20 border-b px-4 h-[64px] flex items-center justify-between ${isDark ? 'bg-[#121212] border-[#262626]' : 'bg-white border-[#E2E4E9]'}`}>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            <HomeIcon size={18} className="text-[#3B82F6]" />
+            <h1 className="text-[17px] font-bold tracking-[-0.5px]">{t('learning.title')}</h1>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-2xl mx-auto px-4 pt-5 relative">
 
         {/* HERO SECTION REDESIGNED - Vertically split */}
-        <section className={`relative overflow-hidden rounded-[14px] border mb-[20px] flex flex-col min-h-[300px] ${isFinished ? 'border-[#10B981]/40' : isDark ? 'border-[#2D2D2F]' : 'border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
+        <section className={`relative overflow-hidden rounded-[14px] border mb-[20px] flex flex-col min-h-[300px] ${isFinished ? 'border-[#10B981]/40' : isDark ? 'border-[#2D2D2F]' : 'border-[#E2E4E9]'}`}>
           {/* TOP SECTION (≈60% height) - Muted earthy landscape theme */}
           <div className="relative h-[180px] md:h-[200px] w-full bg-[#292524] overflow-hidden flex items-end justify-center perspective-[1000px]">
             {/* Soft landscape background elements */}
@@ -516,8 +525,8 @@ export default function Home() {
                   <span className="text-[10px] font-bold">{language === 'ar' ? 'لا بطاقات' : 'No cards'}</span>
                 </div>
               ) : due > 0 ? (
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EF4444]/10 border border-[#EF4444]/20 text-[#EF4444]">
-                  <span className="w-2 h-2 rounded-full bg-[#EF4444]" />
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 border border-black text-white">
+                  <span className="w-2 h-2 rounded-full bg-white" />
                   <span className="text-[10px] font-bold">{language === 'ar' ? `${due} مستحقة` : `${due} due`}</span>
                 </div>
               ) : (
@@ -528,53 +537,22 @@ export default function Home() {
               )}
             </div>
             <div className="absolute inset-0 bg-gradient-to-b from-[#3E332D] to-[#292524]" />
-            
+
             {/* Sun / Moon reflection */}
             <div className="absolute top-[20%] left-[70%] w-[60px] h-[60px] bg-[#E8C39E] rounded-full blur-[20px] opacity-20" />
-{/* Oxford Style Background SVG */}
-<svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" className="absolute inset-0 w-full h-full pointer-events-none z-0">
-  {/* Sky / Base Layer */}
-  <rect width="400" height="200" fill="#DAD6C9" />
-  
-  {/* Farthest Hill (Pale Sage/Grey) */}
-  <path 
-    d="M-50,120 Q100,70 250,100    <!--  <!--T450,80 L450,200 L-50,200 Z" 
-    fill="#B0B9AE" 
-    opacity="0.8" 
-  />
-  
-  {/* Mid Hill (Muted Olive) */}
-  <path 
-    d="M-50,150 Q150,100 300,140 T500,120 L500,200 L-50,200 Z" 
-    fill="#828D75" 
-  />
-  
-  {/* Foreground Ground (Darker Moss Green) */}
-  <path 
-    d="M-20,180 Q180,150 420,185 L420,200 L-20,200 Z" 
-    fill="#687C4D" 
-  />
+            {/* Oxford Style Background SVG */}
+            <img
+              src="/assets/image-gen.png"
+              alt="Hero illustration"
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+              style={{ filter: 'grayscale(100%) contrast(0.95) brightness(0.95)' }}
+            />
 
-  {/* Subtle Birds (matching the minimalist style) */}
-  <g fill="none" stroke="#4A543F" strokeWidth="1" strokeLinecap="round" opacity="0.6">
-    <g transform="translate(80, 40) scale(0.5)">
-        <animateTransform attributeName="transform" type="translate" values="80,40; 85,35; 80,40" dur="6s" repeatCount="indefinite" />
-        <path d="M0,2 Q2.5,0 5,2 Q2.5,1 0,2 Z" />
-        <path d="M5,2 Q7.5,0 10,2 Q7.5,1 5,2 Z" />
-    </g>
-    <g transform="translate(160, 30) scale(0.4)">
-        <animateTransform attributeName="transform" type="translate" values="160,30; 155,35; 160,30" dur="8s" repeatCount="indefinite" />
-        <path d="M0,2 Q2.5,0 5,2 Q2.5,1 0,2 Z" />
-        <path d="M5,2 Q7.5,0 10,2 Q7.5,1 5,2 Z" />
-    </g>
-  </g>
-</svg>
-            
             {/* Horizontal stack of flashcards */}
             <div className="relative z-10 flex items-center justify-center mb-[20px]">
-              
+
               {/* Left Card */}
-              <div 
+              <div
                 className="absolute w-[80px] md:w-[90px] h-[115px] md:h-[130px] bg-white rounded-[12px] shadow-[0_8px_16px_rgba(0,0,0,0.06)] flex flex-col overflow-hidden opacity-90"
                 style={{
                   transform: 'translateX(-55px) translateY(10px) rotate(-10deg) translateZ(-20px)',
@@ -587,9 +565,9 @@ export default function Home() {
                   <div className="w-12 h-1 md:h-1.5 bg-[#E5E7EB] rounded-full" />
                 </div>
               </div>
-              
+
               {/* Right Card */}
-              <div 
+              <div
                 className="absolute w-[80px] md:w-[90px] h-[115px] md:h-[130px] bg-white rounded-[12px] shadow-[0_8px_16px_rgba(0,0,0,0.06)] flex flex-col overflow-hidden opacity-90"
                 style={{
                   transform: 'translateX(55px) translateY(10px) rotate(10deg) translateZ(-20px)',
@@ -604,7 +582,7 @@ export default function Home() {
               </div>
 
               {/* Center Card (Front) */}
-              <div 
+              <div
                 className="relative w-[100px] md:w-[110px] h-[140px] md:h-[155px] bg-white rounded-[14px] shadow-[0_12px_24px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden z-20"
                 style={{
                   transform: 'translateY(-5px) translateZ(20px)',
@@ -626,7 +604,7 @@ export default function Home() {
 
           {/* BOTTOM SECTION (≈40% height) - Controls and actionable elements */}
           <div className={`relative flex-1 p-5 md:p-6 flex flex-row items-center justify-between z-20 ${isDark ? 'bg-[#1C1C1E]' : 'bg-white'} border-t ${isDark ? 'border-black/10' : 'border-[#E2E4E9]'}`}>
-            
+
             {/* Bottom-left: Cards to review — DueCardsStack */}
             <DueCardsStack due={due} loading={loading} isDark={isDark} />
 
@@ -641,11 +619,10 @@ export default function Home() {
               </Link>
               <Link
                 href="/cards/deck"
-                className={`flex items-center justify-center gap-2 px-[20px] md:px-[24px] py-[12px] md:py-[14px] rounded-[12px] font-bold text-[13px] md:text-[14px] transition-all active:scale-[0.95] ${
-                  isFinished
-                    ? "bg-[#374151] text-[#6B7280] cursor-not-allowed"
-                    : "bg-[#EF4444] text-[#FFFFFF] shadow-[0_10px_30px_rgba(239,68,68,0.2)]"
-                }`}
+                className={`flex items-center justify-center gap-2 px-[20px] md:px-[24px] py-[12px] md:py-[14px] rounded-[12px] font-bold text-[13px] md:text-[14px] transition-all active:scale-[0.95] ${isFinished
+                  ? "bg-[#374151] text-[#6B7280] cursor-not-allowed"
+                  : "bg-[#EF4444] text-[#FFFFFF] shadow-[0_10px_30px_rgba(239,68,68,0.2)]"
+                  }`}
               >
                 <AnimatedZap size={16} className="text-current" />
                 <span>{isFinished ? t('learning.finished') : t('learning.start')}</span>
@@ -653,7 +630,8 @@ export default function Home() {
             </div>
           </div>
 
-          <style dangerouslySetInnerHTML={{__html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             @keyframes floatMain {
               0% { transform: translateY(-5px) translateZ(20px); }
               100% { transform: translateY(-15px) translateZ(20px); }
@@ -726,14 +704,14 @@ export default function Home() {
 
         {/* STREAK & XP SECTION */}
         <section className="mb-[20px]">
-          <div className={`relative overflow-hidden rounded-[14px] border-4 p-4 transition-all ${streak > 0 ? (isDark ? 'bg-[#1C1C1E] border-[#EF4444]/20' : 'bg-white border-[#EF4444]/20') : (isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]')
+          <div className={`relative overflow-hidden rounded-[14px] border p-4 transition-all ${streak > 0 ? (isDark ? 'bg-[#1C1C1E] border-[#EF4444]/20' : 'bg-white border-[#EF4444]/20') : (isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]')
             }`}>
             {streak > 0 && (
               <div className="absolute top-[-30px] right-[-30px] w-[120px] h-[120px] blur-[60px] rounded-full bg-[#EF4444]/10 pointer-events-none" />
             )}
             <div className="relative z-10 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center border ${streak > 0 ? 'bg-[#EF4444]/10 border-[#EF4444]/20' : isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'
+                <div className={`w-11 h-11 rounded-[12px] flex items-center justify-center border ${streak > 0 ? 'bg-[#EF4444]/10 border-[#EF4444]/20' : isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'
                   }`}>
                   <MainAnimatedFlame size={32} active={streak > 0} className={streak > 0 ? "text-[#EF4444]" : "text-[#6B7280]"} />
                 </div>
@@ -761,7 +739,7 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
+              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] border ${isDark ? 'bg-[#222222] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'}`}>
                 <AnimatedZap size={12} className="text-[#FACC15]" />
                 <span className="text-[12px] font-bold text-[#FACC15]">{loading ? '...' : totalXp}</span>
                 <span className="text-[10px] text-[#6B7280] font-bold uppercase">XP</span>
@@ -770,10 +748,10 @@ export default function Home() {
 
             {/* Streak progress - UPDATED WITH FLAME SHAPES CONTAINING LETTERS */}
             {streak > 0 && (
-              <div className={`mt-4 pt-4 border-t flex items-center justify-between px-2 ${isDark ? 'border-[#262626]' : 'border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#262626]'}`}>
+              <div className={`mt-4 pt-4 border-t flex items-center justify-between px-2 ${isDark ? 'border-[#262626]' : 'border-[#E2E4E9]'}`}>
                 {(() => {
-                  const weekLabels = language === 'ar' 
-                    ? ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'أ'] 
+                  const weekLabels = language === 'ar'
+                    ? ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'أ']
                     : ['M', 'T', 'W', 'T', 'F', 'S', 'S']
                   const todayIndex = (new Date().getDay() + 6) % 7
 
@@ -806,7 +784,7 @@ export default function Home() {
 
                     return (
                       <div key={i} className="flex flex-col items-center">
-                        <WeekDayFlame 
+                        <WeekDayFlame
                           label={label}
                           filled={filled}
                           isToday={isToday}
@@ -856,20 +834,20 @@ export default function Home() {
             <div className={`relative overflow-hidden rounded-[14px] border border-[#FACC15]/30 p-5 ${isDark ? 'bg-gradient-to-br from-[#1C1C1E] to-[#1a1a0f]' : 'bg-gradient-to-br from-white to-[#FFFBEB]'}`}>
               <div className="absolute top-[-40px] right-[-40px] w-[160px] h-[160px] blur-[80px] rounded-full bg-[#FACC15]/10 pointer-events-none" />
               <div className="absolute bottom-[-20px] left-[-20px] w-[80px] h-[80px] blur-[40px] rounded-full bg-[#FACC15]/5 pointer-events-none" />
-              
+
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-2">
                   <AnimatedCrown size={14} className="text-[#FACC15]" />
                   <span className="text-[11px] font-bold uppercase tracking-widest text-[#FACC15]">Flotter Pro</span>
                 </div>
-                
+
                 <h3 className={`text-[17px] font-bold mb-1 ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>
                   {t('learning.unlockPotential')}
                 </h3>
                 <p className={`text-[12px] leading-relaxed mb-4 ${isDark ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}>
                   {t('learning.bannerDesc1')}<span className="text-[#FACC15] font-bold">{t('subscribe.heroPrice')}</span>{t('learning.bannerDesc2')}
                 </p>
-                
+
                 <div className="flex flex-wrap gap-2 mb-4">
                   {[t('learning.tagUnlimited'), t('learning.tagNoAds'), t('learning.tagStreakFreeze'), t('learning.tagProBadge')].map((tag) => (
                     <span key={tag} className="px-2 py-1 rounded-full bg-[#FACC15]/10 border border-[#FACC15]/20 text-[9px] font-bold uppercase tracking-widest text-[#FACC15]">
@@ -877,7 +855,7 @@ export default function Home() {
                     </span>
                   ))}
                 </div>
-                
+
                 <Link
                   href="/subscribe"
                   className="inline-flex items-center gap-2 bg-[#FACC15] text-[#000000] px-5 py-3 rounded-[10px] font-bold text-[12px] transition-all active:scale-95 shadow-[0_8px_24px_rgba(250,204,21,0.15)]"
@@ -926,7 +904,7 @@ export default function Home() {
             />
           </div>
         </section>
-        
+
 
         {/* RECENT ACTIVITY - List Item / Settings Row Implementation */}
         <section>
@@ -941,19 +919,19 @@ export default function Home() {
             </button>
           </div>
 
-          <div className={`rounded-[14px] overflow-hidden transition-all duration-500 border ${isDark ? 'bg-[#121212] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'} ${isListExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+          <div className={`rounded-[14px] overflow-hidden transition-all duration-500 border ${isDark ? 'bg-[#121212] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'} ${isListExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
             <div className="w-full">
               {!loading && data?.cards?.map((c: any) => {
                 const isOpen = expandedId === c.id;
                 return (
-                  <div key={c.id} className={`border-b last:border-0 ${isDark ? 'border-[#262626]' : 'border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#262626]'}`}>
+                  <div key={c.id} className={`border-b last:border-0 ${isDark ? 'border-[#262626]' : 'border-[#EBEDF0]'}`}>
                     <div
                       onClick={() => setExpandedId(isOpen ? null : c.id)}
                       className={`flex items-center justify-between px-4 h-[56px] cursor-pointer transition-all ${isOpen ? (isDark ? 'bg-[#222222]' : 'bg-[#F0F1F3]') : ''} ${isDark ? 'active:bg-[#222222]' : 'active:bg-[#F0F1F3]'}`}
                     >
                       <div className="flex items-center gap-3">
                         {/* Icon Container Rounded 8px per spec */}
-                        <div className={`w-10 h-10 rounded-[8px] overflow-hidden flex-shrink-0 flex items-center justify-center border ${isDark ? 'bg-[#121212] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
+                        <div className={`w-10 h-10 rounded-[8px] overflow-hidden flex-shrink-0 flex items-center justify-center border ${isDark ? 'bg-[#121212] border-[#2D2D2F]' : 'bg-[#F0F1F3] border-[#E2E4E9]'}`}>
                           {c.imageUrl ? (
                             <img src={c.imageUrl} alt="" className="w-full h-full object-cover" />
                           ) : (
@@ -972,14 +950,14 @@ export default function Home() {
                     {isOpen && (
                       <div className={`px-4 py-6 animate-in slide-in-from-top-1 duration-200 ${isDark ? 'bg-[#222222]/50' : 'bg-[#F0F1F3]/50'}`}>
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                          <div className={`md:col-span-4 aspect-video rounded-[12px] overflow-hidden border ${isDark ? 'border-[#2D2D2F] bg-[#121212]' : 'border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F] bg-[#F0F1F3]'}`}>
+                          <div className={`md:col-span-4 aspect-video rounded-[12px] overflow-hidden border ${isDark ? 'border-[#2D2D2F] bg-[#121212]' : 'border-[#E2E4E9] bg-[#F0F1F3]'}`}>
                             {c.imageUrl ? <img src={c.imageUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[#6B7280] text-[11px] font-bold uppercase">{t('learning.noVisual')}</div>}
                           </div>
                           <div className="md:col-span-8">
                             <p className="text-[11px] font-bold text-[#10B981] uppercase tracking-widest mb-3">{t('learning.contextVariations')}</p>
                             <div className="space-y-2">
                               {c.sentences.map((s: string, i: number) => (
-                                <div key={i} className={`p-3 rounded-[12px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:border-[#2D2D2F]'}`}>
+                                <div key={i} className={`p-3 rounded-[12px] border ${isDark ? 'bg-[#1C1C1E] border-[#2D2D2F]' : 'bg-white border-[#E2E4E9]'}`}>
                                   <p className={`text-[14px] leading-snug ${isDark ? 'text-[#FFFFFF]' : 'text-[#111827]'}`}>{s}</p>
                                 </div>
                               ))}

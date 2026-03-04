@@ -363,7 +363,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.legal.hostingDesc': 'Host: Vercel Inc.\nAddress: 340 S Lemon Ave #1150, Walnut, CA 91789, USA',
     'settings.legal.compliance': '4. Legal Compliance',
     'settings.legal.complianceDesc': 'This legal notice complies with Moroccan Laws 53-05 relating to the electronic exchange of legal data and 31-08 relating to consumer protection.',
-    
+
     'settings.privacy.entity': '1. Responsible Entity',
     'settings.privacy.entityDesc': 'This policy covers the data collected by the service Flotter, managed by Mezuma.',
     'settings.privacy.cndp': '2. CNDP Compliance',
@@ -374,7 +374,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.privacy.storageDesc': 'All data is stored securely in our Neon database via Google Cloud/Vercel infrastructure.',
     'settings.privacy.rights': '5. User Rights',
     'settings.privacy.rightsDesc': 'In accordance with Law 09-08, you have the right to access, rectify, and delete your personal data. To exercise these rights, please contact us via email.',
-    
+
     'settings.terms.contract': '1. Contract',
     'settings.terms.contractDesc': 'This is an agreement between the user and Mezuma regarding the use of Flotter.',
     'settings.terms.merchant': '2. Merchant of Record',
@@ -474,6 +474,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'flashcard.review': 'Review',
 
     // ─── Cards: Learning ───
+    'learning.title': 'My Cards',
     'learning.dailyObjective': 'Daily Objective',
     'learning.neuralSynced': 'Neural Pathways Synced',
     'learning.everythingIs': 'Everything is',
@@ -1064,7 +1065,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.legal.hostingDesc': 'المضيف: Vercel Inc.\nالعنوان: 340 S Lemon Ave #1150, Walnut, CA 91789, USA',
     'settings.legal.compliance': '4. الامتثال القانوني',
     'settings.legal.complianceDesc': 'يتوافق هذا الإشعار القانوني مع القوانين المغربية 53-05 المتعلقة بالتبادل الإلكتروني للبيانات القانونية و 31-08 المتعلقة بحماية المستهلك.',
-    
+
     'settings.privacy.entity': '1. الكيان المسؤول',
     'settings.privacy.entityDesc': 'تغطي هذه السياسة البيانات التي يتم جمعها بواسطة خدمة Flotter، والتي تديرها Mezuma.',
     'settings.privacy.cndp': '2. الامتثال لقانون CNDP',
@@ -1075,7 +1076,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'settings.privacy.storageDesc': 'يتم تخزين جميع البيانات بشكل آمن في قاعدة بيانات Neon الخاصة بنا عبر البنية التحتية لـ Google Cloud/Vercel.',
     'settings.privacy.rights': '5. حقوق المستخدم',
     'settings.privacy.rightsDesc': 'وفقًا للقانون 09-08، يحق لك الوصول إلى بياناتك الشخصية وتصحيحها وحذفها. لممارسة هذه الحقوق، يرجى الاتصال بنا عبر البريد الإلكتروني.',
-    
+
     'settings.terms.contract': '1. العقد',
     'settings.terms.contractDesc': 'هذه اتفاقية بين المستخدم و Mezuma فيما يتعلق باستخدام خدمة Flotter.',
     'settings.terms.merchant': '2. التاجر المسجل',
@@ -1175,6 +1176,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'flashcard.review': 'مراجعة',
 
     // ─── Cards: Learning ───
+    'learning.title': 'بطاقاتي',
     'learning.dailyObjective': 'الهدف اليومي',
     'learning.neuralSynced': 'المسارات العصبية متزامنة',
     'learning.everythingIs': 'كل شيء',

@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getEffectiveStreak } from '@/lib/xp'
 
+// Ensure Next.js never caches or statically renders this route
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/ranking
  * Returns top users ranked by monthly XP (descending).
