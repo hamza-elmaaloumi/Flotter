@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import ProfileForm from './ProfileForm'
 import { useLanguage } from '../providers/LanguageProvider'
 import { useTheme } from '../providers/ThemeProvider'
@@ -160,8 +161,28 @@ type ProfileContentProps = {
 export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditing }: ProfileContentProps) {
   const { t, language } = useLanguage()
   const { isDark } = useTheme()
+  const router = useRouter()
   const [exporting, setExporting] = useState(false)
   const [exportDone, setExportDone] = useState(false)
+  const [canceling, setCanceling] = useState(false)
+  const [cancelError, setCancelError] = useState<string | null>(null)
+
+  const handleCancelSubscription = async () => {
+    if (!window.confirm(t('profile.cancelSubConfirm'))) return
+    setCanceling(true)
+    setCancelError(null)
+    try {
+      const res = await fetch('/api/subscription/cancel', { method: 'POST' })
+      if (!res.ok) {
+        throw new Error((await res.json()).error || 'Unknown error')
+      }
+      router.refresh()
+    } catch (err: any) {
+      setCancelError(t('profile.cancelSubError'))
+    } finally {
+      setCanceling(false)
+    }
+  }
 
   const handleExport = async () => {
     if (exporting) return
@@ -347,6 +368,26 @@ export default function ProfileContent({ user, effectiveMonthlyXp, rank, isEditi
                   {user.subscriptionStatus === 'active' ? t('profile.activeSub') : user.subscriptionStatus}
                   {user.subscriptionEndsAt && ` · ${t('profile.renews')} ${new Date(user.subscriptionEndsAt).toLocaleDateString()}`}
                 </p>
+                {user.subscriptionStatus === 'active' && (
+                  <div className="mt-3">
+                    <button
+                      onClick={handleCancelSubscription}
+                      disabled={canceling}
+                      className={`text-[11px] font-bold uppercase tracking-widest px-4 py-2 rounded-[10px] border transition-all active:scale-95 ${
+                        canceling
+                          ? 'text-[#6B7280] border-[#2D2D2F] opacity-60 cursor-wait'
+                          : isDark
+                            ? 'text-[#EF4444] border-[#EF4444]/20 hover:bg-[#EF4444]/10'
+                            : 'text-[#EF4444] border-[#EF4444]/30 hover:bg-[#EF4444]/10'
+                      }`}
+                    >
+                      {canceling ? t('profile.cancelling') : t('profile.cancelSub')}
+                    </button>
+                    {cancelError && (
+                      <p className="mt-2 text-[11px] text-[#EF4444]">{cancelError}</p>
+                    )}
+                  </div>
+                )}
               </div>
             ) : (
               <div>

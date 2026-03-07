@@ -103,6 +103,13 @@ export default function SubscribePage() {
       freeLimit: t('subscribe.feat5Free'),
       proLimit: t('subscribe.feat5Pro'),
     },
+    {
+      icon: Ban,
+      title: t('subscribe.feat6Title'),
+      description: t('subscribe.feat6Desc'),
+      freeLimit: t('subscribe.feat6Free'),
+      proLimit: t('subscribe.feat6Pro'),
+    },
   ]
 
   return (

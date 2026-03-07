@@ -567,6 +567,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'subscribe.feat5Desc': 'Stand out on the leaderboard with an exclusive Pro badge.',
     'subscribe.feat5Free': 'No badge',
     'subscribe.feat5Pro': 'Pro badge',
+    'subscribe.feat6Title': 'Cancel Anytime',
+    'subscribe.feat6Desc': 'Cancel your subscription anytime with no hidden fees or long-term commitments.',
+    'subscribe.feat6Free': 'N/A',
+    'subscribe.feat6Pro': 'Cancel anytime',
 
     // ─── Profile Subscription ───
     'profile.currentPlan': 'Current Plan',
@@ -574,6 +578,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'profile.planFree': 'Free',
     'profile.planName': 'Flotter Pro',
     'profile.activeSub': 'Active subscription',
+    'profile.cancelSub': 'Cancel Subscription',
+    'profile.cancelSubConfirm': 'Are you sure you want to cancel your subscription? You will immediately lose access to all Pro features.',
+    'profile.cancelSubError': 'Failed to cancel subscription. Please try again.',
+    'profile.cancelling': 'Cancelling...',
     'profile.renews': 'Renews',
     'profile.upgradeDesc': 'Upgrade to Pro for just 1$/month to unlock unlimited AI cards, no ads, and streak protection.',
     'profile.upgradeToPro': 'Upgrade to Pro',
@@ -1266,6 +1274,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'subscribe.feat5Desc': 'تميّز في لوحة المتصدرين بشارة برو الحصرية.',
     'subscribe.feat5Free': 'بدون شارة',
     'subscribe.feat5Pro': 'شارة برو',
+    'subscribe.feat6Title': 'إلغاء في أي وقت',
+    'subscribe.feat6Desc': 'ألغِ اشتراكك في أي وقت دون رسوم مخفية أو التزامات طويلة الأمد.',
+    'subscribe.feat6Free': 'غير متاح',
+    'subscribe.feat6Pro': 'الإلغاء في أي وقت',
 
     // ─── اشتراك الملف الشخصي ───
     'profile.currentPlan': 'الخطة الحالية',
@@ -1273,6 +1285,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'profile.planFree': 'مجاني',
     'profile.planName': 'فلوتر برو',
     'profile.activeSub': 'اشتراك مفعّل',
+    'profile.cancelSub': 'إلغاء الاشتراك',
+    'profile.cancelSubConfirm': 'هل أنت متأكد من رغبتك في إلغاء اشتراكك؟ ستفقد فوراً الوصول إلى جميع ميزات برو.',
+    'profile.cancelSubError': 'فشل إلغاء الاشتراك. يرجى المحاولة مرة أخرى.',
+    'profile.cancelling': 'جارٍ الإلغاء...',
     'profile.renews': 'يتجدد',
     'profile.upgradeDesc': 'ترقّ إلى برو مقابل 1$/شهرياً فقط لفتح بطاقات ذكاء اصطناعي غير محدودة، بدون إعلانات، وحماية السلسلة.',
     'profile.upgradeToPro': 'ترقية إلى برو',
