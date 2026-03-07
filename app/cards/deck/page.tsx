@@ -71,10 +71,42 @@ export default function DeckPage() {
   const handleCelebrationDismiss = useCallback(() => {
     setShowStreakCelebration(false)
     const todayStr = new Date().toISOString().slice(0, 10)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(`flotter-streak-celebrated-${todayStr}`, 'true')
+    if (typeof window !== 'undefined' && user?.id) {
+      localStorage.setItem(`flotter-streak-celebrated-${user.id}-${todayStr}`, 'true')
     }
-  }, [])
+  }, [user?.id])
+
+  // Reset per-session swipe marker when the authenticated user changes
+  useEffect(() => {
+    hasSwipedRef.current = false
+    setShowStreakCelebration(false)
+  }, [user?.id])
+
+  // Check and show streak celebration given dashboard data (safe to call multiple times)
+  const checkStreakCelebration = useCallback((data: any) => {
+    if (!hasSwipedRef.current) return
+    if (!user?.id) return
+    if (!data) return
+
+    const todayStr = new Date().toISOString().slice(0, 10)
+    const wasActiveBeforeSession = data.lastActiveDate
+      ? new Date(data.lastActiveDate).toISOString().slice(0, 10) === todayStr
+      : false
+    const celebratedToday = typeof window !== 'undefined'
+      ? localStorage.getItem(`flotter-streak-celebrated-${user.id}-${todayStr}`) === 'true'
+      : true
+    if (!wasActiveBeforeSession && !celebratedToday) {
+      setTimeout(() => setShowStreakCelebration(true), 800)
+    }
+  }, [user?.id])
+
+  // When dashData becomes available after the user has already swiped,
+  // run the streak check.
+  useEffect(() => {
+    if (!hasSwipedRef.current) return
+    if (!dashData) return
+    checkStreakCelebration(dashData)
+  }, [dashData, checkStreakCelebration])
 
   // 2. Helper: Fetch Audio URL
   const fetchAudioUrl = async (text: string, signal?: AbortSignal): Promise<string> => {
@@ -193,19 +225,10 @@ export default function DeckPage() {
   const handleReview = (cardId: string, result: 'success' | 'struggle') => {
     if (audioRef.current) audioRef.current.pause();
 
-    // First-swipe streak celebration (once per day, only if user was not yet active today)
-    if (!hasSwipedRef.current && dashData) {
+    // Mark first swipe immediately so subsequent dashData arrival can trigger celebration.
+    if (!hasSwipedRef.current) {
       hasSwipedRef.current = true
-      const todayStr = new Date().toISOString().slice(0, 10)
-      const wasActiveBeforeSession = dashData.lastActiveDate
-        ? new Date(dashData.lastActiveDate).toISOString().slice(0, 10) === todayStr
-        : false
-      const celebratedToday = typeof window !== 'undefined'
-        ? localStorage.getItem(`flotter-streak-celebrated-${todayStr}`) === 'true'
-        : true
-      if (!wasActiveBeforeSession && !celebratedToday) {
-        setTimeout(() => setShowStreakCelebration(true), 800)
-      }
+      if (dashData) checkStreakCelebration(dashData)
     }
 
     // Track swipe count for free users
