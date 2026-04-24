@@ -107,11 +107,17 @@ export async function POST(req: Request) {
         }
 
         try {
-            const completion = await groq.chat.completions.create({
-                messages: [
-                    {
-                        role: "system",
-                        content: `Role: Expert Mnemonist, Neuro-Linguistic Architect & Master of Visceral Storytelling.
+            const models = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
+            let completion: any = null;
+            let lastModelError: any = null;
+
+            for (const model of models) {
+                try {
+                    completion = await groq.chat.completions.create({
+                        messages: [
+                            {
+                                role: "system",
+                                content: `Role: Expert Mnemonist, Neuro-Linguistic Architect & Master of Visceral Storytelling.
 
                         Output: Strict JSON matching this schema:
                         { 
@@ -142,17 +148,27 @@ export async function POST(req: Request) {
                             - ONLY use objects, landscapes, nature, animals, buildings, food, weather, abstract concepts.
                             - Examples of FORBIDDEN queries: "woman", "girl", "man", "person", "couple", "model", "beauty", "bikini", "sexy", "body".
                             - Examples of GOOD queries: "dark forest rain", "broken clock tower", "stormy ocean waves", "abandoned house night".`
-                    },
-                    {
-                        role: "user",
-                        content: `Target Word: "${sanitizedWord}"`
-                    },
-                ],
-                model: "moonshotai/kimi-k2-instruct-0905",
-                temperature: 0.85,
-                max_tokens: 300,
-                response_format: { type: "json_object" },
-            });
+                            },
+                            {
+                                role: "user",
+                                content: `Target Word: "${sanitizedWord}"`
+                            },
+                        ],
+                        model,
+                        temperature: 0.85,
+                        max_tokens: 300,
+                        response_format: { type: "json_object" },
+                    });
+                    break;
+                } catch (modelError) {
+                    lastModelError = modelError;
+                    console.error(`Groq model failed: ${model}`, modelError);
+                }
+            }
+
+            if (!completion) {
+                throw lastModelError || new Error('All Groq models failed');
+            }
 
             const responseContent = completion.choices[0]?.message?.content;
 
